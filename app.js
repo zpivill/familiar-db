@@ -27,7 +27,7 @@ const toB64 = bytes => { let s = ''; bytes.forEach(b => { s += String.fromCharCo
 const fromB64 = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g, '')), c => c.charCodeAt(0)));
 
 function gh(path, opts = {}) {
-  return fetch(`https://api.github.com/repos/${REPO}/${path}`, {
+  return fetch(`https://api.github.com/repos/${REPO}${path && '/' + path}`, {
     ...opts, cache: 'no-store',
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
   });
