@@ -11,7 +11,7 @@
         "types": [
           "Water"
         ],
-        "image": "images/tanjiro-mvnh83wk.png"
+        "image": ""
       },
       {
         "name": "Hinokami Tanjiro",
@@ -31,30 +31,908 @@
     ]
   },
   {
-    "id": "ayanokoji",
-    "name": "Ayanokoji",
-    "anime": "Classroom of the Elite",
+    "id": "todoroki",
+    "name": "Todoroki",
+    "anime": "My Hero Academia",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Class D Ayanokoji",
+        "name": "Todoroki",
         "types": [
-          "Neutral"
+          "Fire",
+          "Ice"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "natsu",
+    "name": "Natsu",
+    "anime": "Fairy Tail",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Natsu",
+        "types": [
+          "Fire"
         ],
         "image": ""
       },
       {
-        "name": "Unmasked Ayanokoji",
+        "name": "Lightning Flame Natsu",
         "types": [
-          "Neutral"
+          "Fire",
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "madara",
+    "name": "Madara",
+    "anime": "Naruto",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Young Madara",
+        "types": [
+          "Fire",
+          "Dark"
         ],
         "image": ""
       },
       {
-        "name": "White Room Ayanokoji",
+        "name": "Madara",
         "types": [
+          "Fire",
+          "Cosmic"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Six Paths Madara",
+        "types": [
+          "Cosmic",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "axel-blaze",
+    "name": "Axel Blaze",
+    "anime": "Inazuma Eleven",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Axel Blaze",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "megumin",
+    "name": "Megumin",
+    "anime": "KonoSuba",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Megumin",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "ace",
+    "name": "Ace",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Ace",
+        "types": [
+          "Fire",
           "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rengoku",
+    "name": "Rengoku",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Rengoku",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yamamoto",
+    "name": "Yamamoto",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Bankai Yamamoto",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Yamamoto",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "akainu",
+    "name": "Akainu",
+    "anime": "One Piece",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Akainu",
+        "types": [
+          "Fire",
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "aqua",
+    "name": "Aqua",
+    "anime": "KonoSuba",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Aqua",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "giyu",
+    "name": "Giyu",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Giyu",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "poseidon",
+    "name": "Poseidon",
+    "anime": "Record of Ragnarok",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Poseidon",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "hanako-kun",
+    "name": "Hanako-kun",
+    "anime": "Toilet-bound Hanako-kun",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Hanako-kun",
+        "types": [
+          "Water",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "nessie",
+    "name": "Nessie",
+    "anime": "Folklore",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Nessie",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "spongebob",
+    "name": "SpongeBob",
+    "anime": "SpongeBob SquarePants",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "SpongeBob",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "patrick",
+    "name": "Patrick",
+    "anime": "SpongeBob SquarePants",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Patrick",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "juvia",
+    "name": "Juvia",
+    "anime": "Fairy Tail",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Phantom Juvia",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Juvia",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "fern",
+    "name": "Fern",
+    "anime": "Frieren",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Fern",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "brook",
+    "name": "Brook",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Brook",
+        "types": [
+          "Ice",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rukia",
+    "name": "Rukia",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Rukia",
+        "types": [
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Shikai Rukia",
+        "types": [
+          "Ice",
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Bankai Rukia",
+        "types": [
+          "Ice",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "ryo-yamada",
+    "name": "Ryo Yamada",
+    "anime": "Bocchi the Rock!",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Ryo Yamada",
+        "types": [
+          "Ice",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shawn-frost",
+    "name": "Shawn Frost",
+    "anime": "Inazuma Eleven",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Shawn Frost",
+        "types": [
+          "Ice"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kagami",
+    "name": "Kagami",
+    "anime": "Kuroko's Basketball",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kagami",
+        "types": [
+          "Ice",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "cole-palmer",
+    "name": "Cole Palmer",
+    "anime": "Football",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Cole Palmer",
+        "types": [
+          "Ice"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "toshiro",
+    "name": "Toshiro",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Bankai Toshiro",
+        "types": [
+          "Ice"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Winged Bankai Toshiro",
+        "types": [
+          "Ice",
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Adult Bankai Toshiro",
+        "types": [
+          "Ice",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "doma",
+    "name": "Doma",
+    "anime": "Demon Slayer",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Doma",
+        "types": [
+          "Ice",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "emilia",
+    "name": "Emilia",
+    "anime": "Re:Zero",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Emilia and Puck",
+        "types": [
+          "Ice",
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Emilia",
+        "types": [
+          "Ice"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "deku",
+    "name": "Deku",
+    "anime": "My Hero Academia",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Deku",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Full Cowl Deku",
+        "types": [
+          "Wind",
+          "Time"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Dark Deku",
+        "types": [
+          "Wind",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "nami",
+    "name": "Nami",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Nami",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Zeus Nami",
+        "types": [
+          "Wind",
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kita",
+    "name": "Kita",
+    "anime": "Bocchi the Rock!",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Kita",
+        "types": [
+          "Wind",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sunthorn-phu",
+    "name": "Sunthorn Phu",
+    "anime": "Thai poet",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "สุนทรภู่",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yuno",
+    "name": "Yuno",
+    "anime": "Black Clover",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Yuno",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Spirit of Zephyr Yuno",
+        "types": [
+          "Wind",
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Spirit Dive Yuno",
+        "types": [
+          "Wind",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sanemi",
+    "name": "Sanemi",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Sanemi",
+        "types": [
+          "Wind",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "tatsumaki",
+    "name": "Tatsumaki",
+    "anime": "One Punch Man",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Tatsumaki",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gyomei",
+    "name": "Gyomei",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Gyomei",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "onoki",
+    "name": "Onoki",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Onoki",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "hashirama",
+    "name": "Hashirama",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Hashirama",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Sage Mode Hashirama",
+        "types": [
+          "Earth",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "nijika",
+    "name": "Nijika",
+    "anime": "Bocchi the Rock!",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Nijika",
+        "types": [
+          "Earth",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mark-evans",
+    "name": "Mark Evans",
+    "anime": "Inazuma Eleven",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Mark Evans",
+        "types": [
+          "Earth",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "senku",
+    "name": "Senku",
+    "anime": "Dr. Stone",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Senku",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Older Senku",
+        "types": [
+          "Earth",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "senku-s-rocket",
+    "name": "Senku's Rocket",
+    "anime": "Dr. Stone",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Senku's Rocket",
+        "types": [
+          "Cosmic",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kakuzu",
+    "name": "Kakuzu",
+    "anime": "Naruto",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kakuzu",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "zenitsu",
+    "name": "Zenitsu",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Zenitsu",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Thunder God Zenitsu",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "misaka",
+    "name": "Misaka",
+    "anime": "A Certain Scientific Railgun",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Misaka",
+        "types": [
+          "Lightning",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "enel",
+    "name": "Enel",
+    "anime": "One Piece",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Enel",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yoruichi",
+    "name": "Yoruichi",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Cat Yoruichi",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Yoruichi",
+        "types": [
+          "Lightning",
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Raijū Senkei Yoruichi",
+        "types": [
+          "Lightning",
+          "Beast"
         ],
         "image": ""
       }
@@ -68,7 +946,7 @@
     "gag": false,
     "stages": [
       {
-        "name": "Assassin Killua",
+        "name": "Killua",
         "types": [
           "Dark"
         ],
@@ -93,32 +971,24 @@
     ]
   },
   {
-    "id": "yoruichi",
-    "name": "Yoruichi",
-    "anime": "Bleach",
+    "id": "bocchi",
+    "name": "Bocchi",
+    "anime": "Bocchi the Rock!",
     "villain": false,
-    "gag": false,
+    "gag": true,
     "stages": [
       {
-        "name": "Cat Yoruichi",
+        "name": "Bocchi",
         "types": [
+          "Lightning",
           "Beast"
         ],
         "image": ""
       },
       {
-        "name": "Flash Goddess Yoruichi",
+        "name": "Melting Bocchi",
         "types": [
-          "Lightning",
-          "Spirit"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Raijū Senkei Yoruichi",
-        "types": [
-          "Lightning",
-          "Beast"
+          "Neutral"
         ],
         "image": ""
       }
@@ -149,7 +1019,23 @@
       {
         "name": "True Bankai Ichigo",
         "types": [
-          "Spirit",
+          "Light",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "light-yagami",
+    "name": "Light Yagami",
+    "anime": "Death Note",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Light Yagami",
+        "types": [
           "Light"
         ],
         "image": ""
@@ -157,86 +1043,184 @@
     ]
   },
   {
-    "id": "rukia",
-    "name": "Rukia",
-    "anime": "Bleach",
-    "villain": false,
+    "id": "kizaru",
+    "name": "Kizaru",
+    "anime": "One Piece",
+    "villain": true,
     "gag": false,
     "stages": [
       {
-        "name": "Rukia",
+        "name": "Kizaru",
         "types": [
-          "Spirit"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Shikai Rukia",
-        "types": [
-          "Spirit",
-          "Ice"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Bankai Rukia",
-        "types": [
-          "Spirit",
-          "Ice"
+          "Light"
         ],
         "image": ""
       }
     ]
   },
   {
-    "id": "mob",
-    "name": "Mob",
-    "anime": "Mob Psycho 100",
+    "id": "frieren",
+    "name": "Frieren",
+    "anime": "Frieren",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Mob",
+        "name": "Frieren",
         "types": [
-          "Spirit"
+          "Light"
         ],
         "image": ""
       },
       {
-        "name": "Mob in Control",
+        "name": "Frieren (long hair)",
         "types": [
-          "Spirit"
+          "Light"
         ],
         "image": ""
       }
     ]
   },
   {
-    "id": "goku",
-    "name": "Goku",
-    "anime": "Dragon Ball",
+    "id": "seiya",
+    "name": "Seiya",
+    "anime": "Saint Seiya",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Kid Goku",
-        "types": [
-          "Neutral",
-          "Beast"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Super Saiyan Goku",
+        "name": "Bronze Seiya",
         "types": [
           "Neutral"
         ],
         "image": ""
       },
       {
-        "name": "Ultra Instinct Goku",
+        "name": "Gold Seiya",
         "types": [
-          "Cosmic"
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yhwach",
+    "name": "Yhwach",
+    "anime": "Bleach",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "The Almighty Yhwach",
+        "types": [
+          "Light",
+          "Time"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Soul King Yhwach",
+        "types": [
+          "Dark",
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "unknown-light-glasses",
+    "name": "Unknown (light, glasses)",
+    "anime": "?",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Unknown (light, glasses)",
+        "types": [
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "saitama",
+    "name": "Saitama",
+    "anime": "One Punch Man",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Saitama's Head",
+        "types": [
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "darkness",
+    "name": "Darkness",
+    "anime": "KonoSuba",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Darkness",
+        "types": [
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "blackbeard",
+    "name": "Blackbeard",
+    "anime": "One Piece",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Blackbeard",
+        "types": [
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shanks",
+    "name": "Shanks (?)",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Shanks (?)",
+        "types": [
+          "Dark",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yami",
+    "name": "Yami",
+    "anime": "Black Clover",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Yami",
+        "types": [
+          "Dark"
         ],
         "image": ""
       }
@@ -259,16 +1243,8 @@
       {
         "name": "Demon Mark Meliodas",
         "types": [
-          "Neutral",
-          "Dark"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Assault Mode Meliodas",
-        "types": [
           "Dark",
-          "Fire"
+          "Neutral"
         ],
         "image": ""
       }
@@ -291,8 +1267,8 @@
       {
         "name": "Black Asta",
         "types": [
-          "Neutral",
-          "Dark"
+          "Dark",
+          "Neutral"
         ],
         "image": ""
       },
@@ -307,120 +1283,16 @@
     ]
   },
   {
-    "id": "hashirama",
-    "name": "Hashirama",
-    "anime": "Naruto",
+    "id": "alucard",
+    "name": "Alucard",
+    "anime": "Hellsing",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "First Hokage Hashirama",
+        "name": "Alucard",
         "types": [
-          "Earth"
-        ],
-        "image": ""
-      },
-      {
-        "name": "Sage Mode Hashirama",
-        "types": [
-          "Earth",
-          "Beast"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "onoki",
-    "name": "Onoki",
-    "anime": "Naruto",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Onoki",
-        "types": [
-          "Earth",
-          "Light"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "gyomei",
-    "name": "Gyomei",
-    "anime": "Demon Slayer",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Gyomei",
-        "types": [
-          "Earth"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "zenitsu",
-    "name": "Zenitsu",
-    "anime": "Demon Slayer",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Zenitsu",
-        "types": [
-          "Lightning"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "giyu",
-    "name": "Giyu",
-    "anime": "Demon Slayer",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Giyu",
-        "types": [
-          "Water"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "gojo",
-    "name": "Gojo",
-    "anime": "Jujutsu Kaisen",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Gojo",
-        "types": [
-          "Cosmic"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "choso",
-    "name": "Choso",
-    "anime": "Jujutsu Kaisen",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Choso",
-        "types": [
+          "Dark",
           "Blood"
         ],
         "image": ""
@@ -428,32 +1300,23 @@
     ]
   },
   {
-    "id": "aqua",
-    "name": "Aqua",
-    "anime": "KonoSuba",
+    "id": "mob",
+    "name": "Mob",
+    "anime": "Mob Psycho 100",
     "villain": false,
-    "gag": true,
+    "gag": false,
     "stages": [
       {
-        "name": "Aqua",
+        "name": "Mob",
         "types": [
-          "Water"
+          "Spirit"
         ],
         "image": ""
-      }
-    ]
-  },
-  {
-    "id": "darkness",
-    "name": "Darkness",
-    "anime": "KonoSuba",
-    "villain": false,
-    "gag": true,
-    "stages": [
+      },
       {
-        "name": "Darkness",
+        "name": "Mob ???%",
         "types": [
-          "Light"
+          "Spirit"
         ],
         "image": ""
       }
@@ -483,116 +1346,182 @@
     ]
   },
   {
-    "id": "madara",
-    "name": "Madara",
-    "anime": "Naruto",
-    "villain": true,
+    "id": "sung-jinwoo",
+    "name": "Sung Jinwoo",
+    "anime": "Solo Leveling",
+    "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Warring States Madara",
+        "name": "Sung Jinwoo",
         "types": [
-          "Fire",
-          "Dark"
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "david-martinez",
+    "name": "David Martinez (?)",
+    "anime": "Cyberpunk: Edgerunners",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "David Martinez (?)",
+        "types": [
+          "Spirit",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "goku",
+    "name": "Goku",
+    "anime": "Dragon Ball",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kid Goku",
+        "types": [
+          "Beast",
+          "Neutral"
         ],
         "image": ""
       },
       {
-        "name": "Reanimated Madara",
+        "name": "Super Saiyan Goku",
         "types": [
-          "Fire",
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Ultra Instinct Goku",
+        "types": [
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gojo",
+    "name": "Gojo",
+    "anime": "Jujutsu Kaisen",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Gojo",
+        "types": [
           "Cosmic"
         ],
         "image": ""
       },
       {
-        "name": "Ten-Tails Madara",
+        "name": "Blindfold Gojo",
         "types": [
-          "Cosmic",
-          "Dark"
+          "Cosmic"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Hollow Purple Gojo",
+        "types": [
+          "Cosmic"
         ],
         "image": ""
       }
     ]
   },
   {
-    "id": "yhwach",
-    "name": "Yhwach",
-    "anime": "Bleach",
+    "id": "boros",
+    "name": "Boros",
+    "anime": "One Punch Man",
     "villain": true,
     "gag": false,
     "stages": [
       {
-        "name": "Emperor Yhwach",
+        "name": "Armored Boros",
         "types": [
-          "Light"
+          "Cosmic"
         ],
         "image": ""
       },
       {
-        "name": "The Almighty Yhwach",
+        "name": "Boros",
         "types": [
-          "Light",
-          "Time"
+          "Cosmic"
         ],
         "image": ""
-      },
+      }
+    ]
+  },
+  {
+    "id": "cosmic-garou",
+    "name": "Cosmic Garou",
+    "anime": "One Punch Man",
+    "villain": true,
+    "gag": false,
+    "stages": [
       {
-        "name": "Soul King Yhwach",
+        "name": "Cosmic Garou",
+        "types": [
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kazuma",
+    "name": "Kazuma",
+    "anime": "KonoSuba",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kazuma",
+        "types": [
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sailor-moon",
+    "name": "Sailor Moon",
+    "anime": "Sailor Moon",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Sailor Moon",
+        "types": [
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "doraemon",
+    "name": "Doraemon",
+    "anime": "Doraemon",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Doraemon",
         "types": [
           "Time",
-          "Dark"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "muzan",
-    "name": "Muzan",
-    "anime": "Demon Slayer",
-    "villain": true,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Muzan",
-        "types": [
-          "Blood",
-          "Dark"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "akaza",
-    "name": "Akaza",
-    "anime": "Demon Slayer",
-    "villain": true,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Akaza",
-        "types": [
-          "Blood",
-          "Neutral"
-        ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "crocodile",
-    "name": "Crocodile",
-    "anime": "One Piece",
-    "villain": true,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Crocodile",
-        "types": [
-          "Earth",
-          "Wind"
+          "Tech"
         ],
         "image": ""
       }
@@ -608,7 +1537,403 @@
       {
         "name": "Dio",
         "types": [
+          "Time",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "metro-man",
+    "name": "Metro Man",
+    "anime": "Megamind",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Metro Man",
+        "types": [
           "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "pucci",
+    "name": "Pucci",
+    "anime": "JoJo's Bizarre Adventure",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Pucci",
+        "types": [
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "homura",
+    "name": "Homura",
+    "anime": "Madoka Magica",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Homura",
+        "types": [
+          "Time",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "takemichi",
+    "name": "Takemichi",
+    "anime": "Tokyo Revengers",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Takemichi",
+        "types": [
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kurumi",
+    "name": "Kurumi",
+    "anime": "Date A Live",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kurumi",
+        "types": [
+          "Time",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "jotaro",
+    "name": "Jotaro",
+    "anime": "JoJo's Bizarre Adventure",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Jotaro",
+        "types": [
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "adam-smasher",
+    "name": "Adam Smasher",
+    "anime": "Cyberpunk: Edgerunners",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Adam Smasher",
+        "types": [
+          "Time",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "lucy",
+    "name": "Lucy",
+    "anime": "Cyberpunk: Edgerunners",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Lucy",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "jinx",
+    "name": "Jinx",
+    "anime": "Arcane",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Jinx",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "vi",
+    "name": "Vi",
+    "anime": "Arcane",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Vi",
+        "types": [
+          "Tech",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shinji",
+    "name": "Shinji",
+    "anime": "Evangelion",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Shinji",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "zero-two",
+    "name": "Zero Two",
+    "anime": "Darling in the Franxx",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Zero Two",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "baymax",
+    "name": "Baymax",
+    "anime": "Big Hero 6",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Baymax",
+        "types": [
+          "Tech",
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Armored Baymax",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "chiikawa-usagi",
+    "name": "Chiikawa Usagi",
+    "anime": "Chiikawa",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Usagi",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gold-ship",
+    "name": "Gold Ship",
+    "anime": "Umamusume",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Gold Ship",
+        "types": [
+          "Beast",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "unknown-beast-meme-face",
+    "name": "Unknown (beast, meme face)",
+    "anime": "?",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Unknown (beast, meme face)",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "soma",
+    "name": "Soma",
+    "anime": "Food Wars!",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Soma",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "hinata",
+    "name": "Hinata",
+    "anime": "Haikyu!!",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Hinata",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "unknown-bleed-manga-panel",
+    "name": "Unknown (bleed, manga panel)",
+    "anime": "?",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Unknown (bleed, manga panel)",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "guts",
+    "name": "Guts",
+    "anime": "Berserk",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Berserker Armor Guts",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "toga",
+    "name": "Toga",
+    "anime": "My Hero Academia",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Toga",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "ayanokoji",
+    "name": "Ayanokoji",
+    "anime": "Classroom of the Elite",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Ayanokoji",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Unmasked Ayanokoji",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "White Room Ayanokoji",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "johan",
+    "name": "Johan",
+    "anime": "Monster",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Johan",
+        "types": [
+          "Neutral"
         ],
         "image": ""
       }
