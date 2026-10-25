@@ -1,9 +1,13 @@
 const TYPES = ['Fire', 'Water', 'Ice', 'Wind', 'Earth', 'Lightning', 'Light', 'Dark',
   'Spirit', 'Cosmic', 'Time', 'Tech', 'Beast', 'Blood', 'Neutral'];
 const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
-// Editing only works through serve.py on this computer; the hosted site is read-only.
-const EDIT = ['localhost', '127.0.0.1'].includes(location.hostname);
-document.body.classList.toggle('editing', EDIT);
+const REPO = 'zpivill/familiar-db', FILE = 'data/characters.json';
+
+// Two ways to save: serve.py on this computer, or straight to GitHub with a teammate's token.
+const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+let token = null;
+try { token = localStorage.getItem('gh-token'); } catch {}
+const canEdit = () => LOCAL || !!token;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -13,16 +17,63 @@ const dlg = $('#detail');
 
 let roster = [];
 const picked = new Set();  // type chips that are on
-let selected = null;       // {i, j}: the picture slot the next paste goes into
-let openI = null;          // character shown in the dialog
+let selected = null;       // {id, j}: the picture slot the next paste goes into
+let openId = null;         // character shown in the dialog
+const fresh = {};          // pictures uploaded this session, shown before the site redeploys
 
-fetch('data/characters.json', { cache: 'no-store' }).then(r => r.json()).then(d => { roster = d; render(); });
+// ---- loading and saving ----
 
-function save() {
-  return fetch('api/characters', { method: 'PUT', body: JSON.stringify(roster, null, 2) })
-    .then(r => { if (!r.ok) throw r; })
-    .catch(() => alert('Could not save. Is serve.py running?'));
+const toB64 = bytes => { let s = ''; bytes.forEach(b => { s += String.fromCharCode(b); }); return btoa(s); };
+const fromB64 = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g, '')), c => c.charCodeAt(0)));
+
+function gh(path, opts = {}) {
+  return fetch(`https://api.github.com/repos/${REPO}/${path}`, {
+    ...opts, cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+  });
 }
+
+// Latest roster plus the version it came from, so a save never overwrites a teammate's.
+async function latest() {
+  if (LOCAL || !token) {
+    const r = await fetch(FILE, { cache: 'no-store' });
+    return { data: await r.json() };
+  }
+  const r = await gh('contents/' + FILE);
+  if (!r.ok) throw new Error('GitHub said ' + r.status);
+  const j = await r.json();
+  return { data: JSON.parse(fromB64(j.content)), sha: j.sha };
+}
+
+async function store(data, sha, message) {
+  const body = JSON.stringify(data, null, 2) + '\n';
+  if (LOCAL) return (await fetch('api/characters', { method: 'PUT', body })).ok;
+  const r = await gh('contents/' + FILE, {
+    method: 'PUT', body: JSON.stringify({ message, sha, content: toB64(new TextEncoder().encode(body)) }),
+  });
+  return r.ok;  // 409 means someone else saved first: the caller retries on their version
+}
+
+// Apply one edit to the newest roster and save it.
+async function commit(message, edit) {
+  try {
+    for (let tries = 0; tries < 3; tries++) {
+      const { data, sha } = await latest();
+      if (edit(data) === false) return;
+      if (await store(data, sha, message)) { roster = data; return render(); }
+    }
+  } catch {}
+  alert(LOCAL ? 'Could not save. Is serve.py running?' : 'Could not save to GitHub. Check that you are signed in and added to the repo.');
+}
+
+async function uploadImage(path, file) {
+  const content = toB64(new Uint8Array(await file.arrayBuffer()));
+  if (LOCAL) return (await fetch('api/' + path, { method: 'PUT', body: file })).ok;
+  return (await gh('contents/' + path, { method: 'PUT', body: JSON.stringify({ message: 'Add picture ' + path, content }) })).ok;
+}
+
+const imgSrc = path => fresh[path] || (LOCAL ? path : `https://raw.githubusercontent.com/${REPO}/main/${path}`);
+const find = (data, id) => data.find(c => c.id === id);
 
 // ---- filtering and sorting ----
 
@@ -61,16 +112,16 @@ function entries() {
 
 // ---- rendering ----
 
-function slot(s, i, j) {
-  const sel = selected && selected.i === i && selected.j === j ? ' selected' : '';
-  const empty = EDIT ? 'Click, then Ctrl+V<br>to paste a picture' : 'No picture yet';
-  return `<div class="slot${sel}" data-slot="${i}-${j}">${s.image ? `<img src="${esc(s.image)}" alt="">` : empty}</div>`;
+function slot(s, id, j) {
+  const sel = selected && selected.id === id && selected.j === j ? ' selected' : '';
+  const empty = canEdit() ? 'Click, then Ctrl+V<br>to paste a picture' : 'No picture yet';
+  return `<div class="slot${sel}" data-id="${esc(id)}" data-j="${j}">${s.image ? `<img src="${esc(imgSrc(s.image))}" alt="" loading="lazy">` : empty}</div>`;
 }
 
 function card({ c, s, i, j }) {
   const forms = !$('#evos').checked && c.stages.length > 1 ? `<span class="forms">${c.stages.length} forms</span>` : '';
-  return `<article class="card" data-i="${i}">
-    ${slot(s, i, j)}
+  return `<article class="card" data-id="${esc(c.id)}">
+    ${slot(s, c.id, j)}
     <span class="num">${num(i)}</span>
     <span class="name">${esc(s.name || c.name)}</span>
     <span class="anime">${esc(c.anime)}</span>
@@ -80,6 +131,9 @@ function card({ c, s, i, j }) {
 }
 
 function render() {
+  document.body.classList.toggle('editing', canEdit());
+  $('#signin').hidden = LOCAL || !!token;
+  $('#signout').hidden = LOCAL || !token;
   const list = entries();
   $('#grid').innerHTML = list.map(card).join('') || '<p class="hint">No characters match these filters.</p>';
   $('#count').textContent = `${roster.length} characters, ${list.length} shown`;
@@ -92,10 +146,12 @@ function typeSelect(value, n) {
 }
 
 function renderDetail() {
-  const c = roster[openI], dis = EDIT ? '' : ' disabled';
+  const i = roster.findIndex(c => c.id === openId), c = roster[i];
+  if (!c) return dlg.close();
+  const ed = canEdit(), dis = ed ? '' : ' disabled';
   dlg.innerHTML = `
     <div class="dhead">
-      <span class="num">${num(openI)}</span>
+      <span class="num">${num(i)}</span>
       <input name="name" value="${esc(c.name)}" placeholder="Name"${dis}>
       <input name="anime" value="${esc(c.anime)}" placeholder="Anime"${dis}>
       <label class="check"><input type="checkbox" name="villain"${c.villain ? ' checked' : ''}${dis}> Villain</label>
@@ -104,9 +160,9 @@ function renderDetail() {
     <div class="stages">${c.stages.map((s, j) => `
       <div class="stage" data-j="${j}">
         ${c.stages.length > 1 ? `<span class="arrow">Form ${j + 1}</span>` : ''}
-        ${slot(s, openI, j)}
+        ${slot(s, c.id, j)}
         <input name="stage" value="${esc(s.name)}" placeholder="${esc(c.name)}"${dis}>
-        <div class="tags">${EDIT ? typeSelect(s.types[0], 0) + typeSelect(s.types[1], 1) : s.types.map(badge).join('')}</div>
+        <div class="tags">${ed ? typeSelect(s.types[0], 0) + typeSelect(s.types[1], 1) : s.types.map(badge).join('')}</div>
         <button type="button" class="edit-only danger" data-act="remove-stage">Remove this form</button>
       </div>`).join('')}
     </div>
@@ -118,108 +174,124 @@ function renderDetail() {
     </div>`;
 }
 
-function openDetail(i) {
-  openI = i;
+function openDetail(id) {
+  openId = id;
   renderDetail();
   if (!dlg.open) dlg.showModal();
 }
 
 function markSelected() {
   document.querySelectorAll('.slot.selected').forEach(el => el.classList.remove('selected'));
-  if (selected) document.querySelectorAll(`[data-slot="${selected.i}-${selected.j}"]`).forEach(el => el.classList.add('selected'));
+  if (selected) document.querySelectorAll(`.slot[data-id="${CSS.escape(selected.id)}"][data-j="${selected.j}"]`).forEach(el => el.classList.add('selected'));
 }
 
 // ---- pictures ----
 
-async function setImage(i, j, file) {
+async function setImage(id, j, file) {
   const ext = EXT[file.type];
   if (!ext) return alert('Use a PNG, JPG, WebP or GIF picture.');
-  const name = `${roster[i].id}-${Date.now().toString(36)}.${ext}`;
-  const r = await fetch('api/images/' + name, { method: 'PUT', body: file }).catch(() => null);
-  if (!r?.ok) return alert('Could not save the picture. Is serve.py running?');
+  const path = `images/${id}-${Date.now().toString(36)}.${ext}`;
+  if (!await uploadImage(path, file).catch(() => false)) return alert('Could not save the picture.');
+  fresh[path] = URL.createObjectURL(file);
   // shortcut: a replaced picture's old file stays in images/; delete it by hand if it matters.
-  roster[i].stages[j].image = 'images/' + name;
-  await save();
-  render();
+  commit('Set picture for ' + id, data => { const c = find(data, id); if (!c?.stages[j]) return false; c.stages[j].image = path; });
 }
 
 document.addEventListener('paste', e => {
   const file = [...e.clipboardData.files].find(f => f.type.startsWith('image/'));
-  if (!EDIT || !selected || !file) return;
+  if (!canEdit() || !selected || !file) return;
   e.preventDefault();
-  setImage(selected.i, selected.j, file);
+  setImage(selected.id, selected.j, file);
 });
 
 document.addEventListener('dragover', e => {
   const el = e.target.closest?.('.slot');
-  if (!EDIT || !el) return;
+  if (!canEdit() || !el) return;
   e.preventDefault();
   el.classList.add('drop');
 });
 document.addEventListener('dragleave', e => e.target.closest?.('.slot')?.classList.remove('drop'));
 document.addEventListener('drop', e => {
   const el = e.target.closest?.('.slot');
-  if (!EDIT || !el) return;
+  if (!canEdit() || !el) return;
   e.preventDefault();
-  const [i, j] = el.dataset.slot.split('-').map(Number);
   const file = [...e.dataTransfer.files].find(f => f.type.startsWith('image/'));
-  if (file) setImage(i, j, file);
+  if (file) setImage(el.dataset.id, +el.dataset.j, file);
 });
 
 // ---- clicks and edits ----
 
 document.addEventListener('click', e => {
   const el = e.target.closest('.slot');
-  if (el && EDIT) {
-    const [i, j] = el.dataset.slot.split('-').map(Number);
-    selected = { i, j };
+  if (el && canEdit()) {
+    selected = { id: el.dataset.id, j: +el.dataset.j };
     return markSelected();
   }
   const cardEl = e.target.closest('.card');
-  if (cardEl) openDetail(+cardEl.dataset.i);
+  if (cardEl) openDetail(cardEl.dataset.id);
 });
 
 dlg.addEventListener('click', e => {
-  const act = e.target.dataset.act, c = roster[openI];
+  const act = e.target.dataset.act, id = openId, c = find(roster, id);
   if (!act) return;
   if (act === 'close') return dlg.close();
-  if (act === 'add-stage') c.stages.push({ name: '', types: [...c.stages.at(-1).types], image: '' });
+  if (act === 'add-stage') commit('Add evolution to ' + c.name, data => { const d = find(data, id); d.stages.push({ name: '', types: [...d.stages.at(-1).types], image: '' }); });
   if (act === 'remove-stage') {
     if (c.stages.length === 1) return alert('A character needs at least one form.');
     if (!confirm('Remove this form?')) return;
-    c.stages.splice(+e.target.closest('.stage').dataset.j, 1);
+    const j = +e.target.closest('.stage').dataset.j;
     selected = null;
+    commit('Remove a form from ' + c.name, data => { find(data, id).stages.splice(j, 1); });
   }
   if (act === 'delete') {
     if (!confirm(`Delete ${c.name}?`)) return;
-    roster.splice(openI, 1);
     dlg.close();
+    commit('Delete ' + c.name, data => { data.splice(data.findIndex(d => d.id === id), 1); });
   }
-  save();
-  render();
 });
 
 dlg.addEventListener('change', e => {
-  const c = roster[openI], el = e.target, stage = el.closest('.stage'), j = stage && +stage.dataset.j;
-  if (el.name === 'name' || el.name === 'anime') c[el.name] = el.value.trim();
-  else if (el.type === 'checkbox') c[el.name] = el.checked;
-  else if (el.name === 'stage') c.stages[j].name = el.value.trim();
+  const id = openId, el = e.target, stage = el.closest('.stage'), j = stage && +stage.dataset.j;
+  let edit;
+  if (el.name === 'name' || el.name === 'anime') { const v = el.value.trim(); edit = c => { c[el.name] = v; }; }
+  else if (el.type === 'checkbox') { const v = el.checked; edit = c => { c[el.name] = v; }; }
+  else if (el.name === 'stage') { const v = el.value.trim(); edit = c => { c.stages[j].name = v; }; }
   else if (el.name.startsWith('type')) {
     const [a, b] = stage.querySelectorAll('select');
-    c.stages[j].types = [...new Set([a.value, b.value].filter(Boolean))];
+    const types = [...new Set([a.value, b.value].filter(Boolean))];
+    edit = c => { c.stages[j].types = types; };
   }
-  save();
-  render();
+  if (edit) commit('Edit ' + find(roster, id).name, data => { const c = find(data, id); if (!c) return false; edit(c); });
 });
 
-dlg.addEventListener('close', () => { openI = null; selected = null; });
+dlg.addEventListener('close', () => { openId = null; selected = null; });
 
 $('#add').addEventListener('click', () => {
-  roster.push({ id: 'c' + Date.now().toString(36), name: 'New character', anime: '', villain: false, gag: false,
-    stages: [{ name: '', types: ['Neutral'], image: '' }] });
-  save();
+  const id = 'c' + Date.now().toString(36);
+  commit('Add a character', data => {
+    data.push({ id, name: 'New character', anime: '', villain: false, gag: false, stages: [{ name: '', types: ['Neutral'], image: '' }] });
+  }).then(() => { if (find(roster, id)) openDetail(id); });
+});
+
+// ---- signing in (hosted site only) ----
+
+$('#signin').addEventListener('click', async () => {
+  const t = prompt('Paste your GitHub token. To make one, click the "How to edit" link next to this button.');
+  if (!t) return;
+  token = t.trim();
+  const r = await gh('').catch(() => null);
+  const repo = r?.ok ? await r.json() : null;
+  if (!repo?.permissions?.push) {
+    token = null;
+    return alert('That token can\'t edit familiar-db. Check that the owner added you to the repo and that the token has the "public_repo" box ticked.');
+  }
+  try { localStorage.setItem('gh-token', token); } catch {}
+  load();
+});
+$('#signout').addEventListener('click', () => {
+  token = null;
+  try { localStorage.removeItem('gh-token'); } catch {}
   render();
-  openDetail(roster.length - 1);
 });
 
 // ---- filters ----
@@ -244,3 +316,9 @@ $('#clear').addEventListener('click', () => {
   $('#kind').value = $('#side').value = 'all';
   render();
 });
+
+function load() {
+  latest().then(({ data }) => { roster = data; render(); })
+    .catch(() => alert('Could not load the roster from GitHub. Try signing out and in again.'));
+}
+load();
