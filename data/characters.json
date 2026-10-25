@@ -11,7 +11,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/tanjiro-mvnhvv8n.png"
       },
       {
         "name": "Hinokami Tanjiro",
@@ -19,14 +19,14 @@
           "Water",
           "Fire"
         ],
-        "image": ""
+        "image": "images/tanjiro-mvnmq9xy.png"
       },
       {
         "name": "Sun Breathing Tanjiro",
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/tanjiro-mvnmquv4.png"
       }
     ]
   },
@@ -43,7 +43,7 @@
           "Fire",
           "Ice"
         ],
-        "image": ""
+        "image": "images/todoroki-mvnhxlh7.png"
       }
     ]
   },
@@ -59,7 +59,7 @@
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/natsu-mvnmrdpq.png"
       },
       {
         "name": "Lightning Flame Natsu",
@@ -67,7 +67,7 @@
           "Fire",
           "Lightning"
         ],
-        "image": ""
+        "image": "images/natsu-mvnmromv.png"
       }
     ]
   },
@@ -84,7 +84,7 @@
           "Fire",
           "Dark"
         ],
-        "image": ""
+        "image": "images/madara-mvnms4gz.png"
       },
       {
         "name": "Madara",
@@ -92,7 +92,7 @@
           "Fire",
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/madara-mvnmsa9l.png"
       },
       {
         "name": "Six Paths Madara",
@@ -100,7 +100,7 @@
           "Cosmic",
           "Dark"
         ],
-        "image": ""
+        "image": "images/madara-mvnnxlxh.png"
       }
     ]
   },
@@ -116,7 +116,7 @@
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/axel-blaze-mvnmsjlr.png"
       }
     ]
   },
@@ -132,7 +132,7 @@
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/megumin-mvnmss85.png"
       }
     ]
   },
@@ -149,7 +149,7 @@
           "Fire",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/ace-mvnmszx0.png"
       }
     ]
   },
@@ -165,7 +165,7 @@
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/rengoku-mvnmte8h.png"
       }
     ]
   },
@@ -177,18 +177,18 @@
     "gag": false,
     "stages": [
       {
-        "name": "Bankai Yamamoto",
-        "types": [
-          "Fire"
-        ],
-        "image": ""
-      },
-      {
         "name": "Yamamoto",
         "types": [
           "Fire"
         ],
-        "image": ""
+        "image": "images/yamamoto-mvnmvujr.png"
+      },
+      {
+        "name": "Bankai Yamamoto",
+        "types": [
+          "Fire"
+        ],
+        "image": "images/yamamoto-mvnmw30x.png"
       }
     ]
   },
@@ -205,7 +205,7 @@
           "Fire",
           "Earth"
         ],
-        "image": ""
+        "image": "images/akainu-mvnmwctg.png"
       }
     ]
   },
@@ -221,7 +221,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/aqua-mvnmx40t.png"
       }
     ]
   },
@@ -237,7 +237,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/giyu-mvnmxbto.png"
       }
     ]
   },
@@ -253,7 +253,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/poseidon-mvnmxmpb.png"
       }
     ]
   },
@@ -270,7 +270,7 @@
           "Water",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/hanako-kun-mvnmy7vy.png"
       }
     ]
   },
@@ -286,7 +286,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/nessie-mvnmypts.png"
       }
     ]
   },
@@ -302,7 +302,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/spongebob-mvnmyyi9.png"
       }
     ]
   },
@@ -318,14 +318,14 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/patrick-mvnmz51r.png"
       }
     ]
   },
   {
     "id": "juvia",
-    "name": "Juvia",
-    "anime": "Fairy Tail",
+    "name": "Catch the rainbow",
+    "anime": "Jojo",
     "villain": false,
     "gag": false,
     "stages": [
@@ -334,14 +334,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
-      },
-      {
-        "name": "Juvia",
-        "types": [
-          "Water"
-        ],
-        "image": ""
+        "image": "images/juvia-mvnn1gqk.png"
       }
     ]
   },
@@ -357,7 +350,7 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "images/fern-mvnn0noa.png"
       }
     ]
   },
@@ -374,7 +367,7 @@
           "Ice",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/brook-mvnn5koj.png"
       }
     ]
   },
@@ -390,7 +383,7 @@
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/rukia-mvno7fss.png"
       },
       {
         "name": "Shikai Rukia",
@@ -398,7 +391,7 @@
           "Ice",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/rukia-mvnn5wu9.png"
       },
       {
         "name": "Bankai Rukia",
@@ -406,7 +399,7 @@
           "Ice",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/rukia-mvnn62lp.png"
       }
     ]
   },
@@ -423,7 +416,7 @@
           "Ice",
           "Beast"
         ],
-        "image": ""
+        "image": "images/ryo-yamada-mvnn69q3.png"
       }
     ]
   },
@@ -439,24 +432,24 @@
         "types": [
           "Ice"
         ],
-        "image": ""
+        "image": "images/shawn-frost-mvnn6hkq.png"
       }
     ]
   },
   {
     "id": "kagami",
-    "name": "Kagami",
+    "name": "Akashi",
     "anime": "Kuroko's Basketball",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Kagami",
+        "name": "Akashi",
         "types": [
           "Ice",
           "Blood"
         ],
-        "image": ""
+        "image": "images/kagami-mvnn7348.png"
       }
     ]
   },
@@ -472,7 +465,7 @@
         "types": [
           "Ice"
         ],
-        "image": ""
+        "image": "images/cole-palmer-mvnn7stq.png"
       }
     ]
   },
@@ -488,7 +481,7 @@
         "types": [
           "Ice"
         ],
-        "image": ""
+        "image": "images/toshiro-mvnn94jo.png"
       },
       {
         "name": "Winged Bankai Toshiro",
@@ -496,7 +489,7 @@
           "Ice",
           "Beast"
         ],
-        "image": ""
+        "image": "images/toshiro-mvnn8g09.png"
       },
       {
         "name": "Adult Bankai Toshiro",
@@ -504,7 +497,7 @@
           "Ice",
           "Beast"
         ],
-        "image": ""
+        "image": "images/toshiro-mvnn8w1d.png"
       }
     ]
   },
@@ -521,7 +514,7 @@
           "Ice",
           "Blood"
         ],
-        "image": ""
+        "image": "images/doma-mvnn9f0v.png"
       }
     ]
   },
@@ -538,14 +531,14 @@
           "Ice",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/emilia-mvnn9lbn.png"
       },
       {
         "name": "Emilia",
         "types": [
           "Ice"
         ],
-        "image": ""
+        "image": "images/emilia-mvnn9uus.png"
       }
     ]
   },
@@ -561,7 +554,7 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "images/deku-mvnnauip.png"
       },
       {
         "name": "Full Cowl Deku",
@@ -569,7 +562,7 @@
           "Wind",
           "Time"
         ],
-        "image": ""
+        "image": "images/deku-mvnnbcoc.png"
       },
       {
         "name": "Dark Deku",
@@ -577,7 +570,7 @@
           "Wind",
           "Dark"
         ],
-        "image": ""
+        "image": "images/deku-mvnnbkln.png"
       }
     ]
   },
@@ -593,7 +586,7 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "images/nami-mvnnbr9n.png"
       },
       {
         "name": "Zeus Nami",
@@ -601,7 +594,7 @@
           "Wind",
           "Lightning"
         ],
-        "image": ""
+        "image": "images/nami-mvnncext.png"
       }
     ]
   },
@@ -618,7 +611,7 @@
           "Wind",
           "Beast"
         ],
-        "image": ""
+        "image": "images/kita-mvnnclva.png"
       }
     ]
   },
@@ -634,7 +627,7 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "images/sunthorn-phu-mvnncuwo.png"
       }
     ]
   },
@@ -650,7 +643,7 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "images/yuno-mvnnd3ng.png"
       },
       {
         "name": "Spirit of Zephyr Yuno",
@@ -658,7 +651,7 @@
           "Wind",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/yuno-mvnndcoz.png"
       },
       {
         "name": "Spirit Dive Yuno",
@@ -666,7 +659,7 @@
           "Wind",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/yuno-mvnnewth.png"
       }
     ]
   },
@@ -683,7 +676,7 @@
           "Wind",
           "Blood"
         ],
-        "image": ""
+        "image": "images/sanemi-mvnnf8lr.png"
       }
     ]
   },
@@ -699,7 +692,7 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "images/tatsumaki-mvnnfhww.png"
       }
     ]
   },
@@ -715,7 +708,7 @@
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "images/gyomei-mvnng6bz.png"
       }
     ]
   },
@@ -731,7 +724,7 @@
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "images/onoki-mvnnge57.png"
       }
     ]
   },
@@ -747,7 +740,7 @@
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "images/hashirama-mvnngxut.png"
       },
       {
         "name": "Sage Mode Hashirama",
@@ -755,7 +748,7 @@
           "Earth",
           "Beast"
         ],
-        "image": ""
+        "image": "images/hashirama-mvnnh4zq.png"
       }
     ]
   },
@@ -772,7 +765,7 @@
           "Earth",
           "Beast"
         ],
-        "image": ""
+        "image": "images/nijika-mvnnhean.png"
       }
     ]
   },
@@ -789,7 +782,7 @@
           "Earth",
           "Light"
         ],
-        "image": ""
+        "image": "images/mark-evans-mvnni4ib.png"
       }
     ]
   },
@@ -805,7 +798,7 @@
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "images/senku-mvnniaof.png"
       },
       {
         "name": "Older Senku",
@@ -813,7 +806,7 @@
           "Earth",
           "Tech"
         ],
-        "image": ""
+        "image": "images/senku-mvnnj5hq.png"
       }
     ]
   },
@@ -830,23 +823,23 @@
           "Cosmic",
           "Tech"
         ],
-        "image": ""
+        "image": "images/senku-s-rocket-mvnod981.png"
       }
     ]
   },
   {
     "id": "kakuzu",
-    "name": "Kakuzu",
-    "anime": "Naruto",
+    "name": "Hanami",
+    "anime": "Jujutsu Kaisen",
     "villain": true,
     "gag": false,
     "stages": [
       {
-        "name": "Kakuzu",
+        "name": "Hanami",
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "images/kakuzu-mvnnjwou.png"
       }
     ]
   },
@@ -862,14 +855,14 @@
         "types": [
           "Lightning"
         ],
-        "image": ""
+        "image": "images/zenitsu-mvnnkm8l.png"
       },
       {
         "name": "Thunder God Zenitsu",
         "types": [
           "Lightning"
         ],
-        "image": ""
+        "image": "images/zenitsu-mvnnkp1m.png"
       }
     ]
   },
@@ -886,7 +879,7 @@
           "Lightning",
           "Tech"
         ],
-        "image": ""
+        "image": "images/misaka-mvnnkz4i.png"
       }
     ]
   },
@@ -902,7 +895,7 @@
         "types": [
           "Lightning"
         ],
-        "image": ""
+        "image": "images/enel-mvnnl56h.png"
       }
     ]
   },
@@ -918,7 +911,7 @@
         "types": [
           "Beast"
         ],
-        "image": ""
+        "image": "images/yoruichi-mvnonubo.png"
       },
       {
         "name": "Yoruichi",
@@ -926,7 +919,7 @@
           "Lightning",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/yoruichi-mvnnlkwa.png"
       },
       {
         "name": "Raijū Senkei Yoruichi",
@@ -934,7 +927,7 @@
           "Lightning",
           "Beast"
         ],
-        "image": ""
+        "image": "images/yoruichi-mvnnm095.png"
       }
     ]
   },
@@ -946,27 +939,18 @@
     "gag": false,
     "stages": [
       {
-        "name": "Killua",
-        "types": [
-          "Dark"
-        ],
-        "image": ""
-      },
-      {
         "name": "Nen Killua",
         "types": [
-          "Lightning",
-          "Dark"
+          "Lightning"
         ],
-        "image": ""
+        "image": "images/killua-mvnnn544.png"
       },
       {
         "name": "Godspeed Killua",
         "types": [
-          "Lightning",
-          "Dark"
+          "Lightning"
         ],
-        "image": ""
+        "image": "images/killua-mvnnnil7.png"
       }
     ]
   },
@@ -983,14 +967,14 @@
           "Lightning",
           "Beast"
         ],
-        "image": ""
+        "image": "images/bocchi-mvnnpipx.png"
       },
       {
         "name": "Melting Bocchi",
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/bocchi-mvnovbqb.png"
       }
     ]
   },
@@ -1006,7 +990,7 @@
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/ichigo-mvno7wky.png"
       },
       {
         "name": "Hollow Ichigo",
@@ -1014,7 +998,7 @@
           "Spirit",
           "Dark"
         ],
-        "image": ""
+        "image": "images/ichigo-mvnnzocs.png"
       },
       {
         "name": "True Bankai Ichigo",
@@ -1022,7 +1006,7 @@
           "Light",
           "Spirit"
         ],
-        "image": ""
+        "image": "images/ichigo-mvnns8wz.png"
       }
     ]
   },
@@ -1038,7 +1022,7 @@
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/light-yagami-mvnnsidg.png"
       }
     ]
   },
@@ -1054,7 +1038,7 @@
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/kizaru-mvnnsr3y.png"
       }
     ]
   },
@@ -1070,14 +1054,14 @@
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/frieren-mvnnt2kd.png"
       },
       {
         "name": "Frieren (long hair)",
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/frieren-mvnnsxuj.png"
       }
     ]
   },
@@ -1093,14 +1077,14 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/seiya-mvnovok2.png"
       },
       {
         "name": "Gold Seiya",
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/seiya-mvnnv3mt.png"
       }
     ]
   },
@@ -1117,7 +1101,7 @@
           "Light",
           "Time"
         ],
-        "image": ""
+        "image": "images/yhwach-mvnnvnog.png"
       },
       {
         "name": "Soul King Yhwach",
@@ -1125,23 +1109,23 @@
           "Dark",
           "Time"
         ],
-        "image": ""
+        "image": "images/yhwach-mvnnzvpn.png"
       }
     ]
   },
   {
     "id": "unknown-light-glasses",
-    "name": "Unknown (light, glasses)",
-    "anime": "?",
+    "name": "Bhudda",
+    "anime": "Record of Ragnarok",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "Unknown (light, glasses)",
+        "name": "Bhudda",
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/unknown-light-glasses-mvnmgbq8.png"
       }
     ]
   },
@@ -1157,7 +1141,7 @@
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/saitama-mvnnvwij.png"
       }
     ]
   },
@@ -1173,7 +1157,7 @@
         "types": [
           "Light"
         ],
-        "image": ""
+        "image": "images/darkness-mvnnwbx5.png"
       }
     ]
   },
@@ -1189,24 +1173,14 @@
         "types": [
           "Dark"
         ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "shanks",
-    "name": "Shanks (?)",
-    "anime": "One Piece",
-    "villain": false,
-    "gag": false,
-    "stages": [
+        "image": "images/blackbeard-mvno2q86.png"
+      },
       {
-        "name": "Shanks (?)",
+        "name": "Blackberad time skip",
         "types": [
-          "Dark",
-          "Neutral"
+          "Dark"
         ],
-        "image": ""
+        "image": "images/blackbeard-mvno13td.png"
       }
     ]
   },
@@ -1222,7 +1196,7 @@
         "types": [
           "Dark"
         ],
-        "image": ""
+        "image": "images/yami-mvno32ki.png"
       }
     ]
   },
@@ -1238,15 +1212,15 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/meliodas-mvno4dtu.png"
       },
       {
-        "name": "Demon Mark Meliodas",
+        "name": "Wrath meliodas",
         "types": [
           "Dark",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/meliodas-mvno48bw.png"
       }
     ]
   },
@@ -1262,7 +1236,7 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/asta-mvnovvxx.png"
       },
       {
         "name": "Black Asta",
@@ -1270,7 +1244,7 @@
           "Dark",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/asta-mvno6ja6.png"
       },
       {
         "name": "Devil Union Asta",
@@ -1278,7 +1252,7 @@
           "Dark",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/asta-mvno5sdb.png"
       }
     ]
   },
@@ -1295,7 +1269,7 @@
           "Dark",
           "Blood"
         ],
-        "image": ""
+        "image": "images/alucard-mvno6qw3.png"
       }
     ]
   },
@@ -1311,14 +1285,14 @@
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/mob-mvno846q.png"
       },
       {
         "name": "Mob ???%",
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/mob-mvno9i3t.png"
       }
     ]
   },
@@ -1334,21 +1308,21 @@
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/pain-mvnoa3lw.png"
       },
       {
         "name": "Pain",
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/pain-mvnodg67.png"
       }
     ]
   },
   {
     "id": "sung-jinwoo",
-    "name": "Sung Jinwoo",
-    "anime": "Solo Leveling",
+    "name": "Yuta",
+    "anime": "Jujutsu Kaisen",
     "villain": false,
     "gag": false,
     "stages": [
@@ -1357,24 +1331,24 @@
         "types": [
           "Spirit"
         ],
-        "image": ""
+        "image": "images/sung-jinwoo-mvnobrrq.png"
       }
     ]
   },
   {
     "id": "david-martinez",
-    "name": "David Martinez (?)",
+    "name": "David Martinez",
     "anime": "Cyberpunk: Edgerunners",
     "villain": false,
     "gag": false,
     "stages": [
       {
-        "name": "David Martinez (?)",
+        "name": "David Martinez",
         "types": [
           "Spirit",
           "Tech"
         ],
-        "image": ""
+        "image": "images/david-martinez-mvnmi56b.png"
       }
     ]
   },
@@ -1391,21 +1365,21 @@
           "Beast",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/goku-mvnoo0sb.png"
       },
       {
         "name": "Super Saiyan Goku",
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/goku-mvnowmcn.png"
       },
       {
         "name": "Ultra Instinct Goku",
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/goku-mvnodpgn.png"
       }
     ]
   },
@@ -1421,21 +1395,21 @@
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/gojo-mvnoehvn.png"
       },
       {
         "name": "Blindfold Gojo",
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/gojo-mvnoemo8.png"
       },
       {
-        "name": "Hollow Purple Gojo",
+        "name": "Shinfuku Gojo",
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/gojo-mvnoeyut.png"
       }
     ]
   },
@@ -1451,14 +1425,14 @@
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/boros-mvnofb6c.png"
       },
       {
         "name": "Boros",
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/boros-mvnoggef.png"
       }
     ]
   },
@@ -1474,7 +1448,7 @@
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/cosmic-garou-mvnoh68o.png"
       }
     ]
   },
@@ -1490,7 +1464,7 @@
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/kazuma-mvnohcf4.png"
       }
     ]
   },
@@ -1506,7 +1480,7 @@
         "types": [
           "Cosmic"
         ],
-        "image": ""
+        "image": "images/sailor-moon-mvnohm9e.png"
       }
     ]
   },
@@ -1523,7 +1497,7 @@
           "Time",
           "Tech"
         ],
-        "image": ""
+        "image": "images/doraemon-mvnoizh4.png"
       }
     ]
   },
@@ -1540,7 +1514,7 @@
           "Time",
           "Blood"
         ],
-        "image": ""
+        "image": "images/dio-mvnoj9t8.png"
       }
     ]
   },
@@ -1556,7 +1530,7 @@
         "types": [
           "Time"
         ],
-        "image": ""
+        "image": "images/metro-man-mvnojggy.png"
       }
     ]
   },
@@ -1572,7 +1546,7 @@
         "types": [
           "Time"
         ],
-        "image": ""
+        "image": "images/pucci-mvnojnx0.png"
       }
     ]
   },
@@ -1589,7 +1563,7 @@
           "Time",
           "Tech"
         ],
-        "image": ""
+        "image": "images/homura-mvnojtzt.png"
       }
     ]
   },
@@ -1605,7 +1579,7 @@
         "types": [
           "Time"
         ],
-        "image": ""
+        "image": "images/takemichi-mvnojzr6.png"
       }
     ]
   },
@@ -1622,7 +1596,7 @@
           "Time",
           "Blood"
         ],
-        "image": ""
+        "image": "images/kurumi-mvnok8da.png"
       }
     ]
   },
@@ -1638,7 +1612,7 @@
         "types": [
           "Time"
         ],
-        "image": ""
+        "image": "images/jotaro-mvnokebt.png"
       }
     ]
   },
@@ -1655,7 +1629,7 @@
           "Time",
           "Tech"
         ],
-        "image": ""
+        "image": "images/adam-smasher-mvnokwab.png"
       }
     ]
   },
@@ -1671,7 +1645,7 @@
         "types": [
           "Tech"
         ],
-        "image": ""
+        "image": "images/lucy-mvnom1py.png"
       }
     ]
   },
@@ -1687,7 +1661,7 @@
         "types": [
           "Tech"
         ],
-        "image": ""
+        "image": "images/jinx-mvnomgb4.png"
       }
     ]
   },
@@ -1704,7 +1678,7 @@
           "Tech",
           "Blood"
         ],
-        "image": ""
+        "image": "images/vi-mvnommna.png"
       }
     ]
   },
@@ -1720,7 +1694,7 @@
         "types": [
           "Tech"
         ],
-        "image": ""
+        "image": "images/shinji-mvnomvre.png"
       }
     ]
   },
@@ -1736,7 +1710,7 @@
         "types": [
           "Tech"
         ],
-        "image": ""
+        "image": "images/zero-two-mvnon3oh.png"
       }
     ]
   },
@@ -1753,14 +1727,14 @@
           "Tech",
           "Neutral"
         ],
-        "image": ""
+        "image": "images/baymax-mvnonb91.png"
       },
       {
         "name": "Armored Baymax",
         "types": [
           "Tech"
         ],
-        "image": ""
+        "image": "images/baymax-mvnonj1q.png"
       }
     ]
   },
@@ -1776,7 +1750,7 @@
         "types": [
           "Beast"
         ],
-        "image": ""
+        "image": "images/chiikawa-usagi-mvnoonos.png"
       }
     ]
   },
@@ -1793,14 +1767,14 @@
           "Beast",
           "Blood"
         ],
-        "image": ""
+        "image": "images/gold-ship-mvnop0ro.png"
       }
     ]
   },
   {
     "id": "unknown-beast-meme-face",
-    "name": "Unknown (beast, meme face)",
-    "anime": "?",
+    "name": "Shikonokonoko konstanta",
+    "anime": "My Dear Friend Nokotan",
     "villain": false,
     "gag": true,
     "stages": [
@@ -1809,7 +1783,7 @@
         "types": [
           "Beast"
         ],
-        "image": ""
+        "image": "images/unknown-beast-meme-face-mvnopvln.png"
       }
     ]
   },
@@ -1825,7 +1799,7 @@
         "types": [
           "Blood"
         ],
-        "image": ""
+        "image": "images/soma-mvnotkd4.png"
       }
     ]
   },
@@ -1841,23 +1815,7 @@
         "types": [
           "Blood"
         ],
-        "image": ""
-      }
-    ]
-  },
-  {
-    "id": "unknown-bleed-manga-panel",
-    "name": "Unknown (bleed, manga panel)",
-    "anime": "?",
-    "villain": false,
-    "gag": false,
-    "stages": [
-      {
-        "name": "Unknown (bleed, manga panel)",
-        "types": [
-          "Blood"
-        ],
-        "image": ""
+        "image": "images/hinata-mvnotzpp.png"
       }
     ]
   },
@@ -1869,11 +1827,18 @@
     "gag": false,
     "stages": [
       {
-        "name": "Berserker Armor Guts",
+        "name": "Guts",
         "types": [
           "Blood"
         ],
-        "image": ""
+        "image": "images/guts-mvnoulur.png"
+      },
+      {
+        "name": "Berserker Armour Guts",
+        "types": [
+          "Blood"
+        ],
+        "image": "images/guts-mvnouvcn.png"
       }
     ]
   },
@@ -1889,7 +1854,7 @@
         "types": [
           "Blood"
         ],
-        "image": ""
+        "image": "images/toga-mvnov2es.png"
       }
     ]
   },
@@ -1905,21 +1870,21 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/ayanokoji-mvnoyr6a.png"
       },
       {
         "name": "Unmasked Ayanokoji",
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/ayanokoji-mvnozkzr.png"
       },
       {
         "name": "White Room Ayanokoji",
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/ayanokoji-mvnoz18w.png"
       }
     ]
   },
@@ -1935,7 +1900,23 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "images/johan-mvnozrqp.png"
+      }
+    ]
+  },
+  {
+    "id": "cmvnn1tin",
+    "name": "Juvia",
+    "anime": "Fairy Tale",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "",
+        "types": [
+          "Water"
+        ],
+        "image": "images/cmvnn1tin-mvnn2dl6.png"
       }
     ]
   }
