@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Familiar DB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Familiar DB</h1>
+    <p id="count"></p>
+  </header>
+
+  <section class="controls">
+    <input id="search" type="search" placeholder="Search name or anime">
+    <div id="types" class="chips"></div>
+    <div class="row">
+      <label>Types <select id="kind">
+        <option value="all">Mono and dual</option>
+        <option value="mono">Mono only</option>
+        <option value="dual">Dual only</option>
+      </select></label>
+      <label>Side <select id="side">
+        <option value="all">Everyone</option>
+        <option value="heroes">Heroes</option>
+        <option value="villains">Villains</option>
+        <option value="gags">Gag characters</option>
+      </select></label>
+      <label>Sort <select id="sort">
+        <option value="number">Number</option>
+        <option value="name">Name</option>
+        <option value="type">Type</option>
+        <option value="villain">Villains first</option>
+      </select></label>
+      <label class="check"><input id="evos" type="checkbox"> Show every evolution</label>
+      <button id="clear" type="button">Clear filters</button>
+      <button id="add" type="button" class="edit-only">+ Add character</button>
+    </div>
+    <p class="hint edit-only">Click a picture slot, then press Ctrl+V to paste a picture. You can also drag a picture file onto it.</p>
+  </section>
+
+  <main id="grid"></main>
+
+  <dialog id="detail"></dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
