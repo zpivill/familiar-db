@@ -114,7 +114,8 @@
       {
         "name": "Axel Blaze",
         "types": [
-          "Fire"
+          "Fire",
+          "Wind"
         ],
         "image": "images/axel-blaze-mvnmsjlr.png"
       }
@@ -186,7 +187,8 @@
       {
         "name": "Bankai Yamamoto",
         "types": [
-          "Fire"
+          "Fire",
+          "Spirit"
         ],
         "image": "images/yamamoto-mvnmw30x.png"
       }
@@ -235,7 +237,8 @@
       {
         "name": "Giyu",
         "types": [
-          "Water"
+          "Water",
+          "Neutral"
         ],
         "image": "images/giyu-mvnmxbto.png"
       }
@@ -251,7 +254,8 @@
       {
         "name": "Poseidon",
         "types": [
-          "Water"
+          "Water",
+          "Earth"
         ],
         "image": "images/poseidon-mvnmxmpb.png"
       }
@@ -284,7 +288,8 @@
       {
         "name": "Nessie",
         "types": [
-          "Water"
+          "Water",
+          "Beast"
         ],
         "image": "images/nessie-mvnmypts.png"
       }
@@ -300,7 +305,8 @@
       {
         "name": "SpongeBob",
         "types": [
-          "Water"
+          "Water",
+          "Beast"
         ],
         "image": "images/spongebob-mvnmyyi9.png"
       }
@@ -316,7 +322,8 @@
       {
         "name": "Patrick",
         "types": [
-          "Water"
+          "Water",
+          "Earth"
         ],
         "image": "images/patrick-mvnmz51r.png"
       }
@@ -690,7 +697,8 @@
       {
         "name": "Tatsumaki",
         "types": [
-          "Wind"
+          "Wind",
+          "Spirit"
         ],
         "image": "images/tatsumaki-mvnnfhww.png"
       }
@@ -706,7 +714,8 @@
       {
         "name": "Gyomei",
         "types": [
-          "Earth"
+          "Earth",
+          "Spirit"
         ],
         "image": "images/gyomei-mvnng6bz.png"
       }
@@ -722,7 +731,8 @@
       {
         "name": "Onoki",
         "types": [
-          "Earth"
+          "Earth",
+          "Light"
         ],
         "image": "images/onoki-mvnnge57.png"
       }
@@ -837,7 +847,8 @@
       {
         "name": "Hanami",
         "types": [
-          "Earth"
+          "Earth",
+          "Beast"
         ],
         "image": "images/kakuzu-mvnnjwou.png"
       }
@@ -860,7 +871,8 @@
       {
         "name": "Thunder God Zenitsu",
         "types": [
-          "Lightning"
+          "Lightning",
+          "Neutral"
         ],
         "image": "images/zenitsu-mvnnkp1m.png"
       }
@@ -893,7 +905,8 @@
       {
         "name": "Enel",
         "types": [
-          "Lightning"
+          "Lightning",
+          "Light"
         ],
         "image": "images/enel-mvnnl56h.png"
       }
@@ -948,7 +961,8 @@
       {
         "name": "Godspeed Killua",
         "types": [
-          "Lightning"
+          "Lightning",
+          "Dark"
         ],
         "image": "images/killua-mvnnnil7.png"
       }
@@ -1020,7 +1034,8 @@
       {
         "name": "Light Yagami",
         "types": [
-          "Light"
+          "Light",
+          "Dark"
         ],
         "image": "images/light-yagami-mvnnsidg.png"
       }
@@ -1036,7 +1051,8 @@
       {
         "name": "Kizaru",
         "types": [
-          "Light"
+          "Light",
+          "Lightning"
         ],
         "image": "images/kizaru-mvnnsr3y.png"
       }
@@ -1123,7 +1139,8 @@
       {
         "name": "Bhudda",
         "types": [
-          "Light"
+          "Light",
+          "Spirit"
         ],
         "image": "images/unknown-light-glasses-mvnmgbq8.png"
       }
@@ -1139,7 +1156,8 @@
       {
         "name": "Saitama's Head",
         "types": [
-          "Light"
+          "Light",
+          "Neutral"
         ],
         "image": "images/saitama-mvnnvwij.png"
       }
@@ -1155,7 +1173,8 @@
       {
         "name": "Darkness",
         "types": [
-          "Light"
+          "Light",
+          "Earth"
         ],
         "image": "images/darkness-mvnnwbx5.png"
       }
@@ -1178,7 +1197,8 @@
       {
         "name": "Blackberad time skip",
         "types": [
-          "Dark"
+          "Dark",
+          "Earth"
         ],
         "image": "images/blackbeard-mvno13td.png"
       }
@@ -1329,7 +1349,8 @@
       {
         "name": "Sung Jinwoo",
         "types": [
-          "Spirit"
+          "Spirit",
+          "Neutral"
         ],
         "image": "images/sung-jinwoo-mvnobrrq.png"
       }
@@ -1433,18 +1454,9 @@
           "Cosmic"
         ],
         "image": "images/boros-mvnoggef.png"
-      }
-    ]
-  },
-  {
-    "id": "cosmic-garou",
-    "name": "Cosmic Garou",
-    "anime": "One Punch Man",
-    "villain": true,
-    "gag": false,
-    "stages": [
+      },
       {
-        "name": "Cosmic Garou",
+        "name": "Cosmic Boros",
         "types": [
           "Cosmic"
         ],
@@ -1478,7 +1490,8 @@
       {
         "name": "Sailor Moon",
         "types": [
-          "Cosmic"
+          "Cosmic",
+          "Light"
         ],
         "image": "images/sailor-moon-mvnohm9e.png"
       }
@@ -1544,7 +1557,8 @@
       {
         "name": "Pucci",
         "types": [
-          "Time"
+          "Time",
+          "Light"
         ],
         "image": "images/pucci-mvnojnx0.png"
       }
@@ -1577,7 +1591,8 @@
       {
         "name": "Takemichi",
         "types": [
-          "Time"
+          "Time",
+          "Neutral"
         ],
         "image": "images/takemichi-mvnojzr6.png"
       }
@@ -1610,7 +1625,8 @@
       {
         "name": "Jotaro",
         "types": [
-          "Time"
+          "Time",
+          "Spirit"
         ],
         "image": "images/jotaro-mvnokebt.png"
       }
@@ -1643,7 +1659,8 @@
       {
         "name": "Lucy",
         "types": [
-          "Tech"
+          "Tech",
+          "Lightning"
         ],
         "image": "images/lucy-mvnom1py.png"
       }
@@ -1659,7 +1676,8 @@
       {
         "name": "Jinx",
         "types": [
-          "Tech"
+          "Tech",
+          "Fire"
         ],
         "image": "images/jinx-mvnomgb4.png"
       }
@@ -1692,7 +1710,8 @@
       {
         "name": "Shinji",
         "types": [
-          "Tech"
+          "Tech",
+          "Spirit"
         ],
         "image": "images/shinji-mvnomvre.png"
       }
@@ -1708,7 +1727,8 @@
       {
         "name": "Zero Two",
         "types": [
-          "Tech"
+          "Tech",
+          "Beast"
         ],
         "image": "images/zero-two-mvnon3oh.png"
       }
@@ -1748,7 +1768,8 @@
       {
         "name": "Usagi",
         "types": [
-          "Beast"
+          "Beast",
+          "Neutral"
         ],
         "image": "images/chiikawa-usagi-mvnoonos.png"
       }
@@ -1797,7 +1818,8 @@
       {
         "name": "Soma",
         "types": [
-          "Blood"
+          "Blood",
+          "Fire"
         ],
         "image": "images/soma-mvnotkd4.png"
       }
@@ -1813,7 +1835,8 @@
       {
         "name": "Hinata",
         "types": [
-          "Blood"
+          "Blood",
+          "Light"
         ],
         "image": "images/hinata-mvnotzpp.png"
       }
@@ -1836,7 +1859,8 @@
       {
         "name": "Berserker Armour Guts",
         "types": [
-          "Blood"
+          "Blood",
+          "Dark"
         ],
         "image": "images/guts-mvnouvcn.png"
       }
@@ -1852,7 +1876,8 @@
       {
         "name": "Toga",
         "types": [
-          "Blood"
+          "Blood",
+          "Dark"
         ],
         "image": "images/toga-mvnov2es.png"
       }
@@ -1898,7 +1923,8 @@
       {
         "name": "Johan",
         "types": [
-          "Neutral"
+          "Neutral",
+          "Dark"
         ],
         "image": "images/johan-mvnozrqp.png"
       }
@@ -1914,7 +1940,8 @@
       {
         "name": "",
         "types": [
-          "Water"
+          "Water",
+          "Wind"
         ],
         "image": "images/cmvnn1tin-mvnn2dl6.png"
       }
