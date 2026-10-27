@@ -27,8 +27,21 @@ const canEdit = () => LOCAL || !!token;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-// Every form has its own dex number, counted through the roster in order, so an evolution gets the next number after its base form.
-const dex = (i, j = 0) => roster.slice(0, i).reduce((n, c) => n + c.stages.length, 0) + j + 1;
+// Every form has its own dex number. Characters are numbered tier by tier (Starter first, Legendary last, untiered at the end),
+// in roster order within a tier, and an evolution gets the next number after its base form.
+const tierRank = c => { const k = RARITY.findIndex(r => r[0] === c.rarity); return k < 0 ? RARITY.length : k; };
+let dexCache = { sig: null, start: [] };
+const dex = (i, j = 0) => {
+  const sig = roster.map(c => (c.rarity || '') + c.stages.length).join();
+  if (dexCache.sig !== sig) {
+    const start = [];
+    let n = 1;
+    roster.map((c, k) => k).sort((a, b) => tierRank(roster[a]) - tierRank(roster[b]) || a - b)
+      .forEach(k => { start[k] = n; n += roster[k].stages.length; });
+    dexCache = { sig, start };
+  }
+  return dexCache.start[i] + j;
+};
 const num = (i, j = 0) => '#' + String(dex(i, j)).padStart(3, '0');
 const numRange = i => num(i) + (roster[i].stages.length > 1 ? '–' + num(i, roster[i].stages.length - 1).slice(1) : '');
 const badge = t => `<span class="type" style="--t:var(--${t})">${t}</span>`;
@@ -123,11 +136,11 @@ function entries() {
     if ($('#evos').checked) out.push(...hits); else if (hits[0]) out.push(hits[0]);
   });
   const key = {
-    number: e => [e.i, e.j],
+    number: e => [dex(e.i, e.j)],
     name: e => [(e.s.name || e.c.name).toLowerCase()],
-    type: e => [TYPES.indexOf(e.s.types[0]), TYPES.indexOf(e.s.types[1] ?? ''), e.i, e.j],
-    villain: e => [e.c.villain ? 0 : 1, e.i, e.j],
-    rarity: e => [RARITY.findIndex(r => r[0] === e.c.rarity) >>> 0, e.i, e.j],
+    type: e => [TYPES.indexOf(e.s.types[0]), TYPES.indexOf(e.s.types[1] ?? ''), dex(e.i, e.j)],
+    villain: e => [e.c.villain ? 0 : 1, dex(e.i, e.j)],
+    rarity: e => [RARITY.findIndex(r => r[0] === e.c.rarity) >>> 0, dex(e.i, e.j)],
   }[$('#sort').value];
   const cmp = (a, b) => { for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] < b[k] ? -1 : 1; return 0; };
   return out.sort((a, b) => cmp(key(a), key(b)));
@@ -418,12 +431,12 @@ function renderTab(id) {
       <div class="alist">${list.map(([a, n]) => `<button type="button" data-show-anime="${esc(a)}"><span>${esc(a)}</span><span>${n}</span></button>`).join('')}</div>`;
   }
   if (id === 'roster-villains') {
-    const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).map(card).join('');
+    const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).sort((a, b) => dex(a.i) - dex(b.i)).map(card).join('');
     html = `<h2>Villains <span class="hint">${roster.filter(c => c.villain).length}</span></h2><div class="grid">${grid(c => c.villain)}</div>
       <h2>Gag characters <span class="hint">${roster.filter(c => c.gag).length}</span></h2><div class="grid">${grid(c => c.gag)}</div>`;
   }
   if (id === 'roster-rarity') {
-    const grid = cs => cs.map(c => ({ c, s: c.stages[0], i: roster.indexOf(c), j: 0 })).map(card).join('');
+    const grid = cs => cs.map(c => ({ c, s: c.stages[0], i: roster.indexOf(c), j: 0 })).sort((a, b) => dex(a.i) - dex(b.i)).map(card).join('');
     const tiers = [...RARITY, ['', 'No tier yet']].map(([r, l]) => {
       const cs = roster.filter(c => (c.rarity || '') === r);
       if (!cs.length && !r) return '';
