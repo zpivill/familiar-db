@@ -1946,5 +1946,589 @@
         "image": "images/cmvnn1tin-mvnn2dl6.png"
       }
     ]
+  },
+  {
+    "id": "dante",
+    "name": "Dante",
+    "anime": "Devil May Cry",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Dante",
+        "types": [
+          "Dark"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Sin Devil Trigger Dante",
+        "types": [
+          "Dark",
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "vergil",
+    "name": "Vergil",
+    "anime": "Devil May Cry",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Vergil",
+        "types": [
+          "Dark"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Sin Devil Trigger Vergil",
+        "types": [
+          "Dark",
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "vergil-chair",
+    "name": "Vergil chair",
+    "anime": "Devil May Cry",
+    "villain": false,
+    "gag": true,
+    "stages": [
+      {
+        "name": "Vergil chair",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sunraku",
+    "name": "Sunraku",
+    "anime": "Shangri-La Frontier",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Sunraku",
+        "types": [
+          "Tech",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "eren",
+    "name": "Eren",
+    "anime": "Attack on Titan",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Eren",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Attack Titan Eren",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Founding Titan Eren",
+        "types": [
+          "Earth",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kaneki",
+    "name": "Kaneki",
+    "anime": "Tokyo Ghoul",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Eyepatch Kaneki",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Centipede Kaneki",
+        "types": [
+          "Blood",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "arima",
+    "name": "Arima",
+    "anime": "Tokyo Ghoul",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Arima",
+        "types": [
+          "Lightning",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shinra",
+    "name": "Shinra",
+    "anime": "Fire Force",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Shinra",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Adolla Burst Shinra",
+        "types": [
+          "Fire",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "arthur",
+    "name": "Arthur",
+    "anime": "Fire Force",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Arthur",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rudo",
+    "name": "Rudo",
+    "anime": "Gachiakuta",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Rudo",
+        "types": [
+          "Tech",
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sung-jin-woo",
+    "name": "Sung Jin-woo",
+    "anime": "Solo Leveling",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "E-rank Jin-woo",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Shadow Monarch Jin-woo",
+        "types": [
+          "Dark",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kirito",
+    "name": "Kirito",
+    "anime": "Sword Art Online",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Kirito",
+        "types": [
+          "Tech"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Black Swordsman Kirito",
+        "types": [
+          "Tech",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "asuna",
+    "name": "Asuna",
+    "anime": "Sword Art Online",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Asuna",
+        "types": [
+          "Tech",
+          "Lightning"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rudeus",
+    "name": "Rudeus",
+    "anime": "Mushoku Tensei",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Young Rudeus",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Rudeus",
+        "types": [
+          "Water",
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "reborn",
+    "name": "Reborn",
+    "anime": "Reborn!",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Reborn",
+        "types": [
+          "Light",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "tsuna",
+    "name": "Tsuna",
+    "anime": "Reborn!",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "No-Good Tsuna",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Hyper Dying Will Tsuna",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Vongola X Tsuna",
+        "types": [
+          "Fire",
+          "Ice"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "ainz",
+    "name": "Ainz Ooal Gown",
+    "anime": "Overlord",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Ainz Ooal Gown",
+        "types": [
+          "Dark",
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rimuru",
+    "name": "Rimuru",
+    "anime": "That Time I Got Reincarnated as a Slime",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Slime Rimuru",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Demon Lord Rimuru",
+        "types": [
+          "Water",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gobta",
+    "name": "Gobta",
+    "anime": "That Time I Got Reincarnated as a Slime",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Gobta",
+        "types": [
+          "Beast",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "inuyasha",
+    "name": "Inuyasha",
+    "anime": "Inuyasha",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Inuyasha",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Tessaiga Inuyasha",
+        "types": [
+          "Beast",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "toriko",
+    "name": "Toriko",
+    "anime": "Toriko",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Toriko",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "coco",
+    "name": "Coco",
+    "anime": "Toriko",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Coco",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sunny",
+    "name": "Sunny",
+    "anime": "Toriko",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Sunny",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "zebra",
+    "name": "Zebra",
+    "anime": "Toriko",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Zebra",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "komatsu",
+    "name": "Komatsu",
+    "anime": "Toriko",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Komatsu",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "saber",
+    "name": "Saber",
+    "anime": "Fate",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Saber",
+        "types": [
+          "Light",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gilgamesh",
+    "name": "Gilgamesh",
+    "anime": "Fate",
+    "villain": true,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Gilgamesh",
+        "types": [
+          "Earth",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shirou",
+    "name": "Shirou",
+    "anime": "Fate",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Shirou",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Unlimited Blade Works Shirou",
+        "types": [
+          "Fire",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "conan",
+    "name": "Conan",
+    "anime": "Detective Conan",
+    "villain": false,
+    "gag": false,
+    "stages": [
+      {
+        "name": "Conan",
+        "types": [
+          "Time",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
   }
 ]
