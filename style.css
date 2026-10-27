@@ -112,3 +112,4 @@ input:disabled, select:disabled { border-color: transparent; background: transpa
 .toc a { color: var(--muted); text-decoration: none; }
 .toc a:hover { color: var(--accent); }
 @media (max-width: 760px) { #wiki { grid-template-columns: 1fr; } .toc { display: none; } }
+.tbd { color: var(--muted); font-style: italic; }

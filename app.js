@@ -347,10 +347,12 @@ function route() {
   if (where === 'roster') renderTab(id);
 }
 
+const written = p => p.sections.reduce((n, s) => n + s.items.filter(i => i.n).length, 0);
+
 function renderHome() {
   const tile = (href, title, sub, meta) => `<a class="tile" href="#${href}"><strong>${esc(title)}</strong><span>${esc(sub)}</span><small>${esc(meta)}</small></a>`;
   const pages = wiki.pages.map(p => tile(p.id, p.title, p.blurb,
-    p.soon ? 'Coming soon' : `${p.sections.reduce((n, s) => n + s.items.length, 0)} entries`));
+    p.soon ? 'Coming soon' : written(p) ? `${written(p)} entries` : 'Template, not written yet'));
   $('#home').innerHTML = `
     <p class="pitch">${PITCH}</p>
     <div class="tiles">
@@ -364,7 +366,7 @@ function renderPage(p) {
   const slug = s => p.id + '-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   const body = p.soon ? `<p class="soon">${esc(p.soon)}</p>` : p.sections.map(s => `
     <section id="${slug(s)}"><h2>${esc(s.title)}</h2><dl>${s.items.map(i => `
-      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}</dt><dd>${esc(i.n)}</dd></div>`).join('')}
+      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}</dt>${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}</div>`).join('')}
     </dl></section>`).join('');
   const toc = p.sections.length > 1 ? `<nav class="toc" aria-label="On this page">${p.sections.map(s =>
     `<a href="#${p.id}" data-jump="${slug(s)}">${esc(s.title)}</a>`).join('')}</nav>` : '';
