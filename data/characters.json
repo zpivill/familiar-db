@@ -2679,13 +2679,6 @@
     "rarity": "pseudo",
     "stages": [
       {
-        "name": "Itadori",
-        "types": [
-          "Neutral"
-        ],
-        "image": ""
-      },
-      {
         "name": "Black Flash Itadori",
         "types": [
           "Neutral",
@@ -2695,6 +2688,14 @@
       },
       {
         "name": "Shrine Itadori",
+        "types": [
+          "Spirit",
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Modulo Itadori",
         "types": [
           "Spirit",
           "Blood"
