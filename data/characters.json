@@ -2091,7 +2091,7 @@
     "gag": false,
     "stages": [
       {
-        "name": "Arima(Old)",
+        "name": "Arima",
         "types": [
           "Lightning",
           "Neutral"
