@@ -2603,5 +2603,944 @@
         "image": "images/conan-mvqu47h5.png"
       }
     ]
+  },
+  {
+    "id": "luffy",
+    "name": "Luffy",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Straw Hat Luffy",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Gear 4 Luffy",
+        "types": [
+          "Neutral",
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Gear 5 Luffy",
+        "types": [
+          "Neutral",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "naruto",
+    "name": "Naruto",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Genin Naruto",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Kurama Mode Naruto",
+        "types": [
+          "Wind",
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Six Paths Sage Naruto",
+        "types": [
+          "Wind",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "itadori",
+    "name": "Itadori",
+    "anime": "Jujutsu Kaisen",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Itadori",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Black Flash Itadori",
+        "types": [
+          "Neutral",
+          "Spirit"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Shrine Itadori",
+        "types": [
+          "Spirit",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gon",
+    "name": "Gon",
+    "anime": "Hunter x Hunter",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Gon",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Jajanken Gon",
+        "types": [
+          "Beast",
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Adult Gon",
+        "types": [
+          "Beast",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "denji",
+    "name": "Denji",
+    "anime": "Chainsaw Man",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Denji",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Chainsaw Man",
+        "types": [
+          "Blood",
+          "Tech"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Hero of Hell Chainsaw Man",
+        "types": [
+          "Blood",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "gintoki",
+    "name": "Gintoki",
+    "anime": "Gintama",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Odd Jobs Gintoki",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Shiroyasha Gintoki",
+        "types": [
+          "Neutral",
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Final Arc Gintoki",
+        "types": [
+          "Neutral",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "lelouch",
+    "name": "Lelouch",
+    "anime": "Code Geass",
+    "villain": false,
+    "gag": false,
+    "rarity": "pseudo",
+    "stages": [
+      {
+        "name": "Lelouch",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Zero",
+        "types": [
+          "Dark",
+          "Tech"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Demon Emperor Lelouch",
+        "types": [
+          "Dark",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sasuke",
+    "name": "Sasuke",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Sasuke",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Curse Mark Sasuke",
+        "types": [
+          "Lightning",
+          "Dark"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Rinnegan Sasuke",
+        "types": [
+          "Lightning",
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "vegeta",
+    "name": "Vegeta",
+    "anime": "Dragon Ball",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Vegeta",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Super Saiyan Vegeta",
+        "types": [
+          "Neutral",
+          "Lightning"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Ultra Ego Vegeta",
+        "types": [
+          "Dark",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "zoro",
+    "name": "Zoro",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Zoro",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "King of Hell Zoro",
+        "types": [
+          "Neutral",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "levi",
+    "name": "Levi",
+    "anime": "Attack on Titan",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Levi",
+        "types": [
+          "Wind",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kakashi",
+    "name": "Kakashi",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Kakashi",
+        "types": [
+          "Lightning"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Perfect Susanoo Kakashi",
+        "types": [
+          "Lightning",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "itachi",
+    "name": "Itachi",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Itachi",
+        "types": [
+          "Fire",
+          "Dark"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Susanoo Itachi",
+        "types": [
+          "Fire",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "minato",
+    "name": "Minato",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Minato",
+        "types": [
+          "Lightning",
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "all-might",
+    "name": "All Might",
+    "anime": "My Hero Academia",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "All Might",
+        "types": [
+          "Wind",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kenpachi",
+    "name": "Kenpachi",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Kenpachi",
+        "types": [
+          "Spirit",
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Bankai Kenpachi",
+        "types": [
+          "Blood",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shanks",
+    "name": "Shanks",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Shanks",
+        "types": [
+          "Neutral",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "escanor",
+    "name": "Escanor",
+    "anime": "Seven Deadly Sins",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Night Escanor",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Escanor",
+        "types": [
+          "Fire",
+          "Light"
+        ],
+        "image": ""
+      },
+      {
+        "name": "The One Escanor",
+        "types": [
+          "Light",
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "jiraiya",
+    "name": "Jiraiya",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "post-mid",
+    "stages": [
+      {
+        "name": "Jiraiya",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Sage Mode Jiraiya",
+        "types": [
+          "Fire",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sanji",
+    "name": "Sanji",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Sanji",
+        "types": [
+          "Fire",
+          "Neutral"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Ifrit Jambe Sanji",
+        "types": [
+          "Fire",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "bakugo",
+    "name": "Bakugo",
+    "anime": "My Hero Academia",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Bakugo",
+        "types": [
+          "Fire"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Dynamight",
+        "types": [
+          "Fire",
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mikasa",
+    "name": "Mikasa",
+    "anime": "Attack on Titan",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Mikasa",
+        "types": [
+          "Wind",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "nezuko",
+    "name": "Nezuko",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Nezuko",
+        "types": [
+          "Blood"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Awakened Nezuko",
+        "types": [
+          "Blood",
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "inosuke",
+    "name": "Inosuke",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Inosuke",
+        "types": [
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "nanami",
+    "name": "Nanami",
+    "anime": "Jujutsu Kaisen",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Nanami",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "rem",
+    "name": "Rem",
+    "anime": "Re:Zero",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Rem",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Oni Rem",
+        "types": [
+          "Water",
+          "Blood"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "spike",
+    "name": "Spike Spiegel",
+    "anime": "Cowboy Bebop",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Spike Spiegel",
+        "types": [
+          "Neutral",
+          "Tech"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "anya",
+    "name": "Anya",
+    "anime": "Spy x Family",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Anya",
+        "types": [
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "yor",
+    "name": "Yor",
+    "anime": "Spy x Family",
+    "villain": false,
+    "gag": false,
+    "rarity": "mid",
+    "stages": [
+      {
+        "name": "Yor",
+        "types": [
+          "Blood",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "sukuna",
+    "name": "Sukuna",
+    "anime": "Jujutsu Kaisen",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Heian Sukuna",
+        "types": [
+          "Dark",
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "aizen",
+    "name": "Aizen",
+    "anime": "Bleach",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Hogyoku Aizen",
+        "types": [
+          "Spirit",
+          "Cosmic"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "muzan",
+    "name": "Muzan",
+    "anime": "Demon Slayer",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Final Form Muzan",
+        "types": [
+          "Blood",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "frieza",
+    "name": "Frieza",
+    "anime": "Dragon Ball",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Black Frieza",
+        "types": [
+          "Cosmic",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kaido",
+    "name": "Kaido",
+    "anime": "One Piece",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Hybrid Kaido",
+        "types": [
+          "Beast",
+          "Fire"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "whitebeard",
+    "name": "Whitebeard",
+    "anime": "One Piece",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "Whitebeard",
+        "types": [
+          "Earth",
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "shigaraki",
+    "name": "Shigaraki",
+    "anime": "My Hero Academia",
+    "villain": true,
+    "gag": false,
+    "rarity": "legendary",
+    "stages": [
+      {
+        "name": "All For One Shigaraki",
+        "types": [
+          "Dark",
+          "Time"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "obito",
+    "name": "Obito",
+    "anime": "Naruto",
+    "villain": true,
+    "gag": false,
+    "rarity": "mythical",
+    "stages": [
+      {
+        "name": "Masked Obito",
+        "types": [
+          "Time"
+        ],
+        "image": ""
+      },
+      {
+        "name": "Ten-Tails Obito",
+        "types": [
+          "Time",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "hisoka",
+    "name": "Hisoka",
+    "anime": "Hunter x Hunter",
+    "villain": true,
+    "gag": false,
+    "rarity": "mythical",
+    "stages": [
+      {
+        "name": "Hisoka",
+        "types": [
+          "Neutral",
+          "Dark"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "makima",
+    "name": "Makima",
+    "anime": "Chainsaw Man",
+    "villain": true,
+    "gag": false,
+    "rarity": "mythical",
+    "stages": [
+      {
+        "name": "Makima",
+        "types": [
+          "Dark",
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mahito",
+    "name": "Mahito",
+    "anime": "Jujutsu Kaisen",
+    "villain": true,
+    "gag": false,
+    "rarity": "mythical",
+    "stages": [
+      {
+        "name": "Mahito",
+        "types": [
+          "Spirit"
+        ],
+        "image": ""
+      }
+    ]
   }
 ]
