@@ -1014,7 +1014,8 @@
       {
         "name": "Bocchi",
         "types": [
-          "Lightning"
+          "Lightning",
+          "Beast"
         ],
         "image": "images/bocchi-mvnovbqb.png"
       }
