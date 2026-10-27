@@ -1,6 +1,6 @@
 # Familiar DB
 
-Team wiki for Familiar. The home page links to the Roster (every character, their types, evolutions, villains and gags, with Types, Anime and Stats tabs) and to text pages: Story, Gameplay, Lore, World, Glossary, Art & style and Roadmap.
+Team wiki for Familiar. The home page links to the Roster (every character, their types, evolutions, villains, gags and encounter tier, with Types, Anime, Rarity and Stats tabs) and to text pages: Story, Gameplay, Lore, World, Glossary, Art & style and Roadmap.
 
 Live site: https://zpivill.github.io/familiar-db/
 
@@ -13,7 +13,7 @@ Live site: https://zpivill.github.io/familiar-db/
 Then:
 
 - Click a picture slot and press Ctrl+V to paste a picture, or drag a picture file onto it.
-- Click a character to edit its name, anime, villain or gag tag, its forms and their types.
+- Click a character to edit its name, anime, villain or gag tag, encounter tier, its forms and their types.
 - Every change saves to this repo as a commit under your name. Pictures show up straight away; other changes reach the live site for everyone within about a minute.
 
 Keep your token private. If it leaks, delete it at https://github.com/settings/tokens.

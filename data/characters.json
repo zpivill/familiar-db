@@ -5,6 +5,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Recruit Tanjiro",
@@ -36,6 +37,7 @@
     "anime": "My Hero Academia",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Todoroki",
@@ -53,6 +55,7 @@
     "anime": "Fairy Tail",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Natsu",
@@ -77,23 +80,8 @@
     "anime": "Naruto",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Young Madara",
-        "types": [
-          "Fire",
-          "Dark"
-        ],
-        "image": "images/madara-mvnms4gz.png"
-      },
-      {
-        "name": "Madara",
-        "types": [
-          "Fire",
-          "Cosmic"
-        ],
-        "image": "images/madara-mvnmsa9l.png"
-      },
       {
         "name": "Six Paths Madara",
         "types": [
@@ -110,6 +98,7 @@
     "anime": "Inazuma Eleven",
     "villain": false,
     "gag": true,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Axel Blaze",
@@ -127,6 +116,7 @@
     "anime": "KonoSuba",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Megumin",
@@ -143,6 +133,7 @@
     "anime": "One Piece",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Ace",
@@ -160,6 +151,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Rengoku",
@@ -176,6 +168,7 @@
     "anime": "Bleach",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Yamamoto",
@@ -200,6 +193,7 @@
     "anime": "One Piece",
     "villain": true,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Akainu",
@@ -217,6 +211,7 @@
     "anime": "KonoSuba",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Aqua",
@@ -233,6 +228,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Giyu",
@@ -250,6 +246,7 @@
     "anime": "Record of Ragnarok",
     "villain": false,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Poseidon",
@@ -267,6 +264,8 @@
     "anime": "Toilet-bound Hanako-kun",
     "villain": false,
     "gag": false,
+    "rarity": "mythical",
+    "early": true,
     "stages": [
       {
         "name": "Hanako-kun",
@@ -284,6 +283,8 @@
     "anime": "Folklore",
     "villain": false,
     "gag": true,
+    "rarity": "mythical",
+    "early": true,
     "stages": [
       {
         "name": "Nessie",
@@ -301,6 +302,7 @@
     "anime": "SpongeBob SquarePants",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "SpongeBob",
@@ -318,6 +320,7 @@
     "anime": "SpongeBob SquarePants",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Patrick",
@@ -335,6 +338,7 @@
     "anime": "Jojo",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Catch the rainbow",
@@ -351,6 +355,7 @@
     "anime": "Frieren",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Fern",
@@ -367,6 +372,7 @@
     "anime": "One Piece",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Brook",
@@ -384,6 +390,7 @@
     "anime": "Bleach",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Rukia",
@@ -416,6 +423,7 @@
     "anime": "Bocchi the Rock!",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Ryo Yamada",
@@ -433,6 +441,7 @@
     "anime": "Inazuma Eleven",
     "villain": false,
     "gag": true,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Shawn Frost",
@@ -449,6 +458,7 @@
     "anime": "Kuroko's Basketball",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Akashi",
@@ -466,6 +476,7 @@
     "anime": "Football",
     "villain": false,
     "gag": true,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Cole Palmer",
@@ -482,6 +493,7 @@
     "anime": "Bleach",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Bankai Toshiro",
@@ -514,6 +526,8 @@
     "anime": "Demon Slayer",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
+    "early": true,
     "stages": [
       {
         "name": "Doma",
@@ -531,6 +545,7 @@
     "anime": "Re:Zero",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Emilia and Puck",
@@ -555,6 +570,7 @@
     "anime": "My Hero Academia",
     "villain": false,
     "gag": false,
+    "rarity": "starter",
     "stages": [
       {
         "name": "Deku",
@@ -587,6 +603,7 @@
     "anime": "One Piece",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Nami",
@@ -611,6 +628,7 @@
     "anime": "Bocchi the Rock!",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Kita",
@@ -628,6 +646,7 @@
     "anime": "Thai poet",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "สุนทรภู่",
@@ -644,6 +663,7 @@
     "anime": "Black Clover",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Yuno",
@@ -676,6 +696,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Sanemi",
@@ -693,6 +714,7 @@
     "anime": "One Punch Man",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Tatsumaki",
@@ -710,6 +732,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Gyomei",
@@ -727,6 +750,7 @@
     "anime": "Naruto",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Onoki",
@@ -744,6 +768,7 @@
     "anime": "Naruto",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Hashirama",
@@ -768,6 +793,7 @@
     "anime": "Bocchi the Rock!",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Nijika",
@@ -785,6 +811,7 @@
     "anime": "Inazuma Eleven",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Mark Evans",
@@ -802,6 +829,7 @@
     "anime": "Dr. Stone",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Senku",
@@ -817,16 +845,7 @@
           "Tech"
         ],
         "image": "images/senku-mvnnj5hq.png"
-      }
-    ]
-  },
-  {
-    "id": "senku-s-rocket",
-    "name": "Senku's Rocket",
-    "anime": "Dr. Stone",
-    "villain": false,
-    "gag": true,
-    "stages": [
+      },
       {
         "name": "Senku's Rocket",
         "types": [
@@ -843,6 +862,8 @@
     "anime": "Jujutsu Kaisen",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
+    "early": true,
     "stages": [
       {
         "name": "Hanami",
@@ -860,6 +881,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Zenitsu",
@@ -884,6 +906,7 @@
     "anime": "A Certain Scientific Railgun",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Misaka",
@@ -901,6 +924,8 @@
     "anime": "One Piece",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
+    "early": true,
     "stages": [
       {
         "name": "Enel",
@@ -918,6 +943,7 @@
     "anime": "Bleach",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Cat Yoruichi",
@@ -950,6 +976,7 @@
     "anime": "Hunter x Hunter",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Nen Killua",
@@ -974,6 +1001,7 @@
     "anime": "Bocchi the Rock!",
     "villain": false,
     "gag": true,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Bocchi",
@@ -998,6 +1026,7 @@
     "anime": "Bleach",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Substitute Ichigo",
@@ -1030,6 +1059,7 @@
     "anime": "Death Note",
     "villain": true,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Light Yagami",
@@ -1047,6 +1077,7 @@
     "anime": "One Piece",
     "villain": true,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Kizaru",
@@ -1064,6 +1095,7 @@
     "anime": "Frieren",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Frieren",
@@ -1087,6 +1119,7 @@
     "anime": "Saint Seiya",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Bronze Seiya",
@@ -1110,15 +1143,8 @@
     "anime": "Bleach",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "The Almighty Yhwach",
-        "types": [
-          "Light",
-          "Time"
-        ],
-        "image": "images/yhwach-mvnnvnog.png"
-      },
       {
         "name": "Soul King Yhwach",
         "types": [
@@ -1135,6 +1161,7 @@
     "anime": "Record of Ragnarok",
     "villain": false,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Bhudda",
@@ -1151,10 +1178,11 @@
     "name": "Saitama",
     "anime": "One Punch Man",
     "villain": false,
-    "gag": true,
+    "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
-        "name": "Saitama's Head",
+        "name": "Saitama",
         "types": [
           "Light",
           "Neutral"
@@ -1169,6 +1197,7 @@
     "anime": "KonoSuba",
     "villain": false,
     "gag": false,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Darkness",
@@ -1186,14 +1215,8 @@
     "anime": "One Piece",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Blackbeard",
-        "types": [
-          "Dark"
-        ],
-        "image": "images/blackbeard-mvno2q86.png"
-      },
       {
         "name": "Blackberad time skip",
         "types": [
@@ -1210,6 +1233,7 @@
     "anime": "Black Clover",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Yami",
@@ -1226,6 +1250,7 @@
     "anime": "Seven Deadly Sins",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Captain Meliodas",
@@ -1250,6 +1275,7 @@
     "anime": "Black Clover",
     "villain": false,
     "gag": false,
+    "rarity": "starter",
     "stages": [
       {
         "name": "Asta",
@@ -1282,6 +1308,7 @@
     "anime": "Hellsing",
     "villain": false,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Alucard",
@@ -1299,6 +1326,7 @@
     "anime": "Mob Psycho 100",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Mob",
@@ -1322,14 +1350,8 @@
     "anime": "Naruto",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Nagato",
-        "types": [
-          "Spirit"
-        ],
-        "image": "images/pain-mvnoa3lw.png"
-      },
       {
         "name": "Pain",
         "types": [
@@ -1345,6 +1367,7 @@
     "anime": "Jujutsu Kaisen",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Yuta",
@@ -1362,6 +1385,7 @@
     "anime": "Cyberpunk: Edgerunners",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "David Martinez",
@@ -1379,6 +1403,7 @@
     "anime": "Dragon Ball",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Kid Goku",
@@ -1410,21 +1435,8 @@
     "anime": "Jujutsu Kaisen",
     "villain": false,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Gojo",
-        "types": [
-          "Cosmic"
-        ],
-        "image": "images/gojo-mvnoehvn.png"
-      },
-      {
-        "name": "Blindfold Gojo",
-        "types": [
-          "Cosmic"
-        ],
-        "image": "images/gojo-mvnoemo8.png"
-      },
       {
         "name": "Shinfuku Gojo",
         "types": [
@@ -1440,21 +1452,8 @@
     "anime": "One Punch Man",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Armored Boros",
-        "types": [
-          "Cosmic"
-        ],
-        "image": "images/boros-mvnofb6c.png"
-      },
-      {
-        "name": "Boros",
-        "types": [
-          "Cosmic"
-        ],
-        "image": "images/boros-mvnoggef.png"
-      },
       {
         "name": "Cosmic Boros",
         "types": [
@@ -1470,6 +1469,7 @@
     "anime": "KonoSuba",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Kazuma",
@@ -1486,6 +1486,7 @@
     "anime": "Sailor Moon",
     "villain": false,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Sailor Moon",
@@ -1503,6 +1504,8 @@
     "anime": "Doraemon",
     "villain": false,
     "gag": true,
+    "rarity": "mythical",
+    "early": true,
     "stages": [
       {
         "name": "Doraemon",
@@ -1520,6 +1523,7 @@
     "anime": "JoJo's Bizarre Adventure",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Dio",
@@ -1537,6 +1541,7 @@
     "anime": "Megamind",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Metro Man",
@@ -1553,6 +1558,7 @@
     "anime": "JoJo's Bizarre Adventure",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Pucci",
@@ -1570,6 +1576,8 @@
     "anime": "Madoka Magica",
     "villain": false,
     "gag": false,
+    "rarity": "legendary",
+    "early": true,
     "stages": [
       {
         "name": "Homura",
@@ -1587,6 +1595,7 @@
     "anime": "Tokyo Revengers",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Takemichi",
@@ -1604,6 +1613,7 @@
     "anime": "Date A Live",
     "villain": false,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Kurumi",
@@ -1621,6 +1631,7 @@
     "anime": "JoJo's Bizarre Adventure",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Jotaro",
@@ -1638,6 +1649,7 @@
     "anime": "Cyberpunk: Edgerunners",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Adam Smasher",
@@ -1655,6 +1667,7 @@
     "anime": "Cyberpunk: Edgerunners",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Lucy",
@@ -1672,6 +1685,7 @@
     "anime": "Arcane",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Jinx",
@@ -1689,6 +1703,7 @@
     "anime": "Arcane",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Vi",
@@ -1706,6 +1721,7 @@
     "anime": "Evangelion",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Shinji",
@@ -1723,6 +1739,7 @@
     "anime": "Darling in the Franxx",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Zero Two",
@@ -1740,6 +1757,7 @@
     "anime": "Big Hero 6",
     "villain": false,
     "gag": true,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Baymax",
@@ -1764,6 +1782,7 @@
     "anime": "Chiikawa",
     "villain": false,
     "gag": true,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Usagi",
@@ -1781,6 +1800,7 @@
     "anime": "Umamusume",
     "villain": false,
     "gag": true,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Gold Ship",
@@ -1798,6 +1818,7 @@
     "anime": "My Dear Friend Nokotan",
     "villain": false,
     "gag": true,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Unknown (beast, meme face)",
@@ -1814,6 +1835,7 @@
     "anime": "Food Wars!",
     "villain": false,
     "gag": false,
+    "rarity": "first-route",
     "stages": [
       {
         "name": "Soma",
@@ -1831,6 +1853,7 @@
     "anime": "Haikyu!!",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Hinata",
@@ -1848,6 +1871,7 @@
     "anime": "Berserk",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Guts",
@@ -1872,6 +1896,7 @@
     "anime": "My Hero Academia",
     "villain": true,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Toga",
@@ -1889,6 +1914,7 @@
     "anime": "Classroom of the Elite",
     "villain": false,
     "gag": false,
+    "rarity": "starter",
     "stages": [
       {
         "name": "Ayanokoji",
@@ -1919,6 +1945,7 @@
     "anime": "Monster",
     "villain": true,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Johan",
@@ -1936,6 +1963,7 @@
     "anime": "Fairy Tale",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Juvia",
@@ -1953,6 +1981,7 @@
     "anime": "Devil May Cry",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Dante",
@@ -1977,14 +2006,8 @@
     "anime": "Devil May Cry",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
-      {
-        "name": "Vergil",
-        "types": [
-          "Dark"
-        ],
-        "image": "images/vergil-mvqrf93j.png"
-      },
       {
         "name": "Sin Devil Trigger Vergil",
         "types": [
@@ -2001,6 +2024,7 @@
     "anime": "Devil May Cry",
     "villain": false,
     "gag": true,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Vergil chair",
@@ -2017,6 +2041,7 @@
     "anime": "Shangri-La Frontier",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Sunraku",
@@ -2034,6 +2059,7 @@
     "anime": "Attack on Titan",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Eren",
@@ -2065,6 +2091,7 @@
     "anime": "Tokyo Ghoul",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Eyepatch Kaneki",
@@ -2089,6 +2116,7 @@
     "anime": "Tokyo Ghoul",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Arima",
@@ -2106,6 +2134,7 @@
     "anime": "Fire Force",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Shinra",
@@ -2138,6 +2167,7 @@
     "anime": "Fire Force",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Arthur",
@@ -2161,6 +2191,7 @@
     "anime": "Gachiakuta",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Rudo",
@@ -2178,6 +2209,7 @@
     "anime": "Solo Leveling",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "E-rank Jin-woo",
@@ -2210,6 +2242,7 @@
     "anime": "Sword Art Online",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Kirito",
@@ -2234,6 +2267,7 @@
     "anime": "Sword Art Online",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Asuna",
@@ -2251,6 +2285,7 @@
     "anime": "Mushoku Tensei",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Young Rudeus",
@@ -2275,6 +2310,7 @@
     "anime": "Reborn!",
     "villain": false,
     "gag": false,
+    "rarity": "mythical",
     "stages": [
       {
         "name": "Reborn",
@@ -2292,6 +2328,7 @@
     "anime": "Reborn!",
     "villain": false,
     "gag": false,
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "No-Good Tsuna",
@@ -2323,6 +2360,7 @@
     "anime": "Overlord",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Ainz Ooal Gown",
@@ -2340,6 +2378,7 @@
     "anime": "That Time I Got Reincarnated as a Slime",
     "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Slime Rimuru",
@@ -2364,6 +2403,7 @@
     "anime": "That Time I Got Reincarnated as a Slime",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Gobta",
@@ -2381,6 +2421,7 @@
     "anime": "Inuyasha",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Inuyasha",
@@ -2405,6 +2446,7 @@
     "anime": "Toriko",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Toriko",
@@ -2421,6 +2463,7 @@
     "anime": "Toriko",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Coco",
@@ -2437,6 +2480,7 @@
     "anime": "Toriko",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Sunny",
@@ -2451,8 +2495,9 @@
     "id": "zebra",
     "name": "Zebra",
     "anime": "Toriko",
-    "villain": true,
+    "villain": false,
     "gag": false,
+    "rarity": "post-mid",
     "stages": [
       {
         "name": "Zebra",
@@ -2469,6 +2514,7 @@
     "anime": "Toriko",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Komatsu",
@@ -2485,6 +2531,7 @@
     "anime": "Fate",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Saber",
@@ -2502,6 +2549,7 @@
     "anime": "Fate",
     "villain": true,
     "gag": false,
+    "rarity": "legendary",
     "stages": [
       {
         "name": "Gilgamesh",
@@ -2519,6 +2567,7 @@
     "anime": "Fate",
     "villain": false,
     "gag": false,
+    "rarity": "mid",
     "stages": [
       {
         "name": "Shirou",
@@ -2543,6 +2592,7 @@
     "anime": "Detective Conan",
     "villain": false,
     "gag": false,
+    "rarity": "pre-mid",
     "stages": [
       {
         "name": "Conan",

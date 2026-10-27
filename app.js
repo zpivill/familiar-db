@@ -1,6 +1,22 @@
 const TYPES = ['Fire', 'Water', 'Ice', 'Wind', 'Earth', 'Lightning', 'Light', 'Dark',
   'Spirit', 'Cosmic', 'Time', 'Tech', 'Beast', 'Blood', 'Neutral'];
 const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/gif': 'gif' };
+// Encounter tiers: where and when a character can be met. Team-only, never shown to players.
+const RARITY = [['starter', 'Starter'], ['first-route', 'First route'], ['pre-mid', 'Pre-mid'], ['mid', 'Mid'],
+  ['post-mid', 'Post-mid'], ['pseudo', 'Pseudo'], ['mythical', 'Mythical'], ['legendary', 'Legendary']];
+const RARITY_NOTE = {
+  starter: 'Picked at the start of the game. Never met in frays.',
+  'first-route': 'The first route or two. Low ceiling, though a few have a niche build.',
+  'pre-mid': 'Frays opened by the early cities.',
+  mid: 'Frays in the middle cities.',
+  'post-mid': 'Late routes before the Circle.',
+  pseudo: 'Rare in late frays. Weak first form, slow to grow, final form rivals legendaries.',
+  mythical: 'Special one-offs, weaker than legendaries. Most come after beating the game.',
+  legendary: 'Legendary patches after beating the game. Strongest form only.',
+};
+// What "early" means for each tier that can have it.
+const EARLY = { mythical: 'Can be found before the post-game', legendary: 'Very rare chance after post-mid' };
+const rarityName = r => RARITY.find(x => x[0] === r)?.[1] ?? 'No tier yet';
 const REPO = 'zpivill/familiar-db', FILE = 'data/characters.json';
 
 // Two ways to save: serve.py on this computer, or straight to GitHub with a teammate's token.
@@ -90,6 +106,8 @@ function charMatches(c) {
   if (side === 'heroes' && c.villain) return false;
   if (side === 'villains' && !c.villain) return false;
   if (side === 'gags' && !c.gag) return false;
+  const rarity = $('#rarity').value;
+  if (rarity !== 'all' && (c.rarity || '') !== rarity) return false;
   return !q || [c.name, c.anime, ...c.stages.map(s => s.name)].some(x => x.toLowerCase().includes(q));
 }
 
@@ -106,6 +124,7 @@ function entries() {
     name: e => [(e.s.name || e.c.name).toLowerCase()],
     type: e => [TYPES.indexOf(e.s.types[0]), TYPES.indexOf(e.s.types[1] ?? ''), e.i, e.j],
     villain: e => [e.c.villain ? 0 : 1, e.i, e.j],
+    rarity: e => [RARITY.findIndex(r => r[0] === e.c.rarity) >>> 0, e.i, e.j],
   }[$('#sort').value];
   const cmp = (a, b) => { for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] < b[k] ? -1 : 1; return 0; };
   return out.sort((a, b) => cmp(key(a), key(b)));
@@ -158,6 +177,8 @@ function renderDetail() {
       <input name="anime" value="${esc(c.anime)}" placeholder="Anime"${dis}>
       <label class="check"><input type="checkbox" name="villain"${c.villain ? ' checked' : ''}${dis}> Villain</label>
       <label class="check"><input type="checkbox" name="gag"${c.gag ? ' checked' : ''}${dis}> Gag</label>
+      <label>Tier <select name="rarity"${dis}><option value="">No tier yet</option>${RARITY.map(([r, l]) => `<option value="${r}"${r === c.rarity ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+      ${EARLY[c.rarity] ? `<label class="check"><input type="checkbox" name="early"${c.early ? ' checked' : ''}${dis}> ${EARLY[c.rarity]}</label>` : ''}
     </div>
     <div class="stages">${c.stages.map((s, j) => `
       <div class="stage" data-j="${j}">
@@ -256,6 +277,8 @@ dlg.addEventListener('change', e => {
   const id = openId, el = e.target, stage = el.closest('.stage'), j = stage && +stage.dataset.j;
   let edit;
   if (el.name === 'name' || el.name === 'anime') { const v = el.value.trim(); edit = c => { c[el.name] = v; }; }
+  else if (el.name === 'rarity') { const v = el.value; edit = c => { if (v) c.rarity = v; else delete c.rarity; if (!EARLY[v]) delete c.early; }; }
+  else if (el.name === 'early') { const v = el.checked; edit = c => { if (v) c.early = true; else delete c.early; }; }
   else if (el.type === 'checkbox') { const v = el.checked; edit = c => { c[el.name] = v; }; }
   else if (el.name === 'stage') { const v = el.value.trim(); edit = c => { c.stages[j].name = v; }; }
   else if (el.name.startsWith('type')) {
@@ -310,12 +333,13 @@ $('#types').addEventListener('click', e => {
   e.currentTarget.querySelectorAll('.type').forEach(b => b.classList.toggle('on', picked.has(b.dataset.type)));
   render();
 });
-['#search', '#kind', '#side', '#sort', '#evos'].forEach(s => $(s).addEventListener('input', render));
+$('#rarity').innerHTML = '<option value="all">Every tier</option>' + RARITY.map(([r, l]) => `<option value="${r}">${l}</option>`).join('');
+['#search', '#kind', '#side', '#rarity', '#sort', '#evos'].forEach(s => $(s).addEventListener('input', render));
 $('#clear').addEventListener('click', () => {
   picked.clear();
   document.querySelectorAll('#types .on').forEach(b => b.classList.remove('on'));
   $('#search').value = '';
-  $('#kind').value = $('#side').value = 'all';
+  $('#kind').value = $('#side').value = $('#rarity').value = 'all';
   render();
 });
 
@@ -324,7 +348,7 @@ $('#clear').addEventListener('click', () => {
 // Every page has its own link: #home, #roster, #roster-types, #lore and so on.
 const TABS = [
   ['roster', 'Characters'], ['roster-types', 'Types'], ['roster-anime', 'Anime'],
-  ['roster-villains', 'Villains & gags'], ['roster-stats', 'Stats'],
+  ['roster-villains', 'Villains & gags'], ['roster-rarity', 'Rarity'], ['roster-stats', 'Stats'],
 ];
 const PITCH = 'A Pokémon-style story RPG on near-future Earth, where anime characters have been re-imagined into the real world.';
 const finalTypes = c => c.stages.at(-1).types;
@@ -394,6 +418,18 @@ function renderTab(id) {
     const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).map(card).join('');
     html = `<h2>Villains <span class="hint">${roster.filter(c => c.villain).length}</span></h2><div class="grid">${grid(c => c.villain)}</div>
       <h2>Gag characters <span class="hint">${roster.filter(c => c.gag).length}</span></h2><div class="grid">${grid(c => c.gag)}</div>`;
+  }
+  if (id === 'roster-rarity') {
+    const grid = cs => cs.map(c => ({ c, s: c.stages[0], i: roster.indexOf(c), j: 0 })).map(card).join('');
+    const tiers = [...RARITY, ['', 'No tier yet']].map(([r, l]) => {
+      const cs = roster.filter(c => (c.rarity || '') === r);
+      if (!cs.length && !r) return '';
+      const early = EARLY[r] ? cs.filter(c => c.early) : [];
+      return `<h2>${l} <span class="hint">${cs.length}</span></h2><p class="hint">${esc(RARITY_NOTE[r] ?? 'Not sorted into a tier yet.')}</p>
+        ${early.length ? `<p class="hint"><b>${EARLY[r]}:</b> ${early.map(c => esc(c.name)).join(', ')}.</p>` : ''}
+        <div class="grid">${grid(cs)}</div>`;
+    });
+    html = `<p class="hint">Hidden encounter tiers: where and when each character can be met as the player progresses, like Pokémon's route tables. Players never see these. A tier is not a power rating.</p>${tiers.join('')}`;
   }
   if (id === 'roster-stats') {
     const forms = roster.reduce((n, c) => n + c.stages.length, 0);
