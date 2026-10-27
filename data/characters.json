@@ -3542,5 +3542,179 @@
         "image": ""
       }
     ]
+  },
+  {
+    "id": "yamcha",
+    "name": "Yamcha",
+    "anime": "Dragon Ball",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Yamcha",
+        "types": [
+          "Neutral",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mr-satan",
+    "name": "Mr. Satan",
+    "anime": "Dragon Ball",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Mr. Satan",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mumen-rider",
+    "name": "Mumen Rider",
+    "anime": "One Punch Man",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Mumen Rider",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "murata",
+    "name": "Murata",
+    "anime": "Demon Slayer",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Murata",
+        "types": [
+          "Water"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "koby",
+    "name": "Koby",
+    "anime": "One Piece",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Koby",
+        "types": [
+          "Neutral"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "hanataro",
+    "name": "Hanataro",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Hanataro",
+        "types": [
+          "Spirit",
+          "Light"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "kon",
+    "name": "Kon",
+    "anime": "Bleach",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Kon",
+        "types": [
+          "Spirit",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "happy",
+    "name": "Happy",
+    "anime": "Fairy Tail",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Happy",
+        "types": [
+          "Wind",
+          "Beast"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "konohamaru",
+    "name": "Konohamaru",
+    "anime": "Naruto",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Konohamaru",
+        "types": [
+          "Wind"
+        ],
+        "image": ""
+      }
+    ]
+  },
+  {
+    "id": "mineta",
+    "name": "Mineta",
+    "anime": "My Hero Academia",
+    "villain": false,
+    "gag": false,
+    "rarity": "first-route",
+    "stages": [
+      {
+        "name": "Mineta",
+        "types": [
+          "Earth"
+        ],
+        "image": ""
+      }
+    ]
   }
 ]
