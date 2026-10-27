@@ -2125,7 +2125,8 @@
       {
         "name": "Adolla Burst Shinra",
         "types": [
-          "Fire"
+          "Fire",
+          "Wind"
         ],
         "image": "images/shinra-mvqsouxh.png"
       },
