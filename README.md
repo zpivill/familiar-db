@@ -2,6 +2,8 @@
 
 Team wiki for Familiar. The home page links to the Roster (every character, their types, evolutions, villains, gags and encounter tier, with Types, Anime, Rarity and Stats tabs) and to text pages: Story, Gameplay, Lore, World, Glossary, Art & style and Roadmap.
 
+Every form has its own dex number, Pokémon-style: a base form is #001 and its evolutions are #002, #003, and the next character carries on from there. Numbers go tier by tier (Starters first, Legendaries last, characters with no tier yet at the end), in roster order within a tier, so changing a tier or adding or removing a form shifts the numbers after it.
+
 Live site: https://zpivill.github.io/familiar-db/
 
 ## Editing online

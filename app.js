@@ -27,7 +27,23 @@ const canEdit = () => LOCAL || !!token;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const num = i => '#' + String(i + 1).padStart(3, '0');
+// Every form has its own dex number. Characters are numbered tier by tier (Starter first, Legendary last, untiered at the end),
+// in roster order within a tier, and an evolution gets the next number after its base form.
+const tierRank = c => { const k = RARITY.findIndex(r => r[0] === c.rarity); return k < 0 ? RARITY.length : k; };
+let dexCache = { sig: null, start: [] };
+const dex = (i, j = 0) => {
+  const sig = roster.map(c => (c.rarity || '') + c.stages.length).join();
+  if (dexCache.sig !== sig) {
+    const start = [];
+    let n = 1;
+    roster.map((c, k) => k).sort((a, b) => tierRank(roster[a]) - tierRank(roster[b]) || a - b)
+      .forEach(k => { start[k] = n; n += roster[k].stages.length; });
+    dexCache = { sig, start };
+  }
+  return dexCache.start[i] + j;
+};
+const num = (i, j = 0) => '#' + String(dex(i, j)).padStart(3, '0');
+const numRange = i => num(i) + (roster[i].stages.length > 1 ? '–' + num(i, roster[i].stages.length - 1).slice(1) : '');
 const badge = t => `<span class="type" style="--t:var(--${t})">${t}</span>`;
 const dlg = $('#detail');
 
@@ -120,11 +136,11 @@ function entries() {
     if ($('#evos').checked) out.push(...hits); else if (hits[0]) out.push(hits[0]);
   });
   const key = {
-    number: e => [e.i, e.j],
+    number: e => [dex(e.i, e.j)],
     name: e => [(e.s.name || e.c.name).toLowerCase()],
-    type: e => [TYPES.indexOf(e.s.types[0]), TYPES.indexOf(e.s.types[1] ?? ''), e.i, e.j],
-    villain: e => [e.c.villain ? 0 : 1, e.i, e.j],
-    rarity: e => [RARITY.findIndex(r => r[0] === e.c.rarity) >>> 0, e.i, e.j],
+    type: e => [TYPES.indexOf(e.s.types[0]), TYPES.indexOf(e.s.types[1] ?? ''), dex(e.i, e.j)],
+    villain: e => [e.c.villain ? 0 : 1, dex(e.i, e.j)],
+    rarity: e => [RARITY.findIndex(r => r[0] === e.c.rarity) >>> 0, dex(e.i, e.j)],
   }[$('#sort').value];
   const cmp = (a, b) => { for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] < b[k] ? -1 : 1; return 0; };
   return out.sort((a, b) => cmp(key(a), key(b)));
@@ -142,7 +158,7 @@ function card({ c, s, i, j }) {
   const forms = !$('#evos').checked && c.stages.length > 1 ? `<span class="forms">${c.stages.length} forms</span>` : '';
   return `<article class="card" data-id="${esc(c.id)}">
     ${slot(s, c.id, j)}
-    <span class="num">${num(i)}</span>
+    <span class="num">${num(i, j)}</span>
     <span class="name">${esc(s.name || c.name)}</span>
     <span class="anime">${esc(c.anime)}</span>
     <div class="tags">${s.types.map(badge).join('')}${c.villain ? '<span class="badge villain">Villain</span>' : ''}${c.gag ? '<span class="badge gag">Gag</span>' : ''}</div>
@@ -172,7 +188,7 @@ function renderDetail() {
   const ed = canEdit(), dis = ed ? '' : ' disabled';
   dlg.innerHTML = `
     <div class="dhead">
-      <span class="num">${num(i)}</span>
+      <span class="num">${numRange(i)}</span>
       <input name="name" value="${esc(c.name)}" placeholder="Name"${dis}>
       <input name="anime" value="${esc(c.anime)}" placeholder="Anime"${dis}>
       <label class="check"><input type="checkbox" name="villain"${c.villain ? ' checked' : ''}${dis}> Villain</label>
@@ -182,7 +198,7 @@ function renderDetail() {
     </div>
     <div class="stages">${c.stages.map((s, j) => `
       <div class="stage" data-j="${j}">
-        ${c.stages.length > 1 ? `<span class="arrow">Form ${j + 1}</span>` : ''}
+        ${c.stages.length > 1 ? `<span class="arrow">${num(i, j)} · Form ${j + 1}</span>` : ''}
         ${slot(s, c.id, j)}
         <input name="stage" value="${esc(s.name)}" placeholder="${esc(c.name)}"${dis}>
         <div class="tags">${ed ? typeSelect(s.types[0], 0) + typeSelect(s.types[1], 1) : s.types.map(badge).join('')}</div>
@@ -415,12 +431,12 @@ function renderTab(id) {
       <div class="alist">${list.map(([a, n]) => `<button type="button" data-show-anime="${esc(a)}"><span>${esc(a)}</span><span>${n}</span></button>`).join('')}</div>`;
   }
   if (id === 'roster-villains') {
-    const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).map(card).join('');
+    const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).sort((a, b) => dex(a.i) - dex(b.i)).map(card).join('');
     html = `<h2>Villains <span class="hint">${roster.filter(c => c.villain).length}</span></h2><div class="grid">${grid(c => c.villain)}</div>
       <h2>Gag characters <span class="hint">${roster.filter(c => c.gag).length}</span></h2><div class="grid">${grid(c => c.gag)}</div>`;
   }
   if (id === 'roster-rarity') {
-    const grid = cs => cs.map(c => ({ c, s: c.stages[0], i: roster.indexOf(c), j: 0 })).map(card).join('');
+    const grid = cs => cs.map(c => ({ c, s: c.stages[0], i: roster.indexOf(c), j: 0 })).sort((a, b) => dex(a.i) - dex(b.i)).map(card).join('');
     const tiers = [...RARITY, ['', 'No tier yet']].map(([r, l]) => {
       const cs = roster.filter(c => (c.rarity || '') === r);
       if (!cs.length && !r) return '';

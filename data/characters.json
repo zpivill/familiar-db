@@ -5,7 +5,7 @@
     "anime": "Demon Slayer",
     "villain": false,
     "gag": false,
-    "rarity": "pseudo",
+    "rarity": "starter",
     "stages": [
       {
         "name": "Recruit Tanjiro",
@@ -1275,7 +1275,7 @@
     "anime": "Black Clover",
     "villain": false,
     "gag": false,
-    "rarity": "starter",
+    "rarity": "pseudo",
     "stages": [
       {
         "name": "Asta",
