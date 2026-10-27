@@ -1006,8 +1006,7 @@
       {
         "name": "Melting Bocchi",
         "types": [
-          "Neutral",
-          "Beast"
+          "Lightning"
         ],
         "image": "images/bocchi-mvnnpipx.png"
       },
