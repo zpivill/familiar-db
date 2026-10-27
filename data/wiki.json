@@ -5,8 +5,98 @@
       "id": "story",
       "title": "Story",
       "blurb": "The plot, chapter by chapter.",
-      "soon": "r is writing this up. It lands here once it is settled.",
-      "sections": []
+      "sections": [
+        {
+          "title": "Premise",
+          "items": [
+            {
+              "t": "Setting",
+              "n": ""
+            },
+            {
+              "t": "The player",
+              "n": ""
+            },
+            {
+              "t": "The goal",
+              "n": ""
+            }
+          ]
+        },
+        {
+          "title": "Characters",
+          "items": [
+            {
+              "t": "The player",
+              "n": ""
+            },
+            {
+              "t": "The Maker's child",
+              "n": ""
+            },
+            {
+              "t": "The copycat",
+              "n": ""
+            },
+            {
+              "t": "The Champion",
+              "n": ""
+            },
+            {
+              "t": "Villain leader",
+              "n": ""
+            }
+          ]
+        },
+        {
+          "title": "Factions",
+          "items": [
+            {
+              "t": "Kith (the Maker)",
+              "n": ""
+            },
+            {
+              "t": "The Ward",
+              "n": ""
+            },
+            {
+              "t": "The Unbound",
+              "n": ""
+            }
+          ]
+        },
+        {
+          "title": "Chapters",
+          "items": [
+            {
+              "t": "Chapter 1",
+              "n": ""
+            },
+            {
+              "t": "Chapter 2",
+              "n": ""
+            },
+            {
+              "t": "Chapter 3",
+              "n": ""
+            }
+          ]
+        },
+        {
+          "title": "Ending and post-game",
+          "items": [
+            {
+              "t": "Ending",
+              "n": ""
+            },
+            {
+              "t": "Post-game",
+              "n": ""
+            }
+          ]
+        }
+      ],
+      "note": "Template: fill in each entry as the story gets settled. Empty entries show as \"Not written yet\"."
     },
     {
       "id": "gameplay",
