@@ -24,6 +24,18 @@ Keep your token private. If it leaks, delete it at https://github.com/settings/t
 
 Double-click `start.bat` (or run `py serve.py` and open http://localhost:8000). Changes save to `data/characters.json` and pictures to `images/`; commit and push them to publish.
 
+## Character pages
+
+Clicking a character opens its own page (for example `#c/tanjiro`, or `#c/tanjiro/2` for its second form), laid out like a pokemondb entry: picture, familiar data, abilities, base stats, evolution line and moves, with links to the previous and next dex number. Signed-in editors get an **Edit character** button that opens the editor.
+
+Abilities, base stats and moves show as placeholders until they are added to `data/characters.json`. All of these fields are optional:
+
+- On a character: `"abilities": [{ "name": "...", "text": "..." }, { "name": "...", "text": "...", "hidden": true }]`
+- On a character: `"moves": [{ "name": "...", "type": "Fire", "category": "...", "power": 80, "accuracy": 100, "pp": 10, "text": "..." }, ...]`, up to five, with `"signature": true` on the signature move.
+- On each form in `stages`: `"stats": { "hp": 45, "atk": 49, "def": 49, "spa": 65, "spd": 65, "spe": 45 }` and `"evolve": "how it evolves into this form"`.
+
+The stat names are placeholders (Pokémon's six) until the real ones are decided.
+
 ## Editing the text pages
 
 Story, Gameplay, Lore and the other text pages come from `data/wiki.json`. Each page has a title, a one-line blurb and sections of entries (`t` is the entry's name, `n` its text, `plan: true` marks it as a plan that may change). Only settled things go here; ideas still being discussed stay in the game map. Edit the file on GitHub (the pencil icon) and the site updates within about a minute.
