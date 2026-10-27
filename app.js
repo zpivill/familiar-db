@@ -27,7 +27,10 @@ const canEdit = () => LOCAL || !!token;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const num = i => '#' + String(i + 1).padStart(3, '0');
+// Every form has its own dex number, counted through the roster in order, so an evolution gets the next number after its base form.
+const dex = (i, j = 0) => roster.slice(0, i).reduce((n, c) => n + c.stages.length, 0) + j + 1;
+const num = (i, j = 0) => '#' + String(dex(i, j)).padStart(3, '0');
+const numRange = i => num(i) + (roster[i].stages.length > 1 ? '–' + num(i, roster[i].stages.length - 1).slice(1) : '');
 const badge = t => `<span class="type" style="--t:var(--${t})">${t}</span>`;
 const dlg = $('#detail');
 
@@ -142,7 +145,7 @@ function card({ c, s, i, j }) {
   const forms = !$('#evos').checked && c.stages.length > 1 ? `<span class="forms">${c.stages.length} forms</span>` : '';
   return `<article class="card" data-id="${esc(c.id)}">
     ${slot(s, c.id, j)}
-    <span class="num">${num(i)}</span>
+    <span class="num">${num(i, j)}</span>
     <span class="name">${esc(s.name || c.name)}</span>
     <span class="anime">${esc(c.anime)}</span>
     <div class="tags">${s.types.map(badge).join('')}${c.villain ? '<span class="badge villain">Villain</span>' : ''}${c.gag ? '<span class="badge gag">Gag</span>' : ''}</div>
@@ -172,7 +175,7 @@ function renderDetail() {
   const ed = canEdit(), dis = ed ? '' : ' disabled';
   dlg.innerHTML = `
     <div class="dhead">
-      <span class="num">${num(i)}</span>
+      <span class="num">${numRange(i)}</span>
       <input name="name" value="${esc(c.name)}" placeholder="Name"${dis}>
       <input name="anime" value="${esc(c.anime)}" placeholder="Anime"${dis}>
       <label class="check"><input type="checkbox" name="villain"${c.villain ? ' checked' : ''}${dis}> Villain</label>
@@ -182,7 +185,7 @@ function renderDetail() {
     </div>
     <div class="stages">${c.stages.map((s, j) => `
       <div class="stage" data-j="${j}">
-        ${c.stages.length > 1 ? `<span class="arrow">Form ${j + 1}</span>` : ''}
+        ${c.stages.length > 1 ? `<span class="arrow">${num(i, j)} · Form ${j + 1}</span>` : ''}
         ${slot(s, c.id, j)}
         <input name="stage" value="${esc(s.name)}" placeholder="${esc(c.name)}"${dis}>
         <div class="tags">${ed ? typeSelect(s.types[0], 0) + typeSelect(s.types[1], 1) : s.types.map(badge).join('')}</div>
