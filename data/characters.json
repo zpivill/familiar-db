@@ -2091,14 +2091,6 @@
     "gag": false,
     "stages": [
       {
-        "name": "Arima",
-        "types": [
-          "Lightning",
-          "Neutral"
-        ],
-        "image": "images/arima-mvqsiqcc.png"
-      },
-      {
         "name": "Arima(Old)",
         "types": [
           "Lightning",
