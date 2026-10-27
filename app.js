@@ -16,6 +16,7 @@ const badge = t => `<span class="type" style="--t:var(--${t})">${t}</span>`;
 const dlg = $('#detail');
 
 let roster = [];
+let wiki = { pages: [] };  // Story, Gameplay, Lore and the other text pages, from data/wiki.json
 const picked = new Set();  // type chips that are on
 let selected = null;       // {id, j}: the picture slot the next paste goes into
 let openId = null;         // character shown in the dialog
@@ -138,6 +139,7 @@ function render() {
   $('#grid').innerHTML = list.map(card).join('') || '<p class="hint">No characters match these filters.</p>';
   $('#count').textContent = `${roster.length} characters, ${list.length} shown`;
   if (dlg.open) renderDetail();
+  route();
 }
 
 function typeSelect(value, n) {
@@ -317,8 +319,110 @@ $('#clear').addEventListener('click', () => {
   render();
 });
 
+// ---- pages: home hub, roster tabs, wiki pages ----
+
+// Every page has its own link: #home, #roster, #roster-types, #lore and so on.
+const TABS = [
+  ['roster', 'Characters'], ['roster-types', 'Types'], ['roster-anime', 'Anime'],
+  ['roster-villains', 'Villains & gags'], ['roster-stats', 'Stats'],
+];
+const PITCH = 'A Pokémon-style story RPG on near-future Earth, where anime characters have been re-imagined into the real world.';
+const finalTypes = c => c.stages.at(-1).types;
+const typeCount = t => roster.filter(c => finalTypes(c).includes(t)).length;
+const animeList = () => {
+  const m = new Map();
+  roster.forEach(c => m.set(c.anime, (m.get(c.anime) || 0) + 1));
+  return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+};
+
+function route() {
+  const id = location.hash.slice(1) || 'home';
+  const page = wiki.pages.find(p => p.id === id);
+  const tab = TABS.find(t => t[0] === id);
+  const where = tab ? 'roster' : page ? 'wiki' : 'home';
+  ['home', 'roster', 'wiki'].forEach(p => { $('#' + p).hidden = p !== where; });
+  $('#crumb').innerHTML = where === 'home' ? '' : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page.title)}</span>`;
+  if (where === 'home') renderHome();
+  if (where === 'wiki') renderPage(page);
+  if (where === 'roster') renderTab(id);
+}
+
+function renderHome() {
+  const tile = (href, title, sub, meta) => `<a class="tile" href="#${href}"><strong>${esc(title)}</strong><span>${esc(sub)}</span><small>${esc(meta)}</small></a>`;
+  const pages = wiki.pages.map(p => tile(p.id, p.title, p.blurb,
+    p.soon ? 'Coming soon' : `${p.sections.reduce((n, s) => n + s.items.length, 0)} entries`));
+  $('#home').innerHTML = `
+    <p class="pitch">${PITCH}</p>
+    <div class="tiles">
+      ${tile('roster', 'Roster', 'Every familiar, their types, forms, villains and gags.', `${roster.length} characters`)}
+      ${pages.join('')}
+    </div>
+    <p class="hint">Only settled things go on these pages. Ideas still being discussed stay in the game map.${wiki.updated ? ` Text pages last updated ${esc(wiki.updated)}.` : ''}</p>`;
+}
+
+function renderPage(p) {
+  const slug = s => p.id + '-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const body = p.soon ? `<p class="soon">${esc(p.soon)}</p>` : p.sections.map(s => `
+    <section id="${slug(s)}"><h2>${esc(s.title)}</h2><dl>${s.items.map(i => `
+      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}</dt><dd>${esc(i.n)}</dd></div>`).join('')}
+    </dl></section>`).join('');
+  const toc = p.sections.length > 1 ? `<nav class="toc" aria-label="On this page">${p.sections.map(s =>
+    `<a href="#${p.id}" data-jump="${slug(s)}">${esc(s.title)}</a>`).join('')}</nav>` : '';
+  $('#wiki').innerHTML = `<div class="article"><h1>${esc(p.title)}</h1><p class="lead">${esc(p.blurb)}</p>
+    ${p.note ? `<p class="hint">${esc(p.note)}</p>` : ''}${body}</div>${toc}`;
+}
+
+function renderTab(id) {
+  $('#tabs').innerHTML = TABS.map(([t, label]) => `<a href="#${t}"${t === id ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  const chars = id === 'roster';
+  $('#tab-characters').hidden = $('#grid').hidden = !chars;
+  $('#tab-view').hidden = chars;
+  if (chars) return;
+  let html = '';
+  if (id === 'roster-types') {
+    html = `<p class="hint">Counts use each character's final form; dual types count for both. Click a type to see its characters.</p>
+      <div class="typegrid">${TYPES.map(t => `<button type="button" data-show-type="${t}" style="--t:var(--${t})"><b>${t}</b>${typeCount(t)} characters</button>`).join('')}</div>`;
+  }
+  if (id === 'roster-anime') {
+    const list = animeList();
+    html = `<p class="hint">${list.length} shows. Click one to see its characters.</p>
+      <div class="alist">${list.map(([a, n]) => `<button type="button" data-show-anime="${esc(a)}"><span>${esc(a)}</span><span>${n}</span></button>`).join('')}</div>`;
+  }
+  if (id === 'roster-villains') {
+    const grid = f => roster.map((c, i) => ({ c, s: c.stages[0], i, j: 0 })).filter(e => f(e.c)).map(card).join('');
+    html = `<h2>Villains <span class="hint">${roster.filter(c => c.villain).length}</span></h2><div class="grid">${grid(c => c.villain)}</div>
+      <h2>Gag characters <span class="hint">${roster.filter(c => c.gag).length}</span></h2><div class="grid">${grid(c => c.gag)}</div>`;
+  }
+  if (id === 'roster-stats') {
+    const forms = roster.reduce((n, c) => n + c.stages.length, 0);
+    const dual = roster.filter(c => finalTypes(c).length === 2).length;
+    const evo = roster.filter(c => c.stages.length > 1).length;
+    const counts = TYPES.map(t => [t, typeCount(t)]).sort((a, b) => b[1] - a[1]);
+    const max = Math.max(1, ...counts.map(x => x[1]));
+    const stat = (n, l) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
+    html = `<div class="stats">${stat(roster.length, 'characters')}${stat(forms, 'forms')}${stat(dual, 'end dual-type')}${stat(roster.length - dual, 'end mono-type')}${stat(evo, 'evolve')}${stat(animeList().length, 'shows')}</div>
+      <h2>Characters per type</h2><p class="hint">Final forms; dual types count for both.</p>
+      <div class="bars">${counts.map(([t, n]) => `<div><span>${t}</span><em style="--t:var(--${t});width:${n / max * 100}%"></em><span>${n}</span></div>`).join('')}</div>`;
+  }
+  $('#tab-view').innerHTML = html;
+}
+
+// Types and Anime tabs hand off to the Characters tab with the filter set.
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-show-type]'), a = e.target.closest('[data-show-anime]'), j = e.target.closest('[data-jump]');
+  if (j) { e.preventDefault(); return document.getElementById(j.dataset.jump)?.scrollIntoView({ behavior: 'smooth' }); }
+  if (!t && !a) return;
+  $('#clear').click();
+  if (t) { picked.add(t.dataset.showType); $('#types').querySelector(`[data-type="${t.dataset.showType}"]`).classList.add('on'); }
+  if (a) $('#search').value = a.dataset.showAnime;
+  render();
+  location.hash = 'roster';
+});
+addEventListener('hashchange', () => { route(); scrollTo(0, 0); });
+
 function load() {
   latest().then(({ data }) => { roster = data; render(); })
     .catch(() => alert('Could not load the roster from GitHub. Try signing out and in again.'));
 }
+fetch('data/wiki.json', { cache: 'no-store' }).then(r => r.json()).then(w => { wiki = w; route(); }).catch(() => {});
 load();

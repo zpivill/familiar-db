@@ -1,0 +1,514 @@
+{
+  "updated": "2026-10-27",
+  "pages": [
+    {
+      "id": "story",
+      "title": "Story",
+      "blurb": "The plot, chapter by chapter.",
+      "soon": "r is writing this up. It lands here once it is settled.",
+      "sections": []
+    },
+    {
+      "id": "gameplay",
+      "title": "Gameplay",
+      "blurb": "How Familiar plays: the loop, encounters, collecting and battles.",
+      "sections": [
+        {
+          "title": "Pillars",
+          "items": [
+            {
+              "t": "1. Catch, battle, climb",
+              "n": "The Pokémon loop is the heart: find characters, build a team, climb to Champion (and later the ranked PvP ladder). Test: does this make collecting or battling more fun? If it does neither, it is a side feature or a cut."
+            },
+            {
+              "t": "2. Every clue is true",
+              "n": "Full name: every clue is true, the conclusion is wrong. Bright, then dark, and built to read differently the second time. Test: does this plant something the player will reread later?"
+            },
+            {
+              "t": "3. Anime made real",
+              "n": "Characters are copies rebuilt into our world; merged cities and chaos zones follow logic you can explain. Test: does this have a reason inside the world? 'Because it's a game' gets questioned."
+            },
+            {
+              "t": "4. Depth to discover",
+              "n": "Battle depth players discover for themselves. Strong characters have gaps to exploit; weak characters have niches if you know how to use them, for mono and dual types. Test: does this create a new strategy or counter, or does it make one option simply better? Name picked 2026-10-20 over 'Every character has a use'."
+            },
+            {
+              "t": "Hard rule: no pay to win",
+              "n": "Never. Power comes from skill and strategy, never from spending. Not a pillar: pillars guide choices, this one is never up for debate, and it governs monetization."
+            },
+            {
+              "t": "Dropped: shared world",
+              "n": "'Your journey, a shared world' was cut as a pillar. Shared world is a feature (kept in Vision); 'the story is about you' is covered by pillar 2."
+            }
+          ]
+        },
+        {
+          "title": "The game",
+          "items": [
+            {
+              "t": "Pokémon loop",
+              "n": "Hidden wild encounters, trainer battles, collecting and building the best team."
+            },
+            {
+              "t": "Become Champion",
+              "n": "The main goal. Side goals are the player's choice: strongest team, collect everyone, rare characters, side quests."
+            },
+            {
+              "t": "PC first",
+              "n": "Keyboard and mouse first."
+            },
+            {
+              "t": "Solo in a shared world",
+              "n": "Your progress is personal. Other players are visible in the world."
+            },
+            {
+              "t": "Real anime characters",
+              "n": "Real anime characters, renamed and remodeled to stay recognisable. Alongside them: folklore, myths and a few non-anime picks."
+            }
+          ]
+        },
+        {
+          "title": "Encounters",
+          "items": [
+            {
+              "t": "Chaos zones",
+              "n": "Patches of distorted or space-textured ground on routes. Walking in can trigger an encounter."
+            },
+            {
+              "t": "Hidden until it happens",
+              "n": "You can see the zone but never who is in it, like tall grass."
+            }
+          ]
+        },
+        {
+          "title": "Characters and collection",
+          "items": [
+            {
+              "t": "Types: 15",
+              "n": "Fire, Water, Ice, Wind, Earth, Lightning, Light, Dark, Spirit, Cosmic, Time, Tech, Beast, Blood, Neutral. Grass, Poison and Sound were left out (too few characters fit). Time and Cosmic are rare and powerful."
+            },
+            {
+              "t": "Type = how they fight",
+              "n": "A character's type comes from what they fight with, not their anime's genre. Genre stays as flavor for city themes and zone looks."
+            },
+            {
+              "t": "Dual types",
+              "n": "Allowed when the character's traits support it (Naruto = Wind + Beast because of Kurama). Most final forms are dual. Gag reasons count (Patrick is Water/Earth because he lives under a rock)."
+            },
+            {
+              "t": "Neutral type",
+              "n": "A true neutral like Pokémon's Normal, for characters whose power is skill, strength or a quirk (Luffy, Nanami, Ayanokoji)."
+            },
+            {
+              "t": "Gag characters",
+              "n": "Joke picks are in on purpose, e.g. Inazuma Eleven players, Cole Palmer, Sunthorn Phu, the Bocchi the Rock band, SpongeBob and Patrick, Doraemon, Gold Ship, the Vergil chair."
+            },
+            {
+              "t": "Non-anime picks",
+              "n": "Folklore, myths and other media join the anime cast: Nessie, Poseidon, Buddha, Cole Palmer, Sunthorn Phu, Baymax, Metro Man."
+            },
+            {
+              "t": "Villains tagged",
+              "n": "Roster characters tagged as villains are the ones the Unbound hunt. See Roster, Villains & gags."
+            },
+            {
+              "t": "Rarity tiers",
+              "n": "There will be tiers. Details later."
+            }
+          ]
+        },
+        {
+          "title": "Battles and progression",
+          "items": [
+            {
+              "t": "Trainer battles",
+              "n": "Battles against other collectors, like Pokémon trainers."
+            },
+            {
+              "t": "Turn-based",
+              "n": "Turn-based battles, like Pokémon."
+            },
+            {
+              "t": "Singles, sometimes duos",
+              "n": "One vs one by default. Two vs two is the most that ever fights at once, for special battles only."
+            },
+            {
+              "t": "Switching",
+              "n": "Switching characters mid-battle is allowed."
+            },
+            {
+              "t": "Type matchups",
+              "n": "Like Pokémon: super effective (double), resisted (half), immune (zero). Every type except Neutral has resistances."
+            },
+            {
+              "t": "Balance philosophy",
+              "n": "Type balance is fairly strict. Many strategies must exist for players to discover: stat maxing, finding gaps in strong characters, niche uses for weaker ones, for both mono and dual types. No pay to win."
+            },
+            {
+              "t": "Ranked PvP (future)",
+              "n": "Planned later: areas where players battle each other and climb ranks. A feature under pillar 1, but it means balance must hold up against people, not just bosses, from the start."
+            },
+            {
+              "t": "Move typing",
+              "n": "A character uses moves of their own type(s) plus Neutral moves, and a few off-type moves only when the character has a real reason in their anime (e.g. Killua: a Dark move from assassin training; Luffy: a Fire move from Red Hawk). Coverage stays rare and lore-backed, and those off-type moves are hidden niches (pillar 4). Each off-type move needs a written justification."
+            },
+            {
+              "t": "Move slots",
+              "n": "Each character equips four moves picked from a pool they learn over time, plus one signature move that is unique to them and always equipped (e.g. Gojo's Hollow Purple, Luffy's Gear form). The signature keeps each character feeling like themselves; the four open slots are where builds and off-type surprises live. Signature moves must not decide fights alone."
+            },
+            {
+              "t": "Move limits: PP",
+              "n": "Each move has a limited number of uses per battle, like Pokémon's PP. Strong moves are kept in check by countermeasures: fewer uses, recoil, and side effects."
+            },
+            {
+              "t": "Signature drawbacks",
+              "n": "No blanket rule. Whether a signature has a drawback depends on the character and other factors: a move that looks very strong on paper needs no drawback if the character's attack is low, because the whole character is what gets balanced."
+            },
+            {
+              "t": "Learning moves",
+              "n": "Works like Pokémon. Each character has a fixed list of moves learned at set levels, plus TMs. No daycare and no breeding."
+            },
+            {
+              "t": "Evolutions",
+              "n": "Characters evolve in 2 or 3 stages that follow their anime's arcs (Recruit, Hinokami, Sun Breathing Tanjiro). A character's type can change between stages: Tanjiro goes Water, then Water/Fire, then Fire."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lore",
+      "title": "Lore",
+      "blurb": "How the world came to be like this, including what the player doesn't know yet.",
+      "sections": [
+        {
+          "title": "Tone",
+          "items": [
+            {
+              "t": "Bright, then dark",
+              "n": "Starts bright and adventurous. The story opens into dark turns as it goes."
+            },
+            {
+              "t": "Ignorance theme",
+              "n": "The whole world doesn't realize what is really going on. The player does."
+            },
+            {
+              "t": "Twists you look back on",
+              "n": "The story should have major twists and read differently after you finish it, like AOT."
+            }
+          ]
+        },
+        {
+          "title": "The world",
+          "items": [
+            {
+              "t": "Near-future Earth",
+              "n": "A few years from now."
+            },
+            {
+              "t": "The re-imagining tech",
+              "n": "Someone built technology that re-imagines anime characters into the real world."
+            },
+            {
+              "t": "The merge",
+              "n": "Using it also merged parts of the anime worlds with ours, changing the world map."
+            },
+            {
+              "t": "Data into matter",
+              "n": "The one thing the game accepts: the Maker's tech rebuilds characters from everything that exists about them (episodes, art, scripts, fan data) and makes them physical. No real anime worlds. This is also why folklore and myth characters can exist: centuries of data."
+            },
+            {
+              "t": "Characters are copies",
+              "n": "Re-imagined rebuilds, not the originals, so many copies of the same character can exist, each slightly different."
+            },
+            {
+              "t": "Why worlds merge",
+              "n": "A character doesn't make sense without their world, so to keep an unanchored copy stable the system renders pieces of their world around them. That is the merge and the anime cities."
+            },
+            {
+              "t": "Contracts anchor",
+              "n": "A contract gives a character a place in our world, so the system stops rendering their home. Characters are partners, not prisoners."
+            },
+            {
+              "t": "The Maker",
+              "n": "The first company. Created re-imagined characters and the contract device that makes people trainers. Started as a worldwide trend: battles, collecting."
+            },
+            {
+              "t": "Trend era: device-only",
+              "n": "Like Pokémon Go: get the device and catch characters. People without a device can't see them. After the patches appear, people start seeing them, and eventually everyone does and has to live with it."
+            },
+            {
+              "t": "Chaos patches appear",
+              "n": "Patches start appearing worldwide for reasons unknown. The world declares a code red: this is changing the world itself."
+            },
+            {
+              "t": "The Shield",
+              "n": "A second organization claims it stopped the patches but cannot reverse them. Some cities are permanently merged with anime cities."
+            },
+            {
+              "t": "Leaders hold stability",
+              "n": "The Shield says the 6 most affected cities each need a strong trainer to halt the merge, each a different type so powers don't overlap. The Elite Four and Champion maintain the whole world. Any title can be taken by a stronger challenger, and holders get big benefits."
+            },
+            {
+              "t": "Why people keep the device",
+              "n": "Without it they stop being trainers and lose their characters and status."
+            },
+            {
+              "t": "The Shield's campaign",
+              "n": "The Shield re-releases the device to everyone as a way to help save the world and says it is harmless. You don't have to battle: just owning a character helps stabilize the world, even if it only does chores like a fire character lighting kindling. People are pushed into it and mostly believe it. It is literally true."
+            },
+            {
+              "t": "No-abandoning law",
+              "n": "Breaking a contract or abandoning a character is illegal. Secretly: broken contracts become loose threads."
+            },
+            {
+              "t": "Core and nodes",
+              "n": "Every Master's arena sits on its city's biggest chaos zone, with a node underneath controlling that vent. All six link to a core at the League summit, keyed to the Champion. It can only be shut down by the Champion with a hidden shutdown key."
+            },
+            {
+              "t": "Node lock",
+              "n": "A node can only grab what is tearing it, and freezes it. Normal characters don't tear the render, so they can't be taken. Frozen villains become anchored to the node, so they add no pressure."
+            },
+            {
+              "t": "Zones after the Shield",
+              "n": "The Shield stopped new patches but can't reverse existing ones. Secretly, the existing zones are the vents."
+            },
+            {
+              "t": "Wild copies come from vents",
+              "n": "Energy leaking from the vents forms copies on its own. Trainers catching them ties the loose threads down."
+            },
+            {
+              "t": "Titles open to anyone",
+              "n": "Anchoring only works through the strongest bond, so the strongest trainer must hold the seat. The Shield watches you and hopes you'll believe them by the top."
+            },
+            {
+              "t": "Champion learns too late",
+              "n": "They try to tell you, or plan to after the ceremony. After the villains fall you don't believe them, and you act first."
+            },
+            {
+              "t": "Villain leader's past",
+              "n": "A former Maker or Shield worker who saw half the truth and left. That's how they know villain power can break the system."
+            },
+            {
+              "t": "You think you feed it",
+              "n": "You only take the device to investigate and climb, believing you're adding to the problem. You were actually helping."
+            }
+          ]
+        },
+        {
+          "title": "Hidden truths",
+          "items": [
+            {
+              "t": "Hidden truth: loose threads",
+              "n": "Held contracts are stable anchors. Anything unanchored builds pressure toward a total merge: broken or abandoned contracts, and wild copies forming in chaos zones. Catching a wild character ties down a loose thread. Battles strengthen bonds. Ripping off devices would snap millions of anchors loose at once, so the truth can't be told."
+            },
+            {
+              "t": "Hidden truth: patches are vents",
+              "n": "Former Maker scientists founded the Shield and opened the patches on purpose to let pressure out, sacrificing some cities. The League really does anchor the world."
+            }
+          ]
+        },
+        {
+          "title": "Frays",
+          "items": [
+            {
+              "t": "Why zones exist",
+              "n": "Places where the rendering broke or overflowed. The space texture is the unfinished render. Secretly they are the Shield's vents."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "title": "World",
+      "blurb": "Cities, routes and how they connect.",
+      "sections": [
+        {
+          "title": "Cities and routes",
+          "items": [
+            {
+              "t": "About 6 cities",
+              "n": "Each one is a real place merged with an anime world."
+            },
+            {
+              "t": "Routes",
+              "n": "Routes connect the cities."
+            },
+            {
+              "t": "Gatehouse connectors",
+              "n": "Brick Bronze-style gatehouses you walk through between sections. The whole world lives in one Roblox place."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "glossary",
+      "title": "Glossary",
+      "blurb": "The words Familiar uses, and what they mean.",
+      "sections": [
+        {
+          "title": "Names",
+          "items": [
+            {
+              "t": "Familiar (title and device)",
+              "n": "The Maker's device and the game's title. In folklore a familiar is a spirit companion bound by a pact; it also means something you recognise. At the end you become someone's familiar. Picked over Recast, Revenant, Rendrant and others."
+            },
+            {
+              "t": "familiars",
+              "n": "The characters you link. Brand and creature share the name, like Pokémon."
+            },
+            {
+              "t": "Keepers",
+              "n": "Trainers. Friendly, and quietly the job the system needs people to do."
+            },
+            {
+              "t": "Binding / bind",
+              "n": "The contract. You bind a familiar instead of catching it."
+            },
+            {
+              "t": "Strays",
+              "n": "Wild copies with no Keeper: the loose threads."
+            },
+            {
+              "t": "Revenant (slang)",
+              "n": "Street slang for strays that turn dangerous. The Maker hates the word."
+            },
+            {
+              "t": "Frays",
+              "n": "The chaos zones: where the world's fabric wears through. Walking in means you enter the fray. Ties to loose threads."
+            },
+            {
+              "t": "Kith",
+              "n": "The Maker. Short and warm, from 'kith and kin'."
+            },
+            {
+              "t": "The Ward",
+              "n": "The Shield. A ward is a protective charm, and they really are protecting the world."
+            },
+            {
+              "t": "Wardens",
+              "n": "The six city Masters, who hold the wards over each node."
+            },
+            {
+              "t": "The Circle",
+              "n": "The Elite Four."
+            },
+            {
+              "t": "The Unbound",
+              "n": "The villain group, who want to break bindings by force."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "art",
+      "title": "Art & style",
+      "blurb": "The look, rig, animation and camera rules for anyone making assets.",
+      "sections": [
+        {
+          "title": "Art, animation and audio",
+          "items": [
+            {
+              "t": "Art style target",
+              "n": "Stylized anime units like Anime Vanguards or Anime Expedition: bigger heads, sculpted hair meshes, faces painted as textures."
+            },
+            {
+              "t": "Rig: R15 for now",
+              "n": "Every humanoid familiar shares one R15 skeleton, chosen over R6 for now because bending elbows, knees and hands suit close-up cinematic moves."
+            },
+            {
+              "t": "Fighting-style animation sets",
+              "n": "For now: each fighting style gets its own version of the common moves, and every signature is fully custom. The prototype can start with one shared animation per move type."
+            },
+            {
+              "t": "Battle camera",
+              "n": "Reusable scripted camera shots picked per move; custom keyframed camera only for signatures. Plan a skip or fast-animation setting."
+            },
+            {
+              "t": "Cutscenes",
+              "n": "Heavily cinematic, with lots of camera movement, mostly in battles. Animation Editor first, Moon Animator for cutscenes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "roadmap",
+      "title": "Roadmap",
+      "blurb": "Where the project stands. Currently: pre-production.",
+      "note": "Items marked Plan are the working plan and may change.",
+      "sections": [
+        {
+          "title": "Phases",
+          "items": [
+            {
+              "t": "Phase 1: Concept",
+              "n": "Mostly done: pillars, hook, platform, target player. Gate: pillars agreed and the pitch fits in one sentence."
+            },
+            {
+              "t": "Phase 2: Pre-production",
+              "n": "We are here. Living GDD, core systems on paper (moves, catching, stats, party size, rarity), a greybox battle prototype, a vertical slice (one city, route, Master), an art style target, a tech plan and a scope list. Gate: the slice is fun when other people play it. Done so far: names, moves, art target, roster database.",
+              "plan": true
+            },
+            {
+              "t": "Phase 3: Production",
+              "n": "Content pipeline from data (roster, cities, story chapters). Alpha = every feature works. Beta = all launch content is in.",
+              "plan": true
+            },
+            {
+              "t": "Phase 4: Post-production and live",
+              "n": "Balance, polish, bug fixing, closed playtests, launch, then updates. The post-game and ranked PvP fit as later updates.",
+              "plan": true
+            }
+          ]
+        },
+        {
+          "title": "Milestones",
+          "items": [
+            {
+              "t": "M1: Logic",
+              "n": "Battle rules, character data and saving as tested code.",
+              "plan": true
+            },
+            {
+              "t": "M2: One-city slice",
+              "n": "One city, one route with chaos zones, one Master. Greybox.",
+              "plan": true
+            },
+            {
+              "t": "M3: Shared world and saving",
+              "n": "Other players visible, progress saved.",
+              "plan": true
+            },
+            {
+              "t": "M4: More cities",
+              "n": "Add cities and routes from data.",
+              "plan": true
+            },
+            {
+              "t": "M5: Art, audio, release",
+              "n": "Final look, then a public test and launch.",
+              "plan": true
+            }
+          ]
+        },
+        {
+          "title": "Settled",
+          "items": [
+            {
+              "t": "Roster database",
+              "n": "Built: this site holds every character, form, type, picture, villain and gag tag as data, editable online."
+            },
+            {
+              "t": "Solo developer",
+              "n": "R builds this alone: code, models, animation, cutscenes, balance and planning. Every scope choice is weighed against that."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
