@@ -156,7 +156,7 @@ function slot(s, id, j) {
 
 function card({ c, s, i, j }) {
   const forms = !$('#evos').checked && c.stages.length > 1 ? `<span class="forms">${c.stages.length} forms</span>` : '';
-  return `<article class="card" data-id="${esc(c.id)}">
+  return `<article class="card" data-id="${esc(c.id)}" data-j="${j}">
     ${slot(s, c.id, j)}
     <span class="num">${num(i, j)}</span>
     <span class="name">${esc(s.name || c.name)}</span>
@@ -267,7 +267,7 @@ document.addEventListener('click', e => {
     return markSelected();
   }
   const cardEl = e.target.closest('.card');
-  if (cardEl) openDetail(cardEl.dataset.id);
+  if (cardEl) location.hash = charLink(find(roster, cardEl.dataset.id), +cardEl.dataset.j).slice(1);
 });
 
 dlg.addEventListener('click', e => {
@@ -285,6 +285,7 @@ dlg.addEventListener('click', e => {
   if (act === 'delete') {
     if (!confirm(`Delete ${c.name}?`)) return;
     dlg.close();
+    location.hash = 'roster';
     commit('Delete ' + c.name, data => { data.splice(data.findIndex(d => d.id === id), 1); });
   }
 });
@@ -311,7 +312,7 @@ $('#add').addEventListener('click', () => {
   const id = 'c' + Date.now().toString(36);
   commit('Add a character', data => {
     data.push({ id, name: 'New character', anime: '', villain: false, gag: false, stages: [{ name: '', types: ['Neutral'], image: '' }] });
-  }).then(() => { if (find(roster, id)) openDetail(id); });
+  }).then(() => { if (find(roster, id)) { location.hash = 'c/' + id; openDetail(id); } });
 });
 
 // ---- signing in (hosted site only) ----
@@ -379,13 +380,104 @@ function route() {
   const id = location.hash.slice(1) || 'home';
   const page = wiki.pages.find(p => p.id === id);
   const tab = TABS.find(t => t[0] === id);
-  const where = tab ? 'roster' : page ? 'wiki' : 'home';
-  ['home', 'roster', 'wiki'].forEach(p => { $('#' + p).hidden = p !== where; });
-  $('#crumb').innerHTML = where === 'home' ? '' : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page.title)}</span>`;
+  // A character's page is #c/<id>, or #c/<id>/<form> for a later form.
+  const [, cid, form] = id.match(/^c\/([^/]+)(?:\/(\d+))?$/) || [];
+  const ci = cid ? roster.findIndex(c => c.id === cid) : -1;
+  const where = tab ? 'roster' : page ? 'wiki' : ci >= 0 ? 'char' : 'home';
+  ['home', 'roster', 'wiki', 'char'].forEach(p => { $('#' + p).hidden = p !== where; });
+  $('#crumb').innerHTML = where === 'home' ? ''
+    : where === 'char' ? `<a href="#home">Home</a> / <a href="#roster">Roster</a> / <span>${esc(roster[ci].name)}</span>`
+    : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page.title)}</span>`;
   if (where === 'home') renderHome();
   if (where === 'wiki') renderPage(page);
   if (where === 'roster') renderTab(id);
+  if (where === 'char') renderChar(ci, Math.min(Math.max((+form || 1) - 1, 0), roster[ci].stages.length - 1));
 }
+
+// ---- character pages, laid out like a pokemondb entry ----
+
+// Placeholder stat names until the real ones are decided (see Stat numbers in the game map).
+const STATS = [['hp', 'HP'], ['atk', 'Attack'], ['def', 'Defense'], ['spa', 'Sp. Atk'], ['spd', 'Sp. Def'], ['spe', 'Speed']];
+const STAT_MAX = 255;
+// Four moves picked from the learned pool, plus one signature that is always equipped.
+const MOVE_SLOTS = 5;
+const tbd = '<span class="tbd">TBD</span>';
+const charLink = (c, j) => '#c/' + c.id + (j ? '/' + (j + 1) : '');
+
+function renderChar(i, j) {
+  const c = roster[i], s = c.stages[j];
+  // Prev and next go by dex number, so they walk forms one by one like the dex does.
+  const order = roster.flatMap((d, k) => d.stages.map((_, m) => [k, m])).sort((a, b) => dex(...a) - dex(...b));
+  const at = order.findIndex(([k, m]) => k === i && m === j);
+  const step = d => { const [k, m] = order[(at + d + order.length) % order.length]; const x = roster[k];
+    return `<a href="${charLink(x, m)}">${d < 0 ? '← ' : ''}${num(k, m)} ${esc(x.stages[m].name || x.name)}${d > 0 ? ' →' : ''}</a>`; };
+
+  const tabs = c.stages.length > 1 ? `<nav class="formtabs" aria-label="Forms">${c.stages.map((f, m) =>
+    `<a href="${charLink(c, m)}"${m === j ? ' aria-current="page"' : ''}>${esc(f.name || c.name)}</a>`).join('')}</nav>` : '';
+
+  const row = (k, v) => `<tr><th>${k}</th><td>${v}</td></tr>`;
+  const tier = rarityName(c.rarity) + (c.early && EARLY[c.rarity] ? ` <span class="hint">(${EARLY[c.rarity].toLowerCase()})</span>` : '');
+  const data = `<table class="vitals">
+    ${row('Dex no.', `<b>${num(i, j)}</b>`)}
+    ${row('Type', s.types.map(badge).join(' '))}
+    ${row('Anime', esc(c.anime) || tbd)}
+    ${row('Form', c.stages.length > 1 ? `${j + 1} of ${c.stages.length}` : 'Only form')}
+    ${row('Side', [c.villain && '<span class="badge villain">Villain</span>', c.gag && '<span class="badge gag">Gag</span>'].filter(Boolean).join(' ') || 'Hero')}
+    ${row('Encounter tier', tier + ' <span class="badge plan">Team only</span>')}
+  </table>`;
+
+  // Abilities, moves and stats are placeholders until they are filled in data/characters.json.
+  const abilities = c.abilities?.length ? c.abilities : [{}, { hidden: true }];
+  const abil = `<table class="vitals">${abilities.map((a, k) =>
+    row(a.hidden ? 'Hidden ability' : `Ability ${k + 1}`, a.name ? `<b>${esc(a.name)}</b>${a.text ? `<br><span class="hint">${esc(a.text)}</span>` : ''}` : tbd)).join('')}</table>`;
+
+  const stats = s.stats || {};
+  const known = STATS.every(([k]) => typeof stats[k] === 'number');
+  const total = STATS.reduce((n, [k]) => n + (stats[k] || 0), 0);
+  const statRows = STATS.map(([k, l]) => { const v = stats[k];
+    return `<tr><th>${l}</th><td class="sv">${v ?? '—'}</td><td class="sb">${v ? `<em style="width:${v / STAT_MAX * 100}%"></em>` : ''}</td></tr>`; }).join('');
+  const statTable = `<table class="basestats">${statRows}<tr class="total"><th>Total</th><td class="sv">${known ? total : '—'}</td><td></td></tr></table>`;
+
+  const moves = Array.from({ length: MOVE_SLOTS }, (_, k) => c.moves?.[k] || { signature: k === MOVE_SLOTS - 1 });
+  const moveRows = moves.map(m => `<tr${m.signature ? ' class="sig"' : ''}>
+    <td>${m.name ? `<b>${esc(m.name)}</b>` : tbd}${m.signature ? ' <span class="badge sigb">Signature</span>' : ''}${m.text ? `<br><span class="hint">${esc(m.text)}</span>` : ''}</td>
+    <td>${m.type ? badge(m.type) : '—'}</td><td>${esc(m.category) || '—'}</td>
+    <td class="sv">${m.power ?? '—'}</td><td class="sv">${m.accuracy ?? '—'}</td><td class="sv">${m.pp ?? '—'}</td></tr>`).join('');
+
+  const evo = c.stages.length > 1
+    ? `<div class="evoline">${c.stages.map((f, m) => `${m ? '<span class="evoarrow" aria-hidden="true">→</span>' : ''}
+        <a class="evo${m === j ? ' here' : ''}" href="${charLink(c, m)}">
+          <span class="evopic">${f.image ? `<img src="${esc(imgSrc(f.image))}" alt="" loading="lazy">` : ''}</span>
+          <span class="num">${num(i, m)}</span><b>${esc(f.name || c.name)}</b>
+          <span class="tags">${f.types.map(badge).join('')}</span>
+          ${f.evolve ? `<small class="hint">${esc(f.evolve)}</small>` : ''}
+        </a>`).join('')}</div>`
+    : `<p class="hint">${esc(c.name)} does not evolve.</p>`;
+
+  $('#char').innerHTML = `
+    <nav class="prevnext">${step(-1)}<span class="spacer"></span>${step(1)}</nav>
+    <div class="chead"><h1>${esc(s.name || c.name)}</h1>
+      <button type="button" class="edit-only" data-edit-char="${esc(c.id)}">Edit character</button></div>
+    ${tabs}
+    <div class="ctop">
+      <div class="cpic">${slot(s, c.id, j)}</div>
+      <section><h2>Familiar data</h2>${data}</section>
+      <section><h2>Abilities</h2>${abil}<p class="hint">Passive traits. Not decided yet.</p></section>
+    </div>
+    <section><h2>Base stats</h2>${statTable}
+      <p class="hint">Placeholder stat names${known ? '' : ' with no numbers yet'}. Bars are out of ${STAT_MAX}.</p></section>
+    <section><h2>Evolution line</h2>${evo}</section>
+    <section><h2>Moves</h2>
+      <p class="hint">Four moves picked from what ${esc(c.name)} learns, plus one signature that is always equipped. Not filled in yet.</p>
+      <div class="scroll"><table class="moves"><thead><tr><th>Move</th><th>Type</th><th>Category</th><th>Power</th><th>Acc.</th><th>PP</th></tr></thead>
+      <tbody>${moveRows}</tbody></table></div></section>`;
+  markSelected();
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-edit-char]');
+  if (b) openDetail(b.dataset.editChar);
+});
 
 const written = p => p.sections.reduce((n, s) => n + s.items.filter(i => i.n).length, 0);
 
