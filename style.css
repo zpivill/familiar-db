@@ -188,3 +188,40 @@ button:disabled { opacity: .55; cursor: default; }
 .simrules { max-width: 90ch; }
 .simrules ul { padding-left: 20px; display: grid; gap: 4px; }
 .simt .badge { white-space: nowrap; }
+
+/* ---- battle vs AI ---- */
+#play { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; }
+#play > * { min-width: 0; }
+#play .simhead { max-width: 80ch; }
+#play h3 { font-size: 17px; margin: 14px 0 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pteam { display: grid; gap: 8px; align-content: start; }
+.pslot { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: grid; gap: 8px; }
+.pslothead, .pslotmoves { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.pslothead > select { max-width: 100%; }
+.pslotmoves select { flex: 1 1 200px; min-width: 0; }
+.pbattle { display: grid; gap: 10px; }
+.pside { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 4px 12px 12px; }
+.pmons { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.pmon { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: center; }
+.ppic { width: 64px; height: 64px; border-radius: 8px; background: var(--bg); overflow: hidden; }
+.ppic img { width: 100%; height: 100%; object-fit: cover; }
+.pinfo { display: grid; gap: 4px; min-width: 0; }
+.pname { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-weight: 600; }
+.pname a { color: inherit; }
+.php { height: 10px; border-radius: 5px; background: var(--bg); border: 1px solid var(--line); overflow: hidden; }
+.php span { display: block; height: 100%; transition: width .3s; }
+.ptags { display: flex; flex-wrap: wrap; gap: 4px; }
+.pballs { display: inline-flex; gap: 4px; }
+.pball { width: 12px; height: 12px; border-radius: 50%; background: #3aa55d; display: inline-block; }
+.pball.on { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pball.out { background: var(--line); }
+.pfield { margin: 0; padding: 8px 12px; border: 1px dashed var(--accent); border-radius: 10px; color: var(--accent); }
+.pact { background: var(--panel); border: 2px solid var(--accent); border-radius: 12px; padding: 4px 12px 12px; }
+.pmoves { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.pmove { display: grid; gap: 3px; text-align: left; padding: 8px 10px; border-left: 5px solid var(--t); }
+.pmove:not(:disabled):hover { border-color: var(--accent); border-left-color: var(--t); }
+.pmn { font-weight: 600; }
+.pmd, .pme { font-size: 13px; color: var(--muted); }
+.pmh { font-size: 13px; font-weight: 600; color: var(--accent); }
+.pswitch { display: flex; flex-wrap: wrap; gap: 6px; }
+.presult { font-size: 18px; padding: 12px; border-radius: 12px; background: var(--panel); border: 2px solid var(--accent); }

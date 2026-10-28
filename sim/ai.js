@@ -24,7 +24,7 @@ export function estDamage(api, u, mv, t) {
   return d * acc / t.maxhp;
 }
 
-const usable = (m, mv, i) => {
+export const usable = (m, mv) => {
   if (mv.pp <= 0) return false;
   if (m.vol.taunt > 0 && mv.m.cat === 'Status') return false;
   if (m.vol.encore && mv.id !== m.vol.encore.id) return false;

@@ -43,6 +43,10 @@ Abilities, roles, stats and moves show as placeholders until they are added to `
 
 Story, Gameplay, Lore and the other text pages come from `data/wiki.json`. Each page has a title, a one-line blurb and sections of entries (`t` is the entry's name, `n` its text, `plan: true` marks it as a plan that may change). Only settled things go here; ideas still being discussed stay in the game map. Edit the file on GitHub (the pencil icon) and the site updates within about a minute.
 
+## Battle vs AI
+
+The **Battle vs AI** page (`#play`) lets you fight the simulator's AI yourself, one turn at a time. Pick singles or duos, the team size, level and Vitality multiplier, then choose each character on your team and the AI's team (or leave a slot on Random), its ability and its four moves; the signature move is always on. In battle, each move shows its type, power, PP, effect, how effective it is against the foe and an estimate of the damage it would do. You can switch, pick a target in duos, undo your last choice, and rematch the same teams. It uses the same engine and AI as the simulator (`sim/play.js`), so every rule and balance change shows up here too.
+
 ## Battle simulator
 
 The **Battle simulator** page (`#sim`) runs AI against AI battles in batches of thousands and reports balance data: win rates per character, ability, move, type and teammate pair, head-to-head matchups, and what share of damage comes from signature moves. Pick one on one, team singles or duos, the number of battles, which tiers and forms take part, and press Run. Battles run in Web Workers in the background (a few thousand a second), and every table can be sorted and downloaded as CSV. **Watch a battle** plays one battle step by step, and **Rules** shows the damage formula, status effects and field effects, plus any move or ability text the simulator can't read yet.
