@@ -159,3 +159,31 @@ input:disabled, select:disabled { border-color: transparent; background: transpa
 .evo .tags { justify-content: center; }
 #moves .article { max-width: none; }
 #moves .article > p, #moves .article > dl { max-width: 72ch; }
+
+/* ---- battle simulator ---- */
+#sim { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; }
+#sim > * { min-width: 0; }
+#sim .simhead { max-width: 80ch; }
+#sim h3 { font-size: 17px; margin: 18px 0 6px; }
+.simform { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.simform label { display: flex; align-items: center; gap: 6px; }
+.simtiers { display: flex; flex-wrap: wrap; gap: 6px 12px; border: 0; padding: 0; margin: 0; flex-basis: 100%; }
+.simtiers legend { float: left; margin-right: 8px; padding: 0; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; padding: 6px 18px; }
+button:disabled { opacity: .55; cursor: default; }
+.simprog { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); }
+.simprog progress { width: min(320px, 60vw); }
+.simtabs { margin: 0; padding: 0; max-width: none; }
+#simq { max-width: 320px; width: 100%; }
+.simt td, .simt th { white-space: nowrap; }
+.simt .sv { text-align: right; font-variant-numeric: tabular-nums; }
+.sortb { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.linkb { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.simcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.simlist { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
+.simflags { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; }
+.simbars div { grid-template-columns: 90px 1fr 48px; }
+.simlog { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; max-height: 520px; overflow: auto; font-size: 13px; white-space: pre-wrap; }
+.simformula { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; overflow-x: auto; font-size: 13px; }
+.simrules { max-width: 90ch; }
+.simrules ul { padding-left: 20px; display: grid; gap: 4px; }
