@@ -134,8 +134,8 @@ async function simSearch(total, field, start) {
 // other one, for the who-beats-whom table.
 async function simMetaChain(total) {
   const id = SIM.jobId, C = SIM.chain;
-  const rounds = Math.max(2, Math.min(6, Math.round(total / 15000)));
-  const firstBudget = Math.round(total * 0.25), matrix = Math.round(total * 0.1), each = Math.floor((total - firstBudget - matrix) / rounds);
+  const rounds = Math.max(2, Math.min(5, Math.round(total / 20000)));
+  const firstBudget = Math.round(total * 0.4), matrix = Math.round(total * 0.1), each = Math.floor((total - firstBudget - matrix) / rounds);
   C.rounds = rounds + 1;
   C.round = 0;
   let res = await simSearch(firstBudget);
@@ -363,34 +363,52 @@ function simFullRows(gen) {
   });
 }
 // A one-line playstyle from how the team actually won: who lands its knockouts, how quickly its wins come,
-// what it spends turns on, and what its members share (speed, bulk, type).
-function simPlaystyle(keys, D) {
+// what it spends turns on, and what its members share (speed, bulk, type). Most features are compared with
+// the other teams in the same table (`ref`), since top teams all look strong next to the whole roster.
+function simTeamFeatures(keys, D) {
+  const ents = keys.map(k => SIM.meta.byKey.get(k)).filter(e => e && e.stats);
+  const U = Object.values(D.use).reduce((x, y) => x + y, 0) || 1, share = k => (D.use[k] || 0) / U;
+  const avgTurns = SIM.stats.battles ? SIM.stats.turns / SIM.stats.battles : 1;
+  const mean = f => ents.reduce((s, e) => s + f(e), 0) / (ents.length || 1);
+  return {
+    ents, U, share,
+    setup: share('setup'), sustain: share('heal') + share('protect'), status: share('status'), attack: share('attack'),
+    tempo: D.w ? D.winTurns / D.w / avgTurns : 1, winTurns: D.w ? D.winTurns / D.w : 0, avgTurns,
+    spe: mean(e => e.stats.spe), bulk: mean(e => (e.stats.vit + e.stats.grd + e.stats.wil) / 3),
+    phys: mean(e => e.stats.pow - e.stats.ene),
+  };
+}
+function simPlayRef(list) {
+  const fs = list.filter(x => x.D && x.D.g).map(x => simTeamFeatures(x.keys, x.D));
+  const ref = {};
+  for (const f of ['setup', 'sustain', 'status', 'attack', 'tempo', 'spe', 'bulk', 'phys']) ref[f] = fs.length ? fs.reduce((s, x) => s + x[f], 0) / fs.length : 0;
+  return ref;
+}
+function simPlaystyle(keys, D, ref) {
   if (!D || !D.g || !SIM.meta) return { text: '', why: '' };
-  const ents = keys.map(k => SIM.meta.byKey.get(k)).filter(Boolean);
-  const pool = SIM.meta.entrants.filter(e => e.final && e.stats);
-  const avg = f => pool.reduce((s, e) => s + f(e), 0) / pool.length;
-  const bulk = e => (e.stats.vit + e.stats.grd + e.stats.wil) / 3;
-  const teamAvg = f => ents.reduce((s, e) => s + f(e), 0) / ents.length;
+  const F = simTeamFeatures(keys, D), R = ref || F, size = keys.length;
   const kos = keys.map(k => ({ k, n: D.kos[k] || 0 })).sort((a, b) => b.n - a.n);
   const koTot = kos.reduce((s, x) => s + x.n, 0) || 1;
   const [a, b] = kos, sa = a.n / koTot, sb = b ? b.n / koTot : 0;
-  const lead = sa >= 0.35 ? `${entName(a.k)} carry` : sa + sb >= 0.55 && sb >= 0.22 ? `${entName(a.k)} and ${entName(b.k)} lead` : '';
-  const U = Object.values(D.use).reduce((x, y) => x + y, 0) || 1, share = k => (D.use[k] || 0) / U;
-  const avgTurns = SIM.stats.battles ? SIM.stats.turns / SIM.stats.battles : 0;
-  const winTurns = D.w ? D.winTurns / D.w : 0, tempo = avgTurns && winTurns ? winTurns / avgTurns : 1;
-  const fastTeam = teamAvg(e => e.stats.spe) - avg(e => e.stats.spe) >= 10, slowTeam = teamAvg(e => e.stats.spe) - avg(e => e.stats.spe) <= -10;
-  const bulky = teamAvg(bulk) - avg(bulk) >= 8;
-  const types = {}; ents.forEach(e => e.types.forEach(t => { types[t] = (types[t] || 0) + 1; }));
+  const lead = size > 1 && sa >= Math.max(0.25, 1.6 / size) ? `${entName(a.k)} carry` : size > 2 && sa + sb >= Math.max(0.4, 2.6 / size) ? `${entName(a.k)} and ${entName(b.k)} lead` : '';
+  // the feature that sets this team apart most from the others in the table
+  const cands = [
+    [(F.setup - R.setup) / Math.max(0.02, R.setup), 0.4, lead ? 'set up, then sweep' : 'setup offense'],
+    [(F.sustain - R.sustain) / Math.max(0.02, R.sustain), 0.35, 'sustain and outlast'],
+    [(F.status - R.status) / Math.max(0.02, R.status), 0.6, 'status pressure'],
+    [(R.tempo - F.tempo) / 0.08, 1, lead ? 'fast sweep' : 'hyper offense'],
+    [(F.tempo - R.tempo) / 0.08, 1, 'slow grind'],
+    [(F.spe - R.spe) / 8, 1, 'fast attackers'],
+    [(F.bulk - R.bulk) / 6, 1, 'bulky wall'],
+    [(F.attack - R.attack) / 0.04, 1, 'all-out attack'],
+  ].map(([score, need, label]) => ({ v: score / need, label })).sort((x, y) => y.v - x.v);
+  const style = cands[0].v >= 1 ? cands[0].label : 'balanced attack and defence';
+  const types = {}; F.ents.forEach(e => e.types.forEach(t => { types[t] = (types[t] || 0) + 1; }));
   const [coreType, coreN] = Object.entries(types).sort((x, y) => y[1] - x[1])[0] || [];
-  const core = coreN >= Math.max(2, Math.ceil(ents.length / 2)) ? `${coreType} core` : '';
-  const style = share('setup') >= 0.1 ? (lead ? 'set up, then sweep' : 'setup offense')
-    : share('heal') + share('protect') >= 0.12 || (bulky && tempo > 1.15) ? 'sustain and outlast'
-    : share('status') >= 0.1 ? 'status pressure'
-    : tempo < 0.85 || fastTeam ? (lead ? 'fast sweep' : 'hyper offense')
-    : tempo > 1.15 ? (slowTeam ? 'slow, bulky grind' : 'slow grind')
-    : bulky ? 'bulky offense' : 'balanced attack and defence';
-  const text = [lead, style, core].filter(Boolean).join(', ');
-  const why = `KOs: ${kos.slice(0, 2).map(x => `${entName(x.k)} ${pctf(x.n / koTot)}`).join(', ')}. Wins take ${winTurns.toFixed(0)} turns (average ${avgTurns.toFixed(0)}). Turns spent: ${pctf(share('attack'))} attacking, ${pctf(share('setup'))} setup, ${pctf(share('heal') + share('protect'))} healing or protecting, ${pctf(share('status'))} status.`;
+  const core = coreN >= Math.max(2, Math.ceil(F.ents.length / 2)) ? `${coreType} core` : '';
+  const side = F.phys >= 15 ? 'physical' : F.phys <= -15 ? 'energy' : '';
+  const text = [lead, style, [side, core].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const why = `KOs: ${kos.slice(0, 2).map(x => `${entName(x.k)} ${pctf(x.n / koTot)}`).join(', ')}. Wins take ${F.winTurns.toFixed(0)} turns (average ${F.avgTurns.toFixed(0)}). Turns spent: ${pctf(F.attack)} attacking, ${pctf(F.setup)} setup, ${pctf(F.sustain)} healing or protecting, ${pctf(F.status)} status.`;
   return { text: text[0].toUpperCase() + text.slice(1), why };
 }
 const playCell = p => p.text ? `${esc(p.text)}<br><span class="hint">${esc(p.why)}</span>` : '—';
@@ -400,11 +418,12 @@ function simMetaView() {
   const C = SIM.chain;
   if (!C) return '';
   const T = C.teams, n = T.length, k = t => t.keys.join('+');
+  const ref = simPlayRef(T.map(t => ({ keys: t.keys, D: C.detail[k(t)] })));
   const h = (i, j) => { const x = C.h2h[k(T[i]) + '|' + k(T[j])]; return x && x.g ? x.w / x.g : NaN; };
   const status = SIM.running ? (C.matrix ? 'Playing every meta team against every other one.' : C.round === 0 ? 'Round 1: finding the strongest team.' : `Round ${C.round + 1} of ${C.rounds}: finding the best counter to meta team ${n}.`)
     : SIM.stopped && !C.matrix ? 'The run stopped before the chain finished.' : '';
   const rows = T.map((t, i) => {
-    const p = simPlaystyle(t.keys, C.detail[k(t)]);
+    const p = simPlaystyle(t.keys, C.detail[k(t)], ref);
     const others = T.map((_, j) => j).filter(j => j !== i).map(j => h(i, j)).filter(isFinite);
     return `<tr><td class="sv">${i + 1}</td><td>${t.keys.map(entLink).join(' + ')}</td><td>${playCell(p)}</td>
       <td class="sv">${i === 0 ? '—' : pctf(h(i, i - 1), 1)}</td><td class="sv">${others.length ? pctf(others.reduce((a, b) => a + b, 0) / others.length, 1) : '—'}</td></tr>`;
@@ -434,7 +453,10 @@ function simRankingTable() {
     ['Win %', r => r.wr, r => winCell(r.w, r.g), 'sv'],
     ['Sure win %', r => r.sure, r => pctf(r.sure, 1), 'sv'],
   ];
-  if (detail && !SIM.chain) cols.push(['Playstyle', r => simPlaystyle(r.keys, detail[r.k]).text, r => playCell(simPlaystyle(r.keys, detail[r.k]))]);
+  if (detail && !SIM.chain) {
+    const ref = simPlayRef(rows.slice().sort((a, b) => b.sure - a.sure).slice(0, 16).map(r => ({ keys: r.keys, D: detail[r.k] })));
+    cols.push(['Playstyle', r => simPlaystyle(r.keys, detail[r.k], ref).text, r => playCell(simPlaystyle(r.keys, detail[r.k], ref))]);
+  }
   const search = r => r.keys.map(entName).join(' ');
   // Who keeps turning up in the best teams. Steadier between runs than the exact teams, which can differ by one member.
   const best = [...(finalGen ? rows : simFullRows(SIM.gen - 1))].sort((a, b) => b.sure - a.sure).slice(0, 16);
@@ -582,7 +604,7 @@ function simSettings() {
     <label class="check"><input type="checkbox" name="gags"${o.gags ? ' checked' : ''}> Gag characters</label>
     <fieldset class="simtiers"><legend>Tiers <span class="hint">(none ticked = all)</span></legend>${RARITY.map(([k, l]) => `<label class="check"><input type="checkbox" name="tier" value="${k}"${o.tiers.includes(k) ? ' checked' : ''}> ${l}</label>`).join('')}</fieldset>
   </form>
-  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.format === 'duel' ? '' : o.teamSearch === 'best' ? ' Strongest teams searches over several generations of teams and ranks the best ones on the Teams tab. More battles means more generations: 50,000 or more gives the steadiest results.' : o.teamSearch === 'meta' ? ' Meta chain finds the strongest team, then the best counter to it, then the best counter to that, and so on, and shows who beats whom on the Teams tab. 100,000 battles gives 7 meta teams.' : ''}</p>`;
+  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.format === 'duel' ? '' : o.teamSearch === 'best' ? ' Strongest teams searches over several generations of teams and ranks the best ones on the Teams tab. More battles means more generations: 50,000 or more gives the steadiest results.' : o.teamSearch === 'meta' ? ' Meta chain finds the strongest team, then the best counter to it, then the best counter to that, and so on, and shows who beats whom on the Teams tab. 100,000 battles gives 6 meta teams.' : ''}</p>`;
 }
 
 function renderSim() {
