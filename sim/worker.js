@@ -14,7 +14,7 @@ self.onmessage = ({ data: msg }) => {
       for (const e of data.entrants) for (const a of e.abilities) for (const s of a.ab.unsupported) unsupported.push({ kind: 'ability', name: a.name, id: e.key, text: s });
       self.postMessage({
         type: 'ready',
-        entrants: data.entrants.map(e => ({ key: e.key, cid: e.cid, name: e.name, charName: e.charName, rarity: e.rarity, types: e.types, total: e.total, final: e.final, gag: e.gag, villain: e.villain, abilities: e.abilities.map(a => ({ name: a.name, hidden: a.hidden })) })),
+        entrants: data.entrants.map(e => ({ key: e.key, cid: e.cid, name: e.name, charName: e.charName, rarity: e.rarity, types: e.types, stats: e.stats, total: e.total, final: e.final, gag: e.gag, villain: e.villain, abilities: e.abilities.map(a => ({ name: a.name, hidden: a.hidden })) })),
         moves: [...data.moves.values()].map(m => ({ id: m.id, name: m.name, type: m.type, cat: m.category, power: m.power, size: m.size, sig: !!m.signature, owner: m.owner })),
         unsupported,
       });
