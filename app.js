@@ -385,15 +385,16 @@ function route() {
   // A character's page is #c/<id>, or #c/<id>/<form> for a later form.
   const [, cid, form] = id.match(/^c\/([^/]+)(?:\/(\d+))?$/) || [];
   const ci = cid ? roster.findIndex(c => c.id === cid) : -1;
-  const where = tab ? 'roster' : page ? 'wiki' : ci >= 0 ? 'char' : id === 'moves' ? 'moves' : 'home';
-  ['home', 'roster', 'wiki', 'char', 'moves'].forEach(p => { $('#' + p).hidden = p !== where; });
+  const where = tab ? 'roster' : page ? 'wiki' : ci >= 0 ? 'char' : id === 'moves' ? 'moves' : id === 'sim' ? 'sim' : 'home';
+  ['home', 'roster', 'wiki', 'char', 'moves', 'sim'].forEach(p => { $('#' + p).hidden = p !== where; });
   $('#crumb').innerHTML = where === 'home' ? ''
     : where === 'char' ? `<a href="#home">Home</a> / <a href="#roster">Roster</a> / <span>${esc(roster[ci].name)}</span>`
-    : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page ? page.title : 'Moves')}</span>`;
+    : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page ? page.title : where === 'sim' ? 'Battle simulator' : 'Moves')}</span>`;
   if (where === 'home') renderHome();
   if (where === 'wiki') renderPage(page);
   if (where === 'roster') renderTab(id);
   if (where === 'moves') renderMoves();
+  if (where === 'sim' && typeof renderSim === 'function') renderSim();
   if (where === 'char') renderChar(ci, Math.min(Math.max((+form || 1) - 1, 0), roster[ci].stages.length - 1));
 }
 
@@ -517,6 +518,7 @@ function renderHome() {
     <div class="tiles">
       ${tile('roster', 'Roster', 'Every familiar, their types, forms, villains and gags.', `${roster.length} characters`)}
       ${tile('moves', 'Moves', 'Every move: generic moves with each character\'s name for them, and signature moves.', `${moves.length} moves`)}
+      ${tile('sim', 'Battle simulator', 'AI against AI in batches of thousands, with win rates per character, ability, move, type and team.', 'For balancing')}
       ${pages.join('')}
     </div>
     <p class="hint">Only settled things go on these pages. Ideas still being discussed stay in the game map.${wiki.updated ? ` Text pages last updated ${esc(wiki.updated)}.` : ''}</p>`;

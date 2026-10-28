@@ -42,3 +42,15 @@ Abilities, roles, stats and moves show as placeholders until they are added to `
 ## Editing the text pages
 
 Story, Gameplay, Lore and the other text pages come from `data/wiki.json`. Each page has a title, a one-line blurb and sections of entries (`t` is the entry's name, `n` its text, `plan: true` marks it as a plan that may change). Only settled things go here; ideas still being discussed stay in the game map. Edit the file on GitHub (the pencil icon) and the site updates within about a minute.
+
+## Battle simulator
+
+The **Battle simulator** page (`#sim`) runs AI against AI battles in batches of thousands and reports balance data: win rates per character, ability, move, type and teammate pair, head-to-head matchups, and what share of damage comes from signature moves. Pick one on one, team singles or duos, the number of battles, which tiers and forms take part, and press Run. Battles run in Web Workers in the background (a few thousand a second), and every table can be sorted and downloaded as CSV. **Watch a battle** plays one battle step by step, and **Rules** shows the damage formula, status effects and field effects, plus any move or ability text the simulator can't read yet.
+
+Each character battles with four moves picked from its form's learnset plus its signature, and rolls one of its abilities. The code lives in `sim/`:
+
+- `sim/rules.js`: the type chart and every number worth tuning (STAB, crit, status strength, battle level, Vitality multiplier).
+- `sim/compile.js`: reads the move effects in `data/moves.json` and the ability texts in `data/characters.json` into rules. A new ability or move written in the same style as the existing ones works without code changes; anything it can't read shows up under Rules.
+- `sim/battle.js` (the engine), `sim/ai.js` (the battle AI), `sim/batch.js` (batches and totals), `sim/worker.js` (the Web Worker), `sim/page.js` (the page).
+
+From a terminal: `node sim/cli.mjs 5000 duel` runs 5,000 one on one battles (`team` or `duos` for the other formats), `node sim/cli.mjs 1 team 7 watch` prints one battle's log, and `node sim/test/mechanics.mjs` checks single rules.
