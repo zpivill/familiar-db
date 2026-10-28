@@ -47,6 +47,8 @@ Story, Gameplay, Lore and the other text pages come from `data/wiki.json`. Each 
 
 The **Battle simulator** page (`#sim`) runs AI against AI battles in batches of thousands and reports balance data: win rates per character, ability, move, type and teammate pair, head-to-head matchups, and what share of damage comes from signature moves. Pick one on one, team singles or duos, the number of battles, which tiers and forms take part, and press Run. Battles run in Web Workers in the background (a few thousand a second), and every table can be sorted and downloaded as CSV. **Watch a battle** plays one battle step by step, and **Rules** shows the damage formula, status effects and field effects, plus any move or ability text the simulator can't read yet.
 
+**Rank whole teams** (team singles and duos) ranks full teams instead of characters. An open round plays a large field of random teams against each other. The best 16 and a variant of each, with one member swapped, then play each other in the finals. The ranking is on the Teams tab.
+
 Each character battles with four moves picked from its form's learnset plus its signature, and rolls one of its abilities. The code lives in `sim/`:
 
 - `sim/rules.js`: the type chart and every number worth tuning (STAB, crit, status strength, battle level, Vitality multiplier).
