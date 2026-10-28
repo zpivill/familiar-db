@@ -30,14 +30,14 @@ function simMessage(msg, i, onReady) {
   if (msg.type === 'ready') { if (!SIM.meta) SIM.meta = { ...msg, byKey: new Map(msg.entrants.map(e => [e.key, e])), moveById: new Map(msg.moves.map(m => [m.id, m])) }; onReady(); }
   if (msg.type === 'progress' && msg.id === SIM.runId) {
     SIM.stats = simMerge(SIM.stats || simEmpty(), msg.stats);
-    const T = SIM.full?.[SIM.stage]; if (T) { for (const [k, v] of Object.entries(msg.stats.full)) { const t = T[k] || (T[k] = { g: 0, w: 0 }); t.g += v.g; t.w += v.w; } }
+    const T = SIM.plan && SIM.full[SIM.gen]; if (T) { for (const [k, v] of Object.entries(msg.stats.full)) { const t = T[k] || (T[k] = { g: 0, w: 0 }); t.g += v.g; t.w += v.w; } }
     SIM.done = SIM.stats.battles; SIM.ms = performance.now() - SIM.t0;
     simDraw();
   }
   if (msg.type === 'done' && msg.id === SIM.runId) {
     SIM.left--;
     if (SIM.left > 0) return;
-    if (SIM.stage === 'open') return simFinals();
+    if (SIM.plan && SIM.gen < SIM.plan.length - 1) return simNextGen();
     SIM.running = false; SIM.ms = performance.now() - SIM.t0; simDraw();
   }
   if (msg.type === 'watch') { SIM.watch = msg.result; SIM.watching = false; simDraw(); }
@@ -69,35 +69,56 @@ function simSend(total, ladder, ladderSize) {
         ladder, offset: Math.floor(i * (ladderSize || 0) / n) } });
   });
 }
-// Team ranking runs in two rounds. The open round plays a big field of random teams against each other,
-// about 60 battles each. The finals take the 16 best, add a variant of each with one member swapped,
-// and play those 32 against each other with the rest of the battles, so the ranking is decided by
-// how teams do against other good teams.
-const SIM_FINALISTS = 16;
+// Team ranking is a search over generations. Generation 1 plays a big field of random teams against each other.
+// Each later generation keeps the best fifth, adds two one-swap variants of each, mixes kept teams together,
+// and adds fresh random teams; new members lean toward characters with good win rates so far, but a third
+// of picks stay uniform so niche and lower tier picks keep getting a chance. The last generation replays
+// only the best 32 teams found, against each other, with a quarter of all battles, so their win rates are tight.
+const SIM_FINAL_TEAMS = 32;
+function simPlan(total) {
+  const gens = Math.max(3, Math.min(14, Math.round(total / 8000) + 2));
+  const first = Math.round(total * 0.2), mid = Math.floor((total - first - Math.round(total * 0.25)) / (gens - 2));
+  return Array.from({ length: gens }, (_, i) => i === 0 ? first : i < gens - 1 ? mid : total - first - mid * (gens - 2));
+}
 function simRun() {
   if (!SIM.ready) return;
   const o = SIM.opts;
   SIM.stats = simEmpty(); SIM.done = 0; SIM.target = +o.count; SIM.running = true; SIM.t0 = performance.now(); SIM.error = '';
   SIM.lastOpts = { ...o, tiers: [...o.tiers] };
-  SIM.stage = o.rankTeams && o.format !== 'duel' ? 'open' : null;
-  SIM.full = { open: {}, finals: {} };
-  if (!SIM.stage) simSend(SIM.target);
+  SIM.plan = o.rankTeams && o.format !== 'duel' ? simPlan(SIM.target) : null;
+  SIM.gen = 0; SIM.full = []; SIM.kept = {}; SIM.stopped = false;
+  if (!SIM.plan) simSend(SIM.target);
   else {
     SIM.tab = 'teams';
-    const open = Math.round(SIM.target * 0.6), size = Math.max(40, Math.min(400, Math.round(open * 2 / 60)));
-    simSend(open, { stage: 'open', size, seed: Math.floor(Math.random() * 1e9) }, size);
+    SIM.full.push({});
+    const size = Math.max(40, Math.min(400, Math.round(SIM.plan[0] * 2 / 60)));
+    simSend(SIM.plan[0], { fresh: size, seed: Math.floor(Math.random() * 1e9) }, size);
   }
   simDraw();
 }
-function simFinals() {
-  const top = simFullRows('open').sort((a, b) => b.sure - a.sure).slice(0, SIM_FINALISTS).map(r => r.keys);
-  SIM.stage = 'finals';
-  simSend(SIM.target - SIM.done, { stage: 'finals', top, seed: Math.floor(Math.random() * 1e9) }, top.length * 2);
+function simNextGen() {
+  const prev = simFullRows(SIM.gen).sort((a, b) => b.sure - a.sure);
+  SIM.gen++;
+  SIM.full.push({});
+  const battles = SIM.plan[SIM.gen], last = SIM.gen === SIM.plan.length - 1;
+  const weights = Object.fromEntries(Object.entries(SIM.stats.ent).map(([k, v]) => [k, Math.max(0.02, v.w / v.g) ** 3]));
+  const seed = Math.floor(Math.random() * 1e9);
+  let ladder, size;
+  if (last) {
+    ladder = { top: prev.slice(0, SIM_FINAL_TEAMS).map(r => r.keys), seed };
+    size = ladder.top.length;
+  } else {
+    const pop = Math.max(30, Math.min(160, Math.round(battles * 2 / 80))), keep = Math.round(pop / 5);
+    ladder = { top: prev.slice(0, keep).map(r => r.keys), variants: 2, crosses: keep, fresh: keep, weights, seed };
+    size = keep * 5;
+  }
+  for (const t of ladder.top) for (const k of t) SIM.kept[k] = (SIM.kept[k] || 0) + 1;
+  simSend(battles, ladder, size);
   simDraw();
 }
 function simStop() {
   SIM.workers.forEach(w => w.terminate());
-  SIM.workers = []; SIM.ready = false; SIM.running = false; SIM.stage = SIM.stage && 'stopped';
+  SIM.workers = []; SIM.ready = false; SIM.running = false; SIM.stopped = true;
   simWorkers();
   simDraw();
 }
@@ -271,15 +292,16 @@ function simTypes() {
     ], { sortBy: 2 })}`;
 }
 
-function simFullRows(stage) {
-  return Object.entries(SIM.full?.[stage] || {}).map(([k, v]) => {
+function simFullRows(gen) {
+  return Object.entries(SIM.full?.[gen] || {}).map(([k, v]) => {
     const wr = v.w / v.g;
     return { k, keys: k.split('+'), ...v, wr, sure: wr - margin(wr, v.g) };
   });
 }
 function simRanking() {
-  const fin = simFullRows('finals'), open = simFullRows('open');
-  if (!fin.length && !open.length) return '';
+  if (!SIM.plan || !SIM.full.length) return '';
+  const G = SIM.plan.length, finalGen = SIM.gen === G - 1, done = finalGen && !SIM.running;
+  const rows = simFullRows(SIM.gen);
   const cols = [
     ['Team', r => r.keys.map(entName).join(' + '), r => r.keys.map(entLink).join(' + ')],
     ['Battles', r => r.g, null, 'sv'],
@@ -287,12 +309,29 @@ function simRanking() {
     ['Sure win %', r => r.sure, r => pctf(r.sure, 1), 'sv'],
   ];
   const search = r => r.keys.map(entName).join(' ');
-  const finished = SIM.stage === 'finals' && !SIM.running;
+  // Who keeps turning up in the best teams. Steadier between runs than the exact teams, which can differ by one member.
+  const best = [...(finalGen ? rows : simFullRows(SIM.gen - 1))].sort((a, b) => b.sure - a.sure).slice(0, 16);
+  const mem = {};
+  best.forEach(r => r.keys.forEach(k => { const m = mem[k] || (mem[k] = { k, n: 0, wr: 0 }); m.n++; m.wr += r.wr; }));
+  for (const k of Object.keys(SIM.kept)) if (!mem[k]) mem[k] = { k, n: 0, wr: 0 };
+  const topTier = SIM.meta ? Math.max(...best.flatMap(r => r.keys.map(k => RARITY.findIndex(([t]) => t === SIM.meta.byKey.get(k)?.rarity)))) : -1;
+  const memRows = Object.values(mem).map(m => ({ ...m, e: SIM.meta?.byKey.get(m.k) || {}, kept: SIM.kept[m.k] || 0, avg: m.n ? m.wr / m.n : NaN }));
+  const status = SIM.running ? `Generation ${SIM.gen + 1} of ${G} is running.` : SIM.stopped && !done ? `The run stopped in generation ${SIM.gen + 1} of ${G}.` : '';
   return `<h2>Best whole teams</h2>
-    <p class="hint">The open round played ${open.length} random teams against each other. The best ${SIM_FINALISTS} went to the finals with a variant of each (one member swapped), and the finals teams played each other, so their win % is against other strong teams. Movesets and abilities are rolled fresh every battle, so this ranks the members, not one exact build. "Sure win %" takes off the 95% margin and is what the ranking goes by.</p>
-    ${fin.length ? `<h3>Finals${finished ? '' : ' (still running)'}</h3>${simTable('finals', fin, cols, { sortBy: 3, search })}`
-      : `<p class="hint">${SIM.running ? 'The finals start when the open round ends.' : 'The run stopped before the finals.'}</p>`}
-    <details${fin.length ? '' : ' open'}><summary>Open round</summary>${simTable('open', open, cols, { sortBy: 3, search, limit: 100 })}</details>
+    <p class="hint">A search over ${G} generations. The first plays random teams. Each later one keeps the best fifth, tries them with one member swapped, mixes kept teams together and adds fresh teams. New members come from the whole pool you picked, leaning toward characters who are winning, so a lower tier or unevolved character only stays if it helps. The last generation replays the best ${SIM_FINAL_TEAMS} against each other with a quarter of all battles. Movesets and abilities are rolled fresh every battle, so this ranks the members, not one exact build. "Sure win %" takes off the 95% margin and is what the ranking goes by.</p>
+    ${status ? `<p class="hint"><strong>${status}</strong> ${finalGen ? '' : 'The table shows the current generation, which still includes untested new teams.'}</p>` : ''}
+    <h3>${done ? 'Final ranking' : `Generation ${SIM.gen + 1}`}</h3>
+    ${simTable('fullteams', rows, cols, { sortBy: 3, search, limit: finalGen ? 300 : 50 })}
+    <h3>Most common members of the top 16 teams</h3>
+    <p class="hint">"In top 16" counts teams in ${finalGen ? 'the final ranking' : 'the last finished generation'}. "Kept" counts how many times across all generations the character was in a kept team: high means it keeps winning its place, not just one lucky team. Characters below the top tier present, or not in a final form, are marked, so you can see which ones earn a spot anyway.</p>
+    ${simTable('members', memRows, [
+      ['Character', r => entName(r.k), r => entLink(r.k)],
+      ['Tier', r => rarityName(r.e.rarity || ''), r => `${esc(rarityName(r.e.rarity || ''))}${topTier >= 0 && RARITY.findIndex(([t]) => t === r.e.rarity) < topTier ? ' <span class="badge">lower tier</span>' : ''}`],
+      ['Form', r => r.e.final ? 'Final' : 'Earlier', r => r.e.final ? 'Final' : '<span class="badge">earlier form</span>'],
+      ['In top 16', r => r.n, null, 'sv'],
+      ['Kept', r => r.kept, null, 'sv'],
+      ['Avg team win %', r => r.avg, r => pctf(r.avg, 1), 'sv'],
+    ], { sortBy: 3, search: r => entName(r.k), limit: 60 })}
     <h2>Teammate pairs</h2>`;
 }
 
@@ -416,7 +455,7 @@ function simSettings() {
     <label class="check"><input type="checkbox" name="gags"${o.gags ? ' checked' : ''}> Gag characters</label>
     <fieldset class="simtiers"><legend>Tiers <span class="hint">(none ticked = all)</span></legend>${RARITY.map(([k, l]) => `<label class="check"><input type="checkbox" name="tier" value="${k}"${o.tiers.includes(k) ? ' checked' : ''}> ${l}</label>`).join('')}</fieldset>
   </form>
-  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.rankTeams && o.format !== 'duel' ? ' Rank whole teams plays an open round of random teams, then finals for the best 16 and their variants. Results are on the Teams tab. 25,000 battles or more gives a steadier ranking.' : ''}</p>`;
+  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.rankTeams && o.format !== 'duel' ? ' Rank whole teams searches over several generations of teams and ranks the best ones on the Teams tab. More battles means more generations: 50,000 or more gives the steadiest results.' : ''}</p>`;
 }
 
 function renderSim() {
@@ -426,7 +465,7 @@ function renderSim() {
   const S = SIM.stats;
   const rate = SIM.ms > 0 ? Math.round(SIM.done / (SIM.ms / 1000)) : 0;
   const prog = SIM.running || S ? `<div class="simprog"><progress max="${SIM.target}" value="${SIM.done}"></progress>
-      <span>${SIM.done.toLocaleString()} of ${SIM.target.toLocaleString()} battles${SIM.running && SIM.stage ? (SIM.stage === 'open' ? ' · open round' : ' · finals') : ''}${rate ? ` · ${rate.toLocaleString()} a second` : ''}${SIM.running ? '' : ' · done'}</span></div>` : '';
+      <span>${SIM.done.toLocaleString()} of ${SIM.target.toLocaleString()} battles${SIM.running && SIM.plan ? ` · generation ${SIM.gen + 1} of ${SIM.plan.length}` : ''}${rate ? ` · ${rate.toLocaleString()} a second` : ''}${SIM.running ? '' : ' · done'}</span></div>` : '';
   const body = !S || !S.battles ? (SIM.tab === 'rules' ? simRulesTab() : SIM.tab === 'watch' && SIM.meta ? simWatch() : '<p class="soon">Pick settings and press Run. Results fill in while it runs.</p>')
     : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, watch: simWatch, rules: simRulesTab })[SIM.tab]();
   const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups'].includes(SIM.tab) && S?.battles;
@@ -438,7 +477,7 @@ function renderSim() {
     <div class="row"><button type="button" id="simrun" class="primary"${SIM.ready && !SIM.running ? '' : ' disabled'}>${SIM.ready ? 'Run' : 'Starting…'}</button>
       ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : ''}${prog}</div>
     ${SIM.error ? `<p class="danger">${esc(SIM.error)}</p>` : ''}
-    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.level}, Vitality ×${lo.hpScale}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.stage ? '. Whole-team ranking run: the finals replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
+    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.level}, Vitality ×${lo.hpScale}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.plan ? '. Whole-team ranking run: later generations replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
     <nav class="tabs simtabs" aria-label="Simulator views">${SIM_TABS.map(([k, l]) => `<a href="#sim" data-simtab="${k}"${k === SIM.tab ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
     ${searchable ? `<input id="simq" type="search" placeholder="Filter rows" value="${esc(SIM.q)}">` : ''}
     <div class="simbody">${body}</div>`;

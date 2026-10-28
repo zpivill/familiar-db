@@ -132,8 +132,10 @@ const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'duos' ? M
 export const teamKey = t => t.map(e => e.key).sort().join('+');
 
 // Whole teams for team ranking. Every worker builds the same list from the same seed.
-// "open": `size` random teams. "finals": the given top teams plus one variant of each with one member swapped,
-// so the finals also test whether a near miss of a good team is better still.
+// A generation is the kept teams (`top`), plus for each kept team `variants` copies with one member swapped,
+// `crosses` teams mixed from two kept teams, and `fresh` brand-new random teams so the search keeps exploring.
+// Swapped-in and fresh members come from the whole pool, so a lower tier or unevolved character stays
+// only if it actually helps its team win.
 export function ladderTeams(data, opts) {
   const L = opts.ladder, r = rng(L.seed), size = teamSize(opts);
   const pool = entrantPool(data, opts), byKey = new Map(data.entrants.map(e => [e.key, e]));
@@ -141,32 +143,53 @@ export function ladderTeams(data, opts) {
   pool.forEach(e => { (byTier[e.rarity] || (byTier[e.rarity] = [])).push(e); });
   const tierKeys = Object.keys(byTier).filter(t => byTier[t].length >= size);
   const focus = opts.focus ? pool.find(e => e.key === opts.focus) : null;
+  // L.weights (character key -> how strongly to favour it, from win rates so far) steers most new picks toward
+  // characters that are doing well; a third stay uniform so niche picks keep getting tried.
+  const W = L.weights, cum = new Map();
+  const pick = src => {
+    if (!W || r() < 1 / 3) return r.pick(src);
+    let c = cum.get(src);
+    if (!c) { let t = 0; c = src.map(e => (t += W[e.key] ?? 0.05)); cum.set(src, c); }
+    const x = r() * c[c.length - 1];
+    let lo = 0, hi = c.length - 1;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (c[m] < x) lo = m + 1; else hi = m; }
+    return src[lo];
+  };
   const fill = (t, src) => {
     const used = new Set(t.map(e => e.cid));
     for (let guard = 0; t.length < size && guard < 500; guard++) {
-      const e = r.pick(src);
+      const e = pick(src);
       if (!used.has(e.cid)) { used.add(e.cid); t.push(e); }
     }
     return t.length === size ? t : null;
   };
   const out = [], seen = new Set();
-  const add = t => { if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); } };
-  if (L.stage === 'finals') {
-    const top = L.top.map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size);
-    top.forEach(add);
-    for (const t of top) {
-      const swappable = t.filter(e => e !== focus);
-      const src = opts.sameTier ? byTier[t[0].rarity] || pool : pool;
-      for (let tries = 0, n = out.length; swappable.length && out.length === n && tries < 10; tries++) {
-        const out1 = r.pick(swappable);
-        add(fill(t.filter(e => e !== out1), src));
+  const add = t => { if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); return true; } return false; };
+  const srcOf = t => opts.sameTier ? byTier[t[0].rarity] || pool : pool;
+  const top = (L.top || []).map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size);
+  top.forEach(add);
+  for (const t of top) {
+    const swappable = t.filter(e => e !== focus);
+    for (let v = 0; v < (L.variants || 0) && swappable.length; v++) {
+      for (let tries = 0; tries < 10; tries++) {
+        const gone = r.pick(swappable);
+        if (add(fill(t.filter(e => e !== gone), srcOf(t)))) break;
       }
     }
-  } else {
-    for (let tries = 0; out.length < L.size && tries < L.size * 20; tries++) {
-      const src = opts.sameTier && tierKeys.length ? byTier[r.pick(tierKeys)] : pool;
-      add(fill(focus ? [focus] : [], src));
-    }
+  }
+  for (let c = 0, tries = 0; c < (L.crosses || 0) && top.length > 1 && tries < L.crosses * 10; tries++) {
+    const a = r.pick(top), b = r.pick(top);
+    if (a === b || (opts.sameTier && a[0].rarity !== b[0].rarity)) continue;
+    const mix = [...a, ...b].filter((e, i, all) => all.findIndex(x => x.cid === e.cid) === i);
+    const t = focus ? [focus] : [];
+    const rest = mix.filter(e => e !== focus);
+    while (t.length < size && rest.length) t.push(rest.splice(Math.floor(r() * rest.length), 1)[0]);
+    if (add(fill(t, srcOf(a)))) c++;
+  }
+  const want = out.length + (L.fresh || 0);
+  for (let tries = 0; out.length < want && tries < (L.fresh || 0) * 20; tries++) {
+    const src = opts.sameTier && tierKeys.length ? byTier[r.pick(tierKeys)] : pool;
+    add(fill(focus ? [focus] : [], src));
   }
   if (out.length < 2) throw new Error('Not enough characters to make teams. Pick more tiers or a smaller team size.');
   return out;
