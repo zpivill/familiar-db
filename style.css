@@ -187,3 +187,4 @@ button:disabled { opacity: .55; cursor: default; }
 .simformula { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; overflow-x: auto; font-size: 13px; }
 .simrules { max-width: 90ch; }
 .simrules ul { padding-left: 20px; display: grid; gap: 4px; }
+.simt .badge { white-space: nowrap; }
