@@ -49,6 +49,8 @@ const dlg = $('#detail');
 
 let roster = [];
 let wiki = { pages: [] };  // Story, Gameplay, Lore and the other text pages, from data/wiki.json
+let moves = [];            // generic and signature moves, from data/moves.json
+const moveById = id => moves.find(m => m.id === id);
 const picked = new Set();  // type chips that are on
 let selected = null;       // {id, j}: the picture slot the next paste goes into
 let openId = null;         // character shown in the dialog
@@ -383,25 +385,41 @@ function route() {
   // A character's page is #c/<id>, or #c/<id>/<form> for a later form.
   const [, cid, form] = id.match(/^c\/([^/]+)(?:\/(\d+))?$/) || [];
   const ci = cid ? roster.findIndex(c => c.id === cid) : -1;
-  const where = tab ? 'roster' : page ? 'wiki' : ci >= 0 ? 'char' : 'home';
-  ['home', 'roster', 'wiki', 'char'].forEach(p => { $('#' + p).hidden = p !== where; });
+  const where = tab ? 'roster' : page ? 'wiki' : ci >= 0 ? 'char' : id === 'moves' ? 'moves' : 'home';
+  ['home', 'roster', 'wiki', 'char', 'moves'].forEach(p => { $('#' + p).hidden = p !== where; });
   $('#crumb').innerHTML = where === 'home' ? ''
     : where === 'char' ? `<a href="#home">Home</a> / <a href="#roster">Roster</a> / <span>${esc(roster[ci].name)}</span>`
-    : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page.title)}</span>`;
+    : `<a href="#home">Home</a> / <span>${esc(tab ? 'Roster' : page ? page.title : 'Moves')}</span>`;
   if (where === 'home') renderHome();
   if (where === 'wiki') renderPage(page);
   if (where === 'roster') renderTab(id);
+  if (where === 'moves') renderMoves();
   if (where === 'char') renderChar(ci, Math.min(Math.max((+form || 1) - 1, 0), roster[ci].stages.length - 1));
 }
 
 // ---- character pages, laid out like a pokemondb entry ----
 
-// Placeholder stat names until the real ones are decided (see Stat numbers in the game map).
-const STATS = [['hp', 'HP'], ['atk', 'Attack'], ['def', 'Defense'], ['spa', 'Sp. Atk'], ['spd', 'Sp. Def'], ['spe', 'Speed']];
+// Power and Guard are the physical side, Energy and Will the energy side (ki, chakra, cursed energy, magic).
+const STATS = [['vit', 'Vitality'], ['pow', 'Power'], ['grd', 'Guard'], ['ene', 'Energy'], ['wil', 'Will'], ['spe', 'Speed']];
 const STAT_MAX = 255;
-// Four moves picked from the learned pool, plus one signature that is always equipped.
-const MOVE_SLOTS = 5;
 const tbd = '<span class="tbd">TBD</span>';
+const dash = v => v ?? '—';
+// A learned move shows its anime name with the generic move in brackets, so its scale is obvious.
+const moveName = (m, as) => as && as !== m.name ? `<b>${esc(as)}</b> <span class="hint">(${esc(m.name)})</span>` : `<b>${esc(m.name)}</b>`;
+const moveCells = m => `<td>${badge(m.type)}</td><td>${m.category}</td>
+  <td class="sv">${m.power ?? (m.category === 'Status' ? '—' : 'Varies')}</td><td class="sv">${m.accuracy ?? (m.category === 'Status' ? '—' : 'Never misses')}</td><td class="sv">${m.pp}</td>`;
+const lvOrder = lv => lv === 'evo' ? 1.5 : lv;
+// Every place a generic move is learned under another name: Map of move id -> [{as, c, j}].
+function renames() {
+  const out = new Map();
+  roster.forEach(c => c.stages.forEach((s, j) => (s.learn || []).forEach(e => {
+    if (!e.as) return;
+    const list = out.get(e.move) || out.set(e.move, []).get(e.move);
+    if (!list.some(x => x.as === e.as && x.c === c)) list.push({ as: e.as, c, j });
+  })));
+  return out;
+}
+const ROLE_NOTE = 'Hidden roles: what the team intends this character to be good at, for balancing. Never shown to players, and not a limit on how they can be played.';
 const charLink = (c, j) => '#c/' + c.id + (j ? '/' + (j + 1) : '');
 
 function renderChar(i, j) {
@@ -424,12 +442,14 @@ function renderChar(i, j) {
     ${row('Form', c.stages.length > 1 ? `${j + 1} of ${c.stages.length}` : 'Only form')}
     ${row('Side', [c.villain && '<span class="badge villain">Villain</span>', c.gag && '<span class="badge gag">Gag</span>'].filter(Boolean).join(' ') || 'Hero')}
     ${row('Encounter tier', tier + ' <span class="badge plan">Team only</span>')}
+    ${row('Hidden roles', c.roles?.length ? `${c.roles.map(r => `<span class="badge role">${esc(r)}</span>`).join(' ')} <span class="badge plan" title="${esc(ROLE_NOTE)}">Team only</span>${c.roleNote ? `<br><span class="hint">${esc(c.roleNote)}</span>` : ''}` : tbd)}
   </table>`;
 
   // Abilities, moves and stats are placeholders until they are filled in data/characters.json.
-  const abilities = c.abilities?.length ? c.abilities : [{}, { hidden: true }];
+  // A form can have its own abilities; otherwise it uses the character's.
+  const abilities = s.abilities?.length ? s.abilities : c.abilities?.length ? c.abilities : [{}, { hidden: true }];
   const abil = `<table class="vitals">${abilities.map((a, k) =>
-    row(a.hidden ? 'Hidden ability' : `Ability ${k + 1}`, a.name ? `<b>${esc(a.name)}</b>${a.text ? `<br><span class="hint">${esc(a.text)}</span>` : ''}` : tbd)).join('')}</table>`;
+    row(a.hidden ? 'Hidden ability' : `Ability ${k + 1}`, a.name ? `<b>${esc(a.name)}</b>${a.text ? `<br><span class="hint">${esc(a.text)}</span>` : ''}${a.like ? `<br><small class="like">Works like ${esc(a.like)}</small>` : ''}` : tbd)).join('')}</table>`;
 
   const stats = s.stats || {};
   const known = STATS.every(([k]) => typeof stats[k] === 'number');
@@ -438,11 +458,18 @@ function renderChar(i, j) {
     return `<tr><th>${l}</th><td class="sv">${v ?? '—'}</td><td class="sb">${v ? `<em style="width:${v / STAT_MAX * 100}%"></em>` : ''}</td></tr>`; }).join('');
   const statTable = `<table class="basestats">${statRows}<tr class="total"><th>Total</th><td class="sv">${known ? total : '—'}</td><td></td></tr></table>`;
 
-  const moves = Array.from({ length: MOVE_SLOTS }, (_, k) => c.moves?.[k] || { signature: k === MOVE_SLOTS - 1 });
-  const moveRows = moves.map(m => `<tr${m.signature ? ' class="sig"' : ''}>
-    <td>${m.name ? `<b>${esc(m.name)}</b>` : tbd}${m.signature ? ' <span class="badge sigb">Signature</span>' : ''}${m.text ? `<br><span class="hint">${esc(m.text)}</span>` : ''}</td>
-    <td>${m.type ? badge(m.type) : '—'}</td><td>${esc(m.category) || '—'}</td>
-    <td class="sv">${m.power ?? '—'}</td><td class="sv">${m.accuracy ?? '—'}</td><td class="sv">${m.pp ?? '—'}</td></tr>`).join('');
+  // The signature is always equipped; the other four slots are picked from what this form learns by level.
+  const sig = moveById(s.signature);
+  const sigRow = sig ? `<tr class="sig"><td class="sv">—</td><td><b>${esc(sig.name)}</b> <span class="badge sigb">Signature</span>
+      ${sig.effect ? `<br><span class="hint">${esc(sig.effect)}</span>` : ''}${sig.source ? `<br><small class="like">From: ${esc(sig.source)}</small>` : ''}</td>${moveCells(sig)}</tr>`
+    : `<tr class="sig"><td class="sv">—</td><td>${tbd} <span class="badge sigb">Signature</span></td><td>—</td><td>—</td><td class="sv">—</td><td class="sv">—</td><td class="sv">—</td></tr>`;
+  const learnRows = (s.learn || []).slice().sort((a, b) => lvOrder(a.lv) - lvOrder(b.lv)).map(e => {
+    const m = moveById(e.move);
+    if (!m) return '';
+    const off = !s.types.includes(m.type) && m.type !== 'Neutral';
+    return `<tr><td class="sv">${e.lv === 'evo' ? 'Evo.' : e.lv}</td><td>${moveName(m, e.as)}${off ? ` <span class="badge off" title="${esc(e.why || '')}">Off-type</span>` : ''}
+      ${m.effect ? `<br><span class="hint">${esc(m.effect)}</span>` : ''}${off && e.why ? `<br><small class="like">${esc(e.why)}</small>` : ''}</td>${moveCells(m)}</tr>`;
+  }).join('');
 
   const evo = c.stages.length > 1
     ? `<div class="evoline">${c.stages.map((f, m) => `${m ? '<span class="evoarrow" aria-hidden="true">→</span>' : ''}
@@ -450,7 +477,7 @@ function renderChar(i, j) {
           <span class="evopic">${f.image ? `<img src="${esc(imgSrc(f.image))}" alt="" loading="lazy">` : ''}</span>
           <span class="num">${num(i, m)}</span><b>${esc(f.name || c.name)}</b>
           <span class="tags">${f.types.map(badge).join('')}</span>
-          ${f.evolve ? `<small class="hint">${esc(f.evolve)}</small>` : ''}
+          ${f.level ? `<small class="hint">Evolves at Lv. ${f.level}</small>` : ''}${f.evolve ? `<small class="hint">${esc(f.evolve)}</small>` : ''}
         </a>`).join('')}</div>`
     : `<p class="hint">${esc(c.name)} does not evolve.</p>`;
 
@@ -462,15 +489,15 @@ function renderChar(i, j) {
     <div class="ctop">
       <div class="cpic">${slot(s, c.id, j)}</div>
       <section><h2>Familiar data</h2>${data}</section>
-      <section><h2>Abilities</h2>${abil}<p class="hint">Passive traits. Not decided yet.</p></section>
+      <section><h2>Abilities</h2>${abil}<p class="hint">Passive traits. Each caught copy has one of the first two, or rarely the hidden one.</p></section>
     </div>
     <section><h2>Base stats</h2>${statTable}
-      <p class="hint">Placeholder stat names${known ? '' : ' with no numbers yet'}. Bars are out of ${STAT_MAX}.</p></section>
+      <p class="hint">${known ? '' : 'No numbers yet. '}Bars are out of ${STAT_MAX}.</p></section>
     <section><h2>Evolution line</h2>${evo}</section>
     <section><h2>Moves</h2>
-      <p class="hint">Four moves picked from what ${esc(c.name)} learns, plus one signature that is always equipped. Not filled in yet.</p>
-      <div class="scroll"><table class="moves"><thead><tr><th>Move</th><th>Type</th><th>Category</th><th>Power</th><th>Acc.</th><th>PP</th></tr></thead>
-      <tbody>${moveRows}</tbody></table></div></section>`;
+      <p class="hint">The signature is always equipped. The other four slots are picked from the moves below, learned by level (Evo. means on evolving into this form). See every move on the <a href="#moves">Moves page</a>.</p>
+      <div class="scroll"><table class="moves"><thead><tr><th>Lv.</th><th>Move</th><th>Type</th><th>Category</th><th>Power</th><th>Acc.</th><th>PP</th></tr></thead>
+      <tbody>${sigRow}${learnRows || `<tr><td></td><td colspan="6">${tbd}</td></tr>`}</tbody></table></div></section>`;
   markSelected();
 }
 
@@ -489,6 +516,7 @@ function renderHome() {
     <p class="pitch">${PITCH}</p>
     <div class="tiles">
       ${tile('roster', 'Roster', 'Every familiar, their types, forms, villains and gags.', `${roster.length} characters`)}
+      ${tile('moves', 'Moves', 'Every move: generic moves with each character\'s name for them, and signature moves.', `${moves.length} moves`)}
       ${pages.join('')}
     </div>
     <p class="hint">Only settled things go on these pages. Ideas still being discussed stay in the game map.${wiki.updated ? ` Text pages last updated ${esc(wiki.updated)}.` : ''}</p>`;
@@ -553,6 +581,48 @@ function renderTab(id) {
   $('#tab-view').innerHTML = html;
 }
 
+// ---- moves page ----
+
+const SIZES = [['light', 'Light', 'Power 40–60, 20–30 uses, often a side effect.'], ['standard', 'Standard', 'Power 70–90, 10–15 uses.'],
+  ['heavy', 'Heavy', 'Power 100–120, 5–8 uses, usually a drawback.'], ['status', 'Status', 'No damage.'], ['signature', 'Signature', 'Set per character, 1–5 uses.']];
+const STATUSES = [['Burn', 'Fire', 'Lowers Power and takes a little Vitality each turn.'], ['Freeze', 'Ice', 'Can\'t act; thaws over a few turns.'],
+  ['Stun', 'Lightning', 'May lose a turn; lowers Speed.'], ['Bleed', 'Blood', 'Takes damage each turn, growing every turn.'],
+  ['Curse', 'Spirit, Dark', 'Lowers Energy and Will.'], ['Sleep', 'Mostly Neutral, Cosmic', 'Can\'t act for a few turns.'],
+  ['Confuse', 'Time, Wind', 'May hit itself instead of attacking.']];
+let moveType = '';
+
+function renderMoves() {
+  const names = renames();
+  const sizeName = k => SIZES.find(x => x[0] === k)?.[1] ?? k;
+  const shown = m => !moveType || m.type === moveType;
+  const generic = moves.filter(m => !m.signature && shown(m));
+  const sigs = moves.filter(m => m.signature && shown(m));
+  const head = '<thead><tr><th>Move</th><th>Type</th><th>Category</th><th>Power</th><th>Acc.</th><th>PP</th></tr></thead>';
+  const genRows = TYPES.map(t => generic.filter(m => m.type === t)).filter(l => l.length).map(list => list.map(m => {
+    const as = names.get(m.id) || [];
+    return `<tr><td><b>${esc(m.name)}</b> <span class="badge">${sizeName(m.size)}</span>${m.basic ? ' <span class="badge">Basic</span>' : ''}
+      ${m.effect ? `<br><span class="hint">${esc(m.effect)}</span>` : ''}
+      ${as.length ? `<div class="knownas">Known as: ${as.map(x => `<a href="${charLink(x.c, x.j)}">${esc(x.as)}</a> <span class="hint">(${esc(x.c.name)})</span>`).join(', ')}</div>` : ''}</td>${moveCells(m)}</tr>`;
+  }).join('')).join('');
+  const sigRows = sigs.map(m => {
+    const c = find(roster, m.owner), f = c?.stages[m.form || 0];
+    return `<tr class="sig"><td><b>${esc(m.name)}</b>${c ? ` <span class="hint">· <a href="${charLink(c, m.form || 0)}">${esc(f.name || c.name)}</a></span>` : ''}
+      ${m.effect ? `<br><span class="hint">${esc(m.effect)}</span>` : ''}${m.source ? `<br><small class="like">From: ${esc(m.source)}</small>` : ''}</td>${moveCells(m)}</tr>`;
+  }).join('');
+  $('#moves').innerHTML = `<div class="article"><h1>Moves</h1>
+    <p class="lead">Each character equips four moves learned by level, plus one signature that is always equipped.</p>
+    <p class="hint">Characters use moves of their own types plus Neutral moves, and an off-type move only with a reason from their anime. Own-type moves do 1.5x. Generic moves are listed once under a plain name, with every character's name for them under "Known as". Basic moves can be learned without a new name.</p>
+    <h2>Move sizes</h2><dl>${SIZES.map(([, l, n]) => `<div><dt>${l}</dt><dd>${n}</dd></div>`).join('')}</dl>
+    <h2>Status effects</h2><dl>${STATUSES.map(([n, t, d]) => `<div><dt>${n} <span class="hint">${t}</span></dt><dd>${d}</dd></div>`).join('')}</dl>
+    <label>Type <select id="movetype"><option value="">Every type</option>${TYPES.map(t => `<option${t === moveType ? ' selected' : ''}>${t}</option>`).join('')}</select></label>
+    <h2>Signature moves <span class="hint">${sigs.length}</span></h2>
+    <div class="scroll"><table class="moves">${head}<tbody>${sigRows || '<tr><td colspan="6" class="tbd">None yet</td></tr>'}</tbody></table></div>
+    <h2>Moves <span class="hint">${generic.length}</span></h2>
+    <div class="scroll"><table class="moves">${head}<tbody>${genRows || '<tr><td colspan="6" class="tbd">None yet</td></tr>'}</tbody></table></div>
+  </div>`;
+}
+document.addEventListener('change', e => { if (e.target.id === 'movetype') { moveType = e.target.value; renderMoves(); } });
+
 // Types and Anime tabs hand off to the Characters tab with the filter set.
 document.addEventListener('click', e => {
   const t = e.target.closest('[data-show-type]'), a = e.target.closest('[data-show-anime]'), j = e.target.closest('[data-jump]');
@@ -571,4 +641,5 @@ function load() {
     .catch(() => alert('Could not load the roster from GitHub. Try signing out and in again.'));
 }
 fetch('data/wiki.json', { cache: 'no-store' }).then(r => r.json()).then(w => { wiki = w; route(); }).catch(() => {});
+fetch('data/moves.json', { cache: 'no-store' }).then(r => r.json()).then(m => { moves = m.moves; route(); }).catch(() => {});
 load();
