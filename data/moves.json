@@ -5959,7 +5959,7 @@
       "power": 120,
       "accuracy": 100,
       "pp": 3,
-      "effect": "Super-effective against Dark and Blood. Heals the user half the damage.",
+      "effect": "Super-effective against Dark and Blood. Heals the user 1/4 of the damage.",
       "signature": true,
       "owner": "sailor-moon",
       "form": 0,

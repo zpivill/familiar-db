@@ -7727,7 +7727,7 @@
     "abilities": [
       {
         "name": "Undead",
-        "text": "He heals 1/8 each turn, and the first time he would be knocked out he survives with 1.",
+        "text": "He heals 1/8 each turn. No wound stays for long.",
         "like": "regen + once Sturdy"
       },
       {

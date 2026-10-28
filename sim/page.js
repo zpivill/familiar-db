@@ -4,7 +4,7 @@
 const SIM = {
   workers: [], ready: false, meta: null, stats: null, running: false, done: 0, target: 0, t0: 0, ms: 0, runId: 0,
   tab: 'overview', sort: {}, q: '', vsKey: '', watch: null, error: '', drawPending: false, lastOpts: null,
-  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '' },
+  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0 },
 };
 const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities', 'Abilities'], ['moves', 'Moves'], ['types', 'Types'],
   ['teams', 'Teams'], ['matchups', 'Matchups'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
@@ -101,10 +101,10 @@ function simPlan(total) {
   const first = Math.round(total * 0.2), mid = Math.floor((total - first - Math.round(total * 0.25)) / (gens - 2));
   return Array.from({ length: gens }, (_, i) => i === 0 ? first : i < gens - 1 ? mid : total - first - mid * (gens - 2));
 }
-async function simSearch(total, field, start) {
+async function simSearch(total, field, start, ban) {
   const id = SIM.jobId;
   SIM.plan = simPlan(total); SIM.gen = 0; SIM.full = [{}]; SIM.kept = {};
-  const vs = field ? { vs: field.vs, vsWeights: field.weights } : {};
+  const vs = { ...(field ? { vs: field.vs, vsWeights: field.weights } : {}), ...(ban?.length ? { ban } : {}) };
   const first = Math.max(40, Math.min(400, Math.round(SIM.plan[0] * 2 / 60)));
   let res = await simSend(SIM.plan[0], { fresh: first, top: start || [], variants: start ? 1 : 0, seed: Math.floor(Math.random() * 1e9), ...vs }, first + (start?.length || 0) * 2);
   for (SIM.gen = 1; SIM.gen < SIM.plan.length; SIM.gen++) {
@@ -147,11 +147,17 @@ async function simMetaChain(total) {
     const prevKeys = C.teams.map(t => t.keys.join('+'));
     const n = C.teams.length;
     const weights = C.teams.map((_, i) => i === n - 1 ? (n === 1 ? 1 : 0.6) : 0.4 / (n - 1));
-    const start = res.rows.filter(r => !prevKeys.includes(r.k)).slice(0, 8).map(r => r.keys);
-    res = await simSearch(each, { vs: C.teams.map(t => t.keys), weights }, start);
+    // optional bans: the characters picked most often by the meta teams so far sit out this counter round,
+    // so the search has to find other answers (ties go to the higher individual win rate)
+    const picks = {};
+    C.teams.forEach(t => t.keys.forEach(x => { picks[x] = (picks[x] || 0) + 1; }));
+    const wr = x => { const v = SIM.stats.ent[x]; return v ? v.w / v.g : 0; };
+    const ban = +SIM.lastOpts.ban ? Object.keys(picks).sort((a, b) => picks[b] - picks[a] || wr(b) - wr(a)).slice(0, +SIM.lastOpts.ban) : [];
+    const start = res.rows.filter(r => !prevKeys.includes(r.k) && !r.keys.some(x => ban.includes(x))).slice(0, 8).map(r => r.keys);
+    res = await simSearch(each, { vs: C.teams.map(t => t.keys), weights }, start, ban);
     if (!res || id !== SIM.jobId) return;
     const best = res.rows.find(r => !prevKeys.includes(r.k)) || res.rows[0];
-    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g });
+    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g, banned: ban });
     simMergeDetail(C.detail, res.detail);
   }
   C.round = rounds + 1; C.matrix = true;
@@ -425,7 +431,7 @@ function simMetaView() {
   const rows = T.map((t, i) => {
     const p = simPlaystyle(t.keys, C.detail[k(t)], ref);
     const others = T.map((_, j) => j).filter(j => j !== i).map(j => h(i, j)).filter(isFinite);
-    return `<tr><td class="sv">${i + 1}</td><td>${t.keys.map(entLink).join(' + ')}</td><td>${playCell(p)}</td>
+    return `<tr><td class="sv">${i + 1}</td><td>${t.keys.map(entLink).join(' + ')}${t.banned?.length ? `<br><span class="hint">Banned this round: ${esc(t.banned.map(entName).join(', '))}</span>` : ''}</td><td>${playCell(p)}</td>
       <td class="sv">${i === 0 ? '—' : pctf(h(i, i - 1), 1)}</td><td class="sv">${others.length ? pctf(others.reduce((a, b) => a + b, 0) / others.length, 1) : '—'}</td></tr>`;
   }).join('');
   const matrix = C.matrix && n > 1 ? `<h3>Who beats whom</h3><p class="hint">Win % of the row team against the column team.</p>
@@ -601,10 +607,11 @@ function simSettings() {
     <label>Always include <select name="focus"><option value="">Nobody</option>${ents.map(e => opt(e.key, esc(e.name), o.focus)).join('')}</select></label>
     <label class="check"><input type="checkbox" name="sameTier"${o.sameTier ? ' checked' : ''}> Same tier only</label>
     ${o.format !== 'duel' ? `<label>Team search <select name="teamSearch">${opt('', 'Off', o.teamSearch)}${opt('best', 'Strongest teams', o.teamSearch)}${opt('meta', 'Meta chain (counters)', o.teamSearch)}</select></label>` : ''}
+    ${o.format !== 'duel' && o.teamSearch === 'meta' ? `<label>Bans in counter rounds <select name="ban">${[[0, 'None'], [3, 'Top 3 picks'], [6, 'Top 6 picks'], [10, 'Top 10 picks']].map(([v, l]) => opt(v, l, o.ban)).join('')}</select></label>` : ''}
     <label class="check"><input type="checkbox" name="gags"${o.gags ? ' checked' : ''}> Gag characters</label>
     <fieldset class="simtiers"><legend>Tiers <span class="hint">(none ticked = all)</span></legend>${RARITY.map(([k, l]) => `<label class="check"><input type="checkbox" name="tier" value="${k}"${o.tiers.includes(k) ? ' checked' : ''}> ${l}</label>`).join('')}</fieldset>
   </form>
-  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.format === 'duel' ? '' : o.teamSearch === 'best' ? ' Strongest teams searches over several generations of teams and ranks the best ones on the Teams tab. More battles means more generations: 50,000 or more gives the steadiest results.' : o.teamSearch === 'meta' ? ' Meta chain finds the strongest team, then the best counter to it, then the best counter to that, and so on, and shows who beats whom on the Teams tab. 100,000 battles gives 6 meta teams.' : ''}</p>`;
+  <p class="hint">${esc(FORMATS.find(f => f[0] === o.format)[2])}${o.format === 'duel' ? '' : o.teamSearch === 'best' ? ' Strongest teams searches over several generations of teams and ranks the best ones on the Teams tab. More battles means more generations: 50,000 or more gives the steadiest results.' : o.teamSearch === 'meta' ? ' Meta chain finds the strongest team, then the best counter to it, then the best counter to that, and so on, and shows who beats whom on the Teams tab. 100,000 battles gives 6 meta teams. With bans, the characters the meta teams pick most sit out each counter round, so niche counters get a chance; the earlier meta teams still use them.' : ''}</p>`;
 }
 
 function renderSim() {
