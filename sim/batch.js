@@ -66,10 +66,41 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
+
+// How a team wins, for the playstyle line: who lands the knockouts and deals the damage, how long its wins take,
+// and what kind of moves it spends its turns on.
+const MOVE_KINDS = ['attack', 'setup', 'heal', 'status', 'protect', 'support'];
+export const emptyDetail = () => ({ g: 0, w: 0, winTurns: 0, kos: {}, dmg: {}, use: Object.fromEntries(MOVE_KINDS.map(k => [k, 0])) });
+export function mergeDetail(T, D) {
+  T.g += D.g; T.w += D.w; T.winTurns += D.winTurns;
+  for (const f of ['kos', 'dmg']) for (const [k, v] of Object.entries(D[f])) T[f][k] = (T[f][k] || 0) + v;
+  for (const k of MOVE_KINDS) T.use[k] += D.use[k];
+  return T;
+}
+const moveKind = m => {
+  if (m.category !== 'Status') return 'attack';
+  const fx = m.fx || {};
+  if (fx.boosts?.some(b => b.who === 'self' && Object.values(b.stats).some(v => v > 0))) return 'setup';
+  if (fx.heal) return 'heal';
+  if (fx.status) return 'status';
+  if (fx.protect || fx.substitute) return 'protect';
+  return 'support';
+};
+function recordDetail(S, data, B, si, key) {
+  const D = S.detail[key] || (S.detail[key] = emptyDetail());
+  const won = B.winner === si;
+  D.g++; D.w += won ? 1 : B.winner < 0 ? 0.5 : 0;
+  if (won) D.winTurns += B.turn;
+  for (const m of B.sides[si].mons) {
+    D.kos[m.key] = (D.kos[m.key] || 0) + m.t.kos;
+    D.dmg[m.key] = (D.dmg[m.key] || 0) + m.t.dmg / m.maxhp;
+    for (const [id, t] of Object.entries(m.t.moves)) { const mv = data.moves.get(id); if (mv) D.use[moveKind(mv)] += t.uses; }
+  }
+}
 
 function record(S, B, builds, opts) {
   S.battles++;
@@ -118,12 +149,13 @@ function record(S, B, builds, opts) {
 
 export function mergeStats(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full']) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h']) {
     for (const [key, v] of Object.entries(S[k])) {
       const t = T[k][key] || (T[k][key] = Object.fromEntries(Object.keys(v).map(f => [f, 0])));
       for (const f in v) t[f] += v[f];
     }
   }
+  for (const [key, v] of Object.entries(S.detail || {})) mergeDetail(T.detail[key] || (T.detail[key] = emptyDetail()), v);
   T.faster.g += S.faster.g; T.faster.w += S.faster.w;
   return T;
 }
@@ -203,6 +235,12 @@ export function runBatch(data, opts, onChunk) {
   const format = opts.format || 'duel';
   const size = teamSize(opts);
   const ladder = opts.ladder ? ladderTeams(data, opts) : null;
+  // L.vs: a fixed set of opponents (with optional weights). Only the ladder teams are scored, so this
+  // measures how well each candidate does against those particular teams, e.g. the current top team.
+  const byKey = new Map(data.entrants.map(e => [e.key, e]));
+  const vs = opts.ladder?.vs?.map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size) || null;
+  const vsW = vs && (opts.ladder.vsWeights || vs.map(() => 1));
+  const pickVs = () => { let x = r() * vsW.reduce((a, b) => a + b, 0), i = 0; while (i < vs.length - 1 && (x -= vsW[i]) > 0) i++; return vs[i]; };
   const focus = opts.focus ? pool.find(e => e.key === opts.focus) : null;
   const byTier = {};
   pool.forEach(e => { (byTier[e.rarity] || (byTier[e.rarity] = [])).push(e); });
@@ -223,24 +261,29 @@ export function runBatch(data, opts, onChunk) {
       }
       return t;
     };
-    let sides;
+    let sides, scored = [0, 1];
     if (ladder) {
-      // every team plays in turn against a random other team from the same list; mirror characters are allowed
+      // every team plays in turn against a random other team from the same list (or one of the fixed
+      // opponents); mirror characters are allowed
       const a = (n + (opts.offset || 0)) % ladder.length;
-      const b = (a + 1 + Math.floor(r() * (ladder.length - 1))) % ladder.length;
-      sides = [ladder[a], ladder[b]];
+      if (vs) { sides = [ladder[a], pickVs()]; scored = [0]; }
+      else sides = [ladder[a], ladder[(a + 1 + Math.floor(r() * (ladder.length - 1))) % ladder.length]];
     } else {
       sides = [team(focus), team(null)];
       if (sides[1].length < size || sides[0].length < size) continue;
     }
-    if (r() < 0.5) sides = [sides[1], sides[0]];
+    if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); }
     const builds = sides.map(t => t.map(e => makeBuild(data, e, r, opts)));
     const B = runBattle(data, builds, { rng: r, format: format === 'duos' ? 'duos' : 'singles', level: opts.level });
     record(S, B, builds, opts);
-    if (ladder) sides.forEach((t, si) => {
-      const F = inc(S.full, teamKey(t), () => ({ g: 0, w: 0 }));
-      F.g++; F.w += B.winner === si ? 1 : B.winner < 0 ? 0.5 : 0;
-    });
+    if (ladder) for (const si of scored) {
+      const k = teamKey(sides[si]);
+      const F = inc(S.full, k, () => ({ g: 0, w: 0 }));
+      const w = B.winner === si ? 1 : B.winner < 0 ? 0.5 : 0;
+      F.g++; F.w += w;
+      if (opts.ladder.detail) recordDetail(S, data, B, si, k);
+      if (opts.ladder.h2h) { const H = inc(S.h2h, k + '|' + teamKey(sides[1 - si]), () => ({ g: 0, w: 0 })); H.g++; H.w += w; }
+    }
     if (onChunk && (n + 1) % chunk === 0) { onChunk(S, n + 1); S = emptyStats(); }
   }
   if (onChunk && S.battles) onChunk(S, opts.count);

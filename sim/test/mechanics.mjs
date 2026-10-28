@@ -98,5 +98,12 @@ ok(typeEff('Fire', ['Water']) === 0.5, 'Water resists Fire');
   ok(ua.length === 0, 'Every ability has rules', ua.join(', '));
 }
 
+// "The first time he enters battle" abilities fire once per battle, not on every switch-in.
+{
+  const aizen = data.entrants.find(e => e.final && e.abilities.some(a => a.name === 'Kyoka Suigetsu'));
+  const op = aizen.abilities.find(a => a.name === 'Kyoka Suigetsu').ab.entry[0];
+  ok(op && op.op === 'confuse' && op.once, 'Kyoka Suigetsu confuses foes only the first time Aizen enters');
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');
