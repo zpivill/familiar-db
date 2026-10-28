@@ -490,9 +490,9 @@ export function compileAbility(a) {
     if (/^He hits through Substitute/.test(s) || /hits through Substitute/.test(s)) { ab.infiltrator = true; hit(); }
     if (/After using EXPLOSION! she switches out by herself/.test(s)) { ab.explodeOut = true; hit(); }
     // --- entry ---
-    if ((mm = s.match(/^When (?:he|she|it) enters battle, foes' ((?:Power|Will|Speed|Energy)(?: and (?:Power|Will|Speed|Energy))?) drops? by 1/)) || (mm = s.match(/^When (?:he|she|it) enters battle, (?:her smug face )?lowers foes' (Will) by 1/))) {
+    if ((mm = s.match(/^(?:When|The first time) (?:he|she|it) enters battle, foes' ((?:Power|Will|Speed|Energy)(?: and (?:Power|Will|Speed|Energy))?) drops? by 1/)) || (mm = s.match(/^When (?:he|she|it) enters battle, (?:her smug face )?lowers foes' (Will) by 1/))) {
       const o = {}; mm[1].split(' and ').forEach(k => { o[STAT[k]] = -1; });
-      ab.entry.push({ op: 'foes', stats: o, intimidate: 'pow' in o });
+      ab.entry.push({ op: 'foes', stats: o, intimidate: 'pow' in o, once: /^The first time/.test(s) });
       if (/Duos: his ally's Power rises by 1/.test(s)) ab.entry.push({ op: 'ally', stats: { pow: 1 } });
       if (/but so does his ally/.test(s)) ab.entry.push({ op: 'ally', stats: { wil: -1 } });
       if (/she learns their moves/.test(s)) {}
