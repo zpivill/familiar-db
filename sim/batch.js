@@ -62,7 +62,8 @@ export function makeBuild(data, e, r, opts = {}) {
 
 export function entrantPool(data, opts = {}) {
   const tiers = opts.tiers?.length ? new Set(opts.tiers) : null;
-  return data.entrants.filter(e => (opts.forms === 'all' || e.final) && (!tiers || tiers.has(e.rarity)) && (opts.gags !== false || !e.gag) && e.stats && e.sig);
+  const ban = new Set(opts.ladder?.ban || []);
+  return data.entrants.filter(e => (opts.forms === 'all' || e.final) && (!tiers || tiers.has(e.rarity)) && (opts.gags !== false || !e.gag) && e.stats && e.sig && !ban.has(e.key));
 }
 
 export function emptyStats() {
@@ -198,7 +199,9 @@ export function ladderTeams(data, opts) {
   const out = [], seen = new Set();
   const add = t => { if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); return true; } return false; };
   const srcOf = t => opts.sameTier ? byTier[t[0].rarity] || pool : pool;
-  const top = (L.top || []).map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size);
+  // L.ban: characters left out of every new team (the fixed opponents in L.vs may still use them)
+  const ban = new Set(L.ban || []);
+  const top = (L.top || []).map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size && !t.some(e => ban.has(e.key)));
   top.forEach(add);
   for (const t of top) {
     const swappable = t.filter(e => e !== focus);
