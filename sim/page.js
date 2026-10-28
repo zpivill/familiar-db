@@ -593,7 +593,7 @@ function simSettings() {
   return `<form id="simform" class="simform" onsubmit="return false">
     <label>Format <select name="format">${FORMATS.map(([v, l]) => opt(v, l, o.format)).join('')}</select></label>
     ${o.format !== 'duel' ? `<label>Team size <select name="teamSize">${(o.format === 'duos' ? [2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6]).map(n => opt(n, n, o.teamSize)).join('')}</select></label>` : ''}
-    <label>Battles <select name="count">${[1000, 5000, 10000, 25000, 50000, 100000].map(n => opt(n, n.toLocaleString(), o.count)).join('')}</select></label>
+    <label>Battles <select name="count">${[1000, 5000, 10000, 25000, 50000, 100000, 200000].map(n => opt(n, n.toLocaleString(), o.count)).join('')}</select></label>
     <label>Characters <select name="forms">${opt('final', 'Final forms', o.forms)}${opt('all', 'Every form', o.forms)}</select></label>
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
     <label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>
