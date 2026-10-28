@@ -182,7 +182,8 @@
           {
             "lv": 1,
             "move": "aqua-jet",
-            "as": "Water Breathing, Seventh Form: Drop Ripple Thrust"
+            "as": "Water Breathing, Seventh Form: Drop Ripple Thrust",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 5,
@@ -191,17 +192,20 @@
           {
             "lv": 9,
             "move": "razor-shell",
-            "as": "Water Breathing, First Form: Water Surface Slash"
+            "as": "Water Breathing, First Form: Water Surface Slash",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 13,
             "move": "whirlpool",
-            "as": "Water Breathing, Sixth Form: Whirlpool"
+            "as": "Water Breathing, Sixth Form: Whirlpool",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 19,
             "move": "waterfall",
-            "as": "Water Breathing, Second Form: Water Wheel"
+            "as": "Water Breathing, Second Form: Water Wheel",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 22,
@@ -216,7 +220,8 @@
           {
             "lv": 28,
             "move": "aqua-step",
-            "as": "Water Breathing, Third Form: Flowing Dance"
+            "as": "Water Breathing, Third Form: Flowing Dance",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 31,
@@ -235,7 +240,8 @@
           {
             "lv": 40,
             "move": "crabhammer",
-            "as": "Water Breathing, Eighth Form: Waterfall Basin"
+            "as": "Water Breathing, Eighth Form: Waterfall Basin",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 46,
@@ -348,9 +354,87 @@
           "Fire",
           "Wind"
         ],
-        "image": "images/axel-blaze-mvnmsjlr.png"
+        "image": "images/axel-blaze-mvnmsjlr.png",
+        "stats": {
+          "vit": 50,
+          "pow": 75,
+          "grd": 45,
+          "ene": 40,
+          "wil": 45,
+          "spe": 75
+        },
+        "signature": "fire-tornado",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "ember",
+            "as": "Fire Shot"
+          },
+          {
+            "lv": 5,
+            "move": "quick-attack",
+            "as": "Speed Dribble"
+          },
+          {
+            "lv": 9,
+            "move": "flame-charge",
+            "as": "Heat Tackle"
+          },
+          {
+            "lv": 14,
+            "move": "aerial-ace",
+            "as": "Jumping Volley"
+          },
+          {
+            "lv": 19,
+            "move": "blaze-kick",
+            "as": "Bakunetsu Screw"
+          },
+          {
+            "lv": 25,
+            "move": "acrobatics",
+            "as": "Overhead Kick"
+          },
+          {
+            "lv": 32,
+            "move": "flare-blitz",
+            "as": "Explosion Storm"
+          },
+          {
+            "lv": 40,
+            "move": "brave-bird",
+            "as": "Fire Tornado Sky"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Ace Striker",
+        "text": "Critical hits do 2.25x instead of 1.5x.",
+        "like": "Sniper"
+      },
+      {
+        "name": "Hot-Blooded",
+        "text": "Immune to Fire moves. Being hit by one makes his own Fire moves do 1.5x.",
+        "like": "Flash Fire"
+      },
+      {
+        "name": "Fire Tornado DD",
+        "text": "Duos: when Shawn Frost is his ally, both of their attacks do 1.3x. Rare pair bonus.",
+        "like": "pair affinity (rare)",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Speed"
+    ],
+    "roleNote": "Fast fire striker with crit focus. Hidden Fire Tornado DD is one of the very rare pair bonuses (with Shawn Frost), a duos gag combo."
   },
   {
     "id": "megumin",
@@ -460,9 +544,90 @@
         "types": [
           "Water"
         ],
-        "image": "images/aqua-mvnmx40t.png"
+        "image": "images/aqua-mvnmx40t.png",
+        "stats": {
+          "vit": 85,
+          "pow": 40,
+          "grd": 60,
+          "ene": 95,
+          "wil": 90,
+          "spe": 60
+        },
+        "signature": "resurrection",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "water-gun",
+            "as": "Sacred Create Water"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Blessing"
+          },
+          {
+            "lv": 6,
+            "move": "water-pulse",
+            "as": "Water Blast"
+          },
+          {
+            "lv": 11,
+            "move": "heal-bell",
+            "as": "Purification",
+            "why": "Off-type (Light): goddess purification magic."
+          },
+          {
+            "lv": 17,
+            "move": "mega-punch",
+            "as": "God Blow"
+          },
+          {
+            "lv": 23,
+            "move": "dazzling-gleam",
+            "as": "Turn Undead",
+            "why": "Off-type (Light): her holy magic against the undead."
+          },
+          {
+            "lv": 30,
+            "move": "surf",
+            "as": "Flood of the Goddess"
+          },
+          {
+            "lv": 36,
+            "move": "hydro-pump",
+            "as": "Sacred Create Water: Full Power"
+          },
+          {
+            "lv": 42,
+            "move": "splash",
+            "as": "Party Trick"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Goddess of Water",
+        "text": "Water moves heal her by 1/4 instead of hurting.",
+        "like": "Water Absorb"
+      },
+      {
+        "name": "Luck: Lowest",
+        "text": "Foes land critical hits on her more often.",
+        "like": "bad luck (gag)"
+      },
+      {
+        "name": "Party Tricks",
+        "text": "Her Status moves go first.",
+        "like": "Prankster",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "The only revive in the early game: Resurrection brings a fainted ally back. Useless otherwise, with a gag Bad Luck ability. Hidden Party Tricks gives her priority status moves."
   },
   {
     "id": "giyu",
@@ -552,9 +717,87 @@
           "Water",
           "Beast"
         ],
-        "image": "images/spongebob-mvnmyyi9.png"
+        "image": "images/spongebob-mvnmyyi9.png",
+        "stats": {
+          "vit": 70,
+          "pow": 60,
+          "grd": 60,
+          "ene": 60,
+          "wil": 60,
+          "spe": 80
+        },
+        "signature": "krabby-patty",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "bubble-beam",
+            "as": "Bubble Blowing"
+          },
+          {
+            "lv": 6,
+            "move": "fake-out",
+            "as": "Hi-yah!"
+          },
+          {
+            "lv": 11,
+            "move": "rapid-spin",
+            "as": "Spatula Spin"
+          },
+          {
+            "lv": 16,
+            "move": "pounce",
+            "as": "Jellyfishing"
+          },
+          {
+            "lv": 22,
+            "move": "aqua-ring",
+            "as": "Squeeze Out"
+          },
+          {
+            "lv": 28,
+            "move": "liquidation",
+            "as": "Karate Chop"
+          },
+          {
+            "lv": 35,
+            "move": "splash",
+            "as": "Imagination"
+          },
+          {
+            "lv": 42,
+            "move": "surf",
+            "as": "Goofy Goober Rock"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Absorbent",
+        "text": "Water moves heal him by 1/4 instead of hurting.",
+        "like": "Water Absorb"
+      },
+      {
+        "name": "I'm Ready!",
+        "text": "His Speed rises by 1 when he enters battle.",
+        "like": "entry Speed"
+      },
+      {
+        "name": "Bubble Buddy",
+        "text": "Duos: his ally takes 1/4 less damage.",
+        "like": "Friend Guard",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "Absorbent sponge that heals off Water hits. Krabby Patty heals and buffs an ally. Fake Out from karate makes him a fun duos lead."
   },
   {
     "id": "patrick",
@@ -570,9 +813,86 @@
           "Water",
           "Earth"
         ],
-        "image": "images/patrick-mvnmz51r.png"
+        "image": "images/patrick-mvnmz51r.png",
+        "stats": {
+          "vit": 110,
+          "pow": 80,
+          "grd": 80,
+          "ene": 40,
+          "wil": 70,
+          "spe": 30
+        },
+        "signature": "firmly-grasp-it",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "rest",
+            "as": "Nap"
+          },
+          {
+            "lv": 6,
+            "move": "rock-throw",
+            "as": "Throw a Rock"
+          },
+          {
+            "lv": 11,
+            "move": "yawn",
+            "as": "Big Yawn"
+          },
+          {
+            "lv": 16,
+            "move": "headbutt"
+          },
+          {
+            "lv": 22,
+            "move": "shore-up",
+            "as": "Back Under My Rock"
+          },
+          {
+            "lv": 29,
+            "move": "splash",
+            "as": "Doing Nothing"
+          },
+          {
+            "lv": 36,
+            "move": "earthquake",
+            "as": "Belly Flop"
+          },
+          {
+            "lv": 44,
+            "move": "wave-crash",
+            "as": "Jellyfish Fields Stampede"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Under a Rock",
+        "text": "If he didn't attack this turn, his Guard rises by 1.",
+        "like": "Guard build-up"
+      },
+      {
+        "name": "Is Mayonnaise an Instrument?",
+        "text": "Immune to Taunt, Encore and Charm.",
+        "like": "Oblivious"
+      },
+      {
+        "name": "Doing Nothing",
+        "text": "Always counts as asleep but still acts, so no other status can affect him.",
+        "like": "Comatose",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Defence",
+      "Gimmick"
+    ],
+    "roleNote": "Bulky wall. Hidden Doing Nothing (Comatose) makes him immune to status. Oblivious stops Taunt and Encore shutting him down."
   },
   {
     "id": "juvia",
@@ -587,9 +907,83 @@
         "types": [
           "Water"
         ],
-        "image": "images/juvia-mvnn1gqk.png"
+        "image": "images/juvia-mvnn1gqk.png",
+        "stats": {
+          "vit": 60,
+          "pow": 85,
+          "grd": 55,
+          "ene": 60,
+          "wil": 55,
+          "spe": 90
+        },
+        "signature": "catch-the-rainbow",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "water-gun",
+            "as": "Raindrop Shot"
+          },
+          {
+            "lv": 6,
+            "move": "aqua-jet",
+            "as": "Rain Step"
+          },
+          {
+            "lv": 12,
+            "move": "icicle-spear",
+            "as": "Frozen Raindrops",
+            "why": "Off-type (Ice): raindrops stopped in mid-air hit like icicles."
+          },
+          {
+            "lv": 18,
+            "move": "whirlpool",
+            "as": "Rain Cage"
+          },
+          {
+            "lv": 25,
+            "move": "liquidation",
+            "as": "Raindrop Slash"
+          },
+          {
+            "lv": 32,
+            "move": "protect",
+            "as": "Raindrop Wall"
+          },
+          {
+            "lv": 40,
+            "move": "wave-crash",
+            "as": "Downpour"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Suspended Raindrops",
+        "text": "Foes that hit her with contact moves lose 1/8 of their max Vitality.",
+        "like": "Rough Skin"
+      },
+      {
+        "name": "Rain Walker",
+        "text": "Immune to Earth moves. He walks on the raindrops.",
+        "like": "Levitate"
+      },
+      {
+        "name": "Rain Body",
+        "text": "Heals 1/16 of his max Vitality each turn.",
+        "like": "Rain Dish, always on",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Setter",
+      "Attack"
+    ],
+    "roleNote": "Hazard setter: her Stand hangs raindrops over the field that cut anything switching in. Fast physical attacker otherwise."
   },
   {
     "id": "fern",
@@ -604,9 +998,89 @@
         "types": [
           "Water"
         ],
-        "image": "images/fern-mvnn0noa.png"
+        "image": "images/fern-mvnn0noa.png",
+        "stats": {
+          "vit": 60,
+          "pow": 40,
+          "grd": 60,
+          "ene": 110,
+          "wil": 75,
+          "spe": 85
+        },
+        "signature": "fern-zoltraak",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "swift",
+            "as": "Ordinary Offensive Magic"
+          },
+          {
+            "lv": 1,
+            "move": "protect",
+            "as": "Defensive Magic"
+          },
+          {
+            "lv": 6,
+            "move": "water-gun",
+            "as": "Water Magic"
+          },
+          {
+            "lv": 11,
+            "move": "water-pulse",
+            "as": "Magic to Make Water Flow"
+          },
+          {
+            "lv": 17,
+            "move": "nasty-plot",
+            "as": "Release Mana Limiter"
+          },
+          {
+            "lv": 23,
+            "move": "fly",
+            "as": "Flight Magic",
+            "why": "Off-type (Wind): flight magic, which every mage in Frieren uses."
+          },
+          {
+            "lv": 30,
+            "move": "surf",
+            "as": "Flood Magic"
+          },
+          {
+            "lv": 36,
+            "move": "hydro-pump",
+            "as": "Torrent Magic"
+          },
+          {
+            "lv": 42,
+            "move": "boomburst",
+            "as": "Full-Power Zoltraak"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Rapid Casting",
+        "text": "Moves with 60 power or less do 1.5x.",
+        "like": "Technician"
+      },
+      {
+        "name": "Mana Suppression",
+        "text": "Her moves ignore the target's ability.",
+        "like": "Mold Breaker"
+      },
+      {
+        "name": "Pouting Apprentice",
+        "text": "When a foe lowers one of her stats, her Energy rises by 2.",
+        "like": "Competitive",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Speed"
+    ],
+    "roleNote": "Fast energy attacker. Zoltraak plus Rapid Casting (Technician) is her main damage. Mana Suppression (Mold Breaker) cuts through defensive abilities."
   },
   {
     "id": "brook",
@@ -622,9 +1096,88 @@
           "Ice",
           "Spirit"
         ],
-        "image": "images/brook-mvnn5koj.png"
+        "image": "images/brook-mvnn5koj.png",
+        "stats": {
+          "vit": 60,
+          "pow": 80,
+          "grd": 50,
+          "ene": 70,
+          "wil": 55,
+          "spe": 95
+        },
+        "signature": "yahazu-giri",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "shadow-sneak",
+            "as": "Gavotte Bond en Avant"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Yohohoho"
+          },
+          {
+            "lv": 6,
+            "move": "ice-shard",
+            "as": "Soul Solid Thrust"
+          },
+          {
+            "lv": 12,
+            "move": "sing",
+            "as": "Lullaby"
+          },
+          {
+            "lv": 18,
+            "move": "icicle-crash",
+            "as": "Scratch Song: Blizzard Slash"
+          },
+          {
+            "lv": 24,
+            "move": "hex",
+            "as": "Soul Parade"
+          },
+          {
+            "lv": 30,
+            "move": "phantom-force",
+            "as": "Soul Walk"
+          },
+          {
+            "lv": 37,
+            "move": "hyper-voice",
+            "as": "Bink's Sake"
+          },
+          {
+            "lv": 44,
+            "move": "blizzard",
+            "as": "Aria of the Underworld"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Skeleton Body",
+        "text": "Immune to Bleed. He has no blood left to lose.",
+        "like": "Bleed immunity"
+      },
+      {
+        "name": "Soul King",
+        "text": "Sound moves do 1.3x.",
+        "like": "Punk Rock"
+      },
+      {
+        "name": "Revive Revive",
+        "text": "Once per battle, a hit that would knock him out leaves him at 1 Vitality.",
+        "like": "Focus Sash, once",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Gimmick"
+    ],
+    "roleNote": "Fast swordsman whose signature lands at the end of the turn through Protect. Revive Revive (hidden) gives a one-time survive."
   },
   {
     "id": "rukia",
@@ -673,9 +1226,83 @@
           "Ice",
           "Beast"
         ],
-        "image": "images/ryo-yamada-mvnn69q3.png"
+        "image": "images/ryo-yamada-mvnn69q3.png",
+        "stats": {
+          "vit": 60,
+          "pow": 55,
+          "grd": 60,
+          "ene": 80,
+          "wil": 65,
+          "spe": 85
+        },
+        "signature": "bass-groove",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "icy-wind",
+            "as": "Low Note"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Deadpan"
+          },
+          {
+            "lv": 6,
+            "move": "pounce",
+            "as": "Grass Grab"
+          },
+          {
+            "lv": 12,
+            "move": "freeze-dry",
+            "as": "Cool Riff"
+          },
+          {
+            "lv": 18,
+            "move": "haze",
+            "as": "Unbothered"
+          },
+          {
+            "lv": 25,
+            "move": "ice-beam",
+            "as": "Bass Drop"
+          },
+          {
+            "lv": 32,
+            "move": "slack-off",
+            "as": "Eat Weeds"
+          },
+          {
+            "lv": 40,
+            "move": "bug-buzz",
+            "as": "Feedback Hum"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Cool Facade",
+        "text": "Ignores the target's stat changes when attacking and being attacked.",
+        "like": "Unaware"
+      },
+      {
+        "name": "Borrowing Money",
+        "text": "When she enters battle she copies the foe's stat boosts.",
+        "like": "entry Psych Up"
+      },
+      {
+        "name": "Eats Weeds",
+        "text": "Heals 1/8 of her max Vitality each turn. She lives on grass when broke.",
+        "like": "Leftovers-style regen",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Defence"
+    ],
+    "roleNote": "Unaware bassist: ignores setup sweepers. Borrowing Money copies the foe's boosts on entry, a cheeky anti-setup niche."
   },
   {
     "id": "shawn-frost",
@@ -690,9 +1317,81 @@
         "types": [
           "Ice"
         ],
-        "image": "images/shawn-frost-mvnn6hkq.png"
+        "image": "images/shawn-frost-mvnn6hkq.png",
+        "stats": {
+          "vit": 50,
+          "pow": 65,
+          "grd": 55,
+          "ene": 40,
+          "wil": 50,
+          "spe": 70
+        },
+        "signature": "eternal-blizzard",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "ice-shard",
+            "as": "Snow Dash"
+          },
+          {
+            "lv": 5,
+            "move": "leer"
+          },
+          {
+            "lv": 9,
+            "move": "ice-punch",
+            "as": "Snow Angel"
+          },
+          {
+            "lv": 14,
+            "move": "icy-wind",
+            "as": "Ice Ground"
+          },
+          {
+            "lv": 20,
+            "move": "protect",
+            "as": "Snow Wall"
+          },
+          {
+            "lv": 27,
+            "move": "icicle-crash",
+            "as": "Wolf Legend"
+          },
+          {
+            "lv": 35,
+            "move": "blizzard",
+            "as": "Eternal Blizzard Storm"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Atsuya Takes Over",
+        "text": "The first time he drops below half Vitality, his brother's side takes over: Power +2, Guard -1.",
+        "like": "Berserk variant"
+      },
+      {
+        "name": "Northern Defender",
+        "text": "His Guard rises by 1 when he enters battle.",
+        "like": "entry Guard boost"
+      },
+      {
+        "name": "Fire Tornado DD",
+        "text": "Duos: when Axel Blaze is his ally, both of their attacks do 1.3x. Rare pair bonus.",
+        "like": "pair affinity (rare)",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Defence"
+    ],
+    "roleNote": "Split personality: starts as a defender, flips to striker when hurt. Hidden pair bonus with Axel Blaze."
   },
   {
     "id": "kagami",
@@ -1009,7 +1708,8 @@
           {
             "lv": 30,
             "move": "shift-gear",
-            "as": "Gearshift"
+            "as": "Gearshift",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": "evo",
@@ -1024,7 +1724,8 @@
           {
             "lv": 44,
             "move": "stored-power",
-            "as": "Fa Jin"
+            "as": "Fa Jin",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 50,
@@ -1071,7 +1772,55 @@
         "types": [
           "Wind"
         ],
-        "image": "images/nami-mvnnbr9n.png"
+        "image": "images/nami-mvnnbr9n.png",
+        "stats": {
+          "vit": 50,
+          "pow": 45,
+          "grd": 50,
+          "ene": 75,
+          "wil": 60,
+          "spe": 80
+        },
+        "signature": "thunderbolt-tempo",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Cyclone Tempo"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Pay Up!"
+          },
+          {
+            "lv": 6,
+            "move": "thunder-shock",
+            "as": "Spark Tempo",
+            "why": "Off-type (Lightning): Clima-Tact makes small sparks before she ever has Zeus."
+          },
+          {
+            "lv": 11,
+            "move": "charm",
+            "as": "Happiness Punch",
+            "why": "Off-type (Light): her charm trick before the punch."
+          },
+          {
+            "lv": 16,
+            "move": "substitute",
+            "as": "Mirage Tempo"
+          },
+          {
+            "lv": 22,
+            "move": "tailwind",
+            "as": "Cool Ball Tempo"
+          },
+          {
+            "lv": 28,
+            "move": "air-cutter",
+            "as": "Tornado Tempo"
+          }
+        ]
       },
       {
         "name": "Zeus Nami",
@@ -1079,9 +1828,100 @@
           "Wind",
           "Lightning"
         ],
-        "image": "images/nami-mvnncext.png"
+        "image": "images/nami-mvnncext.png",
+        "level": 32,
+        "stats": {
+          "vit": 65,
+          "pow": 55,
+          "grd": 60,
+          "ene": 105,
+          "wil": 80,
+          "spe": 95
+        },
+        "signature": "zeus-breeze-tempo",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Cyclone Tempo"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Pay Up!"
+          },
+          {
+            "lv": 6,
+            "move": "thunder-shock",
+            "as": "Spark Tempo"
+          },
+          {
+            "lv": 11,
+            "move": "charm",
+            "as": "Happiness Punch",
+            "why": "Off-type (Light): her charm trick before the punch."
+          },
+          {
+            "lv": 16,
+            "move": "substitute",
+            "as": "Mirage Tempo"
+          },
+          {
+            "lv": 22,
+            "move": "tailwind",
+            "as": "Cool Ball Tempo"
+          },
+          {
+            "lv": 28,
+            "move": "air-cutter",
+            "as": "Tornado Tempo"
+          },
+          {
+            "lv": "evo",
+            "move": "thunderbolt",
+            "as": "Thunder Lance Tempo"
+          },
+          {
+            "lv": 36,
+            "move": "electric-terrain",
+            "as": "Black Ball: Thunder Cloud"
+          },
+          {
+            "lv": 42,
+            "move": "hurricane",
+            "as": "Weather Egg Storm"
+          },
+          {
+            "lv": 48,
+            "move": "thunder",
+            "as": "Zeus Thunder"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Cat Burglar",
+        "text": "When she hits a foe that has stat boosts, she steals one of them.",
+        "like": "boost steal"
+      },
+      {
+        "name": "Navigator",
+        "text": "Her Tailwind lasts 2 more turns, and her Wind moves never miss.",
+        "like": "weather reader"
+      },
+      {
+        "name": "Weather Egg",
+        "text": "Her Lightning moves do 1.3x while Tailwind is up on her side.",
+        "like": "Tailwind synergy",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Attack"
+    ],
+    "roleNote": "Weather navigator. Tailwind and Mirage Tempo support, then Zeus Nami becomes a strong Lightning energy attacker. Cat Burglar steals boosts."
   },
   {
     "id": "kita",
@@ -1097,9 +1937,84 @@
           "Wind",
           "Beast"
         ],
-        "image": "images/kita-mvnnclva.png"
+        "image": "images/kita-mvnnclva.png",
+        "stats": {
+          "vit": 60,
+          "pow": 50,
+          "grd": 55,
+          "ene": 75,
+          "wil": 60,
+          "spe": 95
+        },
+        "signature": "kita-aura",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Guitar Strum"
+          },
+          {
+            "lv": 1,
+            "move": "charm",
+            "as": "Kita Wink",
+            "why": "Off-type (Light): the sparkle is her whole personality."
+          },
+          {
+            "lv": 6,
+            "move": "pounce",
+            "as": "Kita-n!"
+          },
+          {
+            "lv": 11,
+            "move": "helping-hand",
+            "as": "Hype Up"
+          },
+          {
+            "lv": 17,
+            "move": "sing",
+            "as": "Lead Vocals"
+          },
+          {
+            "lv": 23,
+            "move": "hyper-voice",
+            "as": "Chorus"
+          },
+          {
+            "lv": 30,
+            "move": "air-slash",
+            "as": "Power Chord"
+          },
+          {
+            "lv": 38,
+            "move": "tailwind",
+            "as": "Encore Rush"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Life of the Party",
+        "text": "Duos: when she enters, her ally's Power and Energy rise by 1.",
+        "like": "entry ally buff"
+      },
+      {
+        "name": "Sparkle",
+        "text": "Foes that make contact with her have a 30% chance to be Confused by the glare.",
+        "like": "contact Confuse"
+      },
+      {
+        "name": "Lead Vocals",
+        "text": "Sound moves do 1.3x.",
+        "like": "Punk Rock",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Buffer"
+    ],
+    "roleNote": "Blinding extrovert. Kita Aura weakens the whole enemy side in one move. Duos ally buffer."
   },
   {
     "id": "sunthorn-phu",
@@ -1114,9 +2029,78 @@
         "types": [
           "Wind"
         ],
-        "image": "images/sunthorn-phu-mvnncuwo.png"
+        "image": "images/sunthorn-phu-mvnncuwo.png",
+        "stats": {
+          "vit": 55,
+          "pow": 40,
+          "grd": 55,
+          "ene": 80,
+          "wil": 75,
+          "spe": 80
+        },
+        "signature": "phra-aphai-flute",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Verse on the Wind"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Satire"
+          },
+          {
+            "lv": 6,
+            "move": "sing",
+            "as": "Klon Recital"
+          },
+          {
+            "lv": 12,
+            "move": "air-cutter",
+            "as": "Sharp Verse"
+          },
+          {
+            "lv": 18,
+            "move": "yawn",
+            "as": "Late Night Poem"
+          },
+          {
+            "lv": 25,
+            "move": "tailwind",
+            "as": "Nirat Journey"
+          },
+          {
+            "lv": 32,
+            "move": "hurricane",
+            "as": "Epic Poem"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Poet Laureate",
+        "text": "Sound moves never miss.",
+        "like": "sound accuracy"
+      },
+      {
+        "name": "Wandering Poet",
+        "text": "Can always switch out or flee, even when trapped.",
+        "like": "Run Away + Shed Shell"
+      },
+      {
+        "name": "Wine and Verse",
+        "text": "Each time he puts a foe to sleep, he heals 1/8 of his max Vitality.",
+        "like": "sleep heal",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Support"
+    ],
+    "roleNote": "Sleep controller. Phra Aphai's Flute puts every foe to sleep, a rare early sleep spreader. Frail."
   },
   {
     "id": "yuno",
@@ -1262,9 +2246,82 @@
           "Earth",
           "Beast"
         ],
-        "image": "images/nijika-mvnnhean.png"
+        "image": "images/nijika-mvnnhean.png",
+        "stats": {
+          "vit": 70,
+          "pow": 70,
+          "grd": 65,
+          "ene": 40,
+          "wil": 60,
+          "spe": 85
+        },
+        "signature": "drumroll",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Count-In"
+          },
+          {
+            "lv": 6,
+            "move": "rock-throw",
+            "as": "Drumstick Throw"
+          },
+          {
+            "lv": 11,
+            "move": "pounce",
+            "as": "Leader Rush"
+          },
+          {
+            "lv": 16,
+            "move": "bulldoze",
+            "as": "Bass Drum Stomp"
+          },
+          {
+            "lv": 22,
+            "move": "work-up",
+            "as": "Practice"
+          },
+          {
+            "lv": 29,
+            "move": "rock-slide",
+            "as": "Cymbal Crash"
+          },
+          {
+            "lv": 37,
+            "move": "earthquake",
+            "as": "Drum Solo"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Band Leader",
+        "text": "Duos: her ally's Energy moves do 1.3x.",
+        "like": "Battery"
+      },
+      {
+        "name": "Dorito Hair",
+        "text": "Foes that hit her with contact moves lose 1/8 of their max Vitality.",
+        "like": "Rough Skin (gag)"
+      },
+      {
+        "name": "Big Sister",
+        "text": "Duos: her ally takes 1/4 less damage.",
+        "like": "Friend Guard",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Buffer"
+    ],
+    "roleNote": "Band leader support: Count-In (Helping Hand) and Friend Guard keep an ally alive. Her drumroll signature speeds her up."
   },
   {
     "id": "mark-evans",
@@ -1280,9 +2337,82 @@
           "Earth",
           "Light"
         ],
-        "image": "images/mark-evans-mvnni4ib.png"
+        "image": "images/mark-evans-mvnni4ib.png",
+        "stats": {
+          "vit": 80,
+          "pow": 60,
+          "grd": 90,
+          "ene": 40,
+          "wil": 80,
+          "spe": 45
+        },
+        "signature": "god-hand",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Let's Play Football!"
+          },
+          {
+            "lv": 6,
+            "move": "rock-throw",
+            "as": "Goal Kick"
+          },
+          {
+            "lv": 11,
+            "move": "reflect",
+            "as": "Majin the Hand"
+          },
+          {
+            "lv": 17,
+            "move": "spirit-break",
+            "as": "Fist of Justice"
+          },
+          {
+            "lv": 23,
+            "move": "stealth-rock",
+            "as": "Mountain Wall"
+          },
+          {
+            "lv": 30,
+            "move": "rock-slide",
+            "as": "Great the Hand"
+          },
+          {
+            "lv": 38,
+            "move": "solar-beam",
+            "as": "Inazuma Break"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Captain",
+        "text": "Duos: when he enters, his ally's Guard rises by 1.",
+        "like": "entry ally buff"
+      },
+      {
+        "name": "Goalkeeper",
+        "text": "Energy moves (shots) do 3/4 damage to him.",
+        "like": "Energy damage cut"
+      },
+      {
+        "name": "Inazuma Spirit",
+        "text": "Below 1/3 Vitality, his own-type moves do 1.5x.",
+        "like": "Blaze",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Defence",
+      "Support"
+    ],
+    "roleNote": "Goalkeeper wall. God Hand is a Protect that also bounces damage back. Captain buffs an ally's Guard in duos."
   },
   {
     "id": "senku",
@@ -1297,7 +2427,49 @@
         "types": [
           "Earth"
         ],
-        "image": "images/senku-mvnniaof.png"
+        "image": "images/senku-mvnniaof.png",
+        "stats": {
+          "vit": 55,
+          "pow": 45,
+          "grd": 55,
+          "ene": 80,
+          "wil": 60,
+          "spe": 55
+        },
+        "signature": "revival-fluid",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "rock-throw",
+            "as": "Stone Tool"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Get Excited!"
+          },
+          {
+            "lv": 6,
+            "move": "mud-shot",
+            "as": "Clay Shot"
+          },
+          {
+            "lv": 11,
+            "move": "work-up",
+            "as": "Count the Seconds"
+          },
+          {
+            "lv": 17,
+            "move": "heal-bell",
+            "as": "Sulfa Drug",
+            "why": "Off-type (Light): the medicine he makes to cure Ruri."
+          },
+          {
+            "lv": 23,
+            "move": "earth-power",
+            "as": "Nitric Acid Cave"
+          }
+        ]
       },
       {
         "name": "Older Senku",
@@ -1305,7 +2477,71 @@
           "Earth",
           "Tech"
         ],
-        "image": "images/senku-mvnnj5hq.png"
+        "image": "images/senku-mvnnj5hq.png",
+        "level": 28,
+        "stats": {
+          "vit": 65,
+          "pow": 55,
+          "grd": 70,
+          "ene": 100,
+          "wil": 75,
+          "spe": 65
+        },
+        "signature": "medusa-reverse",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "rock-throw",
+            "as": "Stone Tool"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Get Excited!"
+          },
+          {
+            "lv": 6,
+            "move": "mud-shot",
+            "as": "Clay Shot"
+          },
+          {
+            "lv": 11,
+            "move": "work-up",
+            "as": "Count the Seconds"
+          },
+          {
+            "lv": 17,
+            "move": "heal-bell",
+            "as": "Sulfa Drug",
+            "why": "Off-type (Light): the medicine he makes to cure Ruri."
+          },
+          {
+            "lv": 23,
+            "move": "earth-power",
+            "as": "Nitric Acid Cave"
+          },
+          {
+            "lv": "evo",
+            "move": "spark",
+            "as": "Electric Arc",
+            "why": "Off-type (Lightning): his first big project is generating electricity."
+          },
+          {
+            "lv": 31,
+            "move": "lock-on",
+            "as": "Calculation"
+          },
+          {
+            "lv": 35,
+            "move": "flash-cannon",
+            "as": "Arc Lamp"
+          },
+          {
+            "lv": 40,
+            "move": "iron-head",
+            "as": "Iron Sword"
+          }
+        ]
       },
       {
         "name": "Senku's Rocket",
@@ -1313,9 +2549,97 @@
           "Cosmic",
           "Tech"
         ],
-        "image": "images/senku-s-rocket-mvnod981.png"
+        "image": "images/senku-s-rocket-mvnod981.png",
+        "level": 45,
+        "stats": {
+          "vit": 75,
+          "pow": 65,
+          "grd": 85,
+          "ene": 110,
+          "wil": 80,
+          "spe": 50
+        },
+        "signature": "rocket-launch",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "rock-throw",
+            "as": "Stone Tool",
+            "why": "Kept from an earlier form."
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Get Excited!"
+          },
+          {
+            "lv": 6,
+            "move": "mud-shot",
+            "as": "Clay Shot",
+            "why": "Kept from an earlier form."
+          },
+          {
+            "lv": 11,
+            "move": "work-up",
+            "as": "Count the Seconds"
+          },
+          {
+            "lv": 23,
+            "move": "earth-power",
+            "as": "Nitric Acid Cave",
+            "why": "Kept from an earlier form."
+          },
+          {
+            "lv": 31,
+            "move": "lock-on",
+            "as": "Calculation"
+          },
+          {
+            "lv": 35,
+            "move": "flash-cannon",
+            "as": "Arc Lamp"
+          },
+          {
+            "lv": "evo",
+            "move": "meteor-beam",
+            "as": "Ignition"
+          },
+          {
+            "lv": 50,
+            "move": "steel-beam",
+            "as": "Booster Burn"
+          },
+          {
+            "lv": 56,
+            "move": "gravity",
+            "as": "Escape Velocity"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Kingdom of Science",
+        "text": "On entry, raises Power or Energy by 1, whichever hits the foe's weaker defence.",
+        "like": "Download"
+      },
+      {
+        "name": "Ten Billion Percent",
+        "text": "His moves never miss.",
+        "like": "No Guard, user side only"
+      },
+      {
+        "name": "Revival Fluid",
+        "text": "The first time he drops below half Vitality, he heals 1/4 and cures his status.",
+        "like": "one-time heal",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Support"
+    ],
+    "roleNote": "Scientist. Kingdom of Science (Download) adapts to the target. The first form revives (heals and cures), the second petrifies, and the rocket is a slow nuke."
   },
   {
     "id": "kakuzu",
@@ -1349,7 +2673,53 @@
         "types": [
           "Lightning"
         ],
-        "image": "images/zenitsu-mvnnkm8l.png"
+        "image": "images/zenitsu-mvnnkm8l.png",
+        "stats": {
+          "vit": 45,
+          "pow": 80,
+          "grd": 40,
+          "ene": 40,
+          "wil": 40,
+          "spe": 105
+        },
+        "signature": "thunderclap-flash",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Crying Fit"
+          },
+          {
+            "lv": 6,
+            "move": "spark",
+            "as": "Thunderclap and Flash"
+          },
+          {
+            "lv": 11,
+            "move": "rest",
+            "as": "Fall Asleep"
+          },
+          {
+            "lv": 17,
+            "move": "thunder-punch",
+            "as": "Thunderclap and Flash: Sixfold"
+          },
+          {
+            "lv": 24,
+            "move": "wild-charge",
+            "as": "Thunderclap and Flash: Eightfold"
+          },
+          {
+            "lv": 30,
+            "move": "charm",
+            "as": "Nezuko-chan!",
+            "why": "Off-type (Light): his lovestruck gag."
+          }
+        ]
       },
       {
         "name": "Thunder God Zenitsu",
@@ -1357,9 +2727,87 @@
           "Lightning",
           "Neutral"
         ],
-        "image": "images/zenitsu-mvnnkp1m.png"
+        "image": "images/zenitsu-mvnnkp1m.png",
+        "level": 34,
+        "stats": {
+          "vit": 60,
+          "pow": 110,
+          "grd": 55,
+          "ene": 50,
+          "wil": 55,
+          "spe": 130
+        },
+        "signature": "flaming-thunder-god",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Crying Fit"
+          },
+          {
+            "lv": 6,
+            "move": "spark",
+            "as": "Thunderclap and Flash"
+          },
+          {
+            "lv": 11,
+            "move": "rest",
+            "as": "Fall Asleep"
+          },
+          {
+            "lv": 17,
+            "move": "thunder-punch",
+            "as": "Thunderclap and Flash: Sixfold"
+          },
+          {
+            "lv": 24,
+            "move": "wild-charge",
+            "as": "Thunderclap and Flash: Eightfold"
+          },
+          {
+            "lv": "evo",
+            "move": "extreme-speed",
+            "as": "Thunderclap and Flash: Godspeed"
+          },
+          {
+            "lv": 40,
+            "move": "volt-tackle",
+            "as": "Thunderclap and Flash: Godspeed Full Power"
+          },
+          {
+            "lv": 46,
+            "move": "swords-dance"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Sleep Fighting",
+        "text": "While asleep he still attacks, and his Power is 1.5x.",
+        "like": "Comatose-style + boost"
+      },
+      {
+        "name": "Coward's Legs",
+        "text": "The first time he drops below half Vitality, his Speed rises by 2.",
+        "like": "flee boost"
+      },
+      {
+        "name": "Super Hearing",
+        "text": "Immune to sound moves and Sleep from sound.",
+        "like": "Soundproof",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Priority"
+    ],
+    "roleNote": "Fastest priority attacker in his tier. Sleep Fighting plus Fall Asleep (Rest) is the hidden combo: he heals and keeps attacking while asleep."
   },
   {
     "id": "misaka",
@@ -1788,9 +3236,81 @@
           "Light",
           "Earth"
         ],
-        "image": "images/darkness-mvnnwbx5.png"
+        "image": "images/darkness-mvnnwbx5.png",
+        "stats": {
+          "vit": 80,
+          "pow": 40,
+          "grd": 95,
+          "ene": 25,
+          "wil": 80,
+          "spe": 20
+        },
+        "signature": "decoy",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "endure",
+            "as": "Not Yet!"
+          },
+          {
+            "lv": 6,
+            "move": "slam",
+            "as": "Wild Swing"
+          },
+          {
+            "lv": 11,
+            "move": "reflect",
+            "as": "Crusader's Shield"
+          },
+          {
+            "lv": 16,
+            "move": "protect"
+          },
+          {
+            "lv": 22,
+            "move": "shore-up",
+            "as": "Iron Will"
+          },
+          {
+            "lv": 28,
+            "move": "sacred-sword",
+            "as": "Crusader Slash"
+          },
+          {
+            "lv": 36,
+            "move": "rock-slide",
+            "as": "Heavy Armour Charge"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Masochist",
+        "text": "Each time she is hit, her Guard rises by 1.",
+        "like": "Stamina"
+      },
+      {
+        "name": "Crusader's Pride",
+        "text": "Can't be made to flinch, and Taunt doesn't work on her.",
+        "like": "Inner Focus + Oblivious"
+      },
+      {
+        "name": "Can't Hit a Thing",
+        "text": "Her attacks do 2x but have half accuracy.",
+        "like": "extreme Hustle (gag)",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Defence",
+      "Support"
+    ],
+    "roleNote": "Wall that gets tougher the more she is hit (Masochist). Decoy pulls attacks onto her in duos. Gag hidden ability: hits hard but almost never lands."
   },
   {
     "id": "blackbeard",
@@ -2198,9 +3718,82 @@
         "types": [
           "Time"
         ],
-        "image": "images/metro-man-mvnojggy.png"
+        "image": "images/metro-man-mvnojggy.png",
+        "stats": {
+          "vit": 70,
+          "pow": 85,
+          "grd": 70,
+          "ene": 55,
+          "wil": 65,
+          "spe": 95
+        },
+        "signature": "heroic-flyby",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "swift",
+            "as": "Hero Pose"
+          },
+          {
+            "lv": 6,
+            "move": "quick-attack",
+            "as": "Super Speed"
+          },
+          {
+            "lv": 12,
+            "move": "zen-headbutt",
+            "as": "Super Punch"
+          },
+          {
+            "lv": 18,
+            "move": "psycho-cut",
+            "as": "Heat Vision"
+          },
+          {
+            "lv": 24,
+            "move": "trick-room",
+            "as": "Time Out"
+          },
+          {
+            "lv": 30,
+            "move": "sing",
+            "as": "Music Man"
+          },
+          {
+            "lv": 38,
+            "move": "future-sight",
+            "as": "Faked Death Trap"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Faked Death",
+        "text": "Once per battle, a hit that would knock him out instead leaves him at 1 Vitality and switches him out.",
+        "like": "one-time escape"
+      },
+      {
+        "name": "Super Speed",
+        "text": "His Speed rises by 1 at the end of each turn.",
+        "like": "Speed Boost"
+      },
+      {
+        "name": "Music Man",
+        "text": "Sound moves do 1.3x. He retired to make music.",
+        "like": "Punk Rock",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Gimmick"
+    ],
+    "roleNote": "Gag superhero who fakes his death: once per battle he escapes a knockout by switching out. Strong for his tier."
   },
   {
     "id": "pucci",
@@ -2361,9 +3954,83 @@
           "Tech",
           "Blood"
         ],
-        "image": "images/vi-mvnommna.png"
+        "image": "images/vi-mvnommna.png",
+        "stats": {
+          "vit": 75,
+          "pow": 105,
+          "grd": 80,
+          "ene": 40,
+          "wil": 60,
+          "spe": 80
+        },
+        "signature": "hextech-punch",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "bullet-punch",
+            "as": "Jab"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Squared Up"
+          },
+          {
+            "lv": 6,
+            "move": "mega-punch",
+            "as": "Haymaker"
+          },
+          {
+            "lv": 12,
+            "move": "poison-jab",
+            "as": "Bloody Knuckles"
+          },
+          {
+            "lv": 18,
+            "move": "iron-defense",
+            "as": "Gauntlet Guard"
+          },
+          {
+            "lv": 24,
+            "move": "iron-head",
+            "as": "Headbutt"
+          },
+          {
+            "lv": 31,
+            "move": "bitter-blade",
+            "as": "Stay Down"
+          },
+          {
+            "lv": 38,
+            "move": "close-combat",
+            "as": "Undercity Beatdown"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Hextech Gauntlets",
+        "text": "Punching moves do 1.2x.",
+        "like": "Iron Fist"
+      },
+      {
+        "name": "Undercity Brawler",
+        "text": "While she has a status, her Power is 1.5x.",
+        "like": "Guts"
+      },
+      {
+        "name": "Prison Hardened",
+        "text": "Critical hits do normal damage to her.",
+        "like": "Battle Armor",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Defence"
+    ],
+    "roleNote": "Bulky brawler. Iron Fist gauntlets plus Guts makes her stronger when Burned or Bleeding."
   },
   {
     "id": "shinji",
@@ -2415,16 +4082,150 @@
           "Tech",
           "Neutral"
         ],
-        "image": "images/baymax-mvnonb91.png"
+        "image": "images/baymax-mvnonb91.png",
+        "stats": {
+          "vit": 100,
+          "pow": 40,
+          "grd": 70,
+          "ene": 50,
+          "wil": 80,
+          "spe": 30
+        },
+        "signature": "healthcare-scan",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Are You Satisfied With Your Care?"
+          },
+          {
+            "lv": 6,
+            "move": "iron-defense",
+            "as": "Inflate"
+          },
+          {
+            "lv": 12,
+            "move": "spark",
+            "as": "Defibrillator",
+            "why": "Off-type (Lightning): his defibrillator paddles."
+          },
+          {
+            "lv": 18,
+            "move": "heal-bell",
+            "as": "Treatment",
+            "why": "Off-type (Light): he is a nurse robot."
+          },
+          {
+            "lv": 25,
+            "move": "protect",
+            "as": "Hug"
+          },
+          {
+            "lv": 32,
+            "move": "slam",
+            "as": "Bounce"
+          }
+        ]
       },
       {
         "name": "Armored Baymax",
         "types": [
           "Tech"
         ],
-        "image": "images/baymax-mvnonj1q.png"
+        "image": "images/baymax-mvnonj1q.png",
+        "level": 30,
+        "stats": {
+          "vit": 105,
+          "pow": 85,
+          "grd": 95,
+          "ene": 50,
+          "wil": 80,
+          "spe": 55
+        },
+        "signature": "rocket-fist",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Are You Satisfied With Your Care?"
+          },
+          {
+            "lv": 6,
+            "move": "iron-defense",
+            "as": "Carbon Fibre Armour"
+          },
+          {
+            "lv": 12,
+            "move": "spark",
+            "as": "Defibrillator",
+            "why": "Off-type (Lightning): his defibrillator paddles."
+          },
+          {
+            "lv": 18,
+            "move": "heal-bell",
+            "as": "Treatment",
+            "why": "Off-type (Light): he is a nurse robot."
+          },
+          {
+            "lv": 25,
+            "move": "protect",
+            "as": "Hug"
+          },
+          {
+            "lv": "evo",
+            "move": "bullet-punch",
+            "as": "Karate Chip"
+          },
+          {
+            "lv": 34,
+            "move": "fly",
+            "as": "Rocket Boosters",
+            "why": "Off-type (Wind): flight thrusters."
+          },
+          {
+            "lv": 40,
+            "move": "iron-head",
+            "as": "Armoured Ram"
+          },
+          {
+            "lv": 46,
+            "move": "iron-tail",
+            "as": "Rocket Fist Combo"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Healthcare Companion",
+        "text": "Duos: each turn, 30% chance to cure his ally's status.",
+        "like": "Healer"
+      },
+      {
+        "name": "Inflatable",
+        "text": "Contact moves do half damage to him, but Fire moves do double.",
+        "like": "Fluffy"
+      },
+      {
+        "name": "Low Battery",
+        "text": "Below 1/4 Vitality, his Speed doubles but he may act Confused (gag).",
+        "like": "Unburden + Confuse",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Defence"
+    ],
+    "roleNote": "Healer wall. Healthcare Scan heals and reveals the foe. Armored Baymax trades bulk for Rocket Fist damage. Inflatable body halves contact."
   },
   {
     "id": "chiikawa-usagi",
@@ -2440,9 +4241,81 @@
           "Beast",
           "Neutral"
         ],
-        "image": "images/chiikawa-usagi-mvnoonos.png"
+        "image": "images/chiikawa-usagi-mvnoonos.png",
+        "stats": {
+          "vit": 45,
+          "pow": 65,
+          "grd": 40,
+          "ene": 40,
+          "wil": 40,
+          "spe": 85
+        },
+        "signature": "ura",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Haa?"
+          },
+          {
+            "lv": 5,
+            "move": "pounce",
+            "as": "Hop"
+          },
+          {
+            "lv": 9,
+            "move": "fury-cutter",
+            "as": "Weeding"
+          },
+          {
+            "lv": 14,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 20,
+            "move": "belly-drum",
+            "as": "Eat Everything"
+          },
+          {
+            "lv": 27,
+            "move": "first-impression",
+            "as": "Surprise Leap"
+          },
+          {
+            "lv": 35,
+            "move": "raging-bull",
+            "as": "Yaha Charge"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Yaha!",
+        "text": "Each turn, one random stat rises by 2 and another drops by 1.",
+        "like": "Moody"
+      },
+      {
+        "name": "Weeder",
+        "text": "Moves with 60 power or less do 1.5x. Weed-pulling jobs pay the bills.",
+        "like": "Technician"
+      },
+      {
+        "name": "Ura!",
+        "text": "When it enters battle, foes' Speed drops by 1.",
+        "like": "Speed Intimidate",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Speed"
+    ],
+    "roleNote": "Chaos rabbit. Yaha! (Moody) makes every copy play differently turn to turn. Weeder (Technician) makes its many weak moves real damage."
   },
   {
     "id": "gold-ship",
@@ -2458,9 +4331,82 @@
           "Beast",
           "Blood"
         ],
-        "image": "images/gold-ship-mvnop0ro.png"
+        "image": "images/gold-ship-mvnop0ro.png",
+        "stats": {
+          "vit": 60,
+          "pow": 70,
+          "grd": 50,
+          "ene": 35,
+          "wil": 50,
+          "spe": 65
+        },
+        "signature": "golshi-dropkick",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Golshi Stare"
+          },
+          {
+            "lv": 6,
+            "move": "pounce",
+            "as": "Gate Break"
+          },
+          {
+            "lv": 11,
+            "move": "leech-life",
+            "as": "Second Wind"
+          },
+          {
+            "lv": 17,
+            "move": "crush-claw",
+            "as": "Hoof Stomp"
+          },
+          {
+            "lv": 23,
+            "move": "blood-pact",
+            "as": "All-Out Spurt"
+          },
+          {
+            "lv": 30,
+            "move": "close-combat",
+            "as": "Final Corner Push"
+          },
+          {
+            "lv": 38,
+            "move": "outrage",
+            "as": "Runaway Golshi"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Dropkick Artist",
+        "text": "Kicking moves do 1.2x.",
+        "like": "Striker"
+      },
+      {
+        "name": "Golshi Being Golshi",
+        "text": "Her stat changes are reversed: drops become boosts and boosts become drops.",
+        "like": "Contrary"
+      },
+      {
+        "name": "Late Charge",
+        "text": "If she moves after the target, her move does 1.3x. She runs from the back.",
+        "like": "Analytic",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Attack"
+    ],
+    "roleNote": "Unpredictable horse girl. Contrary (hidden in plain sight as ability 2) flips drawbacks into boosts. Late Charge rewards moving last."
   },
   {
     "id": "unknown-beast-meme-face",
@@ -2475,9 +4421,76 @@
         "types": [
           "Beast"
         ],
-        "image": "images/unknown-beast-meme-face-mvnopvln.png"
+        "image": "images/unknown-beast-meme-face-mvnopvln.png",
+        "stats": {
+          "vit": 55,
+          "pow": 60,
+          "grd": 50,
+          "ene": 45,
+          "wil": 50,
+          "spe": 70
+        },
+        "signature": "shikanoko-dance",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Shika!"
+          },
+          {
+            "lv": 5,
+            "move": "headbutt"
+          },
+          {
+            "lv": 10,
+            "move": "pounce",
+            "as": "Deer Hop"
+          },
+          {
+            "lv": 16,
+            "move": "lunge",
+            "as": "Antler Charge"
+          },
+          {
+            "lv": 22,
+            "move": "slack-off",
+            "as": "Deer Cracker Snack"
+          },
+          {
+            "lv": 30,
+            "move": "megahorn",
+            "as": "Antler Rush"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Koshitantan",
+        "text": "When anyone else uses a dance move, she copies it.",
+        "like": "Dancer"
+      },
+      {
+        "name": "Antlers",
+        "text": "Foes that hit her with contact moves lose 1/8 of their max Vitality.",
+        "like": "Rough Skin"
+      },
+      {
+        "name": "Deer Crackers",
+        "text": "When she uses a healing move she also raises her Guard by 1.",
+        "like": "Cheek Pouch variant",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Buffer",
+      "Support"
+    ],
+    "roleNote": "Dance buffer: her signature boosts herself and an ally in duos. Koshitantan copies other dances, a niche for dance-heavy teams."
   },
   {
     "id": "soma",
@@ -2493,9 +4506,82 @@
           "Blood",
           "Fire"
         ],
-        "image": "images/soma-mvnotkd4.png"
+        "image": "images/soma-mvnotkd4.png",
+        "stats": {
+          "vit": 55,
+          "pow": 55,
+          "grd": 50,
+          "ene": 60,
+          "wil": 55,
+          "spe": 60
+        },
+        "signature": "yukihira-special",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "ember",
+            "as": "Flambé"
+          },
+          {
+            "lv": 6,
+            "move": "work-up",
+            "as": "Mise en Place"
+          },
+          {
+            "lv": 11,
+            "move": "flame-wheel",
+            "as": "Wok Toss"
+          },
+          {
+            "lv": 17,
+            "move": "blood-pact",
+            "as": "Fillet"
+          },
+          {
+            "lv": 23,
+            "move": "leech-life",
+            "as": "Taste Test"
+          },
+          {
+            "lv": 30,
+            "move": "flamethrower",
+            "as": "Full Flame"
+          },
+          {
+            "lv": 38,
+            "move": "giga-drain",
+            "as": "Okawari!"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Improviser",
+        "text": "Becomes the type of the move he is about to use.",
+        "like": "Protean"
+      },
+      {
+        "name": "Diner Owner's Son",
+        "text": "Healing moves he uses heal 1.3x as much.",
+        "like": "heal boost"
+      },
+      {
+        "name": "Shokugeki",
+        "text": "When he enters battle, the foe in front of him can't switch out for 2 turns.",
+        "like": "short Shadow Tag",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "Cook support: Yukihira Special heals and buffs. Improviser (Protean) lets him change type to whatever he just used, a surprise attacker build."
   },
   {
     "id": "hinata",
@@ -2511,9 +4597,90 @@
           "Blood",
           "Light"
         ],
-        "image": "images/hinata-mvnotzpp.png"
+        "image": "images/hinata-mvnotzpp.png",
+        "stats": {
+          "vit": 60,
+          "pow": 45,
+          "grd": 55,
+          "ene": 55,
+          "wil": 55,
+          "spe": 130
+        },
+        "signature": "freak-quick",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack",
+            "as": "Broad Attack"
+          },
+          {
+            "lv": 1,
+            "move": "counter",
+            "as": "Receive"
+          },
+          {
+            "lv": 6,
+            "move": "acrobatics",
+            "as": "Jump",
+            "why": "Off-type (Wind): his huge vertical leap."
+          },
+          {
+            "lv": 11,
+            "move": "leech-life",
+            "as": "Stamina Monster"
+          },
+          {
+            "lv": 17,
+            "move": "protect",
+            "as": "Read Block"
+          },
+          {
+            "lv": 23,
+            "move": "spirit-break",
+            "as": "Spike"
+          },
+          {
+            "lv": 29,
+            "move": "swift",
+            "as": "Jump Float Serve"
+          },
+          {
+            "lv": 36,
+            "move": "play-rough",
+            "as": "Minus Tempo Attack"
+          },
+          {
+            "lv": 44,
+            "move": "tailwind",
+            "as": "Synchronized Attack",
+            "why": "Off-type (Wind): the whole team attacking at once at full speed."
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Little Giant",
+        "text": "His Physical attacks use his Speed instead of his Power.",
+        "like": "Speed-as-attack"
+      },
+      {
+        "name": "Ultimate Decoy",
+        "text": "Duos: on his first turn in battle, foes' single-target moves hit him.",
+        "like": "one-turn Follow Me"
+      },
+      {
+        "name": "Beach Training",
+        "text": "His moves never miss and can't have their accuracy lowered.",
+        "like": "No Guard, user side only",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Gimmick"
+    ],
+    "roleNote": "Little Giant: attacks off Speed instead of Power, so Speed boosts double as damage boosts. Ultimate Decoy redirects in duos."
   },
   {
     "id": "guts",
@@ -2831,9 +4998,88 @@
           "Water",
           "Wind"
         ],
-        "image": "images/cmvnn1tin-mvnn2dl6.png"
+        "image": "images/cmvnn1tin-mvnn2dl6.png",
+        "stats": {
+          "vit": 65,
+          "pow": 50,
+          "grd": 75,
+          "ene": 90,
+          "wil": 75,
+          "spe": 70
+        },
+        "signature": "water-nebula",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "water-gun",
+            "as": "Water Shot"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Love Rival!"
+          },
+          {
+            "lv": 6,
+            "move": "whirlpool",
+            "as": "Water Lock"
+          },
+          {
+            "lv": 11,
+            "move": "water-pulse",
+            "as": "Water Cane"
+          },
+          {
+            "lv": 17,
+            "move": "aqua-ring",
+            "as": "Drip Drip"
+          },
+          {
+            "lv": 23,
+            "move": "air-cutter",
+            "as": "Water Slicer"
+          },
+          {
+            "lv": 30,
+            "move": "surf",
+            "as": "Water Body Flood"
+          },
+          {
+            "lv": 37,
+            "move": "hurricane",
+            "as": "Rain Storm"
+          },
+          {
+            "lv": 44,
+            "move": "hydro-pump",
+            "as": "Wings of Love"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Water Body",
+        "text": "Physical moves do half damage to her.",
+        "like": "physical damage cut"
+      },
+      {
+        "name": "Rain Woman",
+        "text": "When she enters battle, Water moves do 1.3x for 5 turns.",
+        "like": "Drizzle-style field"
+      },
+      {
+        "name": "Gray-sama!",
+        "text": "When an ally is knocked out, her Energy rises by 2.",
+        "like": "on ally faint boost",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Defence"
+    ],
+    "roleNote": "Water/Wind energy attacker. Water Body halves physical hits, so she can switch into physical attackers."
   },
   {
     "id": "dante",
@@ -2909,9 +5155,83 @@
           "Tech",
           "Wind"
         ],
-        "image": "images/sunraku-mvqrgrpu.png"
+        "image": "images/sunraku-mvqrgrpu.png",
+        "stats": {
+          "vit": 50,
+          "pow": 95,
+          "grd": 40,
+          "ene": 50,
+          "wil": 40,
+          "spe": 125
+        },
+        "signature": "vorpal-strike",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack",
+            "as": "Dash"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Bird Mask Stare"
+          },
+          {
+            "lv": 6,
+            "move": "metal-claw",
+            "as": "Dual Blades"
+          },
+          {
+            "lv": 11,
+            "move": "acrobatics",
+            "as": "Moonsault"
+          },
+          {
+            "lv": 17,
+            "move": "bullet-punch",
+            "as": "Frame Skip"
+          },
+          {
+            "lv": 23,
+            "move": "u-turn",
+            "as": "Dodge Roll"
+          },
+          {
+            "lv": 30,
+            "move": "iron-head",
+            "as": "Stun Slash"
+          },
+          {
+            "lv": 38,
+            "move": "autotomize",
+            "as": "Overheat Build"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Glass Cannon Build",
+        "text": "His Power and Speed are 1.2x, but his Guard and Will are 0.8x.",
+        "like": "stat trade"
+      },
+      {
+        "name": "Kusoge Veteran",
+        "text": "Immune to Confuse and Sleep. He has played worse games.",
+        "like": "status immunity"
+      },
+      {
+        "name": "Frame Perfect",
+        "text": "His quick (priority) moves do 1.3x.",
+        "like": "priority boost",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Attack"
+    ],
+    "roleNote": "Glass cannon gamer: very fast, frail, with an always-crit signature. Kusoge Veteran shrugs off status."
   },
   {
     "id": "eren",
@@ -3059,9 +5379,82 @@
           "Tech",
           "Earth"
         ],
-        "image": "images/rudo-mvqstuj5.png"
+        "image": "images/rudo-mvqstuj5.png",
+        "stats": {
+          "vit": 70,
+          "pow": 90,
+          "grd": 75,
+          "ene": 40,
+          "wil": 55,
+          "spe": 80
+        },
+        "signature": "vital-instrument",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "rock-throw",
+            "as": "Trash Throw"
+          },
+          {
+            "lv": 6,
+            "move": "metal-claw",
+            "as": "Scrap Swipe"
+          },
+          {
+            "lv": 12,
+            "move": "spikes",
+            "as": "Junk Scatter"
+          },
+          {
+            "lv": 18,
+            "move": "iron-head",
+            "as": "Gloved Punch"
+          },
+          {
+            "lv": 24,
+            "move": "rock-slide",
+            "as": "Garbage Avalanche"
+          },
+          {
+            "lv": 31,
+            "move": "iron-defense",
+            "as": "Trash Armour"
+          },
+          {
+            "lv": 38,
+            "move": "iron-tail",
+            "as": "Pit Rage"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Treasure the Trash",
+        "text": "When hit by a Tech move, his Power rises by 1.",
+        "like": "Justified variant"
+      },
+      {
+        "name": "Pit Survivor",
+        "text": "While he has a status, his Power is 1.5x.",
+        "like": "Guts"
+      },
+      {
+        "name": "Fury of the Fallen",
+        "text": "A critical hit on him raises his Power to the maximum.",
+        "like": "Anger Point",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Setter"
+    ],
+    "roleNote": "Trash-to-weapon fighter. Junk Spikes hazard plus a Retaliate-style signature that hits harder after losing an ally."
   },
   {
     "id": "sung-jin-woo",
@@ -3135,9 +5528,83 @@
           "Tech",
           "Lightning"
         ],
-        "image": "images/asuna-mvqtabei.png"
+        "image": "images/asuna-mvqtabei.png",
+        "stats": {
+          "vit": 60,
+          "pow": 90,
+          "grd": 55,
+          "ene": 60,
+          "wil": 55,
+          "spe": 110
+        },
+        "signature": "mothers-rosario",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack",
+            "as": "Linear"
+          },
+          {
+            "lv": 1,
+            "move": "leer"
+          },
+          {
+            "lv": 6,
+            "move": "metal-claw",
+            "as": "Rapier Slash"
+          },
+          {
+            "lv": 11,
+            "move": "spark",
+            "as": "Flash Step"
+          },
+          {
+            "lv": 17,
+            "move": "wish",
+            "as": "Undine Healing",
+            "why": "Off-type (Light): her healer build in ALO."
+          },
+          {
+            "lv": 23,
+            "move": "bullet-punch",
+            "as": "Star Splash"
+          },
+          {
+            "lv": 30,
+            "move": "iron-head",
+            "as": "Flashing Penetrator"
+          },
+          {
+            "lv": 38,
+            "move": "swords-dance",
+            "as": "Over-Clock"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "The Flash",
+        "text": "Her first move each time she enters battle goes first.",
+        "like": "Quick Draw"
+      },
+      {
+        "name": "Undine Healer",
+        "text": "Healing moves she uses heal 1.3x as much.",
+        "like": "heal boost"
+      },
+      {
+        "name": "Kirito's Partner",
+        "text": "Duos: when Kirito is her ally, both get +1 Speed on entry. Rare pair bonus.",
+        "like": "pair affinity (rare)",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Attack"
+    ],
+    "roleNote": "The Flash: fast multi-hit rapier. Mother's Rosario breaks Substitutes and Sturdy. Hidden pair bonus with Kirito."
   },
   {
     "id": "rudeus",
@@ -3152,7 +5619,49 @@
         "types": [
           "Water"
         ],
-        "image": "images/rudeus-mvqtccst.png"
+        "image": "images/rudeus-mvqtccst.png",
+        "stats": {
+          "vit": 45,
+          "pow": 35,
+          "grd": 45,
+          "ene": 80,
+          "wil": 60,
+          "spe": 65
+        },
+        "signature": "quagmire",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "water-gun",
+            "as": "Water Ball"
+          },
+          {
+            "lv": 1,
+            "move": "leer"
+          },
+          {
+            "lv": 6,
+            "move": "mud-shot",
+            "as": "Mud Shot",
+            "why": "Off-type (Earth): he trains every element as a child; Earth becomes his best."
+          },
+          {
+            "lv": 11,
+            "move": "water-pulse",
+            "as": "Water Cannon"
+          },
+          {
+            "lv": 17,
+            "move": "icy-wind",
+            "as": "Frost Nova",
+            "why": "Off-type (Ice): he trains every element as a child."
+          },
+          {
+            "lv": 23,
+            "move": "bubble-beam",
+            "as": "Rain Spell"
+          }
+        ]
       },
       {
         "name": "Rudeus",
@@ -3160,9 +5669,94 @@
           "Water",
           "Earth"
         ],
-        "image": "images/rudeus-mvqtcnqj.png"
+        "image": "images/rudeus-mvqtcnqj.png",
+        "level": 30,
+        "stats": {
+          "vit": 70,
+          "pow": 50,
+          "grd": 70,
+          "ene": 115,
+          "wil": 80,
+          "spe": 75
+        },
+        "signature": "stone-cannon",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "water-gun",
+            "as": "Water Ball"
+          },
+          {
+            "lv": 1,
+            "move": "leer"
+          },
+          {
+            "lv": 6,
+            "move": "mud-shot",
+            "as": "Mud Shot"
+          },
+          {
+            "lv": 11,
+            "move": "water-pulse",
+            "as": "Water Cannon"
+          },
+          {
+            "lv": 17,
+            "move": "icy-wind",
+            "as": "Frost Nova",
+            "why": "Off-type (Ice): he trains every element as a child."
+          },
+          {
+            "lv": 23,
+            "move": "bubble-beam",
+            "as": "Rain Spell"
+          },
+          {
+            "lv": "evo",
+            "move": "earth-power",
+            "as": "Earth Lance"
+          },
+          {
+            "lv": 34,
+            "move": "protect",
+            "as": "Earth Fortress"
+          },
+          {
+            "lv": 40,
+            "move": "surf",
+            "as": "Tidal Spell"
+          },
+          {
+            "lv": 46,
+            "move": "hydro-pump",
+            "as": "Flood Torrent"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Silent Casting",
+        "text": "His first Energy move each time he enters battle goes first.",
+        "like": "Quick Draw (Energy)"
+      },
+      {
+        "name": "Prodigy",
+        "text": "Moves he uses that are not his type still get a 1.2x bonus.",
+        "like": "off-type boost"
+      },
+      {
+        "name": "Eye of Foresight",
+        "text": "Moves that hit a turn later can't hurt him, and he dodges the first quick (priority) move each battle.",
+        "like": "foresight",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Gimmick"
+    ],
+    "roleNote": "Mage prodigy. Silent Casting gives his first energy move priority. Quagmire slows everyone, and Stone Cannon is a strong crit hit."
   },
   {
     "id": "reborn",
@@ -3406,9 +6000,83 @@
         "types": [
           "Blood"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 80,
+          "pow": 70,
+          "grd": 85,
+          "ene": 90,
+          "wil": 85,
+          "spe": 45
+        },
+        "signature": "poison-doll",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "toxic",
+            "as": "Poison Mist"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Fortune Telling"
+          },
+          {
+            "lv": 6,
+            "move": "poison-jab",
+            "as": "Poison Sword"
+          },
+          {
+            "lv": 12,
+            "move": "giga-drain",
+            "as": "Antidote Draw"
+          },
+          {
+            "lv": 18,
+            "move": "sludge-bomb",
+            "as": "Poison Rifle"
+          },
+          {
+            "lv": 25,
+            "move": "calm-mind",
+            "as": "Read the Future",
+            "why": "Off-type (Time): his fortune telling."
+          },
+          {
+            "lv": 32,
+            "move": "protect"
+          },
+          {
+            "lv": 40,
+            "move": "gunk-shot",
+            "as": "Poison Dressing"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Poison Body",
+        "text": "Foes that hit him with contact moves have a 30% chance to Bleed.",
+        "like": "Poison Point"
+      },
+      {
+        "name": "Electromagnetic Sight",
+        "text": "His moves never miss, and he knows the foe's moves.",
+        "like": "No Guard + Frisk"
+      },
+      {
+        "name": "Antibody",
+        "text": "Bleed heals him 1/8 each turn instead of hurting him.",
+        "like": "Poison Heal",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Defence",
+      "Setter"
+    ],
+    "roleNote": "Poison wall: Poison Body spreads Bleed on contact, Antibody turns Bleed into healing. Poison Doll is a strong finisher."
   },
   {
     "id": "sunny",
@@ -3423,9 +6091,82 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 70,
+          "pow": 80,
+          "grd": 75,
+          "ene": 70,
+          "wil": 70,
+          "spe": 70
+        },
+        "signature": "hair-lock",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Utsukushii"
+          },
+          {
+            "lv": 6,
+            "move": "slam",
+            "as": "Hair Whip"
+          },
+          {
+            "lv": 12,
+            "move": "mega-punch",
+            "as": "Hair Punch"
+          },
+          {
+            "lv": 18,
+            "move": "protect",
+            "as": "Hair Shield"
+          },
+          {
+            "lv": 24,
+            "move": "hyper-voice",
+            "as": "Beautiful Speech"
+          },
+          {
+            "lv": 31,
+            "move": "recover",
+            "as": "Taste Absorption"
+          },
+          {
+            "lv": 38,
+            "move": "double-edge",
+            "as": "Hair Ram"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Hair Net",
+        "text": "Foes that hit him with contact moves lose 1 Speed.",
+        "like": "Gooey"
+      },
+      {
+        "name": "Beautiful!",
+        "text": "When he knocks out a foe, his Energy rises by 1.",
+        "like": "Moxie (Energy)"
+      },
+      {
+        "name": "Feelers",
+        "text": "The first Physical hit he takes each battle does half damage.",
+        "like": "Multiscale variant",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Fielder",
+      "Defence"
+    ],
+    "roleNote": "Hair control: Hair Lock traps and slows. Hair Net punishes contact. A sturdy pre-mid pivot breaker."
   },
   {
     "id": "zebra",
@@ -3457,9 +6198,78 @@
         "types": [
           "Neutral"
         ],
-        "image": "images/komatsu-mvquc0ye.png"
+        "image": "images/komatsu-mvquc0ye.png",
+        "stats": {
+          "vit": 60,
+          "pow": 40,
+          "grd": 55,
+          "ene": 60,
+          "wil": 70,
+          "spe": 55
+        },
+        "signature": "gourmet-cooking",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Cheer for Toriko"
+          },
+          {
+            "lv": 6,
+            "move": "work-up",
+            "as": "Prep Work"
+          },
+          {
+            "lv": 12,
+            "move": "recover",
+            "as": "Taste Test"
+          },
+          {
+            "lv": 18,
+            "move": "protect",
+            "as": "Hide Behind Toriko"
+          },
+          {
+            "lv": 25,
+            "move": "wish",
+            "as": "Full Course",
+            "why": "Off-type (Light): food that heals whoever eats it."
+          },
+          {
+            "lv": 32,
+            "move": "baton-pass",
+            "as": "Serve the Dish"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Food Luck",
+        "text": "His moves land critical hits more often.",
+        "like": "Super Luck"
+      },
+      {
+        "name": "Chef's Care",
+        "text": "Duos: each turn, 30% chance to cure his ally's status.",
+        "like": "Healer"
+      },
+      {
+        "name": "Toriko's Partner",
+        "text": "Duos: when Toriko is his ally, Toriko's moves do 1.3x. Rare pair bonus.",
+        "like": "pair affinity (rare)",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "Weak chef with huge support: Gourmet Cooking heals and double-buffs an ally. Hidden pair bonus with Toriko."
   },
   {
     "id": "saber",
@@ -3536,9 +6346,82 @@
           "Time",
           "Neutral"
         ],
-        "image": "images/conan-mvqu47h5.png"
+        "image": "images/conan-mvqu47h5.png",
+        "stats": {
+          "vit": 55,
+          "pow": 70,
+          "grd": 55,
+          "ene": 75,
+          "wil": 65,
+          "spe": 80
+        },
+        "signature": "kick-shoes",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "yawn",
+            "as": "Tranquilizer Watch"
+          },
+          {
+            "lv": 6,
+            "move": "confusion",
+            "as": "Hunch"
+          },
+          {
+            "lv": 12,
+            "move": "encore",
+            "as": "Voice-Changing Bowtie"
+          },
+          {
+            "lv": 18,
+            "move": "calm-mind",
+            "as": "Think"
+          },
+          {
+            "lv": 24,
+            "move": "psychic",
+            "as": "There's Only One Truth!"
+          },
+          {
+            "lv": 31,
+            "move": "future-sight",
+            "as": "Deduction"
+          },
+          {
+            "lv": 38,
+            "move": "trick-room",
+            "as": "The Trick"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Detective",
+        "text": "On entry he reveals the foe's ability and moves.",
+        "like": "Frisk"
+      },
+      {
+        "name": "Only One Truth",
+        "text": "His moves ignore the target's ability.",
+        "like": "Mold Breaker"
+      },
+      {
+        "name": "Shrunken Body",
+        "text": "His first hit taken each battle does half damage. Everyone underestimates a kid.",
+        "like": "Multiscale variant",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Support"
+    ],
+    "roleNote": "Detective disruptor: sees the foe's moves and ability, puts them to sleep with the tranquilizer, and the kick shoes hit hard."
   },
   {
     "id": "luffy",
@@ -3730,17 +6613,20 @@
           {
             "lv": 45,
             "move": "bulk-up",
-            "as": "Gear Fourth: Boundman"
+            "as": "Gear Fourth: Boundman",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 50,
             "move": "x-scissor",
-            "as": "Gomu Gomu no Kong Gun"
+            "as": "Gomu Gomu no Kong Gun",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": 56,
             "move": "megahorn",
-            "as": "Gomu Gomu no Rhino Schneider"
+            "as": "Gomu Gomu no Rhino Schneider",
+            "why": "Kept from an earlier form."
           },
           {
             "lv": "evo",
@@ -4705,9 +7591,82 @@
           "Neutral",
           "Beast"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 50,
+          "pow": 65,
+          "grd": 45,
+          "ene": 45,
+          "wil": 45,
+          "spe": 70
+        },
+        "signature": "wolf-fang-fist",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer"
+          },
+          {
+            "lv": 5,
+            "move": "quick-attack",
+            "as": "Afterimage Dash"
+          },
+          {
+            "lv": 10,
+            "move": "swift",
+            "as": "Spirit Ball"
+          },
+          {
+            "lv": 16,
+            "move": "bite",
+            "as": "Wolf Bite",
+            "why": "Off-type (Dark): fights like a wild wolf."
+          },
+          {
+            "lv": 22,
+            "move": "crush-claw",
+            "as": "Wolf Claw"
+          },
+          {
+            "lv": 30,
+            "move": "hyper-voice",
+            "as": "Kamehameha"
+          },
+          {
+            "lv": 40,
+            "move": "close-combat",
+            "as": "Turtle School Combo"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Desert Bandit",
+        "text": "When he knocks out a foe, his Speed rises by 1.",
+        "like": "Moxie (Speed)"
+      },
+      {
+        "name": "Baseball Star",
+        "text": "Thrown and shot moves (like Spirit Ball) do 1.3x.",
+        "like": "Mega Launcher"
+      },
+      {
+        "name": "Saibaman Blast",
+        "text": "When he faints from a hit, the attacker loses 1/4 of its max Vitality.",
+        "like": "Aftermath",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Gimmick"
+    ],
+    "roleNote": "Gag fighter. Wolf Fang Fist is a five-hit move that breaks Substitutes and Sturdy. Hidden Saibaman Blast punishes whoever knocks him out."
   },
   {
     "id": "mr-satan",
@@ -4722,9 +7681,77 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 60,
+          "pow": 60,
+          "grd": 50,
+          "ene": 20,
+          "wil": 40,
+          "spe": 50
+        },
+        "signature": "dynamite-kick",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "splash",
+            "as": "Victory Pose"
+          },
+          {
+            "lv": 5,
+            "move": "growl",
+            "as": "Trash Talk"
+          },
+          {
+            "lv": 9,
+            "move": "fake-out",
+            "as": "Fake Tummy Ache"
+          },
+          {
+            "lv": 14,
+            "move": "mega-punch",
+            "as": "Megaton Punch"
+          },
+          {
+            "lv": 20,
+            "move": "helping-hand",
+            "as": "Champion's Cheer"
+          },
+          {
+            "lv": 28,
+            "move": "double-edge",
+            "as": "Satan Charge"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Takes the Credit",
+        "text": "When an ally knocks out a foe, his Power rises by 1.",
+        "like": "Receiver variant"
+      },
+      {
+        "name": "Crowd Favourite",
+        "text": "Duos: when he enters, his ally heals 1/8 of its max Vitality.",
+        "like": "entry heal"
+      },
+      {
+        "name": "Illusion of Strength",
+        "text": "Enters battle disguised as the last ally in the party until hit.",
+        "like": "Illusion",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Support"
+    ],
+    "roleNote": "Fake champion. Illusion disguise and Takes the Credit (power from allies' knockouts) make a gag back-line cleaner. Weakest stats in his tier on purpose."
   },
   {
     "id": "mumen-rider",
@@ -4821,9 +7848,76 @@
         "types": [
           "Water"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 55,
+          "pow": 55,
+          "grd": 55,
+          "ene": 40,
+          "wil": 50,
+          "spe": 60
+        },
+        "signature": "murata-water-breathing",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "aqua-jet",
+            "as": "Drop Ripple Thrust"
+          },
+          {
+            "lv": 6,
+            "move": "leer"
+          },
+          {
+            "lv": 11,
+            "move": "razor-shell",
+            "as": "Water Surface Slash"
+          },
+          {
+            "lv": 17,
+            "move": "endure",
+            "as": "Somehow Alive"
+          },
+          {
+            "lv": 24,
+            "move": "waterfall",
+            "as": "Water Wheel"
+          },
+          {
+            "lv": 32,
+            "move": "liquidation",
+            "as": "Striking Tide"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Survivor",
+        "text": "At full Vitality, he survives any single hit with at least 1.",
+        "like": "Sturdy"
+      },
+      {
+        "name": "Water Breathing (Weak)",
+        "text": "Below 1/3 Vitality, his Water moves do 1.3x.",
+        "like": "weak Torrent"
+      },
+      {
+        "name": "Hashira Report",
+        "text": "When he switches out, the ally coming in gets +1 Speed.",
+        "like": "switch buff",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Gimmick"
+    ],
+    "roleNote": "Background slayer: weak but survives. Never Dies (Sturdy) plus a self-buffing signature makes him a scrappy early-game pick that falls off."
   },
   {
     "id": "koby",
@@ -4838,9 +7932,82 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 55,
+          "pow": 65,
+          "grd": 55,
+          "ene": 40,
+          "wil": 50,
+          "spe": 65
+        },
+        "signature": "honesty-impact",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "growl",
+            "as": "Crying"
+          },
+          {
+            "lv": 5,
+            "move": "quick-attack",
+            "as": "Soru"
+          },
+          {
+            "lv": 10,
+            "move": "headbutt"
+          },
+          {
+            "lv": 16,
+            "move": "iron-defense",
+            "as": "Tekkai",
+            "why": "Off-type (Tech): Rokushiki's Iron Body hardens him like steel."
+          },
+          {
+            "lv": 22,
+            "move": "mega-punch",
+            "as": "Marine Punch"
+          },
+          {
+            "lv": 30,
+            "move": "extreme-speed",
+            "as": "Soru Rush"
+          },
+          {
+            "lv": 38,
+            "move": "close-combat",
+            "as": "Rokushiki Barrage"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Crybaby Resolve",
+        "text": "When a foe lowers one of his stats, his Power rises by 2.",
+        "like": "Defiant"
+      },
+      {
+        "name": "Observation Haki",
+        "text": "The first hit he takes each battle does half damage.",
+        "like": "Multiscale variant"
+      },
+      {
+        "name": "Rokushiki",
+        "text": "His quick (priority) moves do 1.3x.",
+        "like": "priority boost",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Buffer"
+    ],
+    "roleNote": "Growth niche: crybaby who gets strong when pushed. Defiant punishes stat drops, and Honesty Impact is a heavy hitter far above his tier."
   },
   {
     "id": "hanataro",
@@ -4945,9 +8112,83 @@
           "Spirit",
           "Beast"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 45,
+          "pow": 70,
+          "grd": 45,
+          "ene": 40,
+          "wil": 45,
+          "spe": 80
+        },
+        "signature": "mod-soul-kick",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer",
+            "as": "Pervy Stare"
+          },
+          {
+            "lv": 5,
+            "move": "pounce",
+            "as": "Plush Pounce"
+          },
+          {
+            "lv": 10,
+            "move": "shadow-sneak",
+            "as": "Soul Dash"
+          },
+          {
+            "lv": 16,
+            "move": "acrobatics",
+            "as": "Wall Kick",
+            "why": "Off-type (Wind): leaps between walls with his mod soul legs."
+          },
+          {
+            "lv": 22,
+            "move": "crush-claw",
+            "as": "Lion Paw"
+          },
+          {
+            "lv": 30,
+            "move": "phantom-force",
+            "as": "Soul Candy Swap"
+          },
+          {
+            "lv": 38,
+            "move": "first-impression",
+            "as": "Surprise Kick"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Mod Soul Legs",
+        "text": "Kicking moves do 1.3x.",
+        "like": "Striker"
+      },
+      {
+        "name": "Plushie Body",
+        "text": "Contact moves do half damage to him, but Fire moves do double.",
+        "like": "Fluffy"
+      },
+      {
+        "name": "Borrowed Body",
+        "text": "When he enters battle he transforms into the foe in front of him.",
+        "like": "Imposter",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Gimmick",
+      "Attack"
+    ],
+    "roleNote": "Plushie body halves contact damage (but Fire hurts double). Hidden Borrowed Body copies the foe on entry, like Ditto."
   },
   {
     "id": "happy",
@@ -4963,9 +8204,82 @@
           "Wind",
           "Beast"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 50,
+          "pow": 50,
+          "grd": 45,
+          "ene": 45,
+          "wil": 50,
+          "spe": 90
+        },
+        "signature": "max-speed",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "helping-hand",
+            "as": "Aye Sir!"
+          },
+          {
+            "lv": 5,
+            "move": "gust",
+            "as": "Wing Flap"
+          },
+          {
+            "lv": 9,
+            "move": "fury-cutter",
+            "as": "Cat Scratch"
+          },
+          {
+            "lv": 14,
+            "move": "acrobatics",
+            "as": "Flying Headbutt"
+          },
+          {
+            "lv": 20,
+            "move": "tailwind",
+            "as": "Carry Natsu"
+          },
+          {
+            "lv": 27,
+            "move": "roost",
+            "as": "Fish Break"
+          },
+          {
+            "lv": 35,
+            "move": "u-turn",
+            "as": "Aera Swoop"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Aera",
+        "text": "Immune to Earth moves. He flies on magic wings.",
+        "like": "Levitate"
+      },
+      {
+        "name": "Aye Sir!",
+        "text": "Duos: when he enters, his ally's Speed rises by 1.",
+        "like": "entry ally buff"
+      },
+      {
+        "name": "Fish Stash",
+        "text": "The first time he drops below half Vitality he eats a fish and heals 1/4.",
+        "like": "berry-style heal",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Speed"
+    ],
+    "roleNote": "Fast duos support: Aye Sir! speeds up his ally and Max Speed is a strong priority hit for his tier. Levitate dodges Earth."
   },
   {
     "id": "konohamaru",
@@ -4980,9 +8294,82 @@
         "types": [
           "Wind"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 50,
+          "pow": 55,
+          "grd": 45,
+          "ene": 55,
+          "wil": 45,
+          "spe": 70
+        },
+        "signature": "konohamaru-rasengan",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "leer"
+          },
+          {
+            "lv": 5,
+            "move": "gust",
+            "as": "Wind Release: Breeze"
+          },
+          {
+            "lv": 10,
+            "move": "quick-attack",
+            "as": "Ninja Dash"
+          },
+          {
+            "lv": 15,
+            "move": "charm",
+            "as": "Sexy Jutsu",
+            "why": "Off-type (Light): his famous transformation gag."
+          },
+          {
+            "lv": 20,
+            "move": "substitute",
+            "as": "Shadow Clone Jutsu"
+          },
+          {
+            "lv": 27,
+            "move": "air-slash",
+            "as": "Wind Release: Gale"
+          },
+          {
+            "lv": 35,
+            "move": "hurricane",
+            "as": "Wind Release: Great Breakthrough"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Will of Fire",
+        "text": "Below 1/3 Vitality, his own-type moves do 1.5x.",
+        "like": "Blaze"
+      },
+      {
+        "name": "Stubborn Kid",
+        "text": "Can't be Confused or Taunted.",
+        "like": "Own Tempo + Oblivious"
+      },
+      {
+        "name": "Shadow Clone",
+        "text": "The first time he drops below half Vitality, a clone appears and takes hits for him (a 1/4 Substitute).",
+        "like": "auto Substitute",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Gimmick"
+    ],
+    "roleNote": "Kid ninja with a real Rasengan. Shadow Clone hidden ability makes a free decoy, and the gag Sexy Jutsu (Charm) is a legit Power drop."
   },
   {
     "id": "mineta",
