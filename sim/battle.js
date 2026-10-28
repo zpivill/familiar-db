@@ -66,6 +66,9 @@ function makeMon(data, e, build, level) {
 
 // ---------------- the battle ----------------
 
+// opts.decide(kind, B, mon or side, options, extra) lets a player make a side's choices instead of the AI:
+// kind 'action' returns { type: 'move', slot, target } or { type: 'switch', to }, kind 'replace' returns the
+// character to bring in. Returning nothing leaves the choice to the AI. The Battle vs AI page uses it.
 export function runBattle(data, teams, opts = {}) {
   const r = opts.rng || rng(opts.seed || 1);
   const level = opts.level || RULES.level;
@@ -356,7 +359,7 @@ export function runBattle(data, teams, opts = {}) {
   function bringIn(s, slot, how, pickRandom) {
     const options = bench(s);
     if (!options.length) return false;
-    const next = pickRandom ? r.pick(options) : chooseReplacement(B, s, options, api);
+    const next = pickRandom ? r.pick(options) : opts.decide?.('replace', B, s, options) || chooseReplacement(B, s, options, api);
     switchIn(next, slot, how);
     return true;
   }
@@ -1094,7 +1097,7 @@ export function runBattle(data, teams, opts = {}) {
     if (B.turn > RULES.turnCap) { B.over = true; B.winner = -1; break; }
     const acts = [];
     for (const s of B.sides) for (const m of actives(s)) {
-      const act = chooseAction(B, m, api);
+      const act = opts.decide?.('action', B, m) || chooseAction(B, m, api);
       act.m = m;
       if (act.type === 'move') m.vol.plannedAttack = m.moves[act.slot]?.m.cat !== 'Status';
       acts.push(act);
@@ -1118,7 +1121,7 @@ export function runBattle(data, teams, opts = {}) {
       if (m.moves[a.slot]?.m.cat !== 'Status') m.vol.lastAttackTurn = B.turn;
       if (m.vol.extraTurn === B.turn && !m.fainted && m.side.active.includes(m)) {
         m.vol.extraTurn = 0;
-        const again = chooseAction(B, m, api);
+        const again = opts.decide?.('action', B, m, null, true) || chooseAction(B, m, api);
         if (again.type === 'move') useMove(m, again.slot, again.target);
       }
       if (B.sides.some(s => !alive(s).length)) break;
