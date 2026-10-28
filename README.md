@@ -26,15 +26,18 @@ Double-click `start.bat` (or run `py serve.py` and open http://localhost:8000). 
 
 ## Character pages
 
-Clicking a character opens its own page (for example `#c/tanjiro`, or `#c/tanjiro/2` for its second form), laid out like a pokemondb entry: picture, familiar data, abilities, base stats, evolution line and moves, with links to the previous and next dex number. Signed-in editors get an **Edit character** button that opens the editor.
+Clicking a character opens its own page (for example `#c/tanjiro`, or `#c/tanjiro/2` for its second form), laid out like a pokemondb entry: picture, familiar data and hidden roles, abilities, base stats, evolution line and moves learned by level, with links to the previous and next dex number. Signed-in editors get an **Edit character** button that opens the editor.
 
-Abilities, base stats and moves show as placeholders until they are added to `data/characters.json`. All of these fields are optional:
+Abilities, roles, stats and moves show as placeholders until they are added to `data/characters.json`. All of these fields are optional:
 
-- On a character: `"abilities": [{ "name": "...", "text": "..." }, { "name": "...", "text": "...", "hidden": true }]`
-- On a character: `"moves": [{ "name": "...", "type": "Fire", "category": "...", "power": 80, "accuracy": 100, "pp": 10, "text": "..." }, ...]`, up to five, with `"signature": true` on the signature move.
-- On each form in `stages`: `"stats": { "hp": 45, "atk": 49, "def": 49, "spa": 65, "spd": 65, "spe": 45 }` and `"evolve": "how it evolves into this form"`.
+- On a character: `"abilities": [{ "name": "...", "text": "...", "like": "Intimidate" }, ..., { "name": "...", "text": "...", "hidden": true }]`, up to two plus a hidden one. `like` names the familiar effect it works like, for balancers. A form can have its own `abilities` to override the character's.
+- On a character: `"roles": ["Support", "Gimmick"]` and `"roleNote": "..."`: one or two hidden roles saying how the team expects it to be played. Players never see these.
+- On each form in `stages`: `"stats": { "vit": 50, "pow": 60, "grd": 50, "ene": 40, "wil": 50, "spe": 65 }` (Vitality, Power, Guard, Energy, Will, Speed), `"level": 16` (the level it evolves into this form), and `"evolve": "..."` for any other way of evolving.
+- On each form: `"signature": "move-id"` and `"learn": [{ "lv": 1, "move": "razor-shell", "as": "Water Surface Slash" }, { "lv": "evo", "move": "...", "as": "..." }]`. `as` is the character's own name for a generic move; `"lv": "evo"` means learned on evolving into this form. An off-type move adds `"why"` with the reason from the anime.
 
-The stat names are placeholders (Pokémon's six) until the real ones are decided.
+## Moves
+
+`data/moves.json` lists every move, shown on the Moves page (`#moves`). Generic moves have an `id`, plain `name`, `type`, `category` (Physical, Energy or Status), `size` (light, standard, heavy or status), `power`, `accuracy`, `pp`, optional `priority` and `effect`, and `basic: true` if any character can learn it without a new name. Signature moves add `signature: true`, `owner` (character id), `form` (0 for the first form) and `source` (where it comes from in the anime). The Moves page lists every character's name for each generic move, worked out from the learnsets.
 
 ## Editing the text pages
 

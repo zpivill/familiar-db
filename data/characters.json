@@ -12,7 +12,64 @@
         "types": [
           "Water"
         ],
-        "image": "images/tanjiro-mvnhvv8n.png"
+        "image": "images/tanjiro-mvnhvv8n.png",
+        "stats": {
+          "vit": 50,
+          "pow": 60,
+          "grd": 50,
+          "ene": 40,
+          "wil": 50,
+          "spe": 65
+        },
+        "signature": "constant-flux",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "aqua-jet",
+            "as": "Water Breathing, Seventh Form: Drop Ripple Thrust"
+          },
+          {
+            "lv": 5,
+            "move": "headbutt"
+          },
+          {
+            "lv": 9,
+            "move": "razor-shell",
+            "as": "Water Breathing, First Form: Water Surface Slash"
+          },
+          {
+            "lv": 13,
+            "move": "whirlpool",
+            "as": "Water Breathing, Sixth Form: Whirlpool"
+          },
+          {
+            "lv": 17,
+            "move": "waterfall",
+            "as": "Water Breathing, Second Form: Water Wheel"
+          },
+          {
+            "lv": 21,
+            "move": "protect"
+          },
+          {
+            "lv": 25,
+            "move": "aqua-step",
+            "as": "Water Breathing, Third Form: Flowing Dance"
+          },
+          {
+            "lv": 30,
+            "move": "swords-dance"
+          },
+          {
+            "lv": 35,
+            "move": "crabhammer",
+            "as": "Water Breathing, Eighth Form: Waterfall Basin"
+          }
+        ]
       },
       {
         "name": "Hinokami Tanjiro",
@@ -20,16 +77,201 @@
           "Water",
           "Fire"
         ],
-        "image": "images/tanjiro-mvnmq9xy.png"
+        "image": "images/tanjiro-mvnmq9xy.png",
+        "level": 16,
+        "stats": {
+          "vit": 65,
+          "pow": 88,
+          "grd": 63,
+          "ene": 52,
+          "wil": 62,
+          "spe": 90
+        },
+        "signature": "hinokami-kagura",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "aqua-jet",
+            "as": "Water Breathing, Seventh Form: Drop Ripple Thrust"
+          },
+          {
+            "lv": 5,
+            "move": "headbutt"
+          },
+          {
+            "lv": 9,
+            "move": "razor-shell",
+            "as": "Water Breathing, First Form: Water Surface Slash"
+          },
+          {
+            "lv": 13,
+            "move": "whirlpool",
+            "as": "Water Breathing, Sixth Form: Whirlpool"
+          },
+          {
+            "lv": "evo",
+            "move": "flame-wheel",
+            "as": "Hinokami Kagura: Fire Wheel"
+          },
+          {
+            "lv": 19,
+            "move": "waterfall",
+            "as": "Water Breathing, Second Form: Water Wheel"
+          },
+          {
+            "lv": 22,
+            "move": "flame-charge",
+            "as": "Hinokami Kagura: Sunflower Thrust"
+          },
+          {
+            "lv": 25,
+            "move": "protect",
+            "as": "Hinokami Kagura: Fake Rainbow"
+          },
+          {
+            "lv": 28,
+            "move": "aqua-step",
+            "as": "Water Breathing, Third Form: Flowing Dance"
+          },
+          {
+            "lv": 31,
+            "move": "fire-lash",
+            "as": "Hinokami Kagura: Raging Sun"
+          },
+          {
+            "lv": 34,
+            "move": "swords-dance"
+          },
+          {
+            "lv": 38,
+            "move": "crabhammer",
+            "as": "Water Breathing, Eighth Form: Waterfall Basin"
+          },
+          {
+            "lv": 44,
+            "move": "flare-blitz",
+            "as": "Hinokami Kagura: Burning Bones, Summer Sun"
+          }
+        ]
       },
       {
         "name": "Sun Breathing Tanjiro",
         "types": [
           "Fire"
         ],
-        "image": "images/tanjiro-mvnmquv4.png"
+        "image": "images/tanjiro-mvnmquv4.png",
+        "level": 36,
+        "stats": {
+          "vit": 80,
+          "pow": 125,
+          "grd": 78,
+          "ene": 65,
+          "wil": 77,
+          "spe": 110
+        },
+        "signature": "thirteenth-form",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "aqua-jet",
+            "as": "Water Breathing, Seventh Form: Drop Ripple Thrust"
+          },
+          {
+            "lv": 5,
+            "move": "headbutt"
+          },
+          {
+            "lv": 9,
+            "move": "razor-shell",
+            "as": "Water Breathing, First Form: Water Surface Slash"
+          },
+          {
+            "lv": 13,
+            "move": "whirlpool",
+            "as": "Water Breathing, Sixth Form: Whirlpool"
+          },
+          {
+            "lv": 19,
+            "move": "waterfall",
+            "as": "Water Breathing, Second Form: Water Wheel"
+          },
+          {
+            "lv": 22,
+            "move": "flame-charge",
+            "as": "Hinokami Kagura: Sunflower Thrust"
+          },
+          {
+            "lv": 25,
+            "move": "protect",
+            "as": "Hinokami Kagura: Fake Rainbow"
+          },
+          {
+            "lv": 28,
+            "move": "aqua-step",
+            "as": "Water Breathing, Third Form: Flowing Dance"
+          },
+          {
+            "lv": 31,
+            "move": "fire-lash",
+            "as": "Hinokami Kagura: Raging Sun"
+          },
+          {
+            "lv": 34,
+            "move": "swords-dance"
+          },
+          {
+            "lv": "evo",
+            "move": "sacred-fire",
+            "as": "Sun Breathing: Beneficent Radiance"
+          },
+          {
+            "lv": 40,
+            "move": "crabhammer",
+            "as": "Water Breathing, Eighth Form: Waterfall Basin"
+          },
+          {
+            "lv": 46,
+            "move": "flare-blitz",
+            "as": "Hinokami Kagura: Burning Bones, Summer Sun"
+          },
+          {
+            "lv": 52,
+            "move": "endure"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Total Concentration Breathing",
+        "text": "Below 1/3 Vitality, his own-type moves do 1.5x.",
+        "like": "Blaze"
+      },
+      {
+        "name": "Keen Nose",
+        "text": "His moves never miss. He smells the opening thread.",
+        "like": "No Guard, user side only"
+      },
+      {
+        "name": "Hard Head",
+        "text": "Can't flinch or be Confused. Headbutt-style moves do 1.3x.",
+        "like": "Inner Focus + Own Tempo",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Buffer"
+    ],
+    "roleNote": "Physical attacker that snowballs: Constant Flux and the Speed-raising forms reward staying in. Hard Head plus Thirteenth Form (no confusion) is the hidden combo. Water/Fire middle form is a defensive pivot most players will skip past."
   },
   {
     "id": "todoroki",
@@ -577,7 +819,60 @@
         "types": [
           "Wind"
         ],
-        "image": "images/deku-mvnnauip.png"
+        "image": "images/deku-mvnnauip.png",
+        "stats": {
+          "vit": 45,
+          "pow": 65,
+          "grd": 45,
+          "ene": 45,
+          "wil": 45,
+          "spe": 70
+        },
+        "signature": "detroit-smash",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Delaware Smash"
+          },
+          {
+            "lv": 5,
+            "move": "endure"
+          },
+          {
+            "lv": 9,
+            "move": "aerial-ace",
+            "as": "St. Louis Smash"
+          },
+          {
+            "lv": 13,
+            "move": "headbutt"
+          },
+          {
+            "lv": 17,
+            "move": "drill-peck",
+            "as": "Manchester Smash"
+          },
+          {
+            "lv": 21,
+            "move": "air-slash",
+            "as": "Delaware Smash: Air Force"
+          },
+          {
+            "lv": 26,
+            "move": "u-turn",
+            "as": "Shoot Style"
+          },
+          {
+            "lv": 32,
+            "move": "brave-bird",
+            "as": "Delaware Detroit Smash"
+          }
+        ]
       },
       {
         "name": "Full Cowl Deku",
@@ -585,7 +880,76 @@
           "Wind",
           "Time"
         ],
-        "image": "images/deku-mvnnbcoc.png"
+        "image": "images/deku-mvnnbcoc.png",
+        "level": 16,
+        "stats": {
+          "vit": 60,
+          "pow": 90,
+          "grd": 55,
+          "ene": 55,
+          "wil": 55,
+          "spe": 100
+        },
+        "signature": "full-cowl",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Delaware Smash"
+          },
+          {
+            "lv": 5,
+            "move": "endure"
+          },
+          {
+            "lv": 9,
+            "move": "aerial-ace",
+            "as": "St. Louis Smash"
+          },
+          {
+            "lv": "evo",
+            "move": "u-turn",
+            "as": "Shoot Style"
+          },
+          {
+            "lv": 13,
+            "move": "headbutt"
+          },
+          {
+            "lv": 18,
+            "move": "drill-peck",
+            "as": "Manchester Smash"
+          },
+          {
+            "lv": 24,
+            "move": "air-slash",
+            "as": "Delaware Smash: Air Force"
+          },
+          {
+            "lv": 30,
+            "move": "shift-gear",
+            "as": "Gearshift"
+          },
+          {
+            "lv": 36,
+            "move": "brave-bird",
+            "as": "Delaware Detroit Smash"
+          },
+          {
+            "lv": 42,
+            "move": "stored-power",
+            "as": "Fa Jin"
+          },
+          {
+            "lv": 48,
+            "move": "fly",
+            "as": "Float"
+          }
+        ]
       },
       {
         "name": "Dark Deku",
@@ -593,9 +957,106 @@
           "Wind",
           "Dark"
         ],
-        "image": "images/deku-mvnnbkln.png"
+        "image": "images/deku-mvnnbkln.png",
+        "level": 36,
+        "stats": {
+          "vit": 78,
+          "pow": 120,
+          "grd": 70,
+          "ene": 70,
+          "wil": 70,
+          "spe": 122
+        },
+        "signature": "blackwhip",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "gust",
+            "as": "Delaware Smash"
+          },
+          {
+            "lv": 5,
+            "move": "endure"
+          },
+          {
+            "lv": 9,
+            "move": "aerial-ace",
+            "as": "St. Louis Smash"
+          },
+          {
+            "lv": 13,
+            "move": "headbutt"
+          },
+          {
+            "lv": 18,
+            "move": "drill-peck",
+            "as": "Manchester Smash"
+          },
+          {
+            "lv": 24,
+            "move": "air-slash",
+            "as": "Delaware Smash: Air Force"
+          },
+          {
+            "lv": 26,
+            "move": "u-turn",
+            "as": "Shoot Style"
+          },
+          {
+            "lv": 30,
+            "move": "shift-gear",
+            "as": "Gearshift"
+          },
+          {
+            "lv": "evo",
+            "move": "sucker-punch",
+            "as": "Smokescreen Strike"
+          },
+          {
+            "lv": 40,
+            "move": "brave-bird",
+            "as": "Delaware Detroit Smash"
+          },
+          {
+            "lv": 44,
+            "move": "stored-power",
+            "as": "Fa Jin"
+          },
+          {
+            "lv": 50,
+            "move": "fly",
+            "as": "Float"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "100% Smash",
+        "text": "Moves with recoil do 1.2x.",
+        "like": "Reckless"
+      },
+      {
+        "name": "Hero Analysis",
+        "text": "If he moves after the target, his move does 1.3x. He studies every opponent in his notebook.",
+        "like": "Analytic"
+      },
+      {
+        "name": "Danger Sense",
+        "text": "Quick (priority) moves aimed at him fail.",
+        "like": "Queenly Majesty, user only",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Speed"
+    ],
+    "roleNote": "Recoil-heavy physical sweeper. 100% Smash boosts recoil moves and Full Cowl removes the recoil, so the line rewards setting up once. Dark Deku adds trapping (Blackwhip) and a revenge-killer game with Smokescreen Strike. Danger Sense is the hidden anti-priority pick."
   },
   {
     "id": "nami",
@@ -983,7 +1444,54 @@
         "types": [
           "Lightning"
         ],
-        "image": "images/killua-mvnnn544.png"
+        "image": "images/killua-mvnnn544.png",
+        "stats": {
+          "vit": 50,
+          "pow": 75,
+          "grd": 50,
+          "ene": 70,
+          "wil": 50,
+          "spe": 105
+        },
+        "signature": "narukami",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 1,
+            "move": "thunder-wave",
+            "as": "Static Touch"
+          },
+          {
+            "lv": 8,
+            "move": "thunder-punch",
+            "as": "Lightning Palm"
+          },
+          {
+            "lv": 14,
+            "move": "night-slash",
+            "as": "Assassin Claw",
+            "why": "Off-type (Dark): Zoldyck assassin training, his hand turns into claws."
+          },
+          {
+            "lv": 20,
+            "move": "slam",
+            "as": "Yo-yo"
+          },
+          {
+            "lv": 26,
+            "move": "substitute",
+            "as": "Rhythm Echo"
+          },
+          {
+            "lv": 34,
+            "move": "sucker-punch",
+            "as": "Silent Step",
+            "why": "Off-type (Dark): assassins move without a sound."
+          }
+        ]
       },
       {
         "name": "Godspeed Killua",
@@ -991,9 +1499,84 @@
           "Lightning",
           "Dark"
         ],
-        "image": "images/killua-mvnnnil7.png"
+        "image": "images/killua-mvnnnil7.png",
+        "level": 40,
+        "stats": {
+          "vit": 65,
+          "pow": 95,
+          "grd": 60,
+          "ene": 85,
+          "wil": 65,
+          "spe": 135
+        },
+        "signature": "godspeed-whirlwind",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 1,
+            "move": "thunder-wave",
+            "as": "Static Touch"
+          },
+          {
+            "lv": 8,
+            "move": "thunder-punch",
+            "as": "Lightning Palm"
+          },
+          {
+            "lv": 14,
+            "move": "night-slash",
+            "as": "Assassin Claw",
+            "why": "Off-type (Dark): Zoldyck assassin training, his hand turns into claws."
+          },
+          {
+            "lv": 20,
+            "move": "slam",
+            "as": "Yo-yo"
+          },
+          {
+            "lv": 26,
+            "move": "substitute",
+            "as": "Rhythm Echo"
+          },
+          {
+            "lv": 34,
+            "move": "sucker-punch",
+            "as": "Silent Step"
+          },
+          {
+            "lv": "evo",
+            "move": "volt-switch",
+            "as": "Godspeed: Speed of Lightning"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Electric Torture Training",
+        "text": "Lightning moves heal him by 1/4 instead of hurting him.",
+        "like": "Volt Absorb"
+      },
+      {
+        "name": "Assassin's Instinct",
+        "text": "His moves do 1.3x against a target that hasn't moved yet this turn.",
+        "like": "reverse Analytic"
+      },
+      {
+        "name": "Illumi's Needle",
+        "text": "When hit by a super-effective move, he flees and switches out.",
+        "like": "Emergency Exit",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Speed",
+      "Priority"
+    ],
+    "roleNote": "Fast revenge killer. Base form already has Dark coverage through assassin training. Godspeed adds +2 priority Whirlwind and a Volt Switch pivot. Electric Torture Training lets him switch into Lightning moves for free. Illumi's Needle is the hidden auto-pivot."
   },
   {
     "id": "bocchi",
@@ -1442,9 +2025,76 @@
         "types": [
           "Cosmic"
         ],
-        "image": "images/gojo-mvnoeyut.png"
+        "image": "images/gojo-mvnoeyut.png",
+        "stats": {
+          "vit": 90,
+          "pow": 70,
+          "grd": 95,
+          "ene": 150,
+          "wil": 110,
+          "spe": 140
+        },
+        "signature": "hollow-purple",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "teleport"
+          },
+          {
+            "lv": 1,
+            "move": "psyshock",
+            "as": "Cursed Technique Lapse: Blue"
+          },
+          {
+            "lv": 1,
+            "move": "cosmic-power",
+            "as": "Cursed Energy Reinforcement"
+          },
+          {
+            "lv": 10,
+            "move": "close-combat"
+          },
+          {
+            "lv": 20,
+            "move": "spacial-rend",
+            "as": "Cursed Technique Reversal: Red"
+          },
+          {
+            "lv": 30,
+            "move": "psychic-terrain",
+            "as": "Domain Expansion: Unlimited Void"
+          },
+          {
+            "lv": 40,
+            "move": "nasty-plot",
+            "as": "Limitless Focus"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Infinity",
+        "text": "The first damaging move to hit him each time he enters battle is fully blocked.",
+        "like": "Disguise, resets on entry"
+      },
+      {
+        "name": "Six Eyes",
+        "text": "His Energy moves never miss and land critical hits more often.",
+        "like": "Compound Eyes + Super Luck"
+      },
+      {
+        "name": "Reverse Cursed Technique",
+        "text": "Heals 1/3 of his max Vitality when he switches out.",
+        "like": "Regenerator",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Terrain"
+    ],
+    "roleNote": "Energy sweeper and field setter. Unlimited Void (field) shuts down priority, which hard-counters priority teams. Infinity plus Teleport is a strong pivot loop to watch in balancing; Reverse Cursed Technique is the hidden long-game pick."
   },
   {
     "id": "boros",
@@ -1921,23 +2571,233 @@
         "types": [
           "Neutral"
         ],
-        "image": "images/ayanokoji-mvnoyr6a.png"
+        "image": "images/ayanokoji-mvnoyr6a.png",
+        "stats": {
+          "vit": 50,
+          "pow": 50,
+          "grd": 50,
+          "ene": 50,
+          "wil": 50,
+          "spe": 50
+        },
+        "signature": "behind-the-scenes",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "protect"
+          },
+          {
+            "lv": 6,
+            "move": "super-fang",
+            "as": "Exactly 50 Points"
+          },
+          {
+            "lv": 11,
+            "move": "encore",
+            "as": "Pull the Strings"
+          },
+          {
+            "lv": 15,
+            "move": "counter",
+            "as": "Read and Counter"
+          },
+          {
+            "lv": 20,
+            "move": "nasty-plot",
+            "as": "Long Game"
+          },
+          {
+            "lv": 25,
+            "move": "foul-play",
+            "as": "Turn Their Strength",
+            "why": "Off-type (Dark): he wins by turning rivals' own strength against them, like using Ryuen's violence to expose him."
+          },
+          {
+            "lv": 30,
+            "move": "roar",
+            "as": "Expulsion"
+          },
+          {
+            "lv": 36,
+            "move": "substitute",
+            "as": "Use a Pawn"
+          }
+        ]
       },
       {
         "name": "Unmasked Ayanokoji",
         "types": [
           "Neutral"
         ],
-        "image": "images/ayanokoji-mvnozkzr.png"
+        "image": "images/ayanokoji-mvnozkzr.png",
+        "level": 16,
+        "stats": {
+          "vit": 65,
+          "pow": 85,
+          "grd": 65,
+          "ene": 65,
+          "wil": 70,
+          "spe": 80
+        },
+        "signature": "rooftop-showdown",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "protect"
+          },
+          {
+            "lv": 6,
+            "move": "super-fang",
+            "as": "Exactly 50 Points"
+          },
+          {
+            "lv": 11,
+            "move": "encore",
+            "as": "Pull the Strings"
+          },
+          {
+            "lv": "evo",
+            "move": "mega-punch",
+            "as": "Unmasked Strike"
+          },
+          {
+            "lv": 15,
+            "move": "counter",
+            "as": "Read and Counter"
+          },
+          {
+            "lv": 20,
+            "move": "nasty-plot",
+            "as": "Long Game"
+          },
+          {
+            "lv": 25,
+            "move": "foul-play",
+            "as": "Turn Their Strength",
+            "why": "Off-type (Dark): he wins by turning rivals' own strength against them, like using Ryuen's violence to expose him."
+          },
+          {
+            "lv": 30,
+            "move": "roar",
+            "as": "Expulsion"
+          },
+          {
+            "lv": 36,
+            "move": "substitute",
+            "as": "Use a Pawn"
+          },
+          {
+            "lv": 42,
+            "move": "close-combat",
+            "as": "White Room Martial Arts"
+          }
+        ]
       },
       {
         "name": "White Room Ayanokoji",
         "types": [
           "Neutral"
         ],
-        "image": "images/ayanokoji-mvnoz18w.png"
+        "image": "images/ayanokoji-mvnoz18w.png",
+        "level": 36,
+        "stats": {
+          "vit": 80,
+          "pow": 115,
+          "grd": 80,
+          "ene": 90,
+          "wil": 80,
+          "spe": 110
+        },
+        "signature": "white-room-masterpiece",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "protect"
+          },
+          {
+            "lv": 6,
+            "move": "super-fang",
+            "as": "Exactly 50 Points"
+          },
+          {
+            "lv": 11,
+            "move": "encore",
+            "as": "Pull the Strings"
+          },
+          {
+            "lv": 15,
+            "move": "counter",
+            "as": "Read and Counter"
+          },
+          {
+            "lv": 20,
+            "move": "nasty-plot",
+            "as": "Long Game"
+          },
+          {
+            "lv": 25,
+            "move": "foul-play",
+            "as": "Turn Their Strength",
+            "why": "Off-type (Dark): he wins by turning rivals' own strength against them, like using Ryuen's violence to expose him."
+          },
+          {
+            "lv": 30,
+            "move": "roar",
+            "as": "Expulsion"
+          },
+          {
+            "lv": "evo",
+            "move": "close-combat",
+            "as": "White Room Martial Arts"
+          },
+          {
+            "lv": 40,
+            "move": "substitute",
+            "as": "Use a Pawn"
+          },
+          {
+            "lv": 48,
+            "move": "extreme-speed",
+            "as": "Flawless Step"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Manipulator",
+        "text": "His Status moves go first.",
+        "like": "Prankster"
+      },
+      {
+        "name": "White Room Conditioning",
+        "text": "His stats can't be lowered by others and he can't be Confused.",
+        "like": "Clear Body + Own Tempo"
+      },
+      {
+        "name": "Pawns",
+        "text": "When an ally faints, his Power and Speed rise by 1.",
+        "like": "Moxie, on ally faint",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "Disruption support. Manipulator gives his Status moves priority, so Encore, Expulsion and Behind the Scenes come first. Exactly 50 Points chunks walls whatever their stats. Pawns is the hidden late-game cleaner build. Base form stats are all exactly 50 on purpose (gag: the perfect average student)."
   },
   {
     "id": "johan",
@@ -2411,9 +3271,85 @@
           "Beast",
           "Neutral"
         ],
-        "image": "images/gobta-mvqtoaxj.png"
+        "image": "images/gobta-mvqtoaxj.png",
+        "stats": {
+          "vit": 50,
+          "pow": 60,
+          "grd": 45,
+          "ene": 35,
+          "wil": 40,
+          "spe": 80
+        },
+        "signature": "shadow-motion",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "quick-attack"
+          },
+          {
+            "lv": 5,
+            "move": "howl",
+            "as": "Ranga's Howl"
+          },
+          {
+            "lv": 9,
+            "move": "lunge",
+            "as": "Goblin Spear Thrust"
+          },
+          {
+            "lv": 13,
+            "move": "recover",
+            "as": "Slacking Off"
+          },
+          {
+            "lv": 18,
+            "move": "x-scissor",
+            "as": "Twin Blade Slash"
+          },
+          {
+            "lv": 24,
+            "move": "protect"
+          },
+          {
+            "lv": 30,
+            "move": "bulk-up",
+            "as": "Hakuro's Training"
+          },
+          {
+            "lv": 40,
+            "move": "megahorn",
+            "as": "Unity Charge"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Goblin Rider",
+        "text": "His Speed rises by 1 when he enters battle. He rides into fights on a Tempest Wolf.",
+        "like": "Speed Boost, once on entry"
+      },
+      {
+        "name": "Unexpected Genius",
+        "text": "Lands critical hits more often. Everyone underestimates him.",
+        "like": "Super Luck"
+      },
+      {
+        "name": "Ranga Unity",
+        "text": "The first time he drops below half Vitality, Ranga merges with him: Power and Speed +1.",
+        "like": "Berserk",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Priority",
+      "Support"
+    ],
+    "roleNote": "First-route niche: Shadow Motion is +2 priority, and Ranga's Howl buffs an ally in duos. Low ceiling, but Ranga Unity can make him a surprise late-game revenge hitter."
   },
   {
     "id": "inuyasha",
@@ -2617,7 +3553,54 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 70,
+          "pow": 75,
+          "grd": 50,
+          "ene": 35,
+          "wil": 45,
+          "spe": 55
+        },
+        "signature": "bazooka",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "mega-punch",
+            "as": "Gomu Gomu no Pistol"
+          },
+          {
+            "lv": 1,
+            "move": "arm-thrust",
+            "as": "Gomu Gomu no Gatling"
+          },
+          {
+            "lv": 8,
+            "move": "quick-attack",
+            "as": "Gomu Gomu no Rocket"
+          },
+          {
+            "lv": 15,
+            "move": "recover",
+            "as": "Meat!"
+          },
+          {
+            "lv": 22,
+            "move": "fire-punch",
+            "as": "Gomu Gomu no Red Hawk",
+            "why": "Off-type (Fire): Armament Haki friction sets his fist on fire."
+          },
+          {
+            "lv": 30,
+            "move": "extreme-speed",
+            "as": "Gear Second: Jet Pistol"
+          },
+          {
+            "lv": 38,
+            "move": "close-combat",
+            "as": "Gear Third: Gomu Gomu no Elephant Gun"
+          }
+        ]
       },
       {
         "name": "Gear 4 Luffy",
@@ -2625,7 +3608,70 @@
           "Neutral",
           "Beast"
         ],
-        "image": ""
+        "image": "",
+        "level": 45,
+        "stats": {
+          "vit": 95,
+          "pow": 115,
+          "grd": 80,
+          "ene": 40,
+          "wil": 65,
+          "spe": 75
+        },
+        "signature": "king-kong-gun",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "mega-punch",
+            "as": "Gomu Gomu no Pistol"
+          },
+          {
+            "lv": 1,
+            "move": "arm-thrust",
+            "as": "Gomu Gomu no Gatling"
+          },
+          {
+            "lv": 8,
+            "move": "quick-attack",
+            "as": "Gomu Gomu no Rocket"
+          },
+          {
+            "lv": 15,
+            "move": "recover",
+            "as": "Meat!"
+          },
+          {
+            "lv": 22,
+            "move": "fire-punch",
+            "as": "Gomu Gomu no Red Hawk",
+            "why": "Off-type (Fire): Armament Haki friction sets his fist on fire."
+          },
+          {
+            "lv": 30,
+            "move": "extreme-speed",
+            "as": "Gear Second: Jet Pistol"
+          },
+          {
+            "lv": 38,
+            "move": "close-combat",
+            "as": "Gear Third: Gomu Gomu no Elephant Gun"
+          },
+          {
+            "lv": "evo",
+            "move": "bulk-up",
+            "as": "Gear Fourth: Boundman"
+          },
+          {
+            "lv": 50,
+            "move": "x-scissor",
+            "as": "Gomu Gomu no Kong Gun"
+          },
+          {
+            "lv": 56,
+            "move": "megahorn",
+            "as": "Gomu Gomu no Rhino Schneider"
+          }
+        ]
       },
       {
         "name": "Gear 5 Luffy",
@@ -2633,9 +3679,110 @@
           "Neutral",
           "Light"
         ],
-        "image": ""
+        "image": "",
+        "level": 65,
+        "stats": {
+          "vit": 110,
+          "pow": 135,
+          "grd": 90,
+          "ene": 80,
+          "wil": 80,
+          "spe": 105
+        },
+        "signature": "bajrang-gun",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "mega-punch",
+            "as": "Gomu Gomu no Pistol"
+          },
+          {
+            "lv": 1,
+            "move": "arm-thrust",
+            "as": "Gomu Gomu no Gatling"
+          },
+          {
+            "lv": 8,
+            "move": "quick-attack",
+            "as": "Gomu Gomu no Rocket"
+          },
+          {
+            "lv": 15,
+            "move": "recover",
+            "as": "Meat!"
+          },
+          {
+            "lv": 22,
+            "move": "fire-punch",
+            "as": "Gomu Gomu no Red Hawk",
+            "why": "Off-type (Fire): Armament Haki friction sets his fist on fire."
+          },
+          {
+            "lv": 30,
+            "move": "extreme-speed",
+            "as": "Gear Second: Jet Pistol"
+          },
+          {
+            "lv": 38,
+            "move": "close-combat",
+            "as": "Gear Third: Gomu Gomu no Elephant Gun"
+          },
+          {
+            "lv": 45,
+            "move": "bulk-up",
+            "as": "Gear Fourth: Boundman"
+          },
+          {
+            "lv": 50,
+            "move": "x-scissor",
+            "as": "Gomu Gomu no Kong Gun"
+          },
+          {
+            "lv": 56,
+            "move": "megahorn",
+            "as": "Gomu Gomu no Rhino Schneider"
+          },
+          {
+            "lv": "evo",
+            "move": "play-rough",
+            "as": "Gomu Gomu no Dawn Whip"
+          },
+          {
+            "lv": 70,
+            "move": "swords-dance",
+            "as": "Drums of Liberation"
+          },
+          {
+            "lv": 78,
+            "move": "substitute",
+            "as": "Toon Force"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Rubber Body",
+        "text": "Immune to Lightning moves.",
+        "like": "Lightning immunity"
+      },
+      {
+        "name": "Conqueror's Haki",
+        "text": "When he enters battle, foes' Power drops by 1.",
+        "like": "Intimidate"
+      },
+      {
+        "name": "Armament Haki",
+        "text": "His moves can hit Spirit types and ignore the target's Guard boosts.",
+        "like": "Scrappy + Unaware on Guard",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Attack",
+      "Support"
+    ],
+    "roleNote": "Pseudo: weak and slow to grow, then a monster. Conqueror's Haki (Intimidate) makes him a pivot support like Incineroar while still hitting hard. Armament Haki is the hidden pick that lets his Neutral moves hit Spirit types. Gear 5 is a nuke with a rest turn."
   },
   {
     "id": "naruto",
@@ -3592,9 +4739,74 @@
         "types": [
           "Neutral"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 70,
+          "pow": 40,
+          "grd": 60,
+          "ene": 30,
+          "wil": 60,
+          "spe": 50
+        },
+        "signature": "justice-crash",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "follow-me",
+            "as": "I'll Take You On!"
+          },
+          {
+            "lv": 5,
+            "move": "endure"
+          },
+          {
+            "lv": 9,
+            "move": "helping-hand",
+            "as": "Cheer On"
+          },
+          {
+            "lv": 14,
+            "move": "headbutt"
+          },
+          {
+            "lv": 20,
+            "move": "double-edge",
+            "as": "Bicycle Crash"
+          },
+          {
+            "lv": 26,
+            "move": "protect"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Never Give Up",
+        "text": "At full Vitality, he survives any single hit with at least 1.",
+        "like": "Sturdy"
+      },
+      {
+        "name": "Unwavering Heart",
+        "text": "Can't flinch and his Speed can't be lowered.",
+        "like": "Inner Focus"
+      },
+      {
+        "name": "Hero to the Crowd",
+        "text": "When he faints, the ally that replaces him gets +1 Power and +1 Energy.",
+        "like": "on-faint ally boost",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Defence"
+    ],
+    "roleNote": "Duos redirector: Follow Me plus Never Give Up keeps him standing to soak hits. Hero to the Crowd makes his faint a buff, and Justice Crash punishes anyone who leaves him at low Vitality."
   },
   {
     "id": "murata",
@@ -3644,9 +4856,80 @@
           "Spirit",
           "Light"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 55,
+          "pow": 35,
+          "grd": 45,
+          "ene": 60,
+          "wil": 70,
+          "spe": 45
+        },
+        "signature": "hisagomaru",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "wish",
+            "as": "Kaido Healing"
+          },
+          {
+            "lv": 6,
+            "move": "helping-hand"
+          },
+          {
+            "lv": 10,
+            "move": "light-screen",
+            "as": "Bakudo #39: Enkosen"
+          },
+          {
+            "lv": 15,
+            "move": "heal-bell",
+            "as": "Fourth Division Relief"
+          },
+          {
+            "lv": 20,
+            "move": "shadow-ball",
+            "as": "Konso"
+          },
+          {
+            "lv": 25,
+            "move": "dazzling-gleam",
+            "as": "Hado #4: Byakurai"
+          },
+          {
+            "lv": 30,
+            "move": "protect"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Fourth Division Medic",
+        "text": "Duos: each turn, 30% chance to cure his ally's status.",
+        "like": "Healer"
+      },
+      {
+        "name": "Sewer Guide",
+        "text": "Can always switch out, even when trapped. He knows every tunnel under the Seireitei.",
+        "like": "Shed Shell"
+      },
+      {
+        "name": "Senkaimaru",
+        "text": "After he heals with a move, his next attacking move does 2x.",
+        "like": "stored power release",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Support",
+      "Gimmick"
+    ],
+    "roleNote": "Healer and screen setter. The hidden ability Senkaimaru turns stored healing into one huge hit, so an \"attacking Hanataro\" build exists for surprise."
   },
   {
     "id": "kon",
@@ -3714,8 +4997,75 @@
         "types": [
           "Earth"
         ],
-        "image": ""
+        "image": "",
+        "stats": {
+          "vit": 55,
+          "pow": 45,
+          "grd": 60,
+          "ene": 40,
+          "wil": 55,
+          "spe": 50
+        },
+        "signature": "grape-rush",
+        "learn": [
+          {
+            "lv": 1,
+            "move": "tackle"
+          },
+          {
+            "lv": 1,
+            "move": "rock-tomb",
+            "as": "Sticky Ball"
+          },
+          {
+            "lv": 5,
+            "move": "sticky-web",
+            "as": "Pop Off Trap"
+          },
+          {
+            "lv": 10,
+            "move": "protect",
+            "as": "Grape Wall"
+          },
+          {
+            "lv": 15,
+            "move": "bulldoze",
+            "as": "Sticky Floor"
+          },
+          {
+            "lv": 22,
+            "move": "substitute",
+            "as": "Grape Decoy"
+          },
+          {
+            "lv": 30,
+            "move": "endure"
+          }
+        ]
       }
-    ]
+    ],
+    "abilities": [
+      {
+        "name": "Pop Off",
+        "text": "A foe that hits him with a Physical move loses 1 Speed. His head is covered in sticky balls.",
+        "like": "Gooey"
+      },
+      {
+        "name": "Stuck Fast",
+        "text": "He can't be forced to switch out. He sticks himself in place with his balls.",
+        "like": "Suction Cups"
+      },
+      {
+        "name": "Cowardice",
+        "text": "Switches out by himself when he drops below half Vitality.",
+        "like": "Wimp Out",
+        "hidden": true
+      }
+    ],
+    "roles": [
+      "Setter",
+      "Fielder"
+    ],
+    "roleNote": "Hazard lead. Sticky Web plus Grape Rush and Pop Off slow the whole enemy team, which lets slow hard hitters move first. Cowardice (hidden) turns him into a free switch for a teammate."
   }
 ]
