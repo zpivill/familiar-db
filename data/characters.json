@@ -19973,7 +19973,7 @@
     "abilities": [
       {
         "name": "Kyoka Suigetsu",
-        "text": "When he enters battle, all foes are Confused.",
+        "text": "The first time he enters battle, all foes are Confused. Once you have seen his Shikai, the illusion is already set.",
         "like": "entry confuse"
       },
       {

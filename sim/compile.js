@@ -506,7 +506,7 @@ export function compileAbility(a) {
     }
     if ((mm = s.match(/^When (?:he|she) enters battle, (Fire|Water|Lightning|Time) moves do 1.3x for 5 turns/))) { ab.entry.push({ op: 'field', field: { turns: 5, boostType: mm[1] } }); hit(); }
     if (/^When he enters battle, it snows for 5 turns/.test(s)) { ab.entry.push({ op: 'field', field: { turns: 5, snow: true } }); hit(); }
-    if (/^When (?:he|she) enters battle, (?:all foes are Confused|each foe has a 30% chance to be Confused)/.test(s)) { ab.entry.push({ op: 'confuse', p: /30%/.test(s) ? 0.3 : 1 }); hit(); }
+    if (/^(?:When|The first time) (?:he|she) enters battle, (?:all foes are Confused|each foe has a 30% chance to be Confused)/.test(s)) { ab.entry.push({ op: 'confuse', p: /30%/.test(s) ? 0.3 : 1, once: /^The first time/.test(s) }); hit(); }
     if (/^When he enters battle, foes can't switch out next turn|the foe in front of him can't switch out for 2 turns/.test(s)) { ab.entry.push({ op: 'trap', turns: /2 turns/.test(s) ? 2 : 1 }); hit(); }
     if (/^When he enters battle, Beast-type foes' Power drops by 1/.test(s)) { ab.entry.push({ op: 'foes', stats: { pow: -1 }, onlyType: 'Beast' }); ab.entry.push({ op: 'trap', turns: 1, onlyType: 'Beast' }); hit(); }
     if (/^When she enters battle she copies the foe's stat boosts/.test(s)) { ab.entry.push({ op: 'psychUp' }); hit(); }

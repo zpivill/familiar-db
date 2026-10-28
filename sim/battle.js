@@ -311,6 +311,7 @@ export function runBattle(data, teams, opts = {}) {
   function entryAbility(m) {
     const a = abOf(m);
     for (const op of a.entry) {
+      if (op.once) { if ((m.onceDone || (m.onceDone = new Set())).has(op)) continue; m.onceDone.add(op); }
       const foes = foesOf(m).filter(f => !op.onlyType || f.types.includes(op.onlyType));
       if (op.op === 'foes') foes.forEach(f => boost(f, op.stats, m, { intimidate: op.intimidate }));
       if (op.op === 'self' && (!op.ifFoeType || foesOf(m).some(f => f.types.includes(op.ifFoeType)))) boost(m, op.stats, m);
