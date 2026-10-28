@@ -66,7 +66,7 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
@@ -118,7 +118,7 @@ function record(S, B, builds, opts) {
 
 export function mergeStats(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs']) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full']) {
     for (const [key, v] of Object.entries(S[k])) {
       const t = T[k][key] || (T[k][key] = Object.fromEntries(Object.keys(v).map(f => [f, 0])));
       for (const f in v) t[f] += v[f];
@@ -128,13 +128,58 @@ export function mergeStats(T, S) {
   return T;
 }
 
+const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+export const teamKey = t => t.map(e => e.key).sort().join('+');
+
+// Whole teams for team ranking. Every worker builds the same list from the same seed.
+// "open": `size` random teams. "finals": the given top teams plus one variant of each with one member swapped,
+// so the finals also test whether a near miss of a good team is better still.
+export function ladderTeams(data, opts) {
+  const L = opts.ladder, r = rng(L.seed), size = teamSize(opts);
+  const pool = entrantPool(data, opts), byKey = new Map(data.entrants.map(e => [e.key, e]));
+  const byTier = {};
+  pool.forEach(e => { (byTier[e.rarity] || (byTier[e.rarity] = [])).push(e); });
+  const tierKeys = Object.keys(byTier).filter(t => byTier[t].length >= size);
+  const focus = opts.focus ? pool.find(e => e.key === opts.focus) : null;
+  const fill = (t, src) => {
+    const used = new Set(t.map(e => e.cid));
+    for (let guard = 0; t.length < size && guard < 500; guard++) {
+      const e = r.pick(src);
+      if (!used.has(e.cid)) { used.add(e.cid); t.push(e); }
+    }
+    return t.length === size ? t : null;
+  };
+  const out = [], seen = new Set();
+  const add = t => { if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); } };
+  if (L.stage === 'finals') {
+    const top = L.top.map(ks => ks.map(k => byKey.get(k)).filter(Boolean)).filter(t => t.length === size);
+    top.forEach(add);
+    for (const t of top) {
+      const swappable = t.filter(e => e !== focus);
+      const src = opts.sameTier ? byTier[t[0].rarity] || pool : pool;
+      for (let tries = 0, n = out.length; swappable.length && out.length === n && tries < 10; tries++) {
+        const out1 = r.pick(swappable);
+        add(fill(t.filter(e => e !== out1), src));
+      }
+    }
+  } else {
+    for (let tries = 0; out.length < L.size && tries < L.size * 20; tries++) {
+      const src = opts.sameTier && tierKeys.length ? byTier[r.pick(tierKeys)] : pool;
+      add(fill(focus ? [focus] : [], src));
+    }
+  }
+  if (out.length < 2) throw new Error('Not enough characters to make teams. Pick more tiers or a smaller team size.');
+  return out;
+}
+
 // Runs `count` battles. onChunk gets partial stats every `chunk` battles so a page can show progress.
 export function runBatch(data, opts, onChunk) {
   const r = rng(opts.seed || 1);
   const pool = entrantPool(data, opts);
   if (pool.length < 2) throw new Error('Pick at least two characters.');
   const format = opts.format || 'duel';
-  const size = format === 'duel' ? 1 : format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+  const size = teamSize(opts);
+  const ladder = opts.ladder ? ladderTeams(data, opts) : null;
   const focus = opts.focus ? pool.find(e => e.key === opts.focus) : null;
   const byTier = {};
   pool.forEach(e => { (byTier[e.rarity] || (byTier[e.rarity] = [])).push(e); });
@@ -155,12 +200,24 @@ export function runBatch(data, opts, onChunk) {
       }
       return t;
     };
-    const sides = [team(focus), team(null)];
-    if (sides[1].length < size || sides[0].length < size) continue;
-    if (r() < 0.5) sides.reverse();
+    let sides;
+    if (ladder) {
+      // every team plays in turn against a random other team from the same list; mirror characters are allowed
+      const a = (n + (opts.offset || 0)) % ladder.length;
+      const b = (a + 1 + Math.floor(r() * (ladder.length - 1))) % ladder.length;
+      sides = [ladder[a], ladder[b]];
+    } else {
+      sides = [team(focus), team(null)];
+      if (sides[1].length < size || sides[0].length < size) continue;
+    }
+    if (r() < 0.5) sides = [sides[1], sides[0]];
     const builds = sides.map(t => t.map(e => makeBuild(data, e, r, opts)));
     const B = runBattle(data, builds, { rng: r, format: format === 'duos' ? 'duos' : 'singles', level: opts.level });
     record(S, B, builds, opts);
+    if (ladder) sides.forEach((t, si) => {
+      const F = inc(S.full, teamKey(t), () => ({ g: 0, w: 0 }));
+      F.g++; F.w += B.winner === si ? 1 : B.winner < 0 ? 0.5 : 0;
+    });
     if (onChunk && (n + 1) % chunk === 0) { onChunk(S, n + 1); S = emptyStats(); }
   }
   if (onChunk && S.battles) onChunk(S, opts.count);
@@ -171,7 +228,7 @@ export function runBatch(data, opts, onChunk) {
 export function watchBattle(data, opts) {
   const r = rng(opts.seed || Date.now() % 1e9);
   const pool = entrantPool(data, opts);
-  const size = opts.format === 'duel' ? 1 : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+  const size = teamSize(opts);
   const pickTeam = (keys, used) => {
     const t = (keys || []).map(k => pool.find(e => e.key === k) || data.entrants.find(e => e.key === k)).filter(Boolean);
     t.forEach(e => used.add(e.cid));
