@@ -96,23 +96,23 @@ function roles(data, b) {
 // How well two characters work together, with the reasons, for core detection and the log.
 function synergy(a, b, ra, rb) {
   let v = 0;
-  const why = [];
-  const one = (x, y, rx, ry) => {
-    if (rx.tailwind && ry.attacker && ry.spe >= 55 && ry.spe <= 105) { v += 0.5; why.push(`${x.e.name}'s Tailwind speeds up ${y.e.name}`); }
-    if (rx.trickRoom && ry.attacker && ry.spe <= 60) { v += 0.6; why.push(`${x.e.name}'s Trick Room lets slow ${y.e.name} move first`); }
-    if ((rx.follow || rx.redirect) && ry.setup) { v += 0.45; why.push(`${x.e.name} draws hits while ${y.e.name} sets up`); }
-    else if (rx.helping && ry.attacker) { v += 0.3; why.push(`${x.e.name}'s Helping Hand powers up ${y.e.name}`); }
-    for (const t of rx.fieldTypes) if (ry.stab.includes(t)) { v += 0.5; why.push(`${x.e.name}'s ${t} field boosts ${y.e.name}`); break; }
-    if (rx.screens && ry.setup) { v += 0.3; why.push(`${x.e.name}'s screens cover ${y.e.name}'s setup`); }
+  const why = [], kinds = [];  // kinds: what sort of core it is and who enables it (by: 0 = a, 1 = b, -1 = both), for the meta summary
+  const one = (x, y, rx, ry, by) => {
+    if (rx.tailwind && ry.attacker && ry.spe >= 55 && ry.spe <= 105) { v += 0.5; kinds.push({ k: 'tailwind', by }); why.push(`${x.e.name}'s Tailwind speeds up ${y.e.name}`); }
+    if (rx.trickRoom && ry.attacker && ry.spe <= 60) { v += 0.6; kinds.push({ k: 'trickRoom', by }); why.push(`${x.e.name}'s Trick Room lets slow ${y.e.name} move first`); }
+    if ((rx.follow || rx.redirect) && ry.setup) { v += 0.45; kinds.push({ k: 'redirect', by }); why.push(`${x.e.name} draws hits while ${y.e.name} sets up`); }
+    else if (rx.helping && ry.attacker) { v += 0.3; kinds.push({ k: 'helping', by }); why.push(`${x.e.name}'s Helping Hand powers up ${y.e.name}`); }
+    for (const t of rx.fieldTypes) if (ry.stab.includes(t)) { v += 0.5; kinds.push({ k: 'field', by }); why.push(`${x.e.name}'s ${t} field boosts ${y.e.name}`); break; }
+    if (rx.screens && ry.setup) { v += 0.3; kinds.push({ k: 'screens', by }); why.push(`${x.e.name}'s screens cover ${y.e.name}'s setup`); }
   };
-  one(a, b, ra, rb); one(b, a, rb, ra);
+  one(a, b, ra, rb, 0); one(b, a, rb, ra, 1);
   let cover = 0;
   for (const t of TYPES) {
     const ea = typeEff(t, a.e.types), eb = typeEff(t, b.e.types);
     if ((ea > 1 && eb < 1) || (eb > 1 && ea < 1)) cover++;
   }
-  if (cover >= 2) { v += Math.min(0.4, cover * 0.1); why.push(`${a.e.name} and ${b.e.name} cover each other's weaknesses`); }
-  return { v, why };
+  if (cover >= 2) { v += Math.min(0.4, cover * 0.1); kinds.push({ k: 'cover', by: -1 }); why.push(`${a.e.name} and ${b.e.name} cover each other's weaknesses`); }
+  return { v, why, kinds };
 }
 
 const leadBonus = r => (r.fakeOut ? 0.15 : 0) + (r.tailwind || r.trickRoom ? 0.15 : 0) + (r.intimidate ? 0.1 : 0) + (r.follow || r.redirect ? 0.1 : 0);
@@ -189,7 +189,7 @@ export function draftSide(data, mine, theirSeen, opts, r) {
   const MA = matchups(data, mine, theirs, level);
   const MB = matchups(data, theirs, mine, level);
   const rm = mine.map(b => roles(data, b)), rt = theirs.map(b => roles(data, b));
-  const synOf = (bs, rs) => bs.map((a, i) => bs.map((b, j) => i === j ? { v: 0, why: [] } : synergy(a, b, rs[i], rs[j])));
+  const synOf = (bs, rs) => bs.map((a, i) => bs.map((b, j) => i === j ? { v: 0, why: [], kinds: [] } : synergy(a, b, rs[i], rs[j])));
   const SA = synOf(mine, rm), SB = synOf(theirs, rt);
   const sa = SA.map(row => row.map(x => x.v)), sb = SB.map(row => row.map(x => x.v));
   const all = n => Array.from({ length: n }, (_, i) => i);
@@ -251,8 +251,15 @@ export function draftSide(data, mine, theirSeen, opts, r) {
   const back = six.filter(a => !lead.includes(a)).sort((a, b) => backValue(b) - backValue(a));
   const order = [...lead, ...back];
 
+  // the cores among my picks, for the meta summary
+  const cores = [];
+  for (let x = 0; x < order.length; x++) for (let y = x + 1; y < order.length; y++) {
+    const c = SA[order[x]][order[y]];
+    // the enabler (Tailwind setter, redirector...) first when there is one
+    if (c.v >= 0.45) { const k = c.kinds[0]; cores.push(k.by === 1 ? { a: order[y], b: order[x], kind: k.k, by: true } : { a: order[x], b: order[y], kind: k.k, by: k.by === 0 }); }
+  }
   return {
-    order, predicted: P.slice(0, 3).map(x => ({ team: theirTeams[x.i], p: x.p })),
+    order, cores, predicted: P.slice(0, 3).map(x => ({ team: theirTeams[x.i], p: x.p })),
     log: reasoning({ mine, theirs, MA, SA, SB, P, theirTeams, order, weight, choice, cap }),
   };
 }

@@ -8,7 +8,7 @@ const SIM = {
   overrides: {},
 };
 const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities', 'Abilities'], ['moves', 'Moves'], ['types', 'Types'],
-  ['teams', 'Teams'], ['matchups', 'Matchups'], ['draft', 'Draft'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
+  ['teams', 'Teams'], ['matchups', 'Matchups'], ['draft', 'Draft'], ['meta', 'Meta'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
 const FORMATS = [['duel', 'One on one', 'Single character vs single character. The cleanest read on each character.'],
   ['team', 'Team singles', 'Teams battle one at a time with switching, like a trainer battle.'],
   ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.'],
@@ -48,11 +48,11 @@ function simMessage(msg, i, onReady) {
   if (msg.type === 'error') { SIM.error = msg.message; SIM.running = false; SIM.resolve = null; simDraw(); }
 }
 
-const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, bring: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 } });
+const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 } });
 function simMerge(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
   if (S.draft) for (const f of ['g', 'overlap', 'exact']) T.draft[f] += S.draft[f];
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature', 'bring']) for (const [key, v] of Object.entries(S[k] || {})) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature', 'bring', 'core', 'leadPair', 'vsChar']) for (const [key, v] of Object.entries(S[k] || {})) {
     const t = T[k][key] || (T[k][key] = {});
     for (const f in v) t[f] = (t[f] || 0) + v[f];
   }
@@ -630,6 +630,63 @@ function simDraft() {
     ], { sortBy: 3, search: r => r.e.name || r.key })}`;
 }
 
+// Meta tab: the shape of a Competitive doubles meta from the draft runs (sim/meta.js): cores, general and
+// specific supports, niche answers, legendaries, openers, common builds, and best and niche teams when a
+// team search ran. The module loads the first time the tab opens.
+function simMetaSummary() {
+  if (!SIM.metaMod) { import('./meta.js').then(m => { SIM.metaMod = m; simDraw(); }); return null; }
+  const S = SIM.stats, lo = SIM.lastOpts || {};
+  let teams = [];
+  if (SIM.plan && SIM.full.length) teams = simFullRows(SIM.full.length - 1).filter(r => r.g >= 5).sort((a, b) => b.sure - a.sure);
+  const title = `${S.battles.toLocaleString()} battles, ${lo.draft === 'off' ? 'no draft' : `bring ${lo.draft}, pick 6`}, ${lo.tiers?.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}.`;
+  return SIM.metaMod.metaSummary(S, { byKey: SIM.meta.byKey, teams, minGames: Math.max(8, Math.round(minGames() / 2)), title,
+    fmt: { item: simItemName, nature: simNatureName, preset: id => SIM.meta.presets?.[id] || id } });
+}
+function simMetaTab() {
+  if (!SIM.stats.draft?.g) return '<p class="hint">The meta summary comes from the draft, so it only fills in for Competitive doubles with Team preview on. Pick that format and run again.</p>';
+  const m = simMetaSummary();
+  if (!m) return '<p class="hint">Loading…</p>';
+  SIM.metaMd = m.markdown;
+  const pair = keys => keys.map(entLink).join(' + ');
+  const team = t => t.keys.map(entLink).join(', ');
+  const sec = (h, note, rows, cols, id, empty, sortBy = 0) => `<h2>${h}</h2><p class="hint">${note}</p>${rows.length ? simTable(id, rows, cols, { sortBy }) : `<p class="hint">${empty || 'None yet. More battles will fill this in.'}</p>`}`;
+  const wr = (w, g) => r => winCell(r[w] * r[g], r[g]);
+  return `<div class="article">${m.lead.map(l => `<p>${esc(l)}</p>`).join('')}
+      <p class="hint">${SIM.running ? 'Still running: these fill in and settle as more battles come in. ' : ''}Small samples move a lot, so treat a row with few games as a lead to check, not a verdict. <button type="button" class="linkb" id="simmetamd">Download summary (.md)</button></p></div>
+    ${sec('Best teams', 'The strongest brought lists from the team search.', m.best, [
+      ['Team (brought)', r => r.keys.map(entName).join(', '), team, 'wrap'], ['Battles', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
+      ['Cores in it', r => r.cores.map(c => c.label).join(', '), r => r.cores.map(c => `${pair(c.keys)} <span class="hint">(${esc(c.label)})</span>`).join('<br>') || '—']], 'metabest', m.hasTeams ? '' : 'Run with Team search set to Strongest teams to rank whole brought lists.', 2)}
+    ${sec('Cores', 'Pairs the draft picked together because one makes the other better (Tailwind or Trick Room with attackers, redirection or screens with setup, Helping Hand, fields) or because they cover each other\'s weaknesses. "Vs. members alone" is the pair\'s win rate minus the average of each one\'s usual win rate.', m.cores, [
+      ['Core', r => r.keys.map(entName).join(' + '), r => pair(r.keys)], ['Kind', r => r.label], ['Games', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
+      ['Vs. members alone', r => r.lift, r => `${r.lift >= 0 ? '+' : ''}${Math.round(r.lift * 100)}`, 'sv']], 'metacores', '', 3)}
+    ${sec('General supports', 'Characters that enable cores with many different partners and still win at least half the time: safe picks for almost any 10.', m.general, [
+      ['Support', r => entName(r.key), r => entLink(r.key)], ['Core partners', r => r.partners, null, 'sv'], ['Picked', r => r.picks, null, 'sv'], ['Win % when picked', r => r.wr, r => pctf(r.wr), 'sv']], 'metagen', '', 1)}
+    ${sec('Specific supports', 'Characters that win far more with one partner than they usually do: build the pair, not the support alone.', m.specific, [
+      ['Support', r => entName(r.key), r => entLink(r.key)], ['Best with', r => entName(r.top.key), r => entLink(r.top.key)], ['Games together', r => r.top.g, null, 'sv'],
+      ['Win % together', r => r.top.wr, r => winCell(r.top.wr * r.top.g, r.top.g), 'sv'], ['Win % usually', r => r.wr, r => pctf(r.wr), 'sv']], 'metaspec', '', 3)}
+    ${sec('Niche teams', 'Strong brought lists built mostly from characters the other top lists don\'t use.', m.niche, [
+      ['Team (brought)', r => r.keys.map(entName).join(', '), team, 'wrap'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'], ['Rare picks', r => r.rare.map(entName).join(', '), r => r.rare.map(entLink).join(', ')]], 'metaniche', m.hasTeams ? 'No niche list stood out in this search.' : 'Run with Team search set to Strongest teams to find niche lists.', 1)}
+    ${sec('Answers', 'Characters picked less than most that beat one of the most popular characters far more often than they usually win: direct answers to bring when the meta settles.', m.answers, [
+      ['Answer', r => entName(r.key), r => entLink(r.key)], ['Against', r => entName(r.vs), r => entLink(r.vs)], ['Games', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
+      ['Over its usual', r => r.gap, r => `+${Math.round(r.gap * 100)}`, 'sv']], 'metaans', '', 4)}
+    ${sec('Legendaries and mythicals', 'Only one can make the 6, so "Picked when brought" shows which one the draft trusts most.', m.legends, [
+      ['Character', r => entName(r.key), r => entLink(r.key)], ['Brought', r => r.b, null, 'sv'], ['Picked when brought', r => r.rate, r => pctf(r.rate), 'sv'],
+      ['Win % when picked', r => isFinite(r.wr) ? r.wr : -1, r => pctf(r.wr), 'sv'], ['Core', r => r.core?.label || '', r => r.core ? `with ${entLink(r.core.with)} <span class="hint">(${esc(r.core.label)})</span>` : '—']], 'metaleg', '', 2)}
+    ${sec('Openers', 'The first two picked start on the field.', m.openers, [
+      ['Opening pair', r => r.keys.map(entName).join(' + '), r => pair(r.keys)], ['Games', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv']], 'metaopen', '', 2)}
+    ${sec('Common builds', 'The item and nature the AI gave the 20 most picked characters most often.', m.builds.filter(b => b.item || b.nature), [
+      ['Character', r => entName(r.key), r => entLink(r.key)], ['Item', r => r.item ? simItemName(r.item.id) : '—'], ['Nature', r => r.nature ? simNatureName(r.nature.id.nature) : '—'],
+      ['EV preset', r => r.nature ? SIM.meta.presets?.[r.nature.id.preset] || r.nature.id.preset : '—']], 'metabuilds')}`;
+}
+function simMetaDownload() {
+  if (!SIM.metaMd) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([SIM.metaMd], { type: 'text/markdown' }));
+  a.download = 'familiar-meta-summary.md';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
 // Watch a battle: both brought teams with what each side picked, and each side's reasoning.
 function simDraftView(w) {
   const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -681,6 +738,7 @@ function simRulesTab() {
     <h3>Competitive doubles</h3>
     <p>The planned competitive format, for now without the bring-10 draft: 6 a side in doubles with all 6 used, the first two of each team opening. Everyone fights at level 50 but keeps moves learned up to level 100, with AI-trained EVs, natures and IVs and one held item each (one of each per team). A battle still going after 50 turns is a draw, and a draw counts as a non-win for both sides, so stalling out the clock never pays. Other formats draw at 100 turns and count a draw as half a win.</p>
     <p>With Team preview on, each side brings 10 (or 8) with up to 5 legendaries or mythicals and sees only the other side's characters. Each side's AI guesses the other's builds (the same standard build for a character every time), scores every one of its characters against every one of theirs in a quick damage race, finds pairs that work together (Tailwind or Trick Room with the attackers they help, redirection with setup, a field with the types it boosts, partners that cover each other's weaknesses), and predicts the other side's 6 twice: once on its own, once as an answer to its own likely picks. It then picks the 6 (at most 1 legendary or mythical) that does best across those predictions, with a penalty for losing badly to any likely one, and orders it so the two openers fit the openers it expects. Watch a battle shows each side's reasoning, and the Draft tab shows pick rates and how often the prediction was right.</p>
+    <p>The Meta tab reads the draft runs. A core is a pair the draft picked together because one enables the other (Tailwind or Trick Room with attackers, redirection or screens with setup, Helping Hand, a field) or because they cover each other's weaknesses. A general support enables cores with 3 or more partners and wins at least half the time; a specific support wins at least 60% with one partner and 12 points more than usual. An answer is a character picked less than the median that beats one of the 8 most picked characters at least 55% of the time and 12 points more than usual.</p>
     <h3>Turn order</h3>
     <p>Switches go first, then moves by priority (Goes first +1, Extreme Speed +2, Protect +4, Goes last −5 or lower), then by Speed. Prankster-style abilities add +1 to Status moves; Quick Draw-style ones let the first move after entering go before others in its bracket. Trick Room reverses Speed order. A knocked-out character is replaced for free at the end of the turn; a switch by choice costs the turn.</p>
     <h3>Status effects</h3>
@@ -744,8 +802,8 @@ function renderSim() {
   const prog = SIM.running || S ? `<div class="simprog"><progress max="${SIM.target}" value="${SIM.done}"></progress>
       <span>${SIM.done.toLocaleString()} of ${SIM.target.toLocaleString()} battles${SIM.running && SIM.chain ? ` · ${SIM.chain.matrix ? 'final round robin' : `meta round ${SIM.chain.round + 1} of ${SIM.chain.rounds}`}` : ''}${SIM.running && SIM.plan ? ` · generation ${SIM.gen + 1} of ${SIM.plan.length}` : ''}${rate ? ` · ${rate.toLocaleString()} a second` : ''}${SIM.running ? '' : ' · done'}</span></div>` : '';
   const body = !S || !S.battles ? (SIM.tab === 'rules' ? simRulesTab() : SIM.tab === 'watch' && SIM.meta ? simWatch() : SIM.tab === 'builds' && SIM.meta ? simBuilds() : '<p class="soon">Pick settings and press Run. Results fill in while it runs.</p>')
-    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, draft: simDraft, builds: simBuilds, watch: simWatch, rules: simRulesTab })[SIM.tab]();
-  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups', 'draft', 'builds'].includes(SIM.tab) && S?.battles;
+    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, draft: simDraft, meta: simMetaTab, builds: simBuilds, watch: simWatch, rules: simRulesTab })[SIM.tab]();
+  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups', 'draft', 'meta', 'builds'].includes(SIM.tab) && S?.battles;
   const lo = SIM.lastOpts;
   el.innerHTML = `<div class="article simhead"><h1>Battle simulator</h1>
       <p class="lead">AI against AI, thousands of battles at a time, to find what is too strong, too weak or never used.</p>
@@ -779,6 +837,7 @@ document.addEventListener('click', e => {
   if (s) { const [id, k] = s.dataset.sort.split(':'); const cur = SIM.sort[id]; SIM.sort[id] = { k: +k, dir: cur && cur.k === +k ? -cur.dir : -1 }; return simDraw(); }
   const c = e.target.closest('[data-csv]');
   if (c) return simCsv(c.dataset.csv);
+  if (e.target.id === 'simmetamd') return simMetaDownload();
   if (e.target.id === 'simovsave') return simSaveOverride();
   if (e.target.id === 'simovdel') { delete SIM.overrides[SIM.ovEdit?.key]; return simDraw(); }
   if (e.target.id === 'simrun') simRun();

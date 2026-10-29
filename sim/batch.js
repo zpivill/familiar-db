@@ -71,7 +71,7 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, bring: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
@@ -157,7 +157,7 @@ function record(S, B, builds, opts) {
 
 export function mergeStats(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h', 'item', 'nature', 'bring']) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h', 'item', 'nature', 'bring', 'core', 'leadPair', 'vsChar']) {
     for (const [key, v] of Object.entries(S[k] || {})) {
       const t = T[k][key] || (T[k][key] = Object.fromEntries(Object.keys(v).map(f => [f, 0])));
       for (const f in v) t[f] += v[f];
@@ -199,6 +199,14 @@ function recordDraft(S, B, builds, D, opts) {
       X.b++;
       if (k >= 0) { X.p++; X.pw += w; if (k < 2) X.lead++; }
     });
+    // for the meta summary: cores picked together, opening pairs, and how each pick did against each foe
+    const key = i => builds[s][i].e.key, pair = (x, y) => [key(x), key(y)].sort().join('+');
+    // a core with an enabler is keyed enabler>partner, a mutual one (type cover) a+b
+    for (const c of d.cores) { const C = inc(S.core, (c.by ? key(c.a) + '>' + key(c.b) : pair(c.a, c.b)) + '|' + c.kind, () => ({ g: 0, w: 0 })); C.g++; C.w += w; }
+    const L = inc(S.leadPair, pair(d.order[0], d.order[1]), () => ({ g: 0, w: 0 })); L.g++; L.w += w;
+    for (const i of d.order) for (const j of D.drafts[1 - s].order) {
+      const V = inc(S.vsChar, key(i) + '>' + builds[1 - s][j].e.key, () => ({ g: 0, w: 0 })); V.g++; V.w += w;
+    }
     const hit = predictionHit(d.predicted, D.drafts[1 - s].order);
     S.draft.g++; S.draft.overlap += hit.overlap; S.draft.exact += hit.exact ? 1 : 0;
   });
