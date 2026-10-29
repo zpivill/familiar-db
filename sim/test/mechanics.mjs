@@ -200,7 +200,7 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(d.order.filter(i => LEG(mine[i].e)).length <= 1, 'The draft picks at most 1 legendary or mythical');
   ok(d.predicted.length && d.predicted.every(x => [5, 6, 7, 8, 9].every(i => x.team.includes(i))), 'Against 5 legendaries, every predicted 6 holds all 5 of their others');
   ok(['Reading their 10', 'Prediction', 'My 6'].every(h => d.log.some(l => l.includes(h))) && d.log.some(l => /certain picks/.test(l)), 'The reasoning log explains the read, the prediction and the picks', d.log[0]);
-  const S = runBatch(data, { format: 'comp', draft: true, count: 12, seed: 8 });
+  const S = runBatch(data, { format: 'comp', draft: true, bring: 10, count: 12, seed: 8 });
   ok(S.draft.g === S.battles * 2 && Object.values(S.bring).reduce((n, b) => n + b.b, 0) === S.battles * 20, 'Draft runs record every brought character and both predictions');
   ok(Object.values(S.turnHist).reduce((n, x) => n + x, 0) === S.battles, 'Every battle adds its length to the turn counts');
   const Lt = ladderTeams(data, { format: 'comp', draft: true, ladder: { fresh: 4, seed: 4 } });
@@ -212,10 +212,13 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   const picks = { [k]: Object.fromEntries(base.map(e => [e.key, e.key === never ? 0 : 1])) };
   const V = ladderTeams(data, { format: 'comp', draft: true, ladder: { top: [base.map(e => e.key)], variants: 6, picks, seed: 11 } }).slice(1);
   ok(V.filter(t => !t.some(e => e.key === never)).length >= 4, 'Search swaps out the members a team never picks first', V.length);
-  const w8 = watchBattle(data, { format: 'comp', draft: true, bring: 8, seed: 3 });
-  ok(w8.drafts.every(x => x.bring.length === 8) && w8.teams.every(t => t.length === 6), 'Bring 8, pick 6 works');
-  const w = watchBattle(data, { format: 'comp', draft: true, seed: 5 });
-  ok(w.drafts.every(x => x.bring.filter(b => LEG(b)).length <= 5), 'A brought 10 holds at most 5 legendaries or mythicals');
+  const w8 = watchBattle(data, { format: 'comp', draft: true, seed: 3 });
+  ok(w8.drafts.every(x => x.bring.length === 8 && x.bring.filter(b => LEG(b)).length <= 3) && w8.teams.every(t => t.length === 6), 'Bring 8, pick 6 is the default, with at most 3 legendaries or mythicals brought');
+  // bring 8 with too many legendaries left no legal 6 and crashed the draft: every battle must now run
+  const S8 = runBatch(data, { format: 'comp', draft: true, count: 60, seed: 21, tiers: ['legendary', 'mythical', 'pseudo'] });
+  ok(S8.battles === 60 && S8.draft.g === 120, 'Bring 8 drafts run even from a legendary-heavy pool', S8.battles);
+  const w = watchBattle(data, { format: 'comp', draft: true, bring: 10, seed: 5 });
+  ok(w.drafts.every(x => x.bring.length === 10 && x.bring.filter(b => LEG(b)).length <= 5), 'A brought 10 holds at most 5 legendaries or mythicals');
   ok(Object.keys(S.leadPair).length && Object.values(S.leadPair).reduce((n, v) => n + v.g, 0) === S.battles * 2, 'Draft runs record both opening pairs of every battle');
   ok(Object.keys(S.core).every(k => /^[^|]+([>+])[^|]+\|\w+$/.test(k)), 'Cores are recorded as enabler>partner or a+b with their kind', Object.keys(S.core)[0]);
 }

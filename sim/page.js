@@ -4,7 +4,7 @@
 const SIM = {
   workers: [], ready: false, meta: null, stats: null, running: false, done: 0, target: 0, t0: 0, ms: 0, runId: 0,
   tab: 'overview', sort: {}, q: '', vsKey: '', watch: null, error: '', drawPending: false, lastOpts: null,
-  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0, training: 'base', items: 'none', draft: '10' },
+  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0, training: 'base', items: 'none', draft: '8' },
   overrides: {},
 };
 const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities', 'Abilities'], ['moves', 'Moves'], ['types', 'Types'],
@@ -12,7 +12,7 @@ const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities
 const FORMATS = [['duel', 'One on one', 'Single character vs single character. The cleanest read on each character.'],
   ['team', 'Team singles', 'Teams battle one at a time with switching, like a trainer battle.'],
   ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.'],
-  ['comp', 'Competitive doubles', 'The future competitive format. With Team preview on, each side brings 10 (or 8) with up to 5 legendaries or mythicals, sees only the other side\'s characters, and its AI drafts 6 with at most 1 legendary or mythical; the first two picked open. Doubles with all 6, everyone at level 50 with moves learned up to level 100, AI-trained EVs, natures and IVs, one held item each (one of each per team). A battle still going after 50 turns is a draw and counts as a non-win for both sides. Watch a battle shows each side\'s draft reasoning.']];
+  ['comp', 'Competitive doubles', 'The future competitive format. With Team preview on, each side brings 8 (or 10) with up to 3 legendaries or mythicals (5 when bringing 10), sees only the other side\'s characters, and its AI drafts 6 with at most 1 legendary or mythical; the first two picked open. Doubles with all 6, everyone at level 50 with moves learned up to level 100, AI-trained EVs, natures and IVs, one held item each (one of each per team). A battle still going after 50 turns is a draw and counts as a non-win for both sides. Watch a battle shows each side\'s draft reasoning.']];
 
 // ---- workers ----
 function simWorkers() {
@@ -82,7 +82,7 @@ function simMergePick(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: {}, pic
 const simRules = () => ({ level: +SIM.opts.level, hpScale: +SIM.opts.hpScale });
 // Training and items options sent with every run: AI picks plus the overrides from the Builds tab.
 const simBuildOpts = o => ({ training: o.training === 'ai' ? 'ai' : 'none', items: o.items === 'ai' ? 'ai' : 'none', overrides: SIM.overrides,
-  draft: o.format === 'comp' && o.draft !== 'off', bring: +o.draft || 10 });
+  draft: o.format === 'comp' && o.draft !== 'off', bring: +o.draft || 8 });
 // Sends `total` battles to the workers, split evenly, and resolves with that batch's team results.
 // A team ranking passes the same ladder to all of them, and each worker starts at a different team
 // so every team gets about the same number of battles.
@@ -484,10 +484,10 @@ function simMetaView() {
     ${status ? `<p class="hint"><strong>${status}</strong></p>` : ''}
     ${n ? `<div class="scroll"><table class="moves simt"><thead><tr><th class="sv">#</th><th>Team</th><th>Playstyle</th><th class="sv">Beats previous</th><th class="sv">Vs other meta teams</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
     ${matrix}
-    ${T.some(t => t.pick?.g) ? `<h3>Brought 10 vs picked 6</h3><p class="hint">${SIM_PICK_NOTE}${C.matrix ? ' From the final round where every meta team plays every other one.' : ''}</p>${T.map((t, i) => simPickTable(t, t.pick, `Meta team ${i + 1}`)).join('')}` : ''}`;
+    ${T.some(t => t.pick?.g) ? `<h3>Brought list vs picked 6</h3><p class="hint">${SIM_PICK_NOTE}${C.matrix ? ' From the final round where every meta team plays every other one.' : ''}</p>${T.map((t, i) => simPickTable(t, t.pick, `Meta team ${i + 1}`)).join('')}` : ''}`;
 }
 
-// Brought 10 vs picked 6: for each member of a brought list, how often the draft put it in the 6 and in the
+// Brought list vs picked 6: for each member of a brought list, how often the draft put it in the 6 and in the
 // opening pair, how the team did when it played, and its hidden roles, so a member that never plays stands out.
 function simPickTable(t, P, label) {
   if (!P?.g) return '';
@@ -500,7 +500,7 @@ function simPickTable(t, P, label) {
   return `<h4>${label} <span class="hint">${P.g.toLocaleString()} games, ${num1(P.turns / P.g)} turns on average${benched ? `, ${benched} member${benched > 1 ? 's' : ''} picked under 10%` : ''}</span></h4>
     <div class="scroll"><table class="moves simt"><thead><tr><th>Brought</th><th>Tier</th><th>Roles</th><th class="sv">Picked</th><th class="sv">Opens</th><th class="sv">Win % when picked</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
-const SIM_PICK_NOTE = 'How often the draft put each member of the brought 10 into the final 6 and into the opening pair, and the team\'s win rate in the games that member played. Members picked under 10% of the time are greyed out: they hardly ever fight, so the team is really the other members.';
+const SIM_PICK_NOTE = 'How often the draft put each member of the brought list into the final 6 and into the opening pair, and the team\'s win rate in the games that member played. Members picked under 10% of the time are greyed out: they hardly ever fight, so the team is really the other members.';
 
 function simRanking() {
   if (SIM.chain) return simMetaView() + (SIM.running && SIM.plan ? `<h3>Current search</h3>${simRankingTable()}` : '') + '<h2>Teammate pairs</h2>';
@@ -536,7 +536,7 @@ function simRankingTable() {
     ${status ? `<p class="hint"><strong>${status}</strong> ${finalGen ? '' : 'The table shows the current generation, which still includes untested new teams.'}</p>` : ''}
     <h3>${done ? 'Final ranking' : `Generation ${SIM.gen + 1}`}</h3>
     ${simTable('fullteams', rows, cols, { sortBy: 3, search, limit: finalGen ? 300 : 50 })}
-    ${done && SIM.best?.pick ? `<h3>Brought 10 vs picked 6, top 5 teams</h3><p class="hint">${SIM_PICK_NOTE}</p>${SIM.best.rows.slice(0, 5).map((r, i) => simPickTable(r, SIM.best.pick[r.k], `Team ${i + 1}`)).join('')}` : ''}
+    ${done && SIM.best?.pick ? `<h3>Brought list vs picked 6, top 5 teams</h3><p class="hint">${SIM_PICK_NOTE}</p>${SIM.best.rows.slice(0, 5).map((r, i) => simPickTable(r, SIM.best.pick[r.k], `Team ${i + 1}`)).join('')}` : ''}
     <h3>Most common members of the top 16 teams</h3>
     <p class="hint">"In top 16" counts teams in ${finalGen ? 'the final ranking' : 'the last finished generation'}. "Kept" counts how many times across all generations the character was in a kept team: high means it keeps winning its place, not just one lucky team. Characters below the top tier present, or not in a final form, are marked, so you can see which ones earn a spot anyway.</p>
     ${simTable('members', memRows, [
@@ -793,7 +793,7 @@ function simRulesTab() {
     <dl>${(SIM.meta?.items || []).map(i => st(`${i.name} (${i.like})`, esc(i.text))).join('')}</dl>
     <h3>Competitive doubles</h3>
     <p>The planned competitive format, for now without the bring-10 draft: 6 a side in doubles with all 6 used, the first two of each team opening. Everyone fights at level 50 but keeps moves learned up to level 100, with AI-trained EVs, natures and IVs and one held item each (one of each per team). A battle still going after 50 turns is a draw, and a draw counts as a non-win for both sides, so stalling out the clock never pays. Other formats draw at 100 turns and count a draw as half a win.</p>
-    <p>With Team preview on, each side brings 10 (or 8) with up to 5 legendaries or mythicals and sees only the other side's characters. Each side's AI guesses the other's builds (the same standard build for a character every time), scores every one of its characters against every one of theirs in a quick damage race, finds pairs that work together (Tailwind or Trick Room with the attackers they help, redirection with setup, a field with the types it boosts, partners that cover each other's weaknesses), and predicts the other side's 6 twice: once on its own, once as an answer to its own likely picks. It then picks the 6 (at most 1 legendary or mythical) that does best across those predictions, with a penalty for losing badly to any likely one, and orders it so the two openers fit the openers it expects. Watch a battle shows each side's reasoning, and the Draft tab shows pick rates and how often the prediction was right.</p>
+    <p>With Team preview on, each side brings 8 (or 10) with up to 3 legendaries or mythicals (5 when bringing 10, so there are always enough others to fill the 6) and sees only the other side's characters. Each side's AI guesses the other's builds (the same standard build for a character every time), scores every one of its characters against every one of theirs in a quick damage race, finds pairs that work together (Tailwind or Trick Room with the attackers they help, redirection with setup, a field with the types it boosts, partners that cover each other's weaknesses), and predicts the other side's 6 twice: once on its own, once as an answer to its own likely picks. It then picks the 6 (at most 1 legendary or mythical) that does best across those predictions, with a penalty for losing badly to any likely one, and orders it so the two openers fit the openers it expects. Watch a battle shows each side's reasoning, and the Draft tab shows pick rates and how often the prediction was right.</p>
     <p>The Meta tab reads the draft runs. A core is a pair the draft picked together because one enables the other (Tailwind or Trick Room with attackers, redirection or screens with setup, Helping Hand, a field) or because they cover each other's weaknesses. A general support enables cores with 3 or more partners and wins at least half the time; a specific support wins at least 60% with one partner and 12 points more than usual. An answer is a character picked less than the median that beats one of the 8 most picked characters at least 55% of the time and 12 points more than usual.</p>
     <h3>Turn order</h3>
     <p>Switches go first, then moves by priority (Goes first +1, Extreme Speed +2, Protect +4, Goes last −5 or lower), then by Speed. Prankster-style abilities add +1 to Status moves; Quick Draw-style ones let the first move after entering go before others in its bracket. Trick Room reverses Speed order. A knocked-out character is replaced for free at the end of the turn; a switch by choice costs the turn.</p>
@@ -835,7 +835,7 @@ function simSettings() {
     <label>Characters <select name="forms">${opt('final', 'Final forms', o.forms)}${opt('all', 'Every form', o.forms)}</select></label>
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
     ${o.format === 'comp' ? '' : `<label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>`}
-    ${o.format === 'comp' ? `<label>Team preview <select name="draft">${opt('10', 'Bring 10, pick 6', o.draft)}${opt('8', 'Bring 8, pick 6', o.draft)}${opt('off', 'Off (random 6)', o.draft)}</select></label>` : ''}
+    ${o.format === 'comp' ? `<label>Team preview <select name="draft">${opt('8', 'Bring 8, pick 6', o.draft)}${opt('10', 'Bring 10, pick 6', o.draft)}${opt('off', 'Off (random 6)', o.draft)}</select></label>` : ''}
     <label>Vitality <select name="hpScale">${[1, 1.5, 2, 3].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
     ${o.format === 'comp' ? '' : `<label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
     <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>`}

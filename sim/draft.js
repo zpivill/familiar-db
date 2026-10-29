@@ -1,4 +1,4 @@
-// The draft for the competitive format: both players bring 10 (or 8), see only which characters the other
+// The draft for the competitive format: both players bring 8 (or 10), see only which characters the other
 // brought, and pick 6 in order (the first two open). Each side's AI:
 //   1. guesses the other side's hidden builds (moves, ability, nature, EVs, IVs, item),
 //   2. scores every one of its 10 against every one of theirs (a quick damage race, no battle),
