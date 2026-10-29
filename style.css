@@ -226,3 +226,17 @@ button:disabled { opacity: .55; cursor: default; }
 .pmh { font-size: 13px; font-weight: 600; color: var(--accent); }
 .pswitch { display: flex; flex-wrap: wrap; gap: 6px; }
 .presult { font-size: 18px; padding: 12px; border-radius: 12px; background: var(--panel); border: 2px solid var(--accent); }
+.ptrain { display: grid; gap: 6px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.ptrain .hint { margin: 0; }
+.ptrain select { max-width: 100%; }
+.pstats { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.pstats label { display: flex; align-items: center; gap: 3px; font-size: 12px; color: var(--muted); }
+.pstats input { width: 3.4em; padding: 2px 4px; }
+.plabel { font-weight: 600; min-width: 2.2em; }
+.pcard { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; text-align: left; font: inherit; color: inherit; }
+button.pcard:not(:disabled):hover { border-color: var(--accent); }
+.pcard.on { border: 2px solid var(--accent); }
+.pcard:disabled { opacity: .45; }
+.pnum { position: absolute; top: 6px; right: 8px; font-size: 12px; font-weight: 700; color: var(--accent); }
+.pdraftlog { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.pdraftlog summary { cursor: pointer; font-weight: 600; }
