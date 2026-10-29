@@ -2,7 +2,7 @@
 // Used by the Web Worker on the site and by sim/cli.mjs in Node.
 
 import { runBattle, rng } from './battle.js';
-import { RULES, COMPETITIVE, itemName, natureName } from './rules.js';
+import { RULES, COMPETITIVE, bringLegendCap, itemName, natureName } from './rules.js';
 import { trainTeam } from './builds.js';
 import { guessBuilds, draftSide, predictionHit } from './draft.js';
 
@@ -175,10 +175,11 @@ export function mergeStats(T, S) {
 const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'comp' ? (opts.draft ? opts.bring : COMPETITIVE.teamSize) : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
 // The competitive format fixes level, team size, training, items and the turn limit; every other format
 // keeps the settings as given.
-// With opts.draft, teams are the brought 10 (or opts.bring = 8) and each battle starts with the draft.
+// With opts.draft, teams are the brought 8 (or opts.bring = 10) and each battle starts with the draft.
+const bringOf = opts => [8, 10].includes(+opts.bring) ? +opts.bring : COMPETITIVE.bring;
 export const withFormat = opts => opts.format !== 'comp' ? opts
   : { ...opts, teamSize: COMPETITIVE.teamSize, level: COMPETITIVE.level, learnLevel: 100, training: 'ai', items: 'ai', turnCap: COMPETITIVE.turnCap, drawScore: COMPETITIVE.drawScore,
-    ...(opts.draft ? { bring: +opts.bring === 8 ? 8 : COMPETITIVE.bring, legendCap: COMPETITIVE.bringLegendCap, pickLegendCap: COMPETITIVE.legendCap } : { legendCap: COMPETITIVE.legendCap }) };
+    ...(opts.draft ? { bring: bringOf(opts), legendCap: bringLegendCap(bringOf(opts)), pickLegendCap: COMPETITIVE.legendCap } : { legendCap: COMPETITIVE.legendCap }) };
 
 // The draft: each side guesses the other's hidden builds (cached per brought team), picks its 6 and
 // orders them. Returns the 6 builds per side and each side's draft.

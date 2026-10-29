@@ -1,6 +1,6 @@
 // Run a batch from the command line:  node sim/cli.mjs [count] [duel|team|duos] [seed] [watch]
 // Flags: --trained (AI-chosen EVs, nature, IVs and held items), --level=50, --size=4,
-// --draft (comp only: bring 10 and draft 6), --bring=8
+// --draft (comp only: bring 8 and draft 6), --bring=10
 // Prints the top and bottom characters by win rate and how long it took.
 import fs from 'fs';
 import { prepare } from './battle.js';
@@ -12,7 +12,7 @@ const moves = JSON.parse(fs.readFileSync(new URL('data/moves.json', here))).move
 const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const flag = n => process.argv.find(a => a.startsWith('--' + n))?.split('=')[1] ?? (process.argv.includes('--' + n) ? true : undefined);
 const [count = '1000', format = 'duel', seed = '1', watch] = args;
-const extra = { ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('level') ? { level: +flag('level') } : {}), ...(flag('size') ? { teamSize: +flag('size') } : {}), ...(flag('draft') ? { draft: true, bring: +flag('bring') || 10 } : {}) };
+const extra = { ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('level') ? { level: +flag('level') } : {}), ...(flag('size') ? { teamSize: +flag('size') } : {}), ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}) };
 const data = prepare(chars, moves);
 if (watch) {
   const w = watchBattle(data, { format, seed: +seed, ...extra });
