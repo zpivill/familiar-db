@@ -9,6 +9,7 @@
 //     Compares meta chains saved with  node sim/cli.mjs 200000 comp <seed> --draft --hp=3 --forms=all
 //     --search=meta --arch --json=runN.json  (use a different seed per run): how far the runs agree.
 import fs from 'fs';
+import { pathToFileURL } from 'url';
 import { prepare, runBattle, rng } from './battle.js';
 import { makeBuild, entrantPool, withFormat } from './batch.js';
 import { trainTeam } from './builds.js';
@@ -43,7 +44,9 @@ const BOTS = {
   mirror: { action: () => null },
 };
 
-function strength(battles = 1000, seed = 1) {
+// Mirror-match arena: game n of a seed is one half of a pair (same team, same luck, sides swapped).
+// play(bot, seed, n) returns res ('w', 'l' or 'd' for the current AI) and the turns.
+export function arena() {
   RULES.hpScale = 3;
   const here = new URL('..', import.meta.url);
   const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', here))), JSON.parse(fs.readFileSync(new URL('data/moves.json', here))).moves);
@@ -54,17 +57,25 @@ function strength(battles = 1000, seed = 1) {
     while (t.length < 6) { const e = r.pick(pool); if (used.has(e.cid) || (LEG.has(e.rarity) && t.some(x => LEG.has(x.rarity)))) continue; used.add(e.cid); t.push(e); }
     return trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts);
   };
+  return (name, seed, n) => {
+    const bot = BOTS[name], k = Math.floor(n / 2), me = n % 2;
+    const tm = team(rng(seed * 1e6 + k));
+    const B = runBattle(data, [tm, tm], { format: 'duos', level: opts.level, turnCap: opts.turnCap, rng: rng(seed * 1e6 + k + 5e5),
+      decide: (kind, B, x, options) => kind === 'action' ? (x.side.i !== me ? bot.action(B, x) : null) : (x.i !== me && bot.replace ? bot.replace(B, x, options) : null) });
+    return { res: B.winner === me ? 'w' : B.winner < 0 ? 'd' : 'l', turns: B.turn };
+  };
+}
+
+function strength(battles = 1000, seed = 1) {
+  const play = arena();
   console.log(`Current AI vs each opponent: ${battles} mirror battles each, Vitality x3, seed ${seed}`);
-  for (const [name, bot] of Object.entries(BOTS)) {
+  for (const name of Object.keys(BOTS)) {
     let w = 0, l = 0, d = 0, turns = 0;
     const t0 = performance.now();
     for (let n = 0; n < battles; n++) {
-      const k = Math.floor(n / 2), me = n % 2;          // a pair: same team, same luck, sides swapped
-      const tm = team(rng(seed * 1e6 + k));
-      const B = runBattle(data, [tm, tm], { format: 'duos', level: opts.level, turnCap: opts.turnCap, rng: rng(seed * 1e6 + k + 5e5),
-        decide: (kind, B, x, options) => kind === 'action' ? (x.side.i !== me ? bot.action(B, x) : null) : (x.i !== me && bot.replace ? bot.replace(B, x, options) : null) });
-      if (B.winner === me) w++; else if (B.winner < 0) d++; else l++;
-      turns += B.turn;
+      const g = play(name, seed, n);
+      if (g.res === 'w') w++; else if (g.res === 'd') d++; else l++;
+      turns += g.turns;
     }
     const ms = (performance.now() - t0) / battles, p = w / battles, moe = 1.96 * Math.sqrt(p * (1 - p) / battles);
     console.log(`${name.padEnd(7)} won ${(100 * p).toFixed(1)}% ±${(100 * moe).toFixed(1)}, lost ${(100 * l / battles).toFixed(1)}%, drew ${(100 * d / battles).toFixed(1)}%, ${(turns / battles).toFixed(1)} turns, ${ms.toFixed(1)} ms/battle`);
@@ -100,6 +111,7 @@ function stability(files) {
   for (const [nm, sp, xs] of spreads) console.log(`  ${nm.padEnd(30)} ${xs.map(x => (100 * x).toFixed(0) + '%').join(' / ').padEnd(20)} spread ${(100 * sp).toFixed(0)}`);
 }
 
-if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
+if (import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
+else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
 else if (cmd === 'stability') stability(rest);
 else console.log('usage: node sim/bench.mjs strength [battles] [seed] | stability run1.json run2.json ...');

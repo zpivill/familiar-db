@@ -162,3 +162,37 @@ Step 1 (this PR): team search moved to sim/search.js, meta chains from the termi
 - What repeated in all three: Devil Union Asta was in 16 of the 18 meta teams and Six Paths Sage Naruto in 15. Next came Final Arc Gintoki (11), Hero of Hell Chainsaw Man (9, none in run 1) and Pain (8, 6 of them in run 3).
 
 Targets for later steps: overlap 9 of 12, correlation 0.8, archetype spread under 6 points.
+
+## AI step 2: joint side actions and tuned weights (2026-10-29)
+
+The AI now plans both characters on a side together in doubles, and its 29 scoring weights (`W` in ai.js) were tuned by `sim/tune.mjs` (80 generations against frozen v1 + greedy, seeds 1000+ only). A second tuning round gave no further gain and drifted toward almost never switching, so the round-1 weights were kept.
+
+**Strength** (`bench.mjs strength 1000`, seeds 1 / 2, unseen by the tuner):
+
+| Opponent | Step 1 AI won | Step 2 AI won | Step 2 AI lost |
+|---|---|---|---|
+| Random | 92.0% / 90.9% | 94.0% / 94.4% | 4.4% / 4.4% |
+| Greedy hardest-hit bot | 60.3% / 54.9% | 64.7% / 67.0% | 32.0% / 29.7% |
+| Frozen v1 | 48.2% / 46.4% | 55.7% / 54.8% | 38.3% / 40.4% |
+
+Joint actions alone made no measurable difference (46-48% vs v1); the gain came from the weights. The tuned AI uses status moves much more (12% to 22% of moves in a 6k drafted batch): Protect 0.7 to 1.3 uses a battle, Swords Dance 0.21 to 0.77.
+
+**Stability** (three 200k meta chains, seeds 1-3, same settings as step 1): top-12 overlap 4.7 of 12 (was 4.3), rank correlation 0.49 (was 0.48), largest archetype spread 31 points (was 28). **A stronger AI didn't make runs agree**, as expected: that is step 5's job (population meta).
+
+**Archetypes vs meta, step 1 AI → step 2 AI** (average of 3 runs, each run's value in brackets):
+
+| Archetype | Step 1 | Step 2 |
+|---|---|---|
+| Intimidate + Fake Out balance | 48% | 61% (55 / 56 / 71) |
+| Redirection + setup | 36% | 54% (53 / 54 / 56) |
+| Screens + setup | 52% | 54% (59 / 54 / 50) |
+| Snow | 47% | 48% (59 / 39 / 45) |
+| Gravity | 54% | 45% (27 / 57 / 51) |
+| Trick Room | 38% | 42% (42 / 48 / 35) |
+| Tailwind offense | 40% | 41% (30 / 44 / 50) |
+| Fire field | 43% | 39% (46 / 29 / 43) |
+| Water field | 26% | 37% (40 / 47 / 23) |
+| Lightning field | 31% | 37% (37 / 38 / 35) |
+| Spread offense | 38% | 32% (25 / 39 / 33) |
+
+Redirection + setup rose 18 points and now holds steady across runs (53-56%), so it was under-rated by the simpler AI, as suspected. Balance rose too. Most other gaps are within the noise. Devil Union Asta was in 17 of the 18 meta teams, the most repeated result so far.

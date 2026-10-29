@@ -5,7 +5,19 @@
 import { archetypeById } from './archetypes.js';
 
 const STATS = ['pow', 'grd', 'ene', 'wil', 'spe'];
-const NOISE = 0.3;
+// Weights of the scoring below, in one place so sim/tune.mjs can search for better ones. These are the
+// tuned values from 2026-10-29 (hand-set before; the old ones live on in sim/bots/ai-v1.js).
+// Scale: an attack is worth the share of the target's Vitality it takes x 100.
+export const W = {
+  noise: 0.166,        // each score x random (1 - noise/2) to (1 + noise/2), + up to 1
+  ko: 73.7, koPriority: 32.7, statusChance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
+  threat: 11.3, allyFinish: 16,                       // doubles targeting
+  hhKo: 10.7, speedFlip: 27.1, protectSave: 310, protectAlly: 29, wideGuard: 0.321, followSetup: 40.6, followSave: 81.2,
+  setup: 1.78, heal: 85.9, statusMove: 0.934, tailwind: 56.6, trickRoom: 57.5, screen: 29.9, protect: 6,
+  statusScale: 1.47,   // every status move's total score
+  switchBad: -0.369, switchGain: 1.43, switchP: 0.696,
+  overkill: 0.389, combo: 15.2,                     // joint side actions
+};
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
@@ -82,7 +94,7 @@ function duosSupportValue(B, api, u, mv, foes) {
     let best = 0;
     for (const f of foes) {
       const h = bestHit(api, ally, f);
-      best = Math.max(best, Math.min(h * 0.5, left(f)) * 100 + (h < left(f) && h * 1.5 >= left(f) ? 45 : 0));
+      best = Math.max(best, Math.min(h * 0.5, left(f)) * 100 + (h < left(f) && h * 1.5 >= left(f) ? W.hhKo : 0));
     }
     v += best;
   }
@@ -95,15 +107,15 @@ function duosSupportValue(B, api, u, mv, foes) {
     }
     return n;
   };
-  if (fx.tailwind && !u.side.tailwind) v += Math.max(0, flips(2, false)) * 18;
-  if (fx.field?.trickRoom && !B.field?.trickRoom) v += Math.max(0, flips(1, true)) * 18;
+  if (fx.tailwind && !u.side.tailwind) v += Math.max(0, flips(2, false)) * W.speedFlip;
+  if (fx.field?.trickRoom && !B.field?.trickRoom) v += Math.max(0, flips(1, true)) * W.speedFlip;
   const chained = (u.vol.protectChain || 0) && !fx.protect?.repeat && !a.protectAlways;
   if (fx.protect && !chained) {
     // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally
     const one = Math.max(...foes.map(f => bestHit(api, f, u))), both = foes.reduce((n, f) => n + bestHit(api, f, u), 0);
     if (one >= left(u) || (foes.length > 1 && both >= left(u))) {
-      v += 40;
-      if (ally) v += 10 + (foes.some(f => bestHit(api, ally, f) >= left(f)) ? 15 : 0);
+      v += W.protectSave;
+      if (ally) v += W.protectAlly + (foes.some(f => bestHit(api, ally, f) >= left(f)) ? 15 : 0);
     }
   }
   if (fx.wideGuard) {
@@ -115,16 +127,16 @@ function duosSupportValue(B, api, u, mv, foes) {
         if (fm.pp <= 0 || fm.m.cat === 'Status' || !(fm.m.fx.spread || api.abOf(f).spreadType === fm.m.type)) continue;
         best = Math.max(best, mine.reduce((n, m) => n + Math.min(estDamage(api, f, fm, m) * 0.75, left(m)), 0));
       }
-      v += best * 100 * 0.5;
+      v += best * 100 * W.wideGuard;
     }
   }
   if (fx.followMe && ally) {
     // redirection + setup: draw the hits while the ally boosts
     const allySetup = ally.moves.some(x => x.pp > 0 && x.m.cat === 'Status' && x.m.fx.boosts?.some(b => b.who === 'self' && Object.values(b.stats).some(n => n >= 2)));
     const main = ally.raw.pow >= ally.raw.ene ? 'pow' : 'ene';
-    if (allySetup && (ally.boosts[main] || 0) < 2) v += 35;
+    if (allySetup && (ally.boosts[main] || 0) < 2) v += W.followSetup;
     const allyRisk = Math.max(...foes.map(f => bestHit(api, f, ally) / left(ally))), myRisk = Math.max(...foes.map(f => bestHit(api, f, u) / left(u)));
-    if (allyRisk >= 1 && myRisk < 1) v += 45;
+    if (allyRisk >= 1 && myRisk < 1) v += W.followSave;
   }
   return v;
 }
@@ -168,7 +180,7 @@ function statusValue(B, api, u, mv, foes) {
           if (kk === main && b.who === 'self' && !a.contrary) {
             const best = Math.max(...foes.map(f => Math.min(bestHit(api, u, f), 1)));
             const gain = stageMult(Math.min(6, cur + n)) / stageMult(cur) - 1;
-            v += best * 100 * gain * turns * 0.8 * (b.p ?? 1);
+            v += best * 100 * gain * turns * W.setup * (b.p ?? 1);
             continue;
           }
           const w = kk === main ? 16 : kk === 'spe' ? 12 : kk === 'pow' || kk === 'ene' ? 3 : 8;
@@ -184,7 +196,7 @@ function statusValue(B, api, u, mv, foes) {
   }
   if (fx.heal) {
     const miss = 1 - hp;
-    v += miss < 0.25 ? 0 : miss * 90 * (a.healMult || 1);
+    v += miss < 0.25 ? 0 : miss * W.heal * (a.healMult || 1);
     if (fx.restSleep) v -= 15;
   }
   if (fx.cure && u.status) v += 20;
@@ -192,7 +204,7 @@ function statusValue(B, api, u, mv, foes) {
     const k = fx.status.kind;
     const open = foes.filter(f => !f.status && !api.blocks(f, k) && !(f.vol.sub));
     const base = { sleep: 45, freeze: 45, stun: api.speed(foe) > api.speed(u) ? 38 : 26, burn: foe.raw.pow > foe.raw.ene ? 38 : 18, curse: foe.raw.ene > foe.raw.pow ? 38 : 18, bleed: 32 }[k] || 20;
-    v += open.length * base * ((mv.m.accuracy || 100) / 100);
+    v += open.length * base * W.statusMove * ((mv.m.accuracy || 100) / 100);
   }
   if (fx.confuseFoes) v += foes.filter(f => !(f.vol.confuse > 0)).length * 18;
   if (fx.hazard) {
@@ -200,13 +212,13 @@ function statusValue(B, api, u, mv, foes) {
     const set = fx.hazard === 'spikes' ? h.spikes >= 3 : h[fx.hazard];
     v += set || left < 2 ? 0 : 12 + 6 * left;
   }
-  if (fx.screen) v += u.side.screens[fx.screen] ? 0 : 20;
+  if (fx.screen) v += u.side.screens[fx.screen] ? 0 : W.screen;
   // speed control: in duos it's worth what it does for the whole side, not just the user
   const mySpd = B.duos ? sideSpeed(B, api, u.side) : api.speed(u), foeSpd = B.duos ? sideSpeed(B, api, foe.side) : api.speed(foe);
-  if (fx.tailwind) v += u.side.tailwind ? 0 : mySpd < foeSpd ? (B.duos ? 34 : 28) : 8;
+  if (fx.tailwind) v += u.side.tailwind ? 0 : mySpd < foeSpd ? (B.duos ? W.tailwind : 28) : 8;
   if (fx.field) {
     const f = fx.field, cur = B.field;
-    if (f.trickRoom) v += cur?.trickRoom ? (mySpd > foeSpd ? 25 : -20) : mySpd < foeSpd ? (B.duos ? 38 : 32) : -10;
+    if (f.trickRoom) v += cur?.trickRoom ? (mySpd > foeSpd ? 25 : -20) : mySpd < foeSpd ? (B.duos ? W.trickRoom : 32) : -10;
     else if (f.boostType) v += cur?.boostType === f.boostType ? 0 : u.moves.some(x => x.m.type === f.boostType && x.m.cat !== 'Status') ? 22 : 4;
     else if (f.foeSlow) v += cur?.foeSlow ? 0 : api.speed(u) < api.speed(foe) ? 26 : 6;
     else if (f.gravity) v += cur?.gravity ? 0 : a.atk.some(w => w.gravity) ? 35 : 5;
@@ -214,7 +226,7 @@ function statusValue(B, api, u, mv, foes) {
     if (f.sideHeal) v += 6;
   }
   if (fx.protect) {
-    v += (u.vol.protectChain || 0) && !fx.protect.repeat && !a.protectAlways ? -10 : 6;
+    v += (u.vol.protectChain || 0) && !fx.protect.repeat && !a.protectAlways ? -10 : W.protect;
     if (foe.vol.charging || foe.status === 'bleed' || foe.status === 'burn' || foe.vol.seed || foe.vol.bind) v += 15;
     if (a.endTurn.some(o => o.op === 'heal')) v += 6;
     if (u.vol.countdown) v += 0;
@@ -271,22 +283,22 @@ function attackValue(B, api, u, mv, t, foesN) {
   let v = share * 100;
   const ko = d >= t.hp / t.maxhp;
   if (ko) {
-    v += 55;
-    if (api.effPriority(u, mv) > 0 && api.speed(u) < api.speed(t)) v += 30;
+    v += W.ko;
+    if (api.effPriority(u, mv) > 0 && api.speed(u) < api.speed(t)) v += W.koPriority;
   }
   if (d === 0) return -30;
   // side effects worth something
-  if (fx.status && !t.status && !ko) v += (fx.status.p || 0) * 18;
-  if (fx.flinch && !ko && api.speed(u) > api.speed(t)) v += fx.flinch * 14;
+  if (fx.status && !t.status && !ko) v += (fx.status.p || 0) * W.statusChance;
+  if (fx.flinch && !ko && api.speed(u) > api.speed(t)) v += fx.flinch * W.flinch;
   if (fx.firstTurn && fx.flinch) v += 20;
   for (const b of fx.boosts || []) {
     const n = Object.values(b.stats).reduce((s, x) => s + x, 0);
     if (b.who === 'self') v += n * (n > 0 ? 5 : ko ? 1 : 3) * b.p;
     if (b.who === 'foe' || b.who === 'foes') v += -n * 4 * b.p;
   }
-  if (fx.recoil) v -= fx.recoil * Math.min(d * t.maxhp, t.hp) / u.maxhp * 60;
+  if (fx.recoil) v -= fx.recoil * Math.min(d * t.maxhp, t.hp) / u.maxhp * W.recoil;
   if (fx.selfDmg) v -= fx.selfDmg * 70;
-  if (fx.recharge && !ko) v -= 25 * fx.recharge;
+  if (fx.recharge && !ko) v -= W.recharge * fx.recharge;
   if (fx.selfConfuse) v -= 12;
   if (fx.switchOut) v += 3;
   if (fx.drain || a.drain) v += (fx.drain || 0.25) * share * 30;
@@ -299,13 +311,13 @@ function attackValue(B, api, u, mv, t, foesN) {
 function duosTargets(api, u, foes) {
   const mine = api.actives(u.side), al = api.allyOf(u);
   return new Map(foes.map(t => [t, {
-    threat: Math.min(1.2, Math.max(...mine.map(x => bestHit(api, t, x) * x.maxhp / Math.max(1, x.hp)))) * 12,
+    threat: Math.min(1.2, Math.max(...mine.map(x => bestHit(api, t, x) * x.maxhp / Math.max(1, x.hp)))) * W.threat,
     ally: al ? bestHit(api, al, t) : 0,
   }]));
 }
 function duosTargetBonus(api, u, mv, t, info) {
   const left = t.hp / t.maxhp, d = estDamage(api, u, mv, t);
-  return info.threat + (info.ally && d < left && d + info.ally >= left ? 15 : 0);
+  return info.threat + (info.ally && d < left && d + info.ally >= left ? W.allyFinish : 0);
 }
 
 // A side forced to play an archetype (side.plan, from a meta chain's archetype round) puts its plan up first.
@@ -314,21 +326,23 @@ function planBonus(B, m, mv) {
   return plan && plan(mv.m.fx, B, m.side) ? 45 : 0;
 }
 
-export function chooseAction(B, m, api) {
+// Every option for m this turn with its score (noise included), best first. A forced move, a switch or
+// "nothing usable" comes back as the only option.
+function options(B, m, api) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
   if (forced) {
     const id = m.vol.charging || m.vol.rampage?.id;
     const i = id ? m.moves.findIndex(x => x.id === id) : 0;
-    return { type: 'move', slot: Math.max(0, i) };
+    return [{ type: 'move', slot: Math.max(0, i), score: 0 }];
   }
   const foes = api.foesOf(m);
-  let best = { type: 'move', slot: 0, target: foes[0], score: -1e9 };
+  const list = [];
   let tInfo = null;
-  const consider = (act, score) => { const s = score * (1 - NOISE / 2 + r() * NOISE) + r(); if (s > best.score) best = { ...act, score: s }; };
+  const consider = (act, score) => { list.push({ ...act, score: score * (1 - W.noise / 2 + r() * W.noise) + r() }); };
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
-    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0) + planBonus(B, m, mv));
+    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, (statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0)) * W.statusScale + planBonus(B, m, mv));
     const fx = mv.m.fx;
     if (B.duos && (fx.spread || api.abOf(m).spreadType === mv.m.type)) {
       let v = 0;
@@ -342,11 +356,13 @@ export function chooseAction(B, m, api) {
       consider({ type: 'move', slot: i, target: f }, v);
     }
   });
-  if (best.score < -1e8) {
+  if (!list.length) {
     // nothing usable: use whatever still has PP, or the first move
     const i = Math.max(0, m.moves.findIndex(x => x.pp > 0));
-    return { type: 'move', slot: i, target: foes[0] };
+    return [{ type: 'move', slot: i, target: foes[0], score: 0 }];
   }
+  list.sort((x, y) => y.score - x.score);
+  const best = list[0];
   // switching
   const bench = api.bench(m.side);
   if (bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
@@ -356,9 +372,51 @@ export function chooseAction(B, m, api) {
     const doomed = m.vol.countdown && m.vol.countdown - B.turn <= 1;
     // a Choice item locked into a move that does little here is a good reason to switch
     const stuck = m.vol.choice && best.score < 25;
-    if (pick && (doomed || (here < -0.45 && pickV > here + 0.5 && r() < 0.7) || (stuck && pickV > here + 0.2 && r() < 0.8))) return { type: 'switch', to: pick };
+    if (pick && (doomed || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
   }
-  return best;
+  return list;
+}
+
+// How many of each character's best options the side looks at together in doubles.
+const JOINT = 4;
+// What two moves on one side do together that their own scores miss. A hit on a foe the partner's hit
+// already knocks out goes to the other foe instead, often with the wrong move; two hits that only knock
+// out together are worth a knockout; and a doubled side move (two Tailwinds, two of the same screen,
+// Helping Hand next to a partner that isn't attacking) does nothing the second time.
+function pairValue(api, m1, a1, m2, a2) {
+  if (a1.type === 'switch' || a2.type === 'switch') return a1.type === a2.type && a1.to === a2.to ? -1e6 : 0;
+  const mv1 = m1.moves[a1.slot], mv2 = m2.moves[a2.slot];
+  if (!mv1 || !mv2) return 0;
+  const f1 = mv1.m.fx, f2 = mv2.m.fx, hit1 = mv1.m.cat !== 'Status', hit2 = mv2.m.cat !== 'Status';
+  let v = 0;
+  if (f1.helpingHand && !hit2) v -= a1.score;
+  if (f2.helpingHand && !hit1) v -= a2.score;
+  if ((f1.tailwind && f2.tailwind) || (f1.field && f2.field) || (f1.screen && f1.screen === f2.screen) || (f1.followMe && f2.followMe)) v -= Math.min(a1.score, a2.score);
+  const t = a1.target;
+  if (hit1 && hit2 && t && t === a2.target && !f1.spread && !f2.spread && !api.abOf(m1).spreadType && !api.abOf(m2).spreadType) {
+    const left = t.hp / t.maxhp, d1 = estDamage(api, m1, mv1, t), d2 = estDamage(api, m2, mv2, t);
+    if (d1 >= left || d2 >= left) v -= Math.min(a1.score, a2.score) * W.overkill;
+    else if (d1 + d2 >= left) v += W.combo;
+  }
+  return v;
+}
+
+// In doubles, while both sides choose (api.cache is set), the first character asked plans the whole side:
+// the best pair from each one's top options, scored together, kept for the partner's turn to ask.
+export function chooseAction(B, m, api) {
+  if (!B.duos || !api.cache) return options(B, m, api)[0];
+  const P = m.side.jointPlan;
+  if (P && P.turn === B.turn && P.acts.has(m)) return P.acts.get(m);
+  const team = api.actives(m.side);
+  if (team.length < 2) return options(B, m, api)[0];
+  const [L1, L2] = team.map(x => options(B, x, api).slice(0, JOINT));
+  let best = null, bv = -Infinity;
+  for (const a1 of L1) for (const a2 of L2) {
+    const v = a1.score + a2.score + pairValue(api, team[0], a1, team[1], a2);
+    if (v > bv) { bv = v; best = [a1, a2]; }
+  }
+  m.side.jointPlan = { turn: B.turn, acts: new Map([[team[0], best[0]], [team[1], best[1]]]) };
+  return m.side.jointPlan.acts.get(m);
 }
 
 export function chooseReplacement(B, side, options, api) {
