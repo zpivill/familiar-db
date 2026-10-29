@@ -4,15 +4,15 @@
 const SIM = {
   workers: [], ready: false, meta: null, stats: null, running: false, done: 0, target: 0, t0: 0, ms: 0, runId: 0,
   tab: 'overview', sort: {}, q: '', vsKey: '', watch: null, error: '', drawPending: false, lastOpts: null,
-  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0, training: 'base', items: 'none' },
+  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0, training: 'base', items: 'none', draft: '10' },
   overrides: {},
 };
 const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities', 'Abilities'], ['moves', 'Moves'], ['types', 'Types'],
-  ['teams', 'Teams'], ['matchups', 'Matchups'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
+  ['teams', 'Teams'], ['matchups', 'Matchups'], ['draft', 'Draft'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
 const FORMATS = [['duel', 'One on one', 'Single character vs single character. The cleanest read on each character.'],
   ['team', 'Team singles', 'Teams battle one at a time with switching, like a trainer battle.'],
   ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.'],
-  ['comp', 'Competitive doubles', 'The future competitive format, without the draft yet: 6 a side in doubles, everyone at level 50 with moves learned up to level 100, AI-trained EVs, natures and IVs, one held item each (one of each per team). A battle still going after 50 turns is a draw and counts as a non-win for both sides. The first two of each team open.']];
+  ['comp', 'Competitive doubles', 'The future competitive format. With Team preview on, each side brings 10 (or 8) with up to 5 legendaries or mythicals, sees only the other side\'s characters, and its AI drafts 6 with at most 1 legendary or mythical; the first two picked open. Doubles with all 6, everyone at level 50 with moves learned up to level 100, AI-trained EVs, natures and IVs, one held item each (one of each per team). A battle still going after 50 turns is a draw and counts as a non-win for both sides. Watch a battle shows each side\'s draft reasoning.']];
 
 // ---- workers ----
 function simWorkers() {
@@ -48,10 +48,11 @@ function simMessage(msg, i, onReady) {
   if (msg.type === 'error') { SIM.error = msg.message; SIM.running = false; SIM.resolve = null; simDraw(); }
 }
 
-const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, faster: { g: 0, w: 0 } });
+const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, bring: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 } });
 function simMerge(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature']) for (const [key, v] of Object.entries(S[k] || {})) {
+  if (S.draft) for (const f of ['g', 'overlap', 'exact']) T.draft[f] += S.draft[f];
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature', 'bring']) for (const [key, v] of Object.entries(S[k] || {})) {
     const t = T[k][key] || (T[k][key] = {});
     for (const f in v) t[f] = (t[f] || 0) + v[f];
   }
@@ -73,7 +74,8 @@ function simMergeDetail(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: T }, 
 
 const simRules = () => ({ level: +SIM.opts.level, hpScale: +SIM.opts.hpScale });
 // Training and items options sent with every run: AI picks plus the overrides from the Builds tab.
-const simBuildOpts = o => ({ training: o.training === 'ai' ? 'ai' : 'none', items: o.items === 'ai' ? 'ai' : 'none', overrides: SIM.overrides });
+const simBuildOpts = o => ({ training: o.training === 'ai' ? 'ai' : 'none', items: o.items === 'ai' ? 'ai' : 'none', overrides: SIM.overrides,
+  draft: o.format === 'comp' && o.draft !== 'off', bring: +o.draft || 10 });
 // Sends `total` battles to the workers, split evenly, and resolves with that batch's team results.
 // A team ranking passes the same ladder to all of them, and each worker starts at a different team
 // so every team gets about the same number of battles.
@@ -609,6 +611,36 @@ function simSaveOverride() {
   simDraw();
 }
 
+// Draft tab: who gets brought, who gets picked from the 10, who opens, how picked characters do, and how
+// often the draft AI guessed the other side's 6.
+function simDraft() {
+  const S = SIM.stats, D = S.draft;
+  if (!D?.g) return '<p class="hint">The draft only runs in Competitive doubles with Team preview on. Pick that format and run again.</p>';
+  const rows = Object.entries(S.bring).map(([key, v]) => ({ key, e: SIM.meta.byKey.get(key) || {}, ...v, pr: v.p / v.b, lr: v.p ? v.lead / v.p : 0, wr: v.p ? v.pw / v.p : NaN })).filter(r => r.b >= Math.max(3, minGames() / 4));
+  return `<div class="stats"><div class="stat"><b>${pctf(D.overlap / D.g)}</b><span>of the opponent's 6 predicted right, on average</span></div>
+      <div class="stat"><b>${pctf(D.exact / D.g)}</b><span>of drafts guessed the whole 6</span></div></div>
+    <p class="hint">Each side sees only the other's characters, guesses their builds, predicts their 6 (and how they'd answer its own likely picks), then picks the 6 that does best across those predictions without losing badly to any likely one. The first two picked open. "Picked" is how often a character makes the 6 when brought: a low number means it's usually the one left home; a high win rate with a low pick rate is a niche pick worth a look.</p>
+    ${simTable('draft', rows, [
+      ['Character', r => r.e.name || r.key, r => entLink(r.key)],
+      ['Tier', r => rarityName(r.e.rarity)],
+      ['Brought', r => r.b, null, 'sv'],
+      ['Picked', r => r.pr, r => pctf(r.pr), 'sv'],
+      ['Opens', r => r.lr, r => r.p ? pctf(r.lr) : '—', 'sv'],
+      ['Win % when picked', r => isFinite(r.wr) ? r.wr : -1, r => r.p ? winCell(r.pw, r.p) : '—', 'sv'],
+    ], { sortBy: 3, search: r => r.e.name || r.key })}`;
+}
+
+// Watch a battle: both brought teams with what each side picked, and each side's reasoning.
+function simDraftView(w) {
+  const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  return `<h3>Draft</h3><div class="simcols">${w.drafts.map((d, s) => {
+    const pick = new Map(d.order.map((i, k) => [i, k]));
+    return `<section><h3>Side ${s ? 'B' : 'A'} brought</h3>
+      <p>${d.bring.map((b, i) => `${pick.has(i) ? `<b>${entLink(b.key)}</b>${pick.get(i) < 2 ? ' <span class="badge sigb">Opens</span>' : ' <span class="badge">Picked</span>'}` : `<span class="hint">${esc(b.name)}</span>`}${['legendary', 'mythical'].includes(b.rarity) ? ` <small class="hint">${esc(rarityName(b.rarity))}</small>` : ''}`).join(' · ')}</p>
+      <h4>Side ${s ? 'B' : 'A'}'s reasoning</h4>${d.log.map(l => `<p>${md(l)}</p>`).join('')}</section>`;
+  }).join('')}</div>`;
+}
+
 function simWatch() {
   const w = SIM.watch;
   const keys = SIM.meta.entrants.filter(e => SIM.opts.forms === 'all' || e.final).sort((a, b) => a.name.localeCompare(b.name));
@@ -619,6 +651,7 @@ function simWatch() {
   return `<p class="hint">Plays one battle with the settings above and shows every step, to check that the rules and the AI behave. Pick a lead for each side or leave it random.</p>
     <div class="row"><label>Side A ${sel('simwa', SIM.watchA)}</label><label>Side B ${sel('simwb', SIM.watchB)}</label>
     <button type="button" id="simwatch"${SIM.ready ? '' : ' disabled'}>${SIM.watching ? 'Playing…' : 'Play one battle'}</button></div>
+    ${w?.drafts ? simDraftView(w) : ''}
     ${w ? `<div class="simcols">${w.teams.map(team).join('')}</div>
       <p><b>${w.winner < 0 ? 'Draw' : `Side ${w.winner ? 'B' : 'A'} wins`}</b> after ${w.turns} turns.</p>
       <pre class="simlog">${esc(w.log.join('\n'))}</pre>` : ''}`;
@@ -647,6 +680,7 @@ function simRulesTab() {
     <dl>${(SIM.meta?.items || []).map(i => st(`${i.name} (${i.like})`, esc(i.text))).join('')}</dl>
     <h3>Competitive doubles</h3>
     <p>The planned competitive format, for now without the bring-10 draft: 6 a side in doubles with all 6 used, the first two of each team opening. Everyone fights at level 50 but keeps moves learned up to level 100, with AI-trained EVs, natures and IVs and one held item each (one of each per team). A battle still going after 50 turns is a draw, and a draw counts as a non-win for both sides, so stalling out the clock never pays. Other formats draw at 100 turns and count a draw as half a win.</p>
+    <p>With Team preview on, each side brings 10 (or 8) with up to 5 legendaries or mythicals and sees only the other side's characters. Each side's AI guesses the other's builds (the same standard build for a character every time), scores every one of its characters against every one of theirs in a quick damage race, finds pairs that work together (Tailwind or Trick Room with the attackers they help, redirection with setup, a field with the types it boosts, partners that cover each other's weaknesses), and predicts the other side's 6 twice: once on its own, once as an answer to its own likely picks. It then picks the 6 (at most 1 legendary or mythical) that does best across those predictions, with a penalty for losing badly to any likely one, and orders it so the two openers fit the openers it expects. Watch a battle shows each side's reasoning, and the Draft tab shows pick rates and how often the prediction was right.</p>
     <h3>Turn order</h3>
     <p>Switches go first, then moves by priority (Goes first +1, Extreme Speed +2, Protect +4, Goes last −5 or lower), then by Speed. Prankster-style abilities add +1 to Status moves; Quick Draw-style ones let the first move after entering go before others in its bracket. Trick Room reverses Speed order. A knocked-out character is replaced for free at the end of the turn; a switch by choice costs the turn.</p>
     <h3>Status effects</h3>
@@ -687,6 +721,7 @@ function simSettings() {
     <label>Characters <select name="forms">${opt('final', 'Final forms', o.forms)}${opt('all', 'Every form', o.forms)}</select></label>
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
     ${o.format === 'comp' ? '' : `<label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>`}
+    ${o.format === 'comp' ? `<label>Team preview <select name="draft">${opt('10', 'Bring 10, pick 6', o.draft)}${opt('8', 'Bring 8, pick 6', o.draft)}${opt('off', 'Off (random 6)', o.draft)}</select></label>` : ''}
     <label>Vitality <select name="hpScale">${[1, 1.5, 2].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
     ${o.format === 'comp' ? '' : `<label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
     <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>`}
@@ -709,8 +744,8 @@ function renderSim() {
   const prog = SIM.running || S ? `<div class="simprog"><progress max="${SIM.target}" value="${SIM.done}"></progress>
       <span>${SIM.done.toLocaleString()} of ${SIM.target.toLocaleString()} battles${SIM.running && SIM.chain ? ` · ${SIM.chain.matrix ? 'final round robin' : `meta round ${SIM.chain.round + 1} of ${SIM.chain.rounds}`}` : ''}${SIM.running && SIM.plan ? ` · generation ${SIM.gen + 1} of ${SIM.plan.length}` : ''}${rate ? ` · ${rate.toLocaleString()} a second` : ''}${SIM.running ? '' : ' · done'}</span></div>` : '';
   const body = !S || !S.battles ? (SIM.tab === 'rules' ? simRulesTab() : SIM.tab === 'watch' && SIM.meta ? simWatch() : SIM.tab === 'builds' && SIM.meta ? simBuilds() : '<p class="soon">Pick settings and press Run. Results fill in while it runs.</p>')
-    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, builds: simBuilds, watch: simWatch, rules: simRulesTab })[SIM.tab]();
-  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups', 'builds'].includes(SIM.tab) && S?.battles;
+    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, draft: simDraft, builds: simBuilds, watch: simWatch, rules: simRulesTab })[SIM.tab]();
+  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups', 'draft', 'builds'].includes(SIM.tab) && S?.battles;
   const lo = SIM.lastOpts;
   el.innerHTML = `<div class="article simhead"><h1>Battle simulator</h1>
       <p class="lead">AI against AI, thousands of battles at a time, to find what is too strong, too weak or never used.</p>
@@ -719,7 +754,7 @@ function renderSim() {
     <div class="row"><button type="button" id="simrun" class="primary"${SIM.ready && !SIM.running ? '' : ' disabled'}>${SIM.ready ? 'Run' : 'Starting…'}</button>
       ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : ''}${prog}</div>
     ${SIM.error ? `<p class="danger">${esc(SIM.error)}</p>` : ''}
-    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.format === 'comp' ? 50 : lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' || lo.format === 'comp' ? ', AI training' : ''}${lo.items === 'ai' || lo.format === 'comp' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
+    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, ${lo.format === 'comp' ? (lo.draft === 'off' ? 'no draft, ' : `bring ${lo.draft} and pick 6, `) : ''}level ${lo.format === 'comp' ? 50 : lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' || lo.format === 'comp' ? ', AI training' : ''}${lo.items === 'ai' || lo.format === 'comp' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
     <nav class="tabs simtabs" aria-label="Simulator views">${SIM_TABS.map(([k, l]) => `<a href="#sim" data-simtab="${k}"${k === SIM.tab ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
     ${searchable ? `<input id="simq" type="search" placeholder="Filter rows" value="${esc(SIM.q)}">` : ''}
     <div class="simbody">${body}</div>`;

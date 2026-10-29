@@ -4,6 +4,7 @@
 import { runBattle, rng } from './battle.js';
 import { RULES, COMPETITIVE, itemName, natureName } from './rules.js';
 import { trainTeam } from './builds.js';
+import { guessBuilds, draftSide, predictionHit } from './draft.js';
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
@@ -70,7 +71,7 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, bring: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
@@ -156,7 +157,7 @@ function record(S, B, builds, opts) {
 
 export function mergeStats(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h', 'item', 'nature']) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h', 'item', 'nature', 'bring']) {
     for (const [key, v] of Object.entries(S[k] || {})) {
       const t = T[k][key] || (T[k][key] = Object.fromEntries(Object.keys(v).map(f => [f, 0])));
       for (const f in v) t[f] += v[f];
@@ -164,14 +165,44 @@ export function mergeStats(T, S) {
   }
   for (const [key, v] of Object.entries(S.detail || {})) mergeDetail(T.detail[key] || (T.detail[key] = emptyDetail()), v);
   T.faster.g += S.faster.g; T.faster.w += S.faster.w;
+  if (S.draft) for (const f of ['g', 'overlap', 'exact']) T.draft[f] += S.draft[f];
   return T;
 }
 
-const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'comp' ? COMPETITIVE.teamSize : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'comp' ? (opts.draft ? opts.bring : COMPETITIVE.teamSize) : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
 // The competitive format fixes level, team size, training, items and the turn limit; every other format
 // keeps the settings as given.
+// With opts.draft, teams are the brought 10 (or opts.bring = 8) and each battle starts with the draft.
 export const withFormat = opts => opts.format !== 'comp' ? opts
-  : { ...opts, teamSize: COMPETITIVE.teamSize, level: COMPETITIVE.level, learnLevel: 100, training: 'ai', items: 'ai', turnCap: COMPETITIVE.turnCap, drawScore: COMPETITIVE.drawScore, legendCap: COMPETITIVE.legendCap };
+  : { ...opts, teamSize: COMPETITIVE.teamSize, level: COMPETITIVE.level, learnLevel: 100, training: 'ai', items: 'ai', turnCap: COMPETITIVE.turnCap, drawScore: COMPETITIVE.drawScore,
+    ...(opts.draft ? { bring: +opts.bring === 8 ? 8 : COMPETITIVE.bring, legendCap: COMPETITIVE.bringLegendCap, pickLegendCap: COMPETITIVE.legendCap } : { legendCap: COMPETITIVE.legendCap }) };
+
+// The draft: each side guesses the other's hidden builds (cached per brought team), picks its 6 and
+// orders them. Returns the 6 builds per side and each side's draft.
+const guessCache = new Map();
+function runDraft(data, sides, builds, r, opts) {
+  const guess = t => {
+    const k = teamKey(t);
+    let g = guessCache.get(k);
+    if (!g) { if (guessCache.size > 400) guessCache.clear(); g = guessBuilds(data, t, makeBuild, opts); guessCache.set(k, g); }
+    return g;
+  };
+  const drafts = [0, 1].map(s => draftSide(data, builds[s], guess(sides[1 - s]), opts, r));
+  return { six: drafts.map((d, s) => d.order.map(i => builds[s][i])), drafts };
+}
+function recordDraft(S, B, builds, D, opts) {
+  D.drafts.forEach((d, s) => {
+    const w = B.winner === s ? 1 : B.winner < 0 ? drawScore(opts) : 0;
+    builds[s].forEach((b, i) => {
+      const k = d.order.indexOf(i);
+      const X = inc(S.bring, b.e.key, () => ({ b: 0, p: 0, pw: 0, lead: 0 }));
+      X.b++;
+      if (k >= 0) { X.p++; X.pw += w; if (k < 2) X.lead++; }
+    });
+    const hit = predictionHit(d.predicted, D.drafts[1 - s].order);
+    S.draft.g++; S.draft.overlap += hit.overlap; S.draft.exact += hit.exact ? 1 : 0;
+  });
+}
 const battleOpts = opts => ({ format: opts.format === 'duos' || opts.format === 'comp' ? 'duos' : 'singles', level: opts.level, turnCap: opts.turnCap });
 // opts.legendCap: at most this many legendary or mythical characters per team.
 const LEGEND = new Set(['legendary', 'mythical']);
@@ -294,8 +325,10 @@ export function runBatch(data, opts, onChunk) {
     }
     if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); }
     const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
-    const B = runBattle(data, builds, { rng: r, ...battleOpts(opts) });
-    record(S, B, builds, opts);
+    const D = opts.draft ? runDraft(data, sides, builds, r, opts) : null;
+    const B = runBattle(data, D ? D.six : builds, { rng: r, ...battleOpts(opts) });
+    record(S, B, D ? D.six : builds, opts);
+    if (D) recordDraft(S, B, builds, D, opts);
     if (ladder) for (const si of scored) {
       const k = teamKey(sides[si]);
       const F = inc(S.full, k, () => ({ g: 0, w: 0 }));
@@ -324,10 +357,16 @@ export function watchBattle(data, opts) {
   };
   const used = new Set();
   const sides = [pickTeam(opts.teamA, used), pickTeam(opts.teamB, used)];
-  const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
+  const brought = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
+  const D = opts.draft ? runDraft(data, sides, brought, r, opts) : null;
+  const builds = D ? D.six : brought;
   const B = runBattle(data, builds, { rng: r, ...battleOpts(opts), log: true });
   return {
     winner: B.winner, turns: B.turn, log: B.log,
+    drafts: D && D.drafts.map((d, s) => ({
+      bring: brought[s].map(b => ({ key: b.e.key, name: b.e.name, rarity: b.e.rarity })), order: d.order, log: d.log,
+      predicted: d.predicted.map(x => ({ keys: x.team.map(i => brought[1 - s][i].e.key), p: x.p })),
+    })),
     teams: builds.map((t, si) => t.map((b, k) => ({
       key: b.e.key, name: b.e.name, ability: b.ability.name, moves: b.moves.map(l => l.as),
       item: b.item ? itemName(b.item) : null, nature: b.nature ? natureName(b.nature) : null, evs: b.evs || null, ivs: b.ivs || null,

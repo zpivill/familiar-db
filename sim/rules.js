@@ -55,7 +55,9 @@ export const RULES = {
 
 // The competitive format: 6 a side in doubles at Lv50, AI-trained builds with held items, and a battle
 // still going after 50 turns is a draw that counts as a non-win for both sides (so stalling gains nothing).
-export const COMPETITIVE = { teamSize: 6, level: 50, turnCap: 50, drawScore: 0, legendCap: 1 };  // legendCap: legendaries + mythicals per team
+// With the draft on, each side brings `bring` characters (10, or 8) with up to bringLegendCap legendaries or
+// mythicals, and picks 6 with at most legendCap of them.
+export const COMPETITIVE = { teamSize: 6, level: 50, turnCap: 50, drawScore: 0, legendCap: 1, bring: 10, bringLegendCap: 5 };
 
 // Training for the competitive format (and any run with "AI-trained" builds).
 // EV points: each point adds level / 50 to that stat (+1 at Lv50, +2 at Lv100).
