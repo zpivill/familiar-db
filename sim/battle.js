@@ -1,7 +1,7 @@
 // The battle engine: one battle, start to finish, with no DOM. Runs the same in a Web Worker and in Node.
 // Rules and numbers come from rules.js; move and ability effects come from compile.js.
 
-import { RULES, TYPES, typeEff, battleStat, stageMult } from './rules.js';
+import { RULES, TYPES, typeEff, battleStat, stageMult, natureMult, itemDef, itemName, ITEM_NUM } from './rules.js';
 import { compileMove, compileAbility, moveFlags } from './compile.js';
 import { chooseAction, chooseReplacement } from './ai.js';
 
@@ -46,11 +46,15 @@ export function prepare(characters, moveList) {
 
 // ---------------- battlers ----------------
 
+// build.evs / build.ivs ({ vit, pow, ... }), build.nature and build.item are optional: without them a
+// character fights on base stats alone, as in the earlier runs.
 function makeMon(data, e, build, level) {
-  const st = e.stats;
+  const st = e.stats, ev = build.evs || {}, iv = build.ivs || {};
+  const item = itemDef(build.item);
   const mon = {
     e, key: e.key, name: e.name, level, types: [...e.types],
-    maxhp: battleStat(st.vit, level, true), raw: {},
+    maxhp: battleStat(st.vit, level, true, ev.vit || 0, iv.vit ?? RULES.iv), raw: {},
+    item: item ? { ...item, type: (build.item || '').split(':')[1] || null, full: build.item, label: itemName(build.item) } : null, itemUsed: false,
     ability: build.ability.ab, abilityName: build.ability.name, baseAbility: build.ability.ab,
     moves: build.moves.map(l => {
       const m = data.moves.get(l.id);
@@ -59,7 +63,7 @@ function makeMon(data, e, build, level) {
     status: null, statusTurns: 0, bleedN: 0, boosts: {}, vol: {}, once: {}, pending: null, fainted: false,
     t: { dmg: 0, taken: 0, kos: 0, turns: 0, entries: 0, moves: {} },
   };
-  STATS.forEach(k => { mon.raw[k] = battleStat(st[k], level, false); mon.boosts[k] = 0; });
+  STATS.forEach(k => { mon.raw[k] = battleStat(st[k], level, false, ev[k] || 0, iv[k] ?? RULES.iv, natureMult(build.nature, k)); mon.boosts[k] = 0; });
   mon.hp = mon.maxhp;
   return mon;
 }
@@ -96,12 +100,16 @@ export function runBattle(data, teams, opts = {}) {
   const defAb = (t, u, mv) => (u && (abOf(u).moldBreaker || mv?.m.fx.ignoreAbility || (mv?.sig && abOf(u).sigBypass))) ? NO_AB : abOf(t);
   const pct = m => m.hp / m.maxhp;
   const blocks = (m, k) => abOf(m).block.has(k);
+  // The held item, while it still works (used-up items stop counting).
+  const held = (m, id) => m.item && !m.itemUsed && m.item.id === id;
+  const useItem = (m, what) => { m.itemUsed = true; say(nm(m), what || `uses its ${m.item.label}`); };
 
   // ---- stats ----
   // noBoost: a foe with Target Lock ignores raised Speed when working out who moves first.
   const speed = (m, noBoost) => {
     const a = abOf(m);
     let s = m.raw.spe * (a.statMult?.spe || 1) * stageMult(noBoost ? Math.min(0, m.boosts.spe) : m.boosts.spe);
+    if (m.item?.choice === 'spe') s *= ITEM_NUM.choice;
     if (m.status === 'stun') s *= RULES.stun.speed;
     if (m.side.tailwind > 0) s *= 2;
     if (B.field?.foeSlow && B.field.owner !== m.side.i) s *= 0.5;
@@ -115,6 +123,8 @@ export function runBattle(data, teams, opts = {}) {
     const a = abOf(m);
     let x = a.statMult?.[k] || 1;
     if (a.slowStart && !m.once.hitTaken) x *= 0.8;
+    if (m.item?.choice === k) x *= ITEM_NUM.choice;
+    if (k === 'wil' && m.item?.id === 'battle-coat') x *= ITEM_NUM.vest;
     if (k === 'pow') {
       if (a.eyepatch) x *= pct(m) < 0.5 ? 1.5 : 0.8;
       if (a.guts && m.status) x *= 1.5;
@@ -137,6 +147,7 @@ export function runBattle(data, teams, opts = {}) {
       if (k === 'highest') { k = STATS.reduce((b, s) => m.raw[s] > m.raw[b] ? s : b, 'pow'); }
       if (!STATS.includes(k)) continue;
       if (a.contrary) v = -v;
+      if (v < 0 && byFoe && m.item?.id === 'clear-amulet') continue;
       if (v < 0 && byFoe && (a.block.has('drops') || a.block.has('drop:' + k) || (opts.intimidate && a.block.has('intimidate')))) continue;
       const before = m.boosts[k];
       m.boosts[k] = Math.max(-6, Math.min(6, before + v));
@@ -172,6 +183,7 @@ export function runBattle(data, teams, opts = {}) {
   function afterHp(m, by) {
     if (m.fainted || m.hp <= 0) return;
     const a = abOf(m);
+    if (held(m, 'rice-ball') && pct(m) < ITEM_NUM.sitrusBelow) { useItem(m, 'eats its Rice Ball'); heal(m, m.maxhp * ITEM_NUM.sitrus); }
     a.threshold.forEach((th, i) => {
       if (m.once['th' + i] || pct(m) >= th.below) return;
       m.once['th' + i] = true;
@@ -249,6 +261,7 @@ export function runBattle(data, teams, opts = {}) {
     if (opts.wakeConfuse) t.vol.wakeConfuse = true;
     say(nm(t), 'gets', kind);
     if (kind === 'sleep' && src && src !== t && abOf(src).sleepHeal) heal(src, src.maxhp * abOf(src).sleepHeal);
+    if (held(t, 'panacea-leaf')) { useItem(t, 'is cured by its Panacea Leaf'); t.status = null; t.statusTurns = 0; }
     return true;
   }
   const OWN_STATUS = { burn: 'Fire', freeze: 'Ice', stun: 'Lightning', bleed: 'Blood' };
@@ -258,6 +271,7 @@ export function runBattle(data, teams, opts = {}) {
     if (blocks(t, 'confuse') && src !== t) return false;
     t.vol.confuse = r.int(...RULES.confuse.turns);
     say(nm(t), 'is confused');
+    if (held(t, 'panacea-leaf')) { useItem(t, 'is cured by its Panacea Leaf'); t.vol.confuse = 0; }
     return true;
   }
 
@@ -366,6 +380,7 @@ export function runBattle(data, teams, opts = {}) {
 
   function setField(f, by) {
     B.field = { ...f, owner: by.side.i, by };
+    if (by.item?.id === 'field-anchor') B.field.turns = ITEM_NUM.anchorTurns;
     say('Field set by', nm(by), JSON.stringify(f));
   }
 
@@ -461,6 +476,8 @@ export function runBattle(data, teams, opts = {}) {
       if (al && abOf(al).pair?.mult && abOf(al).pair.name === u.e.charName && /Toriko/.test(abOf(al).pair.name)) mod *= abOf(al).pair.mult;
     }
     if (B.field?.boostType === type) mod *= RULES.fieldBoost;
+    if (u.item?.id === 'type-emblem' && u.item.type === type) mod *= ITEM_NUM.emblem;
+    if (u.item?.id === 'overdrive-core') mod *= ITEM_NUM.lifeOrb;
     // base damage
     let dmg = Math.floor(Math.floor(Math.floor(2 * u.level / 5 + 2) * power * A / D) / 50) + 2;
     if (o.spread) dmg *= RULES.spread;
@@ -480,6 +497,7 @@ export function runBattle(data, teams, opts = {}) {
     if (ta.multiscale && !t.once.multiscale && (ta.multiscale === true || ta.multiscale === mv.m.cat)) dmg *= 0.5;
     if (ta.adaptive && t.vol.adapted?.includes(type)) dmg *= 0.5;
     if (B.duos) { const al = allyOf(t); if (al && abOf(al).allyGuard) dmg *= abOf(al).allyGuard; }
+    if (eff > 1 && held(t, 'ward-charm') && t.item.type === type) { dmg *= ITEM_NUM.ward; if (!o.est) useItem(t, 'is shielded by its Ward Charm'); }
     return Math.max(1, Math.floor(dmg));
   }
 
@@ -568,7 +586,9 @@ export function runBattle(data, teams, opts = {}) {
     if (u.vol.rampage) mv = u.moves.find(x => x.id === u.vol.rampage.id) || mv;
     if (u.vol.charging) mv = u.moves.find(x => x.id === u.vol.charging) || mv;
     if (u.vol.encore && !u.vol.charging && !u.vol.rampage) mv = u.moves.find(x => x.id === u.vol.encore.id) || mv;
+    if (u.vol.choice && !u.vol.encore) { const lock = u.moves.find(x => x.id === u.vol.choice); if (lock && lock.pp > 0) mv = lock; }
     if (!mv) return;
+    if (mv.m.cat === 'Status' && u.item?.id === 'battle-coat') { say(nm(u), "can't use", mv.as, 'in its Battle Coat'); return; }
     const fx0 = mv.m.fx;
     if (fx0.metronome) {
       const pool = [...data.moves.values()].filter(m => !m.signature && !m.fx.metronome && m.id !== 'protect');
@@ -587,6 +607,7 @@ export function runBattle(data, teams, opts = {}) {
     if (u.vol.lastMove !== mv.id) u.vol.furyN = 0;
     if (a.stylish) u.vol.styleN = u.vol.lastMove && u.vol.lastMove !== mv.id ? (u.vol.styleN || 0) + 1 : 0;
     u.vol.lastMove = mv.id;
+    if (u.item?.choice && !mv.fromMetronome && !u.vol.choice) u.vol.choice = mv.id;
     if (mv.m.cat === 'Energy') u.vol.usedEnergyTurn = B.turn;
     if (a.protean && !u.vol.charging) u.types = [mv.m.type];
     say(nm(u), 'uses', mv.as);
@@ -775,12 +796,13 @@ export function runBattle(data, teams, opts = {}) {
       if (eff > 1 && defAb(t, u, mv).adaptive) (t.vol.adapted = t.vol.adapted || []).push(type);
       if (eff < 1 && ua.gloom) boost(u, { spe: -1 }, u);
       if (t.fainted) { koAny = true; track(u, mv).kos++; if (fx.koHeal) heal(u, u.maxhp * fx.koHeal); continue; }
-      // secondary effects on the target
-      const grace = ua.sereneGrace === true || (ua.sereneGrace === mv.m.type) ? 2 : 1;
+      // secondary effects on the target (a Hooded Cloak blocks the chance-based ones)
+      const cloak = t.item?.id === 'hooded-cloak';
+      const grace = cloak ? 0 : ua.sereneGrace === true || (ua.sereneGrace === mv.m.type) ? 2 : 1;
       if (fx.status && !fx.status.each) secondaryStatus(u, t, mv, grace);
       if (fx.flinch && t.vol.actedTurn !== B.turn && r() < fx.flinch * grace) t.vol.flinch = true;
       if (fx.timeStop && r() < fx.timeStop * grace) t.vol.loseTurn = true;
-      for (const b of fx.boosts || []) if ((b.who === 'foe' || b.who === 'foes') && r() < b.p * (b.p < 1 ? grace : 1)) boost(t, b.stats, u);
+      for (const b of fx.boosts || []) if ((b.who === 'foe' || b.who === 'foes') && !cloak && r() < b.p * (b.p < 1 ? grace : 1)) boost(t, b.stats, u);
       if (fx.clearFoeBoosts === 'after') STATS.forEach(k => { if (t.boosts[k] > 0) t.boosts[k] = 0; });
       if (fx.suppress) t.vol.suppressed = fx.suppress;
       if (fx.trap && !blocks(t, 'trap')) t.vol.trapped = fx.trap;
@@ -817,6 +839,7 @@ export function runBattle(data, teams, opts = {}) {
       if (f) heal(u, totalDealt * f);
     }
     if (fx.recoil && !u.once.noRecoil) hurt(u, totalDealt * fx.recoil, 'in recoil');
+    if (u.item?.id === 'overdrive-core' && !u.fainted) hurt(u, u.maxhp * ITEM_NUM.lifeOrbCost, 'from its Overdrive Core');
     if (ua.dealRecoil && mv.m.cat === 'Energy') hurt(u, totalDealt * ua.dealRecoil, 'in recoil');
     if (fx.selfDmg && !u.fainted) hurt(u, u.maxhp * fx.selfDmg, 'from the strain');
     for (const b of fx.boosts || []) if ((b.who === 'self' || b.who === 'team') && r() < b.p) {
@@ -835,7 +858,7 @@ export function runBattle(data, teams, opts = {}) {
 
   function secondaryStatus(u, t, mv, grace = 1) {
     const s = mv.m.fx.status;
-    if (!s || t.fainted) return;
+    if (!s || t.fainted || t.item?.id === 'hooded-cloak') return;
     if (r() < Math.min(1, s.p * (s.p < 1 ? grace : 1))) inflict(t, s.kind, u, { mv, turns: s.turns, wakeConfuse: mv.m.fx.wakeConfuse });
   }
 
@@ -858,6 +881,7 @@ export function runBattle(data, teams, opts = {}) {
       if (t.vol.endure === B.turn) d = t.hp - 1;
       else if (ta.sturdy && full) { d = t.hp - 1; if (ta.sturdyBoost) boost(t, ta.sturdyBoost, t); say(nm(t), 'hangs on'); }
       else if (ta.surviveOnce && !t.once.survived) { t.once.survived = true; d = t.hp - 1; say(nm(t), 'hangs on'); if (ta.surviveSwitch) t.vol.ejectNow = true; }
+      else if (full && held(t, 'last-thread')) { d = t.hp - 1; useItem(t, 'hangs on by its Last Thread'); }
     }
     d = Math.max(0, Math.min(t.hp, d));
     if (d === t.hp && full) t.vol.oneHit = true;
@@ -888,6 +912,9 @@ export function runBattle(data, teams, opts = {}) {
         if (h.stats) boost(u, h.stats, t);
       }
       if (ta.bounce && mv.m.cat === ta.bounce.cat && r() < ta.bounce.p) hurt(u, d * ta.bounce.frac, 'from the bounce', t);
+      if (t.item?.id === 'spiked-armor' && mv.flags.contact && !u.fainted) hurt(u, u.maxhp * ITEM_NUM.helmet, 'on the Spiked Armor', t);
+      if (!t.fainted && held(t, 'counterstrike-policy') && effectiveness(u, mv, t, type, false) > 1) { useItem(t); boost(t, { pow: ITEM_NUM.policy, ene: ITEM_NUM.policy }, t); }
+      if (!t.fainted && held(t, 'escape-scroll') && bench(t.side).length) { useItem(t); t.vol.ejectNow = true; }
     }
     return d;
   }
@@ -937,7 +964,7 @@ export function runBattle(data, teams, opts = {}) {
       if (down) { down.fainted = false; down.hp = Math.floor(down.maxhp * fx.revive); down.once.revivedByMove = true; say(down.name, 'is revived'); }
       else say('but it fails');
     }
-    if (fx.screen) u.side.screens[fx.screen] = 5;
+    if (fx.screen) u.side.screens[fx.screen] = u.item?.id === 'field-anchor' ? ITEM_NUM.anchorTurns : 5;
     if (fx.tailwind) u.side.tailwind = fx.tailwind + (ua.longTailwind || 0);
     if (fx.hazard) {
       const h = foeSide(u.side).hazards;
@@ -1039,6 +1066,7 @@ export function runBattle(data, teams, opts = {}) {
       }
       if (m.fainted) continue;
       if (m.vol.aquaRing) heal(m, m.maxhp / 16);
+      if (m.item?.id === 'bento-box') heal(m, m.maxhp * ITEM_NUM.leftovers);
       for (const op of a.endTurn) {
         if (op.op === 'heal' && (!op.lowHp || pct(m) < op.lowHp) && (!op.asleep || m.status === 'sleep')) heal(m, m.maxhp * op.frac);
         if (op.op === 'boost' && (!op.ifNoAttack || m.vol.lastAttackTurn !== B.turn)) boost(m, op.stats, m);
@@ -1096,6 +1124,9 @@ export function runBattle(data, teams, opts = {}) {
     B.turn++;
     if (B.turn > RULES.turnCap) { B.over = true; B.winner = -1; break; }
     const acts = [];
+    for (const s of B.sides) for (const m of actives(s)) if (held(m, 'calm-incense') && (m.vol.taunt > 0 || m.vol.encore)) {
+      useItem(m, 'calms down with its Calm Incense'); m.vol.taunt = 0; m.vol.encore = null;
+    }
     for (const s of B.sides) for (const m of actives(s)) {
       const act = opts.decide?.('action', B, m) || chooseAction(B, m, api);
       act.m = m;

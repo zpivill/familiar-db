@@ -53,11 +53,57 @@ export const RULES = {
   ownTypeStatusImmune: true,  // Fire can't be Burned, Ice can't be Frozen, Lightning can't be Stunned, Blood can't Bleed
 };
 
-// Base stat to battle stat, Pokemon style: every copy counts as perfectly bred (31 IVs), no EVs or natures,
-// so only base stats tell characters apart. hpScale makes everyone bulkier if battles end too fast.
-export const battleStat = (base, level, hp) => hp
-  ? Math.floor(Math.floor((2 * base + RULES.iv) * level / 100) * RULES.hpScale) + level + 10
-  : Math.floor((2 * base + RULES.iv) * level / 100) + 5;
+// Training for the competitive format (and any run with "AI-trained" builds).
+// EV points: each point adds level / 50 to that stat (+1 at Lv50, +2 at Lv100).
+// A nature raises one stat other than Vitality by 10% and lowers another by 10%, or changes nothing.
+// IVs go from 0 to 31 per stat; a build without IVs counts as 31 everywhere.
+export const TRAINING = { evTotal: 66, evMax: 32, nature: 0.1, ivMax: 31 };
+export const STAT_KEYS = ['vit', 'pow', 'grd', 'ene', 'wil', 'spe'];
+export const STAT_NAMES = { vit: 'Vitality', pow: 'Power', grd: 'Guard', ene: 'Energy', wil: 'Will', spe: 'Speed' };
+// 'neutral' plus one nature per (raised, lowered) pair, keyed 'spe-pow' = +Speed -Power.
+export const NATURES = ['neutral'];
+for (const up of STAT_KEYS.slice(1)) for (const dn of STAT_KEYS.slice(1)) if (up !== dn) NATURES.push(up + '-' + dn);
+export const natureName = n => !n || n === 'neutral' ? 'Neutral' : `+${STAT_NAMES[n.split('-')[0]]} −${STAT_NAMES[n.split('-')[1]]}`;
+export const natureMult = (n, k) => { if (!n || n === 'neutral') return 1; const [up, dn] = n.split('-'); return k === up ? 1 + TRAINING.nature : k === dn ? 1 - TRAINING.nature : 1; };
+
+// Held items. One per character and, in team runs, one of each item per team; a Ward Charm or Type Emblem
+// of each type counts as its own item. Names are placeholders, with the Pokémon item in brackets.
+export const ITEMS = [
+  { id: 'last-thread', name: 'Last Thread', like: 'Focus Sash', text: 'At full Vitality, survives one hit with 1 Vitality left. Used up.' },
+  { id: 'iron-gauntlet', name: 'Iron Gauntlet', like: 'Choice Band', text: 'Power ×1.5, but locked into the first move used until it switches out.', choice: 'pow' },
+  { id: 'focus-seal', name: 'Focus Seal', like: 'Choice Specs', text: 'Energy ×1.5, but locked into the first move used until it switches out.', choice: 'ene' },
+  { id: 'swift-sandals', name: 'Swift Sandals', like: 'Choice Scarf', text: 'Speed ×1.5, but locked into the first move used until it switches out.', choice: 'spe' },
+  { id: 'overdrive-core', name: 'Overdrive Core', like: 'Life Orb', text: 'Attacks do 1.3x, and each attack that hits costs 1/10 of max Vitality.' },
+  { id: 'bento-box', name: 'Bento Box', like: 'Leftovers', text: 'Heals 1/16 of max Vitality at the end of each turn.' },
+  { id: 'rice-ball', name: 'Rice Ball', like: 'Sitrus Berry', text: 'Heals 1/4 of max Vitality once, when it drops below half. Used up.' },
+  { id: 'battle-coat', name: 'Battle Coat', like: 'Assault Vest', text: 'Will ×1.5, but only attacking moves can be used.' },
+  { id: 'ward-charm', name: 'Ward Charm', like: 'resist berry', text: 'Halves one super effective hit of its type. Used up.', typed: true },
+  { id: 'type-emblem', name: 'Type Emblem', like: 'type booster', text: 'Moves of its type do 1.2x.', typed: true },
+  { id: 'hooded-cloak', name: 'Hooded Cloak', like: 'Covert Cloak', text: "Immune to the side effects of foes' moves: flinching, stat drops, status chances." },
+  { id: 'clear-amulet', name: 'Clear Amulet', like: 'Clear Amulet', text: "Foes can't lower its stats." },
+  { id: 'calm-incense', name: 'Calm Incense', like: 'Mental Herb', text: 'Cures Taunt or Encore once. Used up.' },
+  { id: 'panacea-leaf', name: 'Panacea Leaf', like: 'Lum Berry', text: 'Cures a status effect or confusion once. Used up.' },
+  { id: 'counterstrike-policy', name: 'Counterstrike Policy', like: 'Weakness Policy', text: 'When hit by a super effective move, +2 Power and +2 Energy. Used up.' },
+  { id: 'spiked-armor', name: 'Spiked Armor', like: 'Rocky Helmet', text: 'Attackers that make contact lose 1/6 of their max Vitality.' },
+  { id: 'escape-scroll', name: 'Escape Scroll', like: 'Eject Button', text: 'Switches out after being hit, if a teammate can come in. Used up.' },
+  { id: 'field-anchor', name: 'Field Anchor', like: 'Terrain Extender', text: 'Fields and screens it sets last 8 turns instead of 5.' },
+];
+export const ITEM_NUM = {
+  choice: 1.5, lifeOrb: 1.3, lifeOrbCost: 1 / 10, leftovers: 1 / 16, sitrus: 1 / 4, sitrusBelow: 0.5, vest: 1.5,
+  ward: 0.5, emblem: 1.2, policy: 2, helmet: 1 / 6, anchorTurns: 8,
+};
+export const itemDef = id => ITEMS.find(i => i.id === (id || '').split(':')[0]) || null;
+export const itemName = id => { const d = itemDef(id); if (!d) return 'None'; const t = (id || '').split(':')[1]; return d.typed && t ? `${t} ${d.name}` : d.name; };
+
+// Base stat to battle stat, Pokemon style. Without training every copy counts as perfectly bred (31 IVs)
+// with no EVs or natures, so only base stats tell characters apart. hpScale makes everyone bulkier if
+// battles end too fast. ev = EV points, iv = 0-31, nat = nature multiplier.
+export const battleStat = (base, level, hp, ev = 0, iv = RULES.iv, nat = 1) => {
+  const bonus = Math.floor(ev * level / 50);
+  return hp
+    ? Math.floor(Math.floor((2 * base + iv) * level / 100) * RULES.hpScale) + level + 10 + bonus
+    : Math.floor((Math.floor((2 * base + iv) * level / 100) + 5 + bonus) * nat);
+};
 
 export const stageMult = n => n >= 0 ? (2 + n) / 2 : 2 / (2 - n);
 

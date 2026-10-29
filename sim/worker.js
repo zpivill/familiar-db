@@ -1,7 +1,8 @@
 // Web Worker for the Simulator page: runs battles off the main thread and posts running totals.
 import { prepare } from './battle.js';
 import { runBatch, watchBattle } from './batch.js';
-import { RULES } from './rules.js';
+import { RULES, ITEMS, NATURES, natureName, TYPES, TRAINING } from './rules.js';
+import { PRESETS } from './builds.js';
 
 let data = null;
 
@@ -17,6 +18,8 @@ self.onmessage = ({ data: msg }) => {
         entrants: data.entrants.map(e => ({ key: e.key, cid: e.cid, name: e.name, charName: e.charName, rarity: e.rarity, types: e.types, stats: e.stats, total: e.total, final: e.final, gag: e.gag, villain: e.villain, abilities: e.abilities.map(a => ({ name: a.name, hidden: a.hidden })) })),
         moves: [...data.moves.values()].map(m => ({ id: m.id, name: m.name, type: m.type, cat: m.category, power: m.power, size: m.size, sig: !!m.signature, owner: m.owner })),
         unsupported,
+        items: ITEMS, types: TYPES, training: TRAINING, presets: Object.fromEntries(Object.entries(PRESETS).map(([k, v]) => [k, v.name])),
+        natures: NATURES.map(n => ({ id: n, name: natureName(n) })),
       });
     }
     if (msg.cmd === 'run') {

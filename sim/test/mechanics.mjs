@@ -1,7 +1,9 @@
 // Checks of single rules: node sim/test/mechanics.mjs  (exits non-zero on a failure)
 import fs from 'fs';
 import { prepare, runBattle, rng } from '../battle.js';
-import { typeEff, RULES } from '../rules.js';
+import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
+import { trainTeam, cleanStat } from '../builds.js';
+import { makeBuild } from '../batch.js';
 
 const root = new URL('../../', import.meta.url);
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', root))), JSON.parse(fs.readFileSync(new URL('data/moves.json', root))).moves);
@@ -103,6 +105,51 @@ ok(typeEff('Fire', ['Water']) === 0.5, 'Water resists Fire');
   const aizen = data.entrants.find(e => e.final && e.abilities.some(a => a.name === 'Kyoka Suigetsu'));
   const op = aizen.abilities.find(a => a.name === 'Kyoka Suigetsu').ab.entry[0];
   ok(op && op.op === 'confuse' && op.once, 'Kyoka Suigetsu confuses foes only the first time Aizen enters');
+}
+
+// ---- training and held items ----
+{
+  ok(battleStat(100, 50, false, 32, 31, natureMult('pow-spe', 'pow')) === 167, 'Lv50: base 100 with 32 EV points and a +10% nature is 167');
+  ok(battleStat(100, 50, false, 0, 0, 1) < battleStat(100, 50, false, 0, 31, 1), 'A 0 IV gives a lower stat than 31');
+  ok(battleStat(100, 50, true, 32, 31) === battleStat(100, 50, true, 0, 31) + 32, 'Each Vitality EV point is +1 at Lv50');
+  const ev = cleanStat('evs', { vit: 40, pow: 32, spe: 32 });
+  ok(ev.vit === 32 && ev.pow === 32 && ev.spe === 2, 'EV overrides are capped at 32 a stat and 66 in all', JSON.stringify(ev));
+}
+const target = () => data.entrants.find(e => e.final && !e.types.includes('Spirit') && e.stats.vit < 80 && !e.abilities.some(a => a.ab.sturdy));
+{
+  const t = target();
+  const B = battle([build('saitama', ['serious-punch'])], [{ ...build(t.key, ['splash']), item: 'last-thread' }], 5, { level: 50 });
+  ok(logHas(B, /hangs on by its Last Thread/), 'Last Thread survives a one-hit knockout at full Vitality');
+}
+{
+  const t = target();
+  const B = battle([{ ...build('saitama', ['serious-punch', 'splash']), item: 'iron-gauntlet' }], [build(t.key, ['splash'])], 6, { level: 50 });
+  ok(!logHas(B, /\(A\) uses Splash/), 'Iron Gauntlet locks the user into its first move');
+}
+{
+  const wall = data.entrants.find(e => e.final && e.learn.some(l => l.id === 'protect'));
+  const B = battle([{ ...build(wall.key, ['protect']), item: 'bento-box' }], [build('saitama', ['serious-punch'])], 7, { level: 50, format: 'singles' });
+  ok(B.sides[0].mons[0].item?.id === 'bento-box', 'Held items reach the battler');
+}
+{
+  // Ward Charm halves the first super effective hit of its type
+  const t = data.entrants.find(e => e.final && e.types.length === 1 && e.types[0] === 'Fire' && !e.abilities.some(a => a.ab.sturdy));
+  const atk = data.entrants.find(e => e.final && e.learn.some(l => { const m = data.moves.get(l.id); return m.type === 'Water' && m.category !== 'Status' && m.power >= 60 && !m.fx.hits; }));
+  const mv = atk.learn.find(l => { const m = data.moves.get(l.id); return m.type === 'Water' && m.category !== 'Status' && m.power >= 60 && !m.fx.hits; });
+  const first = B => +(B.log.find(l => /\(B\) takes/.test(l))?.match(/takes (\d+)/)?.[1] || 0);
+  const plain = battle([build(atk.key, [mv.id])], [build(t.key, ['splash'])], 9, { level: 50 });
+  const warded = battle([build(atk.key, [mv.id])], [{ ...build(t.key, ['splash']), item: 'ward-charm:Water' }], 9, { level: 50 });
+  ok(logHas(warded, /Ward Charm/) && first(warded) < first(plain) * 0.6, 'Water Ward Charm halves a super effective Water hit', `${first(plain)} vs ${first(warded)}`);
+}
+{
+  // AI-trained teams: everyone gets a nature and 66 EV points, and no item repeats on a team
+  const r = rng(11);
+  const team = data.entrants.filter(e => e.final && e.sig).slice(0, 10).map(e => makeBuild(data, e, r, { level: 50 }));
+  trainTeam(data, team, r, { training: 'ai', items: 'ai' });
+  ok(team.every(b => b.nature && Object.values(b.evs).reduce((a, x) => a + x, 0) === 66), 'AI training gives every build a nature and 66 EV points');
+  ok(new Set(team.map(b => b.item)).size === team.length && team.every(b => b.item), 'AI items: one each, no repeats on a team', team.map(b => b.item).join(', '));
+  const ov = trainTeam(data, [makeBuild(data, team[0].e, r, { level: 50 })], r, { training: 'ai', items: 'ai', overrides: { [team[0].e.key]: { nature: 'grd-spe', item: 'bento-box' } } });
+  ok(ov[0].nature === 'grd-spe' && ov[0].item === 'bento-box', 'Page overrides replace the AI pick');
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }

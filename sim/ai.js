@@ -29,6 +29,8 @@ export const usable = (m, mv) => {
   if (m.vol.taunt > 0 && mv.m.cat === 'Status') return false;
   if (m.vol.encore && mv.id !== m.vol.encore.id) return false;
   if (mv.m.fx.noRepeat && m.vol.prevMove === mv.id) return false;
+  if (m.vol.choice && mv.id !== m.vol.choice && m.moves.some(x => x.id === m.vol.choice && x.pp > 0)) return false;
+  if (mv.m.cat === 'Status' && m.item?.id === 'battle-coat') return false;
   return true;
 };
 
@@ -210,7 +212,9 @@ export function chooseAction(B, m, api) {
     let pick = null, pickV = -9;
     for (const b of bench) { const v = Math.min(...foes.map(f => matchup(api, b, f))) - 0.12; if (v > pickV) { pickV = v; pick = b; } }
     const doomed = m.vol.countdown && m.vol.countdown - B.turn <= 1;
-    if (pick && (doomed || (here < -0.45 && pickV > here + 0.5 && r() < 0.7))) return { type: 'switch', to: pick };
+    // a Choice item locked into a move that does little here is a good reason to switch
+    const stuck = m.vol.choice && best.score < 25;
+    if (pick && (doomed || (here < -0.45 && pickV > here + 0.5 && r() < 0.7) || (stuck && pickV > here + 0.2 && r() < 0.8))) return { type: 'switch', to: pick };
   }
   return best;
 }
