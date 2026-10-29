@@ -11,7 +11,8 @@ const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities
   ['teams', 'Teams'], ['matchups', 'Matchups'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
 const FORMATS = [['duel', 'One on one', 'Single character vs single character. The cleanest read on each character.'],
   ['team', 'Team singles', 'Teams battle one at a time with switching, like a trainer battle.'],
-  ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.']];
+  ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.'],
+  ['comp', 'Competitive doubles', 'The future competitive format, without the draft yet: 6 a side in doubles, everyone at level 50 with moves learned up to level 100, AI-trained EVs, natures and IVs, one held item each (one of each per team). A battle still going after 50 turns is a draw and counts as a non-win for both sides. The first two of each team open.']];
 
 // ---- workers ----
 function simWorkers() {
@@ -644,6 +645,8 @@ function simRulesTab() {
     <p>With Training on: each EV point adds L ÷ 50 to its stat after the formula above (+1 at level 50), at most ${SIM.meta?.training.evMax ?? 32} points in one stat and ${SIM.meta?.training.evTotal ?? 66} in all. A nature raises one stat other than Vitality by 10% and lowers another by 10% (or is neutral). IVs go from 0 to 31 and replace the 31 in the formula. The AI picks an EV preset (${esc(Object.values(SIM.meta?.presets || {}).join(', '))}), a nature and IVs from each character's moves and its team, and the Builds tab lets you override any character.</p>
     <p>With Held items on, every character holds one item and a team never holds two of the same item (each type of Ward Charm or Type Emblem counts as its own item). Names are placeholders, with the Pokémon item in brackets.</p>
     <dl>${(SIM.meta?.items || []).map(i => st(`${i.name} (${i.like})`, esc(i.text))).join('')}</dl>
+    <h3>Competitive doubles</h3>
+    <p>The planned competitive format, for now without the bring-10 draft: 6 a side in doubles with all 6 used, the first two of each team opening. Everyone fights at level 50 but keeps moves learned up to level 100, with AI-trained EVs, natures and IVs and one held item each (one of each per team). A battle still going after 50 turns is a draw, and a draw counts as a non-win for both sides, so stalling out the clock never pays. Other formats draw at 100 turns and count a draw as half a win.</p>
     <h3>Turn order</h3>
     <p>Switches go first, then moves by priority (Goes first +1, Extreme Speed +2, Protect +4, Goes last −5 or lower), then by Speed. Prankster-style abilities add +1 to Status moves; Quick Draw-style ones let the first move after entering go before others in its bracket. Trick Room reverses Speed order. A knocked-out character is replaced for free at the end of the turn; a switch by choice costs the turn.</p>
     <h3>Status effects</h3>
@@ -668,7 +671,7 @@ function simRulesTab() {
     <ul>${un.map(u => `<li><b>${esc(u.name)}</b> <span class="hint">${u.kind}</span>: ${esc(u.text)}</li>`).join('') || '<li>None</li>'}</ul>
     <p>Notes: Illusion-style abilities, Frisk-style "knows the foe's moves", held items (4D Pocket) and the hidden rain (Loch Dweller) have no effect, because the AI already knows everything and nothing in the game sets rain yet. Move shapes the data doesn't store (contact, punching, kicking, slicing, sound, shot) are read from the move's name and each character's name for it; every Physical move counts as contact except throws and quakes.</p>
     <h3>AI</h3>
-    <p>Both sides use the same AI with full knowledge of the other side. Each turn it scores every move by expected damage, knockout chance and side effects, scores setup, healing and status moves by the situation, and switches out of bad matchups now and then. A little randomness keeps battles varied. Movesets are four moves from the form's learnset (weighted towards strong own-type attacks and some coverage, or fully random), plus the signature. Each battle rolls one of the character's abilities.</p>
+    <p>Both sides use the same AI with full knowledge of the other side. Each turn it scores every move by expected damage, knockout chance and side effects, scores setup, healing and status moves by the situation, and switches out of bad matchups now and then. In duos it also aims at the foe that threatens its side most, finishes off a foe its partner can knock out this turn, Protects when both foes can hit it hard, and judges Tailwind and Trick Room by the speed of its whole side. A little randomness keeps battles varied. Movesets are four moves from the form's learnset (weighted towards strong own-type attacks and some coverage, or fully random), plus the signature. Each battle rolls one of the character's abilities.</p>
   </div>`;
 }
 
@@ -679,14 +682,14 @@ function simSettings() {
   const ents = SIM.meta ? SIM.meta.entrants.filter(e => o.forms === 'all' || e.final).sort((a, b) => a.name.localeCompare(b.name)) : [];
   return `<form id="simform" class="simform" onsubmit="return false">
     <label>Format <select name="format">${FORMATS.map(([v, l]) => opt(v, l, o.format)).join('')}</select></label>
-    ${o.format !== 'duel' ? `<label>Team size <select name="teamSize">${(o.format === 'duos' ? [2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6]).map(n => opt(n, n, o.teamSize)).join('')}</select></label>` : ''}
+    ${o.format !== 'duel' && o.format !== 'comp' ? `<label>Team size <select name="teamSize">${(o.format === 'duos' ? [2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6]).map(n => opt(n, n, o.teamSize)).join('')}</select></label>` : ''}
     <label>Battles <select name="count">${[1000, 5000, 10000, 25000, 50000, 100000, 200000].map(n => opt(n, n.toLocaleString(), o.count)).join('')}</select></label>
     <label>Characters <select name="forms">${opt('final', 'Final forms', o.forms)}${opt('all', 'Every form', o.forms)}</select></label>
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
-    <label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>
+    ${o.format === 'comp' ? '' : `<label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>`}
     <label>Vitality <select name="hpScale">${[1, 1.5, 2].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
-    <label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
-    <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>
+    ${o.format === 'comp' ? '' : `<label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
+    <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>`}
     <label>Always include <select name="focus"><option value="">Nobody</option>${ents.map(e => opt(e.key, esc(e.name), o.focus)).join('')}</select></label>
     <label class="check"><input type="checkbox" name="sameTier"${o.sameTier ? ' checked' : ''}> Same tier only</label>
     ${o.format !== 'duel' ? `<label>Team search <select name="teamSearch">${opt('', 'Off', o.teamSearch)}${opt('best', 'Strongest teams', o.teamSearch)}${opt('meta', 'Meta chain (counters)', o.teamSearch)}</select></label>` : ''}
@@ -716,7 +719,7 @@ function renderSim() {
     <div class="row"><button type="button" id="simrun" class="primary"${SIM.ready && !SIM.running ? '' : ' disabled'}>${SIM.ready ? 'Run' : 'Starting…'}</button>
       ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : ''}${prog}</div>
     ${SIM.error ? `<p class="danger">${esc(SIM.error)}</p>` : ''}
-    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' ? ', AI training' : ''}${lo.items === 'ai' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
+    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.format === 'comp' ? 50 : lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' || lo.format === 'comp' ? ', AI training' : ''}${lo.items === 'ai' || lo.format === 'comp' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
     <nav class="tabs simtabs" aria-label="Simulator views">${SIM_TABS.map(([k, l]) => `<a href="#sim" data-simtab="${k}"${k === SIM.tab ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
     ${searchable ? `<input id="simq" type="search" placeholder="Filter rows" value="${esc(SIM.q)}">` : ''}
     <div class="simbody">${body}</div>`;
@@ -760,7 +763,7 @@ document.addEventListener('change', e => {
     if (n === 'tier') o.tiers = [...f.querySelectorAll('[name=tier]:checked')].map(x => x.value);
     else if (e.target.type === 'checkbox') o[n] = e.target.checked;
     else o[n] = e.target.value;
-    if (n === 'format') o.teamSize = o.format === 'duos' ? 4 : 3;
+    if (n === 'format') o.teamSize = o.format === 'comp' ? 6 : o.format === 'duos' ? 4 : 3;
     return simDraw();
   }
   const ov = e.target.closest('#simov');

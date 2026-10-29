@@ -2,7 +2,7 @@
 // Used by the Web Worker on the site and by sim/cli.mjs in Node.
 
 import { runBattle, rng } from './battle.js';
-import { RULES, itemName, natureName } from './rules.js';
+import { RULES, COMPETITIVE, itemName, natureName } from './rules.js';
 import { trainTeam } from './builds.js';
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -28,8 +28,10 @@ function rateMove(data, e, l) {
   return v;
 }
 
+// opts.learnLevel: the level the build was trained at, when it fights at another level (the competitive
+// format scales everyone to Lv50 but keeps moves learned later).
 export function makeBuild(data, e, r, opts = {}) {
-  const level = opts.level || RULES.level;
+  const level = opts.learnLevel || opts.level || RULES.level;
   const pool = e.learn.filter(l => l.lv <= level && l.id !== e.sig?.id);
   let picks = [];
   if (opts.movesets === 'random') {
@@ -92,10 +94,10 @@ const moveKind = m => {
   if (fx.protect || fx.substitute) return 'protect';
   return 'support';
 };
-function recordDetail(S, data, B, si, key) {
+function recordDetail(S, data, B, si, key, opts) {
   const D = S.detail[key] || (S.detail[key] = emptyDetail());
   const won = B.winner === si;
-  D.g++; D.w += won ? 1 : B.winner < 0 ? 0.5 : 0;
+  D.g++; D.w += won ? 1 : B.winner < 0 ? drawScore(opts) : 0;
   if (won) D.winTurns += B.turn;
   for (const m of B.sides[si].mons) {
     D.kos[m.key] = (D.kos[m.key] || 0) + m.t.kos;
@@ -109,13 +111,14 @@ function record(S, B, builds, opts) {
   S.turns += B.turn;
   if (B.winner < 0) S.draws++;
   B.sides.forEach((s, si) => {
-    const won = B.winner === si ? 1 : 0, half = B.winner < 0 ? 0.5 : 0;
+    const won = B.winner === si ? 1 : 0, half = B.winner < 0 ? drawScore(opts) : 0;
+    const leads = B.duos ? 2 : 1;
     const w = won || half;
     s.mons.forEach((m, k) => {
       const b = builds[si][k];
       const E = inc(S.ent, m.key, () => ({ g: 0, w: 0, kos: 0, dmg: 0, taken: 0, turns: 0, faint: 0, lead: 0, leadW: 0 }));
       E.g++; E.w += w; E.kos += m.t.kos; E.dmg += m.t.dmg / m.maxhp; E.taken += m.t.taken / m.maxhp; E.turns += m.t.turns; E.faint += m.fainted ? 1 : 0;
-      if (k === 0) { E.lead++; E.leadW += w; }
+      if (k < leads) { E.lead++; E.leadW += w; }
       const A = inc(S.abil, m.key + '|' + b.ability.name, () => ({ g: 0, w: 0 }));
       A.g++; A.w += w;
       if (b.item) { const I = inc(S.item, m.key + '|' + b.item, () => ({ g: 0, w: 0, used: 0 })); I.g++; I.w += w; I.used += m.itemUsed ? 1 : 0; }
@@ -164,7 +167,17 @@ export function mergeStats(T, S) {
   return T;
 }
 
-const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+const teamSize = opts => opts.format === 'duel' ? 1 : opts.format === 'comp' ? COMPETITIVE.teamSize : opts.format === 'duos' ? Math.max(2, opts.teamSize || 4) : Math.max(1, opts.teamSize || 3);
+// The competitive format fixes level, team size, training, items and the turn limit; every other format
+// keeps the settings as given.
+export const withFormat = opts => opts.format !== 'comp' ? opts
+  : { ...opts, teamSize: COMPETITIVE.teamSize, level: COMPETITIVE.level, learnLevel: 100, training: 'ai', items: 'ai', turnCap: COMPETITIVE.turnCap, drawScore: COMPETITIVE.drawScore, legendCap: COMPETITIVE.legendCap };
+const battleOpts = opts => ({ format: opts.format === 'duos' || opts.format === 'comp' ? 'duos' : 'singles', level: opts.level, turnCap: opts.turnCap });
+// opts.legendCap: at most this many legendary or mythical characters per team.
+const LEGEND = new Set(['legendary', 'mythical']);
+const legal = (t, e, opts) => !opts.legendCap || !LEGEND.has(e.rarity) || t.filter(x => LEGEND.has(x.rarity)).length < opts.legendCap;
+// What a draw is worth to each side: half a win, or nothing in the competitive format.
+const drawScore = opts => opts.drawScore ?? 0.5;
 export const teamKey = t => t.map(e => e.key).sort().join('+');
 
 // Whole teams for team ranking. Every worker builds the same list from the same seed.
@@ -173,6 +186,7 @@ export const teamKey = t => t.map(e => e.key).sort().join('+');
 // Swapped-in and fresh members come from the whole pool, so a lower tier or unevolved character stays
 // only if it actually helps its team win.
 export function ladderTeams(data, opts) {
+  opts = withFormat(opts);
   const L = opts.ladder, r = rng(L.seed), size = teamSize(opts);
   const pool = entrantPool(data, opts), byKey = new Map(data.entrants.map(e => [e.key, e]));
   const byTier = {};
@@ -195,7 +209,7 @@ export function ladderTeams(data, opts) {
     const used = new Set(t.map(e => e.cid));
     for (let guard = 0; t.length < size && guard < 500; guard++) {
       const e = pick(src);
-      if (!used.has(e.cid)) { used.add(e.cid); t.push(e); }
+      if (!used.has(e.cid) && legal(t, e, opts)) { used.add(e.cid); t.push(e); }
     }
     return t.length === size ? t : null;
   };
@@ -221,7 +235,7 @@ export function ladderTeams(data, opts) {
     const mix = [...a, ...b].filter((e, i, all) => all.findIndex(x => x.cid === e.cid) === i);
     const t = focus ? [focus] : [];
     const rest = mix.filter(e => e !== focus);
-    while (t.length < size && rest.length) t.push(rest.splice(Math.floor(r() * rest.length), 1)[0]);
+    while (t.length < size && rest.length) { const e = rest.splice(Math.floor(r() * rest.length), 1)[0]; if (legal(t, e, opts)) t.push(e); }
     if (add(fill(t, srcOf(a)))) c++;
   }
   const want = out.length + (L.fresh || 0);
@@ -235,10 +249,10 @@ export function ladderTeams(data, opts) {
 
 // Runs `count` battles. onChunk gets partial stats every `chunk` battles so a page can show progress.
 export function runBatch(data, opts, onChunk) {
+  opts = withFormat(opts);
   const r = rng(opts.seed || 1);
   const pool = entrantPool(data, opts);
   if (pool.length < 2) throw new Error('Pick at least two characters.');
-  const format = opts.format || 'duel';
   const size = teamSize(opts);
   const ladder = opts.ladder ? ladderTeams(data, opts) : null;
   // L.vs: a fixed set of opponents (with optional weights). Only the ladder teams are scored, so this
@@ -262,7 +276,7 @@ export function runBatch(data, opts, onChunk) {
       let guard = 0;
       while (t.length < size && guard++ < 500) {
         const e = r.pick(src);
-        if (used.has(e.cid)) continue;
+        if (used.has(e.cid) || !legal(t, e, opts)) continue;
         used.add(e.cid); t.push(e);
       }
       return t;
@@ -280,14 +294,14 @@ export function runBatch(data, opts, onChunk) {
     }
     if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); }
     const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
-    const B = runBattle(data, builds, { rng: r, format: format === 'duos' ? 'duos' : 'singles', level: opts.level });
+    const B = runBattle(data, builds, { rng: r, ...battleOpts(opts) });
     record(S, B, builds, opts);
     if (ladder) for (const si of scored) {
       const k = teamKey(sides[si]);
       const F = inc(S.full, k, () => ({ g: 0, w: 0 }));
-      const w = B.winner === si ? 1 : B.winner < 0 ? 0.5 : 0;
+      const w = B.winner === si ? 1 : B.winner < 0 ? drawScore(opts) : 0;
       F.g++; F.w += w;
-      if (opts.ladder.detail) recordDetail(S, data, B, si, k);
+      if (opts.ladder.detail) recordDetail(S, data, B, si, k, opts);
       if (opts.ladder.h2h) { const H = inc(S.h2h, k + '|' + teamKey(sides[1 - si]), () => ({ g: 0, w: 0 })); H.g++; H.w += w; }
     }
     if (onChunk && (n + 1) % chunk === 0) { onChunk(S, n + 1); S = emptyStats(); }
@@ -298,19 +312,20 @@ export function runBatch(data, opts, onChunk) {
 
 // One battle with a full text log, for watching what the AI and the rules do.
 export function watchBattle(data, opts) {
+  opts = withFormat(opts);
   const r = rng(opts.seed || Date.now() % 1e9);
   const pool = entrantPool(data, opts);
   const size = teamSize(opts);
   const pickTeam = (keys, used) => {
     const t = (keys || []).map(k => pool.find(e => e.key === k) || data.entrants.find(e => e.key === k)).filter(Boolean);
     t.forEach(e => used.add(e.cid));
-    while (t.length < size) { const e = r.pick(pool); if (!used.has(e.cid)) { used.add(e.cid); t.push(e); } }
+    for (let guard = 0; t.length < size && guard < 2000; guard++) { const e = r.pick(pool); if (!used.has(e.cid) && legal(t, e, opts)) { used.add(e.cid); t.push(e); } }
     return t;
   };
   const used = new Set();
   const sides = [pickTeam(opts.teamA, used), pickTeam(opts.teamB, used)];
   const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
-  const B = runBattle(data, builds, { rng: r, format: opts.format === 'duos' ? 'duos' : 'singles', level: opts.level, log: true });
+  const B = runBattle(data, builds, { rng: r, ...battleOpts(opts), log: true });
   return {
     winner: B.winner, turns: B.turn, log: B.log,
     teams: builds.map((t, si) => t.map((b, k) => ({
