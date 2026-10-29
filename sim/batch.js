@@ -5,6 +5,7 @@ import { runBattle, rng } from './battle.js';
 import { RULES, COMPETITIVE, bringLegendCap, itemName, natureName } from './rules.js';
 import { trainTeam } from './builds.js';
 import { guessBuilds, draftSide, predictionHit } from './draft.js';
+import { archetypeById, roster, fits, forced, BRING, PICK } from './archetypes.js';
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
@@ -33,10 +34,12 @@ function rateMove(data, e, l, duos) {
 
 // opts.learnLevel: the level the build was trained at, when it fights at another level (the competitive
 // format scales everyone to Lv50 but keeps moves learned later).
+// opts.force ({ moves: [ids], ability }): what the build must carry, for a forced archetype's setters and abusers.
 export function makeBuild(data, e, r, opts = {}) {
   const level = opts.learnLevel || opts.level || RULES.level;
-  const pool = e.learn.filter(l => l.lv <= level && l.id !== e.sig?.id);
-  let picks = [];
+  const must = new Set(opts.force?.moves || []);
+  const pool = e.learn.filter(l => l.lv <= level && l.id !== e.sig?.id && !must.has(l.id));
+  let picks = e.learn.filter((l, i, all) => must.has(l.id) && l.id !== e.sig?.id && all.findIndex(x => x.id === l.id) === i).slice(0, 4);
   if (opts.movesets === 'random') {
     const p = [...pool];
     while (picks.length < 4 && p.length) picks.push(p.splice(Math.floor(r() * p.length), 1)[0]);
@@ -44,6 +47,7 @@ export function makeBuild(data, e, r, opts = {}) {
     // weighted picks: strong own-type attacks first, then coverage and one or two utility moves
     const rated = pool.map(l => ({ l, v: rateMove(data, e, l, opts.format === 'duos' || opts.format === 'comp'), m: data.moves.get(l.id) }));
     const types = new Set(), cats = { atk: 0, st: 0 };
+    for (const l of picks) { const m = data.moves.get(l.id); if (m.category === 'Status') cats.st++; else { cats.atk++; types.add(m.type); } }
     while (picks.length < 4 && rated.length) {
       const w = rated.map(x => {
         let v = x.v;
@@ -62,7 +66,8 @@ export function makeBuild(data, e, r, opts = {}) {
   }
   const moves = e.sig ? [...picks, e.sig] : picks;
   const abs = e.abilities.length ? e.abilities : [{ name: 'None', ab: null }];
-  const ability = opts.ability ? abs.find(a => a.name === opts.ability) || r.pick(abs) : r.pick(abs);
+  const want = opts.force?.ability || opts.ability;
+  const ability = want ? abs.find(a => a.name === want) || r.pick(abs) : r.pick(abs);
   return { e, moves, ability: ability.ab ? ability : { name: 'None', ab: abs[0].ab } };
 }
 
@@ -184,14 +189,17 @@ export const withFormat = opts => opts.format !== 'comp' ? opts
 // The draft: each side guesses the other's hidden builds (cached per brought team), picks its 6 and
 // orders them. Returns the 6 builds per side and each side's draft.
 const guessCache = new Map();
-function runDraft(data, sides, builds, r, opts) {
+// arch[s]: the archetype roster side s is forced to play, if any: its draft must pick the plan's members.
+function runDraft(data, sides, builds, r, opts, arch = []) {
   const guess = t => {
     const k = teamKey(t);
     let g = guessCache.get(k);
     if (!g) { if (guessCache.size > 400) guessCache.clear(); g = guessBuilds(data, t, makeBuild, opts); guessCache.set(k, g); }
     return g;
   };
-  const drafts = [0, 1].map(s => draftSide(data, builds[s], guess(sides[1 - s]), opts, r));
+  const must = s => arch[s] && { setters: builds[s].map((b, i) => arch[s].setters.has(b.e.key) ? i : -1).filter(i => i >= 0),
+    abusers: builds[s].map((b, i) => arch[s].abusers.has(b.e.key) ? i : -1).filter(i => i >= 0), need: PICK };
+  const drafts = [0, 1].map(s => draftSide(data, builds[s], guess(sides[1 - s]), { ...opts, must: must(s) }, r));
   return { six: drafts.map((d, s) => d.order.map(i => builds[s][i])), drafts };
 }
 function recordDraft(S, B, builds, D, opts) {
@@ -222,6 +230,9 @@ const legal = (t, e, opts) => !opts.legendCap || !LEGEND.has(e.rarity) || t.filt
 // What a draw is worth to each side: half a win, or nothing in the competitive format.
 const drawScore = opts => opts.drawScore ?? 0.5;
 export const teamKey = t => t.map(e => e.key).sort().join('+');
+// An archetype's setters and abusers in the whole roster (the pool only decides who new teams draw from).
+const archCache = new Map();
+const archRoster = (data, id, opts) => { if (!archCache.has(id)) archCache.set(id, roster(data, archetypeById(id), data.entrants)); return archCache.get(id); };
 const weightedPick = (r, xs, wf) => { const w = xs.map(wf); let x = r() * w.reduce((a, b) => a + b, 0), i = 0; while (i < xs.length - 1 && (x -= w[i]) > 0) i++; return xs[i]; };
 
 // Whole teams for team ranking. Every worker builds the same list from the same seed.
@@ -257,8 +268,41 @@ export function ladderTeams(data, opts) {
     }
     return t.length === size ? t : null;
   };
+  // L.archetype: every team must bring the archetype's setters and abusers (archetypes.js BRING); a team that
+  // doesn't is repaired by swapping members that aren't part of the plan for ones that are
+  const A = L.archetype ? archRoster(data, L.archetype, opts) : null;
+  const aPool = A && { setters: pool.filter(e => A.setters.has(e.key)), abusers: pool.filter(e => A.abusers.has(e.key)) };
+  // the plan must also fit in a legal 6 (one legendary or mythical at most), or the draft couldn't pick it
+  const isLeg = k => LEGEND.has(byKey.get(k)?.rarity), cap6 = opts.pickLegendCap ?? Infinity;
+  const ok = t => fits(t.map(e => e.key), A, BRING) && fits(t.map(e => e.key), A, PICK, isLeg, cap6);
+  const repair = t => {
+    if (!A || !t) return t;
+    t = [...t];
+    for (let guard = 0; guard < 40 && !ok(t); guard++) {
+      const role = e => A.setters.has(e.key) || A.abusers.has(e.key);
+      const nS = t.filter(e => A.setters.has(e.key)).length;
+      let src, gone;
+      if (fits(t.map(e => e.key), A, BRING)) {
+        // enough members, but too many of them are legendary: trade a legendary member for an ordinary one
+        const nSn = t.filter(e => A.setters.has(e.key) && !LEGEND.has(e.rarity)).length;
+        src = (nSn < PICK.setters ? aPool.setters : aPool.abusers).filter(e => !LEGEND.has(e.rarity));
+        gone = r.pick(t.filter(e => role(e) && LEGEND.has(e.rarity) && e !== focus).concat(t.filter(e => !role(e) && e !== focus)));
+      } else {
+        src = nS < BRING.setters ? aPool.setters : aPool.abusers;
+        const spare = t.filter(e => !role(e) && e !== focus);
+        gone = spare.length ? r.pick(spare) : r.pick(t.filter(e => e !== focus && !(nS <= BRING.setters && A.setters.has(e.key))));
+      }
+      if (!src.length || !gone) return null;
+      const rest = t.filter(e => e !== gone);
+      const used = new Set(rest.map(e => e.cid));
+      const opts2 = src.filter(e => !used.has(e.cid) && legal(rest, e, opts));
+      if (!opts2.length) return null;
+      t = [...rest, r.pick(opts2)];
+    }
+    return ok(t) ? t : null;
+  };
   const out = [], seen = new Set();
-  const add = t => { if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); return true; } return false; };
+  const add = t => { t = repair(t); if (t && !seen.has(teamKey(t))) { seen.add(teamKey(t)); out.push(t); return true; } return false; };
   const srcOf = t => opts.sameTier ? byTier[t[0].rarity] || pool : pool;
   // L.ban: characters left out of every new team (the fixed opponents in L.vs may still use them)
   const ban = new Set(L.ban || []);
@@ -302,6 +346,8 @@ export function runBatch(data, opts, onChunk) {
   if (pool.length < 2) throw new Error('Pick at least two characters.');
   const size = teamSize(opts);
   const ladder = opts.ladder ? ladderTeams(data, opts) : null;
+  // a forced archetype with too few members in the pool gives no teams: nothing to play
+  if (ladder && !ladder.length) return emptyStats();
   // L.vs: a fixed set of opponents (with optional weights). Only the ladder teams are scored, so this
   // measures how well each candidate does against those particular teams, e.g. the current top team.
   const byKey = new Map(data.entrants.map(e => [e.key, e]));
@@ -339,10 +385,14 @@ export function runBatch(data, opts, onChunk) {
       sides = [team(focus), team(null)];
       if (sides[1].length < size || sides[0].length < size) continue;
     }
-    if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); }
-    const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
-    const D = opts.draft ? runDraft(data, sides, builds, r, opts) : null;
-    const B = runBattle(data, D ? D.six : builds, { rng: r, ...battleOpts(opts) });
+    let ladderSide = 0;
+    if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); ladderSide = 1; }
+    // a forced archetype: the search's own teams (L.archetype), or listed teams (L.forced, team key -> id)
+    const archIds = sides.map((t, i) => opts.ladder?.forced?.[teamKey(t)] || (opts.ladder?.archetype && (!vs || i === ladderSide) ? opts.ladder.archetype : null));
+    const arch = archIds.map(id => id ? archRoster(data, id, opts) : null);
+    const builds = sides.map((t, i) => trainTeam(data, t.map(e => makeBuild(data, e, r, arch[i] ? { ...opts, force: forced(arch[i], e.key) } : opts)), r, opts));
+    const D = opts.draft ? runDraft(data, sides, builds, r, opts, arch) : null;
+    const B = runBattle(data, D ? D.six : builds, { rng: r, ...battleOpts(opts), plans: archIds });
     record(S, B, D ? D.six : builds, opts);
     if (D) recordDraft(S, B, builds, D, opts);
     if (ladder) for (const si of scored) {

@@ -83,7 +83,7 @@ export function runBattle(data, teams, opts = {}) {
     sides: teams.map((team, i) => ({
       i, mons: team.map(b => makeMon(data, b.e, b, level)), active: [],
       hazards: { rocks: 0, spikes: 0, web: 0, rainbow: 0 }, screens: {}, tailwind: 0, wish: null, chip: null, drain: null,
-      futures: [], faintTurn: -9, timeStop: -1, gift: null,
+      futures: [], faintTurn: -9, timeStop: -1, gift: null, plan: opts.plans?.[i] || null,
     })),
   };
   B.sides.forEach(s => s.mons.forEach(m => { m.side = s; }));
