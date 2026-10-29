@@ -76,7 +76,6 @@ function simMergeTeams(T, S) {
     for (const f of ['kos', 'dmg', 'use']) for (const [x, v] of Object.entries(D[f])) t[f][x] = (t[f][x] || 0) + v;
   }
 }
-function simMergeDetail(T, S) { simMergeTeams({ full: {}, h2h: {}, pick: {}, detail: T }, { detail: S }); return T; }
 function simMergePick(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: {}, pick: T }, { teamPick: S }); return T; }
 
 const simRules = () => ({ level: +SIM.opts.level, hpScale: +SIM.opts.hpScale });
@@ -99,111 +98,7 @@ function simSend(total, ladder, ladderSize) {
   });
   return done;
 }
-const simRows = full => Object.entries(full).map(([k, v]) => { const wr = v.w / v.g; return { k, keys: k.split('+'), ...v, wr, sure: wr - margin(wr, v.g) }; }).sort((a, b) => b.sure - a.sure);
-
-// Team ranking is a search over generations. Generation 1 plays a big field of random teams against each other.
-// Each later generation keeps the best fifth, adds two one-swap variants of each, mixes kept teams together,
-// and adds fresh random teams; new members lean toward characters with good win rates so far, but a third
-// of picks stay uniform so niche and lower tier picks keep getting a chance. The last generation replays
-// only the best 32 teams found with a quarter of the battles, so their win rates are tight.
-// With `field` set, every team plays those fixed opponents instead of each other, so the search looks for
-// the best counter to them.
-const SIM_FINAL_TEAMS = 32;
-function simPlan(total) {
-  const gens = Math.max(3, Math.min(14, Math.round(total / 8000) + 2));
-  const first = Math.round(total * 0.2), mid = Math.floor((total - first - Math.round(total * 0.25)) / (gens - 2));
-  return Array.from({ length: gens }, (_, i) => i === 0 ? first : i < gens - 1 ? mid : total - first - mid * (gens - 2));
-}
-// With `archetype` set, every team the search builds must play that archetype's plan (sim/archetypes.js).
-async function simSearch(total, field, start, ban, archetype) {
-  const id = SIM.jobId;
-  SIM.plan = simPlan(total); SIM.gen = 0; SIM.full = [{}]; SIM.kept = {};
-  const vs = { ...(field ? { vs: field.vs, vsWeights: field.weights } : {}), ...(ban?.length ? { ban } : {}), ...(archetype ? { archetype } : {}) };
-  const first = Math.max(40, Math.min(400, Math.round(SIM.plan[0] * 2 / 60)));
-  let res = await simSend(SIM.plan[0], { fresh: first, top: start || [], variants: start ? 1 : 0, seed: Math.floor(Math.random() * 1e9), ...vs }, first + (start?.length || 0) * 2);
-  for (SIM.gen = 1; SIM.gen < SIM.plan.length; SIM.gen++) {
-    if (id !== SIM.jobId) return null;
-    const prev = simRows(res.full), battles = SIM.plan[SIM.gen], last = SIM.gen === SIM.plan.length - 1;
-    SIM.full.push({});
-    const weights = Object.fromEntries(Object.entries(SIM.stats.ent).map(([k, v]) => [k, Math.max(0.02, v.w / v.g) ** 3]));
-    const seed = Math.floor(Math.random() * 1e9);
-    let ladder, size;
-    if (last) { ladder = { top: prev.slice(0, SIM_FINAL_TEAMS).map(r => r.keys), detail: true, seed, ...vs }; size = ladder.top.length; }
-    else {
-      const pop = Math.max(30, Math.min(160, Math.round(battles * 2 / 80))), keep = Math.round(pop / 5);
-      ladder = { top: prev.slice(0, keep).map(r => r.keys), variants: 2, crosses: keep, fresh: keep, weights, seed, picks: simPickRates(res.pick, prev.slice(0, keep)), ...vs };
-      size = keep * 5;
-    }
-    for (const t of ladder.top) for (const k of t) SIM.kept[k] = (SIM.kept[k] || 0) + 1;
-    simDraw();
-    res = await simSend(battles, ladder, size);
-  }
-  SIM.gen = SIM.plan.length - 1;
-  return { rows: simRows(res.full), detail: res.detail, pick: res.pick };
-}
-// How often the draft picked each member of these teams, as team key -> { member: share of games }.
-function simPickRates(pick, rows) {
-  const out = {};
-  for (const r of rows) { const P = pick?.[r.k]; if (P?.g) out[r.k] = Object.fromEntries(r.keys.map(x => [x, (P.pick[x] || 0) / P.g])); }
-  return out;
-}
-
-// Meta chain: find the strongest team, then the best counter to it, then the best counter to that one, and so on.
-// Each counter search plays the latest meta team 60% of the time and the earlier ones the rest, so a counter
-// has to beat the current top team without folding to the older ones. At the end every meta team plays every
-// other one, for the who-beats-whom table.
-// With archetype rounds on, each archetype (sim/archetypes.js) then gets its own search for the best team that
-// plays its plan against the meta teams (all weighted the same), and those teams join the final round robin
-// still forced to play their plan.
-async function simMetaChain(total) {
-  const id = SIM.jobId, C = SIM.chain;
-  const archs = SIM.lastOpts.arch === 'all' && SIM.lastOpts.format === 'comp' ? SIM.meta.archetypes || [] : [];
-  const rounds = Math.max(2, Math.min(5, Math.round(total / 20000)));
-  const firstBudget = Math.round(total * (archs.length ? 0.3 : 0.4)), matrix = Math.round(total * 0.1), archEach = archs.length ? Math.floor(total * 0.3 / archs.length) : 0;
-  const each = Math.floor((total - firstBudget - matrix - archEach * archs.length) / rounds);
-  C.rounds = rounds + 1; C.archs = archs.length;
-  C.round = 0;
-  let res = await simSearch(firstBudget);
-  if (!res || id !== SIM.jobId) return;
-  C.teams.push({ keys: res.rows[0].keys, wr: res.rows[0].wr, g: res.rows[0].g, vsField: 'the strongest teams found', pick: res.pick?.[res.rows[0].k] });
-  simMergeDetail(C.detail, res.detail);
-  for (let k = 1; k <= rounds; k++) {
-    C.round = k;
-    const prevKeys = C.teams.map(t => t.keys.join('+'));
-    const n = C.teams.length;
-    const weights = C.teams.map((_, i) => i === n - 1 ? (n === 1 ? 1 : 0.6) : 0.4 / (n - 1));
-    // optional bans: the characters picked most often by the meta teams so far sit out this counter round,
-    // so the search has to find other answers (ties go to the higher individual win rate)
-    const picks = {};
-    C.teams.forEach(t => t.keys.forEach(x => { picks[x] = (picks[x] || 0) + 1; }));
-    const wr = x => { const v = SIM.stats.ent[x]; return v ? v.w / v.g : 0; };
-    const ban = +SIM.lastOpts.ban ? Object.keys(picks).sort((a, b) => picks[b] - picks[a] || wr(b) - wr(a)).slice(0, +SIM.lastOpts.ban) : [];
-    const start = res.rows.filter(r => !prevKeys.includes(r.k) && !r.keys.some(x => ban.includes(x))).slice(0, 8).map(r => r.keys);
-    res = await simSearch(each, { vs: C.teams.map(t => t.keys), weights }, start, ban);
-    if (!res || id !== SIM.jobId) return;
-    const best = res.rows.find(r => !prevKeys.includes(r.k)) || res.rows[0];
-    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g, banned: ban, pick: res.pick?.[best.k] });
-    simMergeDetail(C.detail, res.detail);
-  }
-  const meta = C.teams.map(t => t.keys), metaKeys = meta.map(t => t.join('+'));
-  for (const [i, a] of archs.entries()) {
-    C.arch = i + 1; C.archName = a.name;
-    res = await simSearch(archEach, { vs: meta, weights: meta.map(() => 1) }, null, null, a.id);
-    if (!res || id !== SIM.jobId) return;
-    const best = res.rows.find(r => !metaKeys.includes(r.k) && !C.teams.some(t => t.keys.join('+') === r.k));
-    if (!best) continue;
-    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g, arch: a.id, archName: a.name, pick: res.pick?.[best.k] });
-    simMergeDetail(C.detail, res.detail);
-  }
-  C.arch = 0;
-  C.round = rounds + 1; C.matrix = true;
-  SIM.plan = null;
-  const forced = Object.fromEntries(C.teams.filter(t => t.arch).map(t => [[...t.keys].sort().join('+'), t.arch]));
-  res = await simSend(SIM.target - SIM.done, { top: C.teams.map(t => t.keys), forced, h2h: true, detail: true, seed: Math.floor(Math.random() * 1e9) }, C.teams.length);
-  if (id !== SIM.jobId) return;
-  simAddWins(C.h2h, res.h2h); simMergeDetail(C.detail, res.detail);
-  for (const t of C.teams) { const P = res.pick?.[t.keys.join('+')]; if (P?.g) t.pick = P; }
-}
+// Strongest teams and the meta chain run in sim/search.js, shared with the terminal; SIM is their ctx.
 
 async function simRun() {
   if (!SIM.ready) return;
@@ -218,8 +113,10 @@ async function simRun() {
   if (!SIM.mode) await simSend(SIM.target);
   else {
     SIM.tab = 'teams';
-    if (SIM.mode === 'best') { const r = await simSearch(SIM.target); if (r) SIM.best = r; }
-    else await simMetaChain(SIM.target);
+    const { searchTeams, metaChain } = await import('./search.js');
+    SIM.send = simSend; SIM.draw = simDraw;
+    if (SIM.mode === 'best') { const r = await searchTeams(SIM, SIM.target); if (r) SIM.best = r; }
+    else await metaChain(SIM, SIM.target);
   }
   SIM.running = false; SIM.ms = performance.now() - SIM.t0;
   simDraw();
@@ -553,7 +450,7 @@ function simRankingTable() {
   const status = SIM.running ? `Generation ${SIM.gen + 1} of ${G} is running.` : SIM.stopped && !done ? `The run stopped in generation ${SIM.gen + 1} of ${G}.` : '';
   if (SIM.chain) return `<p class="hint">Generation ${SIM.gen + 1} of ${G}. Win % here is against the meta teams so far.</p>${simTable('fullteams', rows, cols, { sortBy: 3, search, limit: 20 })}`;
   return `<h2>Best whole teams</h2>
-    <p class="hint">A search over ${G} generations. The first plays random teams. Each later one keeps the best fifth, tries them with one member swapped, mixes kept teams together and adds fresh teams. New members come from the whole pool you picked, leaning toward characters who are winning, so a lower tier or unevolved character only stays if it helps. The last generation replays the best ${SIM_FINAL_TEAMS} against each other with a quarter of all battles. Movesets and abilities are rolled fresh every battle, so this ranks the members, not one exact build. "Sure win %" takes off the 95% margin and is what the ranking goes by.</p>
+    <p class="hint">A search over ${G} generations. The first plays random teams. Each later one keeps the best fifth, tries them with one member swapped, mixes kept teams together and adds fresh teams. New members come from the whole pool you picked, leaning toward characters who are winning, so a lower tier or unevolved character only stays if it helps. The last generation replays the best 32 against each other with a quarter of all battles. Movesets and abilities are rolled fresh every battle, so this ranks the members, not one exact build. "Sure win %" takes off the 95% margin and is what the ranking goes by.</p>
     ${status ? `<p class="hint"><strong>${status}</strong> ${finalGen ? '' : 'The table shows the current generation, which still includes untested new teams.'}</p>` : ''}
     <h3>${done ? 'Final ranking' : `Generation ${SIM.gen + 1}`}</h3>
     ${simTable('fullteams', rows, cols, { sortBy: 3, search, limit: finalGen ? 300 : 50 })}

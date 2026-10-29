@@ -3,7 +3,8 @@ import fs from 'fs';
 import { prepare, runBattle, rng } from '../battle.js';
 import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
-import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey } from '../batch.js';
+import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey, mergeStats, emptyStats } from '../batch.js';
+import { searchTeams, metaChain } from '../search.js';
 import { draftSide, guessBuilds } from '../draft.js';
 import { metaSummary } from '../meta.js';
 import { ARCHETYPES, archetypeById, roster, fits, forced, BRING } from '../archetypes.js';
@@ -264,6 +265,22 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(P.length && P.every(([k, p]) => { const sk = k.split('+').filter(x => TR.setters.has(x)); return sum(p.pick, sk) >= p.g && sum(p.lead, sk) >= p.g; }), 'A forced team picks its setter and opens with it every game');
   ok(P.every(([k, p]) => k.split('+').filter(x => TR.abusers.has(x)).reduce((n, x) => n + (p.pick[x] || 0), 0) >= 2 * p.g), 'A forced team picks at least 2 of its abusers every game');
   ok(S.move['trick-room']?.uses > 0, 'Forced Trick Room teams set Trick Room up');
+}
+
+// Team search (sim/search.js) runs without the page: a small strongest-teams search and meta chain, battles in-process.
+{
+  const ctx = { stats: emptyStats(), done: 0, target: 3000, jobId: 1, random: rng(4), lastOpts: { format: 'duos' }, meta: { archetypes: [] },
+    chain: { teams: [], detail: {}, h2h: {}, round: 0, rounds: 0 },
+    send: async (total, ladder) => {
+      const S = runBatch(data, { format: 'duos', teamSize: 2, count: total, seed: 9, ladder });
+      mergeStats(ctx.stats, S); ctx.done += S.battles;
+      return { full: S.full, h2h: S.h2h, detail: S.detail, pick: S.teamPick };
+    } };
+  const res = await searchTeams(ctx, 3000);
+  ok(res.rows.length > 0 && res.rows.every((r, i) => !i || res.rows[i - 1].sure >= r.sure), 'Team search ranks teams by sure win rate');
+  ctx.done = 0;
+  await metaChain(ctx, 3000);
+  ok(ctx.chain.teams.length >= 3 && Object.keys(ctx.chain.h2h).length > 0, 'Meta chain finds counter teams and plays them against each other', ctx.chain.teams.length);
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }

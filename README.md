@@ -62,8 +62,8 @@ Each character battles with four moves picked from its form's learnset plus its 
 - `sim/draft.js`: the bring-10 draft AI and its reasoning log.
 - `sim/meta.js`: the meta summary on the Meta tab.
 - `sim/compile.js`: reads the move effects in `data/moves.json` and the ability texts in `data/characters.json` into rules. A new ability or move written in the same style as the existing ones works without code changes; anything it can't read shows up under Rules.
-- `sim/battle.js` (the engine), `sim/ai.js` (the battle AI), `sim/batch.js` (batches and totals), `sim/worker.js` (the Web Worker), `sim/page.js` (the page).
+- `sim/battle.js` (the engine), `sim/ai.js` (the battle AI), `sim/batch.js` (batches and totals), `sim/worker.js` (the Web Worker), `sim/search.js` (team search and meta chains), `sim/page.js` (the page).
 
-From a terminal: `node sim/cli.mjs 5000 duel` runs 5,000 one on one battles (`team`, `duos` or `comp` for the other formats), `node sim/cli.mjs 1 team 7 watch` prints one battle's log (add `--trained --level=50 --size=6` for trained level 50 teams; `node sim/cli.mjs 1 comp 5 watch --draft` prints both sides' draft reasoning), and `node sim/test/mechanics.mjs` checks single rules.
+From a terminal: `node sim/cli.mjs 5000 duel` runs 5,000 one on one battles (`team`, `duos` or `comp` for the other formats), `node sim/cli.mjs 1 team 7 watch` prints one battle's log (add `--trained --level=50 --size=6` for trained level 50 teams; `node sim/cli.mjs 1 comp 5 watch --draft` prints both sides' draft reasoning), `--search=meta --arch --hp=3` runs a meta chain from the terminal on every core, `node sim/bench.mjs strength` measures the AI, and `node sim/test/mechanics.mjs` checks single rules. See docs/BALANCE.md section 10.
 
 Taking over balancing or AI work? Start with [docs/BALANCE.md](docs/BALANCE.md) (how the simulator, AI, draft and competitive format work, and the design rules for balance changes) and [docs/balance-history.md](docs/balance-history.md) (what has been tried and found).

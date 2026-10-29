@@ -15,7 +15,18 @@ function immune(api, u, mv, t) {
 }
 
 // Expected damage of a move as a share of the target's max Vitality (can exceed 1).
+// api.cache (set by the engine while both sides choose their moves, when nothing changes) keeps each
+// move-target estimate so the AI's many repeat looks cost nothing.
 export function estDamage(api, u, mv, t) {
+  const c = api.cache;
+  if (!c) return estDamageNow(api, u, mv, t);
+  let row = c.get(mv);
+  if (!row) c.set(mv, row = new Map());
+  let d = row.get(t);
+  if (d === undefined) row.set(t, d = estDamageNow(api, u, mv, t));
+  return d;
+}
+function estDamageNow(api, u, mv, t) {
   const fx = mv.m.fx;
   if (mv.m.cat === 'Status' || fx.counter || fx.nothing) return 0;
   if (immune(api, u, mv, t)) return 0;

@@ -100,7 +100,8 @@ export const ITEM_NUM = {
   choice: 1.5, lifeOrb: 1.3, lifeOrbCost: 1 / 10, leftovers: 1 / 16, sitrus: 1 / 4, sitrusBelow: 0.5, vest: 1.5,
   ward: 0.5, emblem: 1.2, policy: 2, helmet: 1 / 6, anchorTurns: 8,
 };
-export const itemDef = id => ITEMS.find(i => i.id === (id || '').split(':')[0]) || null;
+const ITEM_BY_ID = new Map(ITEMS.map(i => [i.id, i]));
+export const itemDef = id => ITEM_BY_ID.get((id || '').split(':')[0]) || null;
 export const itemName = id => { const d = itemDef(id); if (!d) return 'None'; const t = (id || '').split(':')[1]; return d.typed && t ? `${t} ${d.name}` : d.name; };
 
 // Base stat to battle stat, Pokemon style. Without training every copy counts as perfectly bred (31 IVs)

@@ -139,3 +139,26 @@ Conclusion: the engine isn't broken; results need repeating. **r paused balancin
 ## PR #25: competitive doubles on Battle vs AI (2026-10-29)
 
 `#play` can now play Competitive doubles with editable brings (presets: random, random archetype, any of the 11), per-character builds and team preview against the draft AI. Use it to hand-test combo plans.
+
+## AI research and step 1: test bench (2026-10-29)
+
+Research on making the AI stronger and faster: [doc](https://claude.ai/artifact/4F8hsLn4janqXy3a7fVdFv). A rough Monte Carlo search prototype (4 playouts per option, replaying from the seed) beat the current AI 131 of 160 (82%, every seed 77-85%), but the greedy bot only 67% (the current AI gets 58%): most of its edge came from knowing how its opponent plays. The plan: (1) test bench, (2) joint side actions + automatic weight tuning, (3) a search AI, (4) distil it into the fast AI, (5) find the meta as a population of teams.
+
+Step 1 (this PR): team search moved to sim/search.js, meta chains from the terminal on every core, `sim/bench.mjs`, frozen `sim/bots/ai-v1.js`, and caches that make a drafted battle 1.5x faster with the same results for the same seed (12.6 to 8.4 ms single-core). A 200k meta chain at Vitality x3 now takes about 10 minutes on 4 cores.
+
+**Baseline strength** (`bench.mjs strength 1000`, seeds 1 / 2), the numbers the next AI has to beat:
+
+| Opponent | AI won | AI lost | Drew |
+|---|---|---|---|
+| Random | 92.0% / 90.9% | 6.9% / 7.7% | 1.1% / 1.4% |
+| Greedy hardest-hit bot | 60.3% / 54.9% | 37.2% / 41.8% | 2.5% / 3.3% |
+| Frozen v1 (same AI) | 48.2% / 46.4% | 48.2% / 46.4% | 3.6% / 7.2% |
+
+**Baseline stability** (`bench.mjs stability`, three 200k meta chains with archetype rounds, seeds 1-3, Vitality x3, bring 8, every form):
+
+- Top-12 meta characters shared between two runs: 4.3 of 12 on average.
+- Rank correlation of win rate when picked (characters with 200+ picks): 0.48.
+- Archetype win rate across the three runs. Only Snow (46 / 46 / 49%), Screens + setup (51 / 52 / 54%) and Spread (40 / 39 / 35%) held within 6 points. Trick Room (26 / 54 / 35%), Redirection + setup (47 / 21 / 39%), Fire field (32 / 56 / 40%) and Tailwind (43 / 28 / 49%) swung 20+ points. Largest spread 28 points.
+- What repeated in all three: Devil Union Asta was in 16 of the 18 meta teams and Six Paths Sage Naruto in 15. Next came Final Arc Gintoki (11), Hero of Hell Chainsaw Man (9, none in run 1) and Pain (8, 6 of them in run 3).
+
+Targets for later steps: overlap 9 of 12, correlation 0.8, archetype spread under 6 points.
