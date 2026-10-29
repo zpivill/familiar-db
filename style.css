@@ -176,6 +176,7 @@ button:disabled { opacity: .55; cursor: default; }
 .simtabs { margin: 0; padding: 0; max-width: none; }
 #simq { max-width: 320px; width: 100%; }
 .simt td, .simt th { white-space: nowrap; }
+.simt td.wrap { white-space: normal; min-width: 16em; }
 .simt .sv { text-align: right; font-variant-numeric: tabular-nums; }
 .sortb { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
 .linkb { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }

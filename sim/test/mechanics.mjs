@@ -5,6 +5,7 @@ import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
 import { makeBuild, runBatch, watchBattle } from '../batch.js';
 import { draftSide, guessBuilds } from '../draft.js';
+import { metaSummary } from '../meta.js';
 
 const root = new URL('../../', import.meta.url);
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', root))), JSON.parse(fs.readFileSync(new URL('data/moves.json', root))).moves);
@@ -192,6 +193,30 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(w8.drafts.every(x => x.bring.length === 8) && w8.teams.every(t => t.length === 6), 'Bring 8, pick 6 works');
   const w = watchBattle(data, { format: 'comp', draft: true, seed: 5 });
   ok(w.drafts.every(x => x.bring.filter(b => LEG(b)).length <= 5), 'A brought 10 holds at most 5 legendaries or mythicals');
+  ok(Object.keys(S.leadPair).length && Object.values(S.leadPair).reduce((n, v) => n + v.g, 0) === S.battles * 2, 'Draft runs record both opening pairs of every battle');
+  ok(Object.keys(S.core).every(k => /^[^|]+([>+])[^|]+\|\w+$/.test(k)), 'Cores are recorded as enabler>partner or a+b with their kind', Object.keys(S.core)[0]);
+}
+
+// meta summary: categories from hand-made totals
+{
+  const byKey = new Map([['a', { name: 'A' }], ['b', { name: 'B' }], ['c', { name: 'C' }], ['d', { name: 'D' }], ['l', { name: 'L', rarity: 'legendary' }]]);
+  const S = {
+    bring: { a: { b: 40, p: 40, pw: 22, lead: 10 }, b: { b: 40, p: 30, pw: 12, lead: 5 }, c: { b: 40, p: 10, pw: 4, lead: 1 }, d: { b: 40, p: 35, pw: 20, lead: 5 }, l: { b: 30, p: 20, pw: 12, lead: 4 } },
+    core: { 'a>b|tailwind': { g: 12, w: 9 }, 'a>d|tailwind': { g: 10, w: 6 }, 'a>l|tailwind': { g: 8, w: 5 }, 'c>b|redirect': { g: 8, w: 7 }, 'b+d|cover': { g: 10, w: 5 } },
+    leadPair: { 'a+b': { g: 12, w: 8 } },
+    vsChar: { 'c>d': { g: 10, w: 9 }, 'b>a': { g: 10, w: 5 } },
+    item: { 'a|calm-incense': { g: 30, w: 16 } }, nature: { 'a|spe-pow|support': { g: 30, w: 16 } },
+  };
+  const m = metaSummary(S, { byKey, minGames: 8 });
+  ok(m.cores.find(c => c.keys.join('+') === 'a+b')?.label === 'Tailwind' && m.cores.every((c, i) => !i || m.cores[i - 1].sure >= c.sure), 'Cores carry their kind, surest first', m.cores);
+  ok(m.general.length === 1 && m.general[0].key === 'a' && m.general[0].partners === 3, 'A support with 3 partners that wins is a general support', m.general);
+  ok(m.specific.some(x => x.key === 'c' && x.top.key === 'b'), 'A support that wins far more with one partner is a specific support', m.specific);
+  ok(m.answers.length === 1 && m.answers[0].key === 'c' && m.answers[0].vs === 'd', 'A rarely picked character that beats a popular one is an answer', m.answers);
+  ok(m.legends[0].key === 'l' && m.legends[0].core?.with === 'a', 'Legendaries show their pick rate and core', m.legends);
+  ok(m.builds[0].item.id === 'calm-incense' && m.builds[0].nature.id.preset === 'support', 'Common builds show the most used item and nature');
+  ok(!m.hasTeams && /## Cores/.test(m.markdown) && /\| A \+ B \| Tailwind \|/.test(m.markdown), 'The summary renders as Markdown');
+  const t = metaSummary(S, { byKey, minGames: 8, teams: [{ keys: ['a', 'b', 'd'], wr: 0.6, g: 20 }] });
+  ok(t.best[0].cores.some(c => c.keys.join('+') === 'a+b'), 'Best teams list the cores inside them');
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
