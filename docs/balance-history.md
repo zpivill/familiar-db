@@ -1,0 +1,141 @@
+# Balance history
+
+What has been tried and found so far, oldest first, so nobody redoes it. How the system works is in [BALANCE.md](BALANCE.md). Add new runs at the end.
+
+Remember the rule from the sim checks below: **trust only results that repeat across 2 or more runs**, and treat archetype gaps under about 15 points as noise. Several single-run results here (especially which exact characters made the meta teams) did not repeat.
+
+## Singles era (2026-10-28)
+
+Format: team singles, 6v6, Lv100, Vitality x2, every form, smart movesets, 100k battles. This was before the competitive format existed; it's here for context.
+
+- **First findings (PR #11):** one on one fights lasted about 1.7 turns (47% ended on turn 1), signature moves dealt about 45% of all damage, the faster side won 66% of 1v1s, and dual types beat mono types.
+- **Aizen (PR #14, r approved):** Kyoka Suigetsu now confuses foes only on Aizen's first entry, not every switch-in.
+- **Sailor Moon and Alucard (PR #15, r approved):** Moon Healing Escalation heals 1/4 of the damage (was 1/2) and Sailor Moon's Energy went 140 to 120 (r's pick). Alucard's Undead keeps its 1/8 heal a turn and lost the survive-with-1. Sailor Moon went 66.9% to about 62% one-by-one (next: Aizen 58%, Pain and Sukuna 58%). Making "In the Name of the Moon" trigger only on first entry did nothing (63.3%), so it isn't what makes her strong. **Still open:** dropping Moon Healing Escalation power 120 to 100 (trial 59.1%); r never answered.
+- **Bans in counter rounds** were added to the meta chain so niche counters get a chance.
+- Top singles teams were built around legendaries: Sailor Moon, Aizen, Pain, Alucard, Saitama, Six Paths Madara, with Hero of Hell Chainsaw Man and Adult Gon the top pseudos.
+
+## Competitive doubles built (2026-10-29, PRs #17-#20)
+
+Builds (EVs, natures, IVs, items), the `comp` format, the draft AI and the meta summary. See BALANCE.md sections 4, 7, 8.
+
+## Run 1: the doubles AI only attacked (2026-10-29)
+
+Bring 10, 200k battles, Vitality x2, meta chain.
+
+- Battles were a narrow 6-9 turn damage race: mean 7.4 turns, std 1.9, about 1.25 knockouts a turn.
+- **99.8% of moves used were attacks.** Per carrier per battle: Protect 0.01, Tailwind 0.03, Helping Hand 0.06, Trick Room 0.06, Swords Dance / Bulk Up 0.003. Support moves scored 6-38 while an attack scored "share of Vitality x100, +55 for a knockout".
+- Trials: AI support value x3 and Vitality x3 together gave 11.3 ± 6.2 turns and real support use.
+- Spread moves were only 11% of damage and 7% of KOs, so spread wasn't what dominated.
+- **Kaido was real:** in 56% of all 6s, 56% win rate, from Strongest Creature (0.75x damage taken *and* survives any hit at full Vitality) on 150/140/120 stats. His KOs came from single-target Ragnaraku (Outrage) and Flame Clouds (Flare Blitz).
+- **Whitebeard was overrated by the draft:** picked 77% when brought, 27% win rate when picked.
+- Devil Union Asta (Black Divider: 140 power, ignores Protect) was in all 6 meta teams.
+- The meta summary's top cores were tiny lucky samples from the random early generations, not cores the meta teams played.
+- Each meta 10 had 2-4 members almost never picked: they never fight, so the search never replaces them.
+
+## PR #21: AI values support moves (2026-10-29)
+
+`duosSupportValue` in ai.js, turn histogram, brought-vs-picked table, Vitality x3 option, a games floor on meta-summary cores, and a swap rule that replaces rarely-picked members first.
+
+Run 2, same settings:
+
+| | Mean turns | Std | Protect | Tailwind | Helping Hand | Trick Room | Follow Me |
+|---|---|---|---|---|---|---|---|
+| Run 1 (old AI, x2) | 7.4 | 1.9 | 0.01 | 0.03 | 0.06 | 0.05 | 0.15 |
+| New AI, x2 | 7.7 | 2.7 | 0.44 | 0.52 | 1.07 | 0.19 | 0.37 |
+| New AI, x3 | 10.3 | 3.6 | 0.64 | 0.74 | 1.29 | 0.82 | 0.73 |
+
+- Meta teams still spent 96% of turns attacking, and **setup moves were almost never used (0.6% of turns)**.
+- At x3 the pick spread widened: Tsuna in 48% of 6s, Kaido 34% (58% when picked), Naruto 33%. Whitebeard went from 27% to 51% when picked.
+- Top core became Founding Titan Eren + Bankai Rukia (Screens + setup, 3,406 games, 58%), a core the meta teams really played.
+
+**From here on, competitive runs use Vitality x3.**
+
+## Variety analysis (2026-10-29)
+
+Why no setup, and why legendaries, mythicals and mids don't get picked (x3 run after PR #21).
+
+- Setup was scored +16 per stage with a one-turn view, so Swords Dance scored 8-19 against 30-90 for attacking. Fix: score it over the turns the user will survive (done in PR #22).
+- Tier picture (final forms):
+
+| Tier | Median stat total | Picked when brought | Win % when picked | In 2%+ of 6s |
+|---|---|---|---|---|
+| Legendary | 660 | 63% | 52% | 5 of 28 |
+| Mythical | 600 | 18% | 33% | 0 of 16 |
+| Pseudo | 600 | 89% | 54% | 10 of 16 |
+| Post-mid | 550 | 73% | 51% | 9 of 34 |
+| Starter | 535 | 52% | 49% | 1 of 3 |
+| Mid | 505 | 60% | 41% | 4 of 33 |
+| Pre-mid | 410 | 23% | 33% | 0 of 27 |
+| First route | 325 | 22% | 30% | 0 of 18 |
+
+- At Lv50 stat totals decide most of it. Mythicals (~600) cost the slot a 660 legendary could fill. Kaido (34% of 6s) and Six Paths Madara (23%) take most of the legendary slot; Saitama and Black Frieza are picked a lot but win 37-41%.
+- Options given to r: trim the top legendaries, a separate mythical slot (r: not yet), lift weak legendaries by their canon gimmick, give selected mids canon team tools (done in PR #22), a tier points budget (bigger change, less VGC-like), or raise mid stats (blunt).
+
+## PR #22: setup scoring, Kaido trim, Wide Guard, mid team tools (2026-10-29)
+
+- Setup scored over expected turns (`setupTurns`).
+- **Kaido:** Strongest Creature's 0.75x now only at full Vitality.
+- **New move Wide Guard.** Canon team tools for mids: Todoroki, Giyu and Mob get Wide Guard; Takemichi and Sanemi get Follow Me; Kazuma gets Fake Out.
+
+Run 3 (200k, x3):
+
+- Mean 11.0 turns, std 4.4. Meta teams: 93.9% attacks, setup 1.4%, heal 1.8%, Protect 1.0%.
+- Per carrier: Protect 0.68, Tailwind 0.81, Helping Hand 1.20, Trick Room 0.62, Follow Me 0.43, Wide Guard 0.16, Fake Out 0.46, Swords Dance 0.20, Nasty Plot 0.25.
+- Kaido fell to 55% when picked but rose to 43% of all 6s: **the draft's quick matchup ignores abilities**, so the trim changed how well he does, not how often he's picked.
+- Mids with new tools get picked more (Todoroki 82%, Sanemi 86%, Mob 89% when brought) but still lose (24-41% when picked). Mids as a tier: 39% when picked. Tools gave them a job, not enough to win the race at ~505 stats.
+- Top core: Final Arc Gintoki + Vongola X Tsuna (Redirection + setup, 4,388 games, 59%).
+- Top picks: Six Paths Sage Naruto 51% of 6s, Ultra Instinct Goku 46%, Hero of Hell Chainsaw Man 43%, Kaido 43%, Devil Union Asta 43%, Lightning Flame Natsu 36%.
+
+## PR #23: bring 8 default (2026-10-29)
+
+Bring 8 is the default; the bring legendary cap is `min(5, bring - 5)` (3 for bring 8). Fixed bring-8 drafts crashing.
+
+## Archetypes (PR #24, 2026-10-29)
+
+Why archetypes: Trick Room never appeared because its 6 setters are all fast (Dio 120, Homura 140, Shinra 150, Ainz 90, Conan 80, Ten-Tails Obito 95; four are legendary/mythical) and almost no strong character is slow (slowest 480+ totals: Bankai Yamamoto and Gyomei 60; Hashirama, Hanami, Jiraiya 65; Founding Titan Eren, Whitebeard, Makima 70). So 11 archetypes can now be forced in a meta chain (r: "Build with all 11").
+
+Archetype run 1 (200k, x3, bring 8, archetype rounds). Mean 10.1 turns. Plan moves per carrier: Helping Hand 1.21, Follow Me 1.17, Tailwind 0.91, Trick Room 0.55, Reflect 0.52, Fake Out 0.41.
+
+- Devil Union Asta in all 6 meta teams, Tsuna in 5 (this did **not** repeat in run 2, below).
+- Archetypes vs meta: Balance 53%, Snow 41%, Screens 37%, Water 33%, Redirection 31%, Gravity 30%, Spread 28%, Trick Room 26%, Fire 25%, Tailwind 23%, Lightning 19%.
+- Read: fields lose because 1.3x on one type doesn't repay the setup turn; Trick Room can't fill a full slow six.
+
+## Sim checks (2026-10-29)
+
+Checks of the tool, not the characters. Competitive doubles, x3, bring 8, every form.
+
+1. **Side bias:** 1,000 mirror matches, side 1 47.7%, side 2 47.3%, draws 5%. None.
+2. **AI strength** (1,000 battles each, same team both sides):
+
+| Opponent | AI wins | Opponent wins | Draws |
+|---|---|---|---|
+| Random moves | 92.8% | 5.3% | 1.9% |
+| Greedy bot (hardest hit into best target) | 59.6% | 38.6% | 1.8% |
+
+   Most of the AI's edge is targeting and support, not planning. A good human would likely beat it. The sim shows what's strong when played simply; combo plans suffer most.
+
+3. **Do two runs agree?** Same 200k meta chain with archetype rounds, twice. Meta-team spots out of 6 (run 1 / run 2): Devil Union Asta 6/1, Tsuna 5/1, Denji 1/6, Toshiro 0/4, Pain 1/4, Levi 3/5, Naruto 2/3, Goku 1/3, Gon / Escanor / Itadori / Jin-woo 3/0.
+
+| Archetype vs meta | Run 1 | Run 2 |
+|---|---|---|
+| Intimidate + Fake Out balance | 53% | 56% |
+| Snow | 41% | 53% |
+| Trick Room | 26% | 42% |
+| Spread | 28% | 40% |
+| Fire field | 25% | 36% |
+| Redirection + setup | 31% | 36% |
+| Lightning field | 19% | 35% |
+| Tailwind | 23% | 29% |
+| Screens + setup | 37% | 22% |
+| Water field | 33% | 21% |
+| Gravity | 30% | 17% |
+
+   **They don't agree.** A meta chain follows whichever team its first search finds. What repeats: Balance and Snow are the best archetypes; Levi, Denji, Tsuna, Asta and Pain keep appearing.
+
+4. **Battle log:** a Trick Room team vs meta team 1. Asta's Black Divider (140, ignores Protect) knocked Shinra out from full on turn 1, before Trick Room went up. A balance point, not a bug.
+
+Conclusion: the engine isn't broken; results need repeating. **r paused balancing here (2026-10-29).** Suggested next steps: repeat each setting 2-3 times and compare; look at Protect-ignoring signatures that one-shot setters; hand-play Trick Room and setup teams on `#play`.
+
+## PR #25: competitive doubles on Battle vs AI (2026-10-29)
+
+`#play` can now play Competitive doubles with editable brings (presets: random, random archetype, any of the 11), per-character builds and team preview against the draft AI. Use it to hand-test combo plans.
