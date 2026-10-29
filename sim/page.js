@@ -4,10 +4,11 @@
 const SIM = {
   workers: [], ready: false, meta: null, stats: null, running: false, done: 0, target: 0, t0: 0, ms: 0, runId: 0,
   tab: 'overview', sort: {}, q: '', vsKey: '', watch: null, error: '', drawPending: false, lastOpts: null,
-  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0 },
+  opts: { format: 'duel', teamSize: 3, count: 5000, forms: 'final', tiers: [], sameTier: false, gags: true, movesets: 'smart', level: 100, hpScale: 1, focus: '', teamSearch: '', ban: 0, training: 'base', items: 'none' },
+  overrides: {},
 };
 const SIM_TABS = [['overview', 'Overview'], ['chars', 'Characters'], ['abilities', 'Abilities'], ['moves', 'Moves'], ['types', 'Types'],
-  ['teams', 'Teams'], ['matchups', 'Matchups'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
+  ['teams', 'Teams'], ['matchups', 'Matchups'], ['builds', 'Builds'], ['watch', 'Watch a battle'], ['rules', 'Rules']];
 const FORMATS = [['duel', 'One on one', 'Single character vs single character. The cleanest read on each character.'],
   ['team', 'Team singles', 'Teams battle one at a time with switching, like a trainer battle.'],
   ['duos', 'Duos', 'Two on the field per side, for special battles. Spread moves and partner abilities matter here.']];
@@ -46,10 +47,10 @@ function simMessage(msg, i, onReady) {
   if (msg.type === 'error') { SIM.error = msg.message; SIM.running = false; SIM.resolve = null; simDraw(); }
 }
 
-const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, faster: { g: 0, w: 0 } });
+const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, faster: { g: 0, w: 0 } });
 function simMerge(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs']) for (const [key, v] of Object.entries(S[k])) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature']) for (const [key, v] of Object.entries(S[k] || {})) {
     const t = T[k][key] || (T[k][key] = {});
     for (const f in v) t[f] = (t[f] || 0) + v[f];
   }
@@ -70,6 +71,8 @@ function simMergeTeams(T, S) {
 function simMergeDetail(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: T }, { detail: S }); return T; }
 
 const simRules = () => ({ level: +SIM.opts.level, hpScale: +SIM.opts.hpScale });
+// Training and items options sent with every run: AI picks plus the overrides from the Builds tab.
+const simBuildOpts = o => ({ training: o.training === 'ai' ? 'ai' : 'none', items: o.items === 'ai' ? 'ai' : 'none', overrides: SIM.overrides });
 // Sends `total` battles to the workers, split evenly, and resolves with that batch's team results.
 // A team ranking passes the same ladder to all of them, and each worker starts at a different team
 // so every team gets about the same number of battles.
@@ -81,7 +84,7 @@ function simSend(total, ladder, ladderSize) {
   SIM.workers.forEach((w, i) => {
     const count = Math.floor(total / n) + (i < total % n ? 1 : 0);
     w.postMessage({ cmd: 'run', id: SIM.runId, rules: simRules(), chunk: 250,
-      opts: { format: o.format, teamSize: +o.teamSize, count, forms: o.forms, tiers: o.tiers, sameTier: o.sameTier, gags: o.gags, movesets: o.movesets, level: +o.level, focus: o.focus || null, seed: seed + i * 7919,
+      opts: { format: o.format, teamSize: +o.teamSize, count, forms: o.forms, tiers: o.tiers, sameTier: o.sameTier, gags: o.gags, movesets: o.movesets, level: +o.level, focus: o.focus || null, seed: seed + i * 7919, ...simBuildOpts(o),
         ladder, offset: Math.floor(i * (ladderSize || 0) / n) } });
   });
   return done;
@@ -533,11 +536,85 @@ function simMatchups() {
     ], { sortBy: 4, search: r => entName(r.o) })}`;
 }
 
+const SIM_STAT = { vit: 'Vitality', pow: 'Power', grd: 'Guard', ene: 'Energy', wil: 'Will', spe: 'Speed' };
+const simItemName = id => { const [k, t] = (id || '').split(':'); const d = SIM.meta?.items.find(i => i.id === k); return d ? (t ? `${t} ${d.name}` : d.name) : id; };
+const simNatureName = id => SIM.meta?.natures.find(n => n.id === id)?.name || id;
+
+// Builds tab: overrides for any character (the AI keeps choosing for everyone else), then how each held
+// item and nature did in the last run.
+function simBuilds() {
+  const M = SIM.meta, S = SIM.stats, T = M.training;
+  const ents = M.entrants.filter(e => SIM.opts.forms === 'all' || e.final).sort((a, b) => a.name.localeCompare(b.name));
+  const ed = SIM.ovEdit || (SIM.ovEdit = { key: ents[0]?.key || '' });
+  const cur = SIM.overrides[ed.key] || {};
+  const opt = (v, l, c) => `<option value="${esc(v)}"${String(c) === String(v) ? ' selected' : ''}>${esc(l)}</option>`;
+  const stats = Object.keys(SIM_STAT);
+  const [ik, it] = (cur.item || '').split(':');
+  const typed = M.items.find(i => i.id === ik)?.typed;
+  const editor = `<form id="simov" class="simform" onsubmit="return false">
+      <label>Character <select name="key">${ents.map(e => opt(e.key, e.name, ed.key)).join('')}</select></label>
+      <label>Nature <select name="nature">${opt('', 'AI picks', cur.nature || '')}${M.natures.map(n => opt(n.id, n.name, cur.nature || '')).join('')}</select></label>
+      <label>Held item <select name="item">${opt('', 'AI picks', ik || '')}${M.items.map(i => opt(i.id, `${i.name} (${i.like})`, ik || '')).join('')}</select></label>
+      ${typed ? `<label>Type <select name="itemType">${M.types.map(t => opt(t, t, it || M.types[0])).join('')}</select></label>` : ''}
+      <fieldset class="simtiers"><legend>EV points <span class="hint">(max ${T.evMax} a stat, ${T.evTotal} in all; leave all 0 for the AI)</span></legend>${stats.map(k => `<label>${SIM_STAT[k]} <input type="number" name="ev-${k}" min="0" max="${T.evMax}" value="${cur.evs?.[k] ?? 0}" style="width:4.5em"></label>`).join('')}</fieldset>
+      <fieldset class="simtiers"><legend>IVs <span class="hint">(0 to ${T.ivMax})</span></legend>${stats.map(k => `<label>${SIM_STAT[k]} <input type="number" name="iv-${k}" min="0" max="${T.ivMax}" value="${cur.ivs?.[k] ?? T.ivMax}" style="width:4.5em"></label>`).join('')}</fieldset>
+      <button type="button" id="simovsave" class="primary">Save override</button>${SIM.overrides[ed.key] ? ' <button type="button" id="simovdel">Remove override</button>' : ''}
+    </form>`;
+  const list = Object.entries(SIM.overrides);
+  const listHtml = list.length ? `<ul>${list.map(([k, o]) => `<li><b>${entLink(k)}</b>: ${[o.nature && simNatureName(o.nature), o.item && simItemName(o.item), o.evs && 'EVs ' + stats.filter(x => o.evs[x]).map(x => `${o.evs[x]} ${SIM_STAT[x]}`).join(', '), o.ivs && stats.some(x => o.ivs[x] < T.ivMax) && 'IVs ' + stats.filter(x => o.ivs[x] < T.ivMax).map(x => `${o.ivs[x]} ${SIM_STAT[x]}`).join(', ')].filter(Boolean).map(esc).join(' · ')}</li>`).join('')}</ul>` : '<p class="hint">No overrides yet.</p>';
+  let results = '';
+  if (S?.battles) {
+    const ent = S.ent, base = k => ent[k] ? ent[k].w / ent[k].g : 0.5, min = Math.max(5, minGames() / 4);
+    const items = Object.entries(S.item || {}).map(([k, v]) => { const [key, id] = k.split('|'); return { key, id, ...v, wr: v.w / v.g, d: v.w / v.g - base(key) }; }).filter(r => r.g >= min);
+    const nats = Object.entries(S.nature || {}).map(([k, v]) => { const [key, id, preset] = k.split('|'); return { key, id, preset, ...v, wr: v.w / v.g, d: v.w / v.g - base(key) }; }).filter(r => r.g >= min);
+    const pdelta = r => `${r.d >= 0 ? '+' : ''}${(r.d * 100).toFixed(1)}`;
+    results = items.length || nats.length ? `<h3>Held items</h3>
+      ${simTable('items', items, [
+        ['Character', r => entName(r.key), r => entLink(r.key)],
+        ['Item', r => simItemName(r.id)],
+        ['Battles', r => r.g, null, 'sv'],
+        ['Win %', r => r.wr, r => winCell(r.w, r.g), 'sv'],
+        ['Vs. average', r => r.d, pdelta, 'sv'],
+        ['Used up', r => r.used / r.g, r => M.items.find(i => i.id === r.id.split(':')[0])?.text.includes('Used up') ? pctf(r.used / r.g) : '—', 'sv'],
+      ], { sortBy: 2, search: r => `${entName(r.key)} ${simItemName(r.id)}` })}
+      <h3>Natures and EV presets</h3>
+      ${simTable('natures', nats, [
+        ['Character', r => entName(r.key), r => entLink(r.key)],
+        ['Nature', r => simNatureName(r.id)],
+        ['EV preset', r => M.presets[r.preset] || 'Override'],
+        ['Battles', r => r.g, null, 'sv'],
+        ['Win %', r => r.wr, r => winCell(r.w, r.g), 'sv'],
+        ['Vs. average', r => r.d, pdelta, 'sv'],
+      ], { sortBy: 3, search: r => `${entName(r.key)} ${simNatureName(r.id)}` })}` : '<p class="hint">The last run used base stats only. Set Training or Held items to "AI picks" and run again to see how builds do.</p>';
+  }
+  return `<p class="hint">With Training set to "AI picks", the AI gives every character an EV preset, a nature and IVs that fit its moves and its team (slow attackers go Trick Room style next to a Trick Room setter, with 0 Speed IVs). With Held items on, it hands out items by role, one of each per team. An override below replaces the AI's pick for that character in every battle of the next run; anything left on "AI picks" stays the AI's choice.</p>
+    ${editor}<h3>Overrides</h3>${listHtml}${results}`;
+}
+
+function simSaveOverride() {
+  const f = $('#simov'); if (!f) return;
+  const val = n => f.querySelector(`[name="${n}"]`)?.value;
+  const key = val('key'), T = SIM.meta.training, o = {};
+  if (val('nature')) o.nature = val('nature');
+  const it = val('item');
+  if (it) { const d = SIM.meta.items.find(i => i.id === it); o.item = d?.typed ? `${it}:${val('itemType') || SIM.meta.types[0]}` : it; }
+  const stats = Object.keys(SIM_STAT);
+  let left = T.evTotal;
+  const evs = Object.fromEntries(stats.map(k => { const n = Math.max(0, Math.min(T.evMax, left, Math.floor(+val('ev-' + k) || 0))); left -= n; return [k, n]; }));
+  if (stats.some(k => evs[k])) o.evs = evs;
+  const ivs = Object.fromEntries(stats.map(k => [k, Math.max(0, Math.min(T.ivMax, Math.floor(+(val('iv-' + k) ?? T.ivMax))))]));
+  if (stats.some(k => ivs[k] < T.ivMax)) o.ivs = ivs;
+  if (Object.keys(o).length) SIM.overrides[key] = o; else delete SIM.overrides[key];
+  simDraw();
+}
+
 function simWatch() {
   const w = SIM.watch;
   const keys = SIM.meta.entrants.filter(e => SIM.opts.forms === 'all' || e.final).sort((a, b) => a.name.localeCompare(b.name));
   const sel = (id, v) => `<select id="${id}"><option value="">Random</option>${keys.map(e => `<option value="${esc(e.key)}"${e.key === v ? ' selected' : ''}>${esc(e.name)}</option>`).join('')}</select>`;
-  const team = (t, i) => `<section><h3>Side ${i ? 'B' : 'A'}${w.winner === i ? ' <span class="badge sigb">Won</span>' : ''}</h3>${t.map(m => `<p><b>${entLink(m.key)}</b> <span class="hint">${esc(m.ability)}</span><br><small>${m.moves.map(esc).join(' · ')}</small></p>`).join('')}</section>`;
+  const spread = m => m.evs ? ` · EVs ${['vit', 'pow', 'grd', 'ene', 'wil', 'spe'].filter(k => m.evs[k]).map(k => `${m.evs[k]} ${SIM_STAT[k]}`).join(', ')}` : '';
+  const ivNote = m => m.ivs ? ['vit', 'pow', 'grd', 'ene', 'wil', 'spe'].filter(k => m.ivs[k] < 31).map(k => ` · ${m.ivs[k]} ${SIM_STAT[k]} IV`).join('') : '';
+  const team = (t, i) => `<section><h3>Side ${i ? 'B' : 'A'}${w.winner === i ? ' <span class="badge sigb">Won</span>' : ''}</h3>${t.map(m => `<p><b>${entLink(m.key)}</b> <span class="hint">${esc(m.ability)}${m.item ? ` @ ${esc(m.item)}` : ''}</span><br><small>${m.moves.map(esc).join(' · ')}</small>${m.nature || m.evs ? `<br><small class="hint">${esc(m.nature || 'Neutral')}${spread(m)}${ivNote(m)}</small>` : ''}</p>`).join('')}</section>`;
   return `<p class="hint">Plays one battle with the settings above and shows every step, to check that the rules and the AI behave. Pick a lead for each side or leave it random.</p>
     <div class="row"><label>Side A ${sel('simwa', SIM.watchA)}</label><label>Side B ${sel('simwb', SIM.watchB)}</label>
     <button type="button" id="simwatch"${SIM.ready ? '' : ' disabled'}>${SIM.watching ? 'Playing…' : 'Play one battle'}</button></div>
@@ -562,7 +639,11 @@ function simRulesTab() {
         × screens (0.5 in singles, 2/3 in duos)
         × field (1.3 for the boosted type)
         × abilities (attacker's boosts, then defender's cuts)</pre>
-    <p>Battle stats at level L: Vitality = floor((2 × base + 31) × L ÷ 100 × Vitality multiplier) + L + 10; other stats = floor((2 × base + 31) × L ÷ 100) + 5. Every copy counts as perfectly bred, with no training or natures, so only base stats tell characters apart. Stat stages go from −6 to +6 (×2/8 to ×8/2). Critical hits: 1 in 24, 1 in 8 with a high-crit move or ability, 1 in 2 at two stages, always at three; a crit ignores the target's raised defence and screens.</p>
+    <p>Battle stats at level L: Vitality = floor((2 × base + 31) × L ÷ 100 × Vitality multiplier) + L + 10; other stats = floor((2 × base + 31) × L ÷ 100) + 5. With Training off, every copy counts as perfectly bred (31 IVs) with no EV points or nature, so only base stats tell characters apart. Stat stages go from −6 to +6 (×2/8 to ×8/2). Critical hits: 1 in 24, 1 in 8 with a high-crit move or ability, 1 in 2 at two stages, always at three; a crit ignores the target's raised defence and screens.</p>
+    <h3>Training and held items</h3>
+    <p>With Training on: each EV point adds L ÷ 50 to its stat after the formula above (+1 at level 50), at most ${SIM.meta?.training.evMax ?? 32} points in one stat and ${SIM.meta?.training.evTotal ?? 66} in all. A nature raises one stat other than Vitality by 10% and lowers another by 10% (or is neutral). IVs go from 0 to 31 and replace the 31 in the formula. The AI picks an EV preset (${esc(Object.values(SIM.meta?.presets || {}).join(', '))}), a nature and IVs from each character's moves and its team, and the Builds tab lets you override any character.</p>
+    <p>With Held items on, every character holds one item and a team never holds two of the same item (each type of Ward Charm or Type Emblem counts as its own item). Names are placeholders, with the Pokémon item in brackets.</p>
+    <dl>${(SIM.meta?.items || []).map(i => st(`${i.name} (${i.like})`, esc(i.text))).join('')}</dl>
     <h3>Turn order</h3>
     <p>Switches go first, then moves by priority (Goes first +1, Extreme Speed +2, Protect +4, Goes last −5 or lower), then by Speed. Prankster-style abilities add +1 to Status moves; Quick Draw-style ones let the first move after entering go before others in its bracket. Trick Room reverses Speed order. A knocked-out character is replaced for free at the end of the turn; a switch by choice costs the turn.</p>
     <h3>Status effects</h3>
@@ -604,6 +685,8 @@ function simSettings() {
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
     <label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>
     <label>Vitality <select name="hpScale">${[1, 1.5, 2].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
+    <label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
+    <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>
     <label>Always include <select name="focus"><option value="">Nobody</option>${ents.map(e => opt(e.key, esc(e.name), o.focus)).join('')}</select></label>
     <label class="check"><input type="checkbox" name="sameTier"${o.sameTier ? ' checked' : ''}> Same tier only</label>
     ${o.format !== 'duel' ? `<label>Team search <select name="teamSearch">${opt('', 'Off', o.teamSearch)}${opt('best', 'Strongest teams', o.teamSearch)}${opt('meta', 'Meta chain (counters)', o.teamSearch)}</select></label>` : ''}
@@ -622,9 +705,9 @@ function renderSim() {
   const rate = SIM.ms > 0 ? Math.round(SIM.done / (SIM.ms / 1000)) : 0;
   const prog = SIM.running || S ? `<div class="simprog"><progress max="${SIM.target}" value="${SIM.done}"></progress>
       <span>${SIM.done.toLocaleString()} of ${SIM.target.toLocaleString()} battles${SIM.running && SIM.chain ? ` · ${SIM.chain.matrix ? 'final round robin' : `meta round ${SIM.chain.round + 1} of ${SIM.chain.rounds}`}` : ''}${SIM.running && SIM.plan ? ` · generation ${SIM.gen + 1} of ${SIM.plan.length}` : ''}${rate ? ` · ${rate.toLocaleString()} a second` : ''}${SIM.running ? '' : ' · done'}</span></div>` : '';
-  const body = !S || !S.battles ? (SIM.tab === 'rules' ? simRulesTab() : SIM.tab === 'watch' && SIM.meta ? simWatch() : '<p class="soon">Pick settings and press Run. Results fill in while it runs.</p>')
-    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, watch: simWatch, rules: simRulesTab })[SIM.tab]();
-  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups'].includes(SIM.tab) && S?.battles;
+  const body = !S || !S.battles ? (SIM.tab === 'rules' ? simRulesTab() : SIM.tab === 'watch' && SIM.meta ? simWatch() : SIM.tab === 'builds' && SIM.meta ? simBuilds() : '<p class="soon">Pick settings and press Run. Results fill in while it runs.</p>')
+    : ({ overview: simOverview, chars: simChars, abilities: simAbilities, moves: simMoves, types: simTypes, teams: simTeams, matchups: simMatchups, builds: simBuilds, watch: simWatch, rules: simRulesTab })[SIM.tab]();
+  const searchable = ['chars', 'abilities', 'moves', 'types', 'teams', 'matchups', 'builds'].includes(SIM.tab) && S?.battles;
   const lo = SIM.lastOpts;
   el.innerHTML = `<div class="article simhead"><h1>Battle simulator</h1>
       <p class="lead">AI against AI, thousands of battles at a time, to find what is too strong, too weak or never used.</p>
@@ -633,7 +716,7 @@ function renderSim() {
     <div class="row"><button type="button" id="simrun" class="primary"${SIM.ready && !SIM.running ? '' : ' disabled'}>${SIM.ready ? 'Run' : 'Starting…'}</button>
       ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : ''}${prog}</div>
     ${SIM.error ? `<p class="danger">${esc(SIM.error)}</p>` : ''}
-    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.level}, Vitality ×${lo.hpScale}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
+    ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, level ${lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' ? ', AI training' : ''}${lo.items === 'ai' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
     <nav class="tabs simtabs" aria-label="Simulator views">${SIM_TABS.map(([k, l]) => `<a href="#sim" data-simtab="${k}"${k === SIM.tab ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
     ${searchable ? `<input id="simq" type="search" placeholder="Filter rows" value="${esc(SIM.q)}">` : ''}
     <div class="simbody">${body}</div>`;
@@ -658,12 +741,14 @@ document.addEventListener('click', e => {
   if (s) { const [id, k] = s.dataset.sort.split(':'); const cur = SIM.sort[id]; SIM.sort[id] = { k: +k, dir: cur && cur.k === +k ? -cur.dir : -1 }; return simDraw(); }
   const c = e.target.closest('[data-csv]');
   if (c) return simCsv(c.dataset.csv);
+  if (e.target.id === 'simovsave') return simSaveOverride();
+  if (e.target.id === 'simovdel') { delete SIM.overrides[SIM.ovEdit?.key]; return simDraw(); }
   if (e.target.id === 'simrun') simRun();
   if (e.target.id === 'simstop') simStop();
   if (e.target.id === 'simwatch' && SIM.ready && !SIM.watching) {
     SIM.watching = true;
     const o = SIM.opts;
-    SIM.workers[0].postMessage({ cmd: 'watch', rules: simRules(), opts: { format: o.format, teamSize: +o.teamSize, forms: o.forms, tiers: o.tiers, gags: o.gags, movesets: o.movesets, level: +o.level,
+    SIM.workers[0].postMessage({ cmd: 'watch', rules: simRules(), opts: { format: o.format, teamSize: +o.teamSize, forms: o.forms, tiers: o.tiers, gags: o.gags, movesets: o.movesets, level: +o.level, ...simBuildOpts(o),
       teamA: SIM.watchA ? [SIM.watchA] : [], teamB: SIM.watchB ? [SIM.watchB] : [], seed: Math.floor(Math.random() * 1e9) } });
     simDraw();
   }
@@ -678,6 +763,10 @@ document.addEventListener('change', e => {
     if (n === 'format') o.teamSize = o.format === 'duos' ? 4 : 3;
     return simDraw();
   }
+  const ov = e.target.closest('#simov');
+  if (ov && e.target.name === 'key') { SIM.ovEdit = { key: e.target.value }; return simDraw(); }
+  // a new item saves the form at once, so the Type picker for Ward Charm / Type Emblem shows up
+  if (ov && e.target.name === 'item') return simSaveOverride();
   if (e.target.id === 'simvs') { SIM.vsKey = e.target.value; simDraw(); }
   if (e.target.id === 'simwa') SIM.watchA = e.target.value;
   if (e.target.id === 'simwb') SIM.watchB = e.target.value;

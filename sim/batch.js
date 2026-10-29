@@ -2,7 +2,8 @@
 // Used by the Web Worker on the site and by sim/cli.mjs in Node.
 
 import { runBattle, rng } from './battle.js';
-import { RULES } from './rules.js';
+import { RULES, itemName, natureName } from './rules.js';
+import { trainTeam } from './builds.js';
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
@@ -67,7 +68,7 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
@@ -117,6 +118,8 @@ function record(S, B, builds, opts) {
       if (k === 0) { E.lead++; E.leadW += w; }
       const A = inc(S.abil, m.key + '|' + b.ability.name, () => ({ g: 0, w: 0 }));
       A.g++; A.w += w;
+      if (b.item) { const I = inc(S.item, m.key + '|' + b.item, () => ({ g: 0, w: 0, used: 0 })); I.g++; I.w += w; I.used += m.itemUsed ? 1 : 0; }
+      if (b.nature) { const N = inc(S.nature, m.key + '|' + b.nature + '|' + (b.preset || ''), () => ({ g: 0, w: 0 })); N.g++; N.w += w; }
       for (const mv of b.moves) {
         const M = inc(S.move, mv.id, () => ({ eq: 0, w: 0, uses: 0, hits: 0, dmg: 0, kos: 0, crits: 0, misses: 0, sup: 0 }));
         M.eq++; M.w += w;
@@ -150,8 +153,8 @@ function record(S, B, builds, opts) {
 
 export function mergeStats(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
-  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h']) {
-    for (const [key, v] of Object.entries(S[k])) {
+  for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'full', 'h2h', 'item', 'nature']) {
+    for (const [key, v] of Object.entries(S[k] || {})) {
       const t = T[k][key] || (T[k][key] = Object.fromEntries(Object.keys(v).map(f => [f, 0])));
       for (const f in v) t[f] += v[f];
     }
@@ -276,7 +279,7 @@ export function runBatch(data, opts, onChunk) {
       if (sides[1].length < size || sides[0].length < size) continue;
     }
     if (r() < 0.5) { sides = [sides[1], sides[0]]; scored = scored.map(i => 1 - i); }
-    const builds = sides.map(t => t.map(e => makeBuild(data, e, r, opts)));
+    const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
     const B = runBattle(data, builds, { rng: r, format: format === 'duos' ? 'duos' : 'singles', level: opts.level });
     record(S, B, builds, opts);
     if (ladder) for (const si of scored) {
@@ -306,10 +309,14 @@ export function watchBattle(data, opts) {
   };
   const used = new Set();
   const sides = [pickTeam(opts.teamA, used), pickTeam(opts.teamB, used)];
-  const builds = sides.map(t => t.map(e => makeBuild(data, e, r, opts)));
+  const builds = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
   const B = runBattle(data, builds, { rng: r, format: opts.format === 'duos' ? 'duos' : 'singles', level: opts.level, log: true });
   return {
     winner: B.winner, turns: B.turn, log: B.log,
-    teams: builds.map(t => t.map(b => ({ key: b.e.key, name: b.e.name, ability: b.ability.name, moves: b.moves.map(l => l.as) }))),
+    teams: builds.map((t, si) => t.map((b, k) => ({
+      key: b.e.key, name: b.e.name, ability: b.ability.name, moves: b.moves.map(l => l.as),
+      item: b.item ? itemName(b.item) : null, nature: b.nature ? natureName(b.nature) : null, evs: b.evs || null, ivs: b.ivs || null,
+      stats: { vit: B.sides[si].mons[k].maxhp, ...B.sides[si].mons[k].raw },
+    }))),
   };
 }
