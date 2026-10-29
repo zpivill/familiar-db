@@ -65,3 +65,5 @@ Each character battles with four moves picked from its form's learnset plus its 
 - `sim/battle.js` (the engine), `sim/ai.js` (the battle AI), `sim/batch.js` (batches and totals), `sim/worker.js` (the Web Worker), `sim/page.js` (the page).
 
 From a terminal: `node sim/cli.mjs 5000 duel` runs 5,000 one on one battles (`team`, `duos` or `comp` for the other formats), `node sim/cli.mjs 1 team 7 watch` prints one battle's log (add `--trained --level=50 --size=6` for trained level 50 teams; `node sim/cli.mjs 1 comp 5 watch --draft` prints both sides' draft reasoning), and `node sim/test/mechanics.mjs` checks single rules.
+
+Taking over balancing or AI work? Start with [docs/BALANCE.md](docs/BALANCE.md) (how the simulator, AI, draft and competitive format work, and the design rules for balance changes) and [docs/balance-history.md](docs/balance-history.md) (what has been tried and found).
