@@ -93,11 +93,39 @@ function duosSupportValue(B, api, u, mv, foes) {
       if (ally) v += 10 + (foes.some(f => bestHit(api, ally, f) >= left(f)) ? 15 : 0);
     }
   }
+  if (fx.wideGuard) {
+    // the spread hits it would stop this turn, if the foes use them (about half the time)
+    const mine = api.actives(u.side);
+    for (const f of foes) {
+      let best = 0;
+      for (const fm of f.moves) {
+        if (fm.pp <= 0 || fm.m.cat === 'Status' || !(fm.m.fx.spread || api.abOf(f).spreadType === fm.m.type)) continue;
+        best = Math.max(best, mine.reduce((n, m) => n + Math.min(estDamage(api, f, fm, m) * 0.75, left(m)), 0));
+      }
+      v += best * 100 * 0.5;
+    }
+  }
   if (fx.followMe && ally) {
     const allyRisk = Math.max(...foes.map(f => bestHit(api, f, ally) / left(ally))), myRisk = Math.max(...foes.map(f => bestHit(api, f, u) / left(u)));
     if (allyRisk >= 1 && myRisk < 1) v += 45;
   }
   return v;
+}
+
+const stageMult = n => n >= 0 ? (2 + n) / 2 : 2 / (2 - n);
+// Turns of attacking a setup move buys before the user is knocked out, at most 3: how much of its Vitality
+// the foes take per turn (in doubles the second foe counts half, since both rarely aim at it), minus the
+// turn spent setting up. Redirection from the ally, screens or a faster side add a turn of safety.
+function setupTurns(B, api, u, foes) {
+  const hits = foes.map(f => bestHit(api, f, u)).sort((x, y) => y - x);
+  const per = (hits[0] || 0) + (hits[1] || 0) * 0.5;
+  const left = u.hp / u.maxhp;
+  let turns = per > 0 ? left / per - 1 : 3;
+  const al = B.duos ? api.allyOf(u) : null;
+  if (al && !al.fainted && al.moves.some(x => x.m.fx.followMe && x.pp > 0)) turns++;
+  if (u.side.screens && Object.values(u.side.screens).some(x => x)) turns++;
+  if (foes.every(f => api.speed(u) > api.speed(f))) turns += 0.5;
+  return Math.max(0, Math.min(3, turns));
 }
 
 function statusValue(B, api, u, mv, foes) {
@@ -111,20 +139,31 @@ function statusValue(B, api, u, mv, foes) {
   if (fx.nothing) return -5;
   if (fx.boosts) {
     const main = u.moves.some(x => x.m.cat === 'Physical') && u.raw.pow >= u.raw.ene ? 'pow' : 'ene';
+    // Raising the main attacking stat pays off on every later attack, not just this turn: score it as the
+    // extra damage it adds over the turns the user is likely to stay in (see setupTurns).
+    let other = 0;
+    const turns = setupTurns(B, api, u, foes);
     for (const b of fx.boosts) {
       if (b.who === 'self' || b.who === 'team' || b.who === 'ally') {
         for (const [k, n] of Object.entries(b.stats)) {
           const kk = k === 'highest' ? main : k;
           const cur = u.boosts[kk] || 0;
+          if (kk === main && b.who === 'self' && !a.contrary) {
+            const best = Math.max(...foes.map(f => Math.min(bestHit(api, u, f), 1)));
+            const gain = stageMult(Math.min(6, cur + n)) / stageMult(cur) - 1;
+            v += best * 100 * gain * turns * 0.8 * (b.p ?? 1);
+            continue;
+          }
           const w = kk === main ? 16 : kk === 'spe' ? 12 : kk === 'pow' || kk === 'ene' ? 3 : 8;
-          v += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (a.contrary ? -1 : 1);
+          other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (a.contrary ? -1 : 1);
         }
       } else if (b.who === 'foe' || b.who === 'foes') {
-        for (const [k, n] of Object.entries(b.stats)) v += -n * 7 * (foe.boosts[k] <= -4 ? 0 : 1);
+        for (const [k, n] of Object.entries(b.stats)) other += -n * 7 * (foe.boosts[k] <= -4 ? 0 : 1);
       }
     }
-    v *= threat > 0.6 ? 0.25 : threat > 0.35 ? 0.6 : 1;
-    if (hp < 0.5) v *= 0.5;
+    other *= threat > 0.6 ? 0.25 : threat > 0.35 ? 0.6 : 1;
+    if (hp < 0.5) other *= 0.5;
+    v += other;
   }
   if (fx.heal) {
     const miss = 1 - hp;

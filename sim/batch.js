@@ -9,8 +9,10 @@ import { guessBuilds, draftSide, predictionHit } from './draft.js';
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
 // How useful a move looks on paper for this character, to pick sensible movesets.
-function rateMove(data, e, l) {
+// duos: the battle has two on each side, so partner moves (Helping Hand, Follow Me, Wide Guard) are worth carrying.
+function rateMove(data, e, l, duos) {
   const m = data.moves.get(l.id), fx = m.fx;
+  if (fx.wideGuard || fx.followMe || fx.helpingHand) return duos ? 35 : 0.5;
   if (fx.duosOnly || fx.nothing) return 0.5;
   if (m.category === 'Status') {
     if (fx.boosts?.some(b => b.who === 'self' && Object.values(b.stats).some(v => v > 0))) return 55;
@@ -40,7 +42,7 @@ export function makeBuild(data, e, r, opts = {}) {
     while (picks.length < 4 && p.length) picks.push(p.splice(Math.floor(r() * p.length), 1)[0]);
   } else {
     // weighted picks: strong own-type attacks first, then coverage and one or two utility moves
-    const rated = pool.map(l => ({ l, v: rateMove(data, e, l), m: data.moves.get(l.id) }));
+    const rated = pool.map(l => ({ l, v: rateMove(data, e, l, opts.format === 'duos' || opts.format === 'comp'), m: data.moves.get(l.id) }));
     const types = new Set(), cats = { atk: 0, st: 0 };
     while (picks.length < 4 && rated.length) {
       const w = rated.map(x => {

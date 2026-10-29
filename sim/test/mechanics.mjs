@@ -87,6 +87,19 @@ ok(typeEff('Fire', ['Water']) === 0.5, 'Water resists Fire');
   ok(after >= 2, 'Spread move hits more than one target in duos', B.log.slice(t1, t1 + 8).join(' / '));
 }
 
+// Wide Guard: blocks a spread move for the whole side that turn, but not single-target moves.
+{
+  const u = data.entrants.find(e => e.final && e.learn.some(l => l.id === 'earthquake'));
+  const B = runBattle(data, [[build(u.key, ['earthquake']), build('saitama', ['splash'])], [build('giyu', ['wide-guard']), build('gojo', ['splash'])]], { rng: rng(9), log: true, format: 'duos', turnCap: 1 });
+  ok(logHas(B, /the guard blocks it/) && !B.log.some(l => /(Giyu|Gojo).* takes /.test(l)), 'Wide Guard blocks a spread move for both allies', B.log.join(' / '));
+}
+
+// Kaido's Strongest Creature: 0.75x damage only while at full Vitality.
+{
+  const k = data.entrants.find(e => e.cid === 'kaido').abilities.find(a => a.name === 'Strongest Creature').ab;
+  ok(k.def.some(w => w.mult === 0.75 && w.fullHp) && k.sturdy, 'Strongest Creature takes 0.75x only at full Vitality and keeps the Sturdy part');
+}
+
 // Trick Room: the slower side moves first while it is up.
 {
   const tr = data.entrants.find(e => e.final && e.learn.some(l => l.id === 'trick-room'));

@@ -189,6 +189,7 @@ export function compileMove(m) {
     if (/Can be used twice in a row/.test(s)) { if (fx.protect) fx.protect.repeat = true; hit(); }
     if (/survives any hit this turn/.test(s)) { fx.endure = true; hit(); }
     if (/Blocks quick \(priority\) moves aimed at the user's team/.test(s)) { fx.quickGuard = true; hit(); }
+    if (/[Bb]locks moves that hit more than one target aimed at the user's team/.test(s)) { fx.wideGuard = true; hit(); }
     if (/Duos: the ally's move this turn does 1.5x/.test(s)) { fx.helpingHand = true; hit(); }
     if (/foes' single-target moves hit the user this turn|foes' moves must target her/.test(s)) { fx.followMe = true; hit(); }
     if (/Duos: the user and its ally swap places/.test(s)) { fx.duosOnly = true; hit(); }
@@ -396,7 +397,8 @@ export function compileAbility(a) {
     }
     if ((mm = s.match(/^Super-effective hits do 0.75x to him, and his moves can't miss/))) { ab.def.push({ mult: 0.75, superEff: true }); ab.neverMiss = true; hit(); }
     if (/^Fire moves do 3\/4 damage to him/.test(s) || /and Fire moves do 3\/4 damage to him/.test(s)) { ab.def.push({ mult: 0.75, type: 'Fire' }); hit(); }
-    if (/(?:He|She|It) takes 0.75x damage/.test(s)) { ab.def.push({ mult: 0.75 }); if (/ally moves can't affect him/.test(s)) ab.loner = true; if (/at full Vitality/.test(s)) ab.sturdy = true; hit(); }
+    if (/^At full Vitality (?:he|she|it) takes 0.75x damage/.test(s)) { ab.def.push({ mult: 0.75, fullHp: true }); ab.sturdy = true; hit(); }
+    else if (/(?:He|She|It) takes 0.75x damage/.test(s)) { ab.def.push({ mult: 0.75 }); if (/ally moves can't affect him/.test(s)) ab.loner = true; if (/at full Vitality/.test(s)) ab.sturdy = true; hit(); }
     if (/He takes 1.25x damage, but his moves heal him 1\/4/.test(s)) { ab.def.push({ mult: 1.25 }); ab.drain = { frac: 0.25 }; hit(); }
     if (/^Below 1\/4 Vitality, she takes half damage/.test(s)) { ab.def.push({ mult: 0.5, lowHp: 0.25 }); hit(); }
     if (/Light moves do normal damage to her, never super effective/.test(s)) { ab.unweak = 'Light'; hit(); }

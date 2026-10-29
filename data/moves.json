@@ -2275,6 +2275,18 @@
       "effect": "Blocks quick (priority) moves aimed at the user's team this turn."
     },
     {
+      "id": "wide-guard",
+      "name": "Wide Guard",
+      "type": "Neutral",
+      "category": "Status",
+      "size": "status",
+      "power": null,
+      "accuracy": null,
+      "pp": 10,
+      "priority": 3,
+      "effect": "Duos: blocks moves that hit more than one target aimed at the user's team this turn."
+    },
+    {
       "id": "ally-switch",
       "name": "Ally Switch",
       "type": "Time",
