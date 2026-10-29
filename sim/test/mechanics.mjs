@@ -6,6 +6,7 @@ import { trainTeam, cleanStat } from '../builds.js';
 import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey } from '../batch.js';
 import { draftSide, guessBuilds } from '../draft.js';
 import { metaSummary } from '../meta.js';
+import { ARCHETYPES, archetypeById, roster, fits, forced, BRING } from '../archetypes.js';
 
 const root = new URL('../../', import.meta.url);
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', root))), JSON.parse(fs.readFileSync(new URL('data/moves.json', root))).moves);
@@ -245,6 +246,24 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(t.best[0].cores.some(c => c.keys.join('+') === 'a+b'), 'Best teams list the cores inside them');
   const pk = metaSummary(S, { byKey, minGames: 8, teams: [{ keys: ['b', 'c', 'd'], wr: 0.6, g: 20, pick: { g: 20, pick: { b: 20, c: 2, d: 18 }, lead: {}, pickW: {} } }] });
   ok(pk.cores[0].keys.join('+') === 'b+d' && pk.cores[0].inTeam?.team === 0 && pk.best[0].bench.join() === 'c', 'Cores a top team actually picks come first, and its rarely picked members are set apart', pk.cores[0]);
+}
+
+// Forced archetypes: every team a search builds brings the plan, its draft picks it and the setter opens.
+{
+  const bad = ARCHETYPES.filter(a => {
+    const R = roster(data, a, data.entrants), T = ladderTeams(data, { format: 'comp', draft: true, ladder: { archetype: a.id, fresh: 6, seed: 5 } });
+    return !T.length || !T.every(t => fits(t.map(e => e.key), R, BRING));
+  });
+  ok(!bad.length, 'Every archetype builds teams that bring its setter and abusers', bad.map(a => a.id));
+  const TR = roster(data, archetypeById('trickRoom'), data.entrants);
+  const f = forced(TR, 'doraemon'), b = makeBuild(data, ent('doraemon'), rng(3), { format: 'comp', movesets: 'smart', force: f });
+  ok(f.moves.includes('trick-room') && b.moves.some(l => l.id === 'trick-room'), 'A forced Trick Room setter always carries Trick Room', b.moves.map(l => l.id));
+  const S = runBatch(data, { format: 'comp', draft: true, count: 16, seed: 6, ladder: { archetype: 'trickRoom', fresh: 4, seed: 6 } });
+  const P = Object.entries(S.teamPick);
+  const sum = (o, keys) => keys.reduce((n, k) => n + (o[k] || 0), 0);
+  ok(P.length && P.every(([k, p]) => { const sk = k.split('+').filter(x => TR.setters.has(x)); return sum(p.pick, sk) >= p.g && sum(p.lead, sk) >= p.g; }), 'A forced team picks its setter and opens with it every game');
+  ok(P.every(([k, p]) => k.split('+').filter(x => TR.abusers.has(x)).reduce((n, x) => n + (p.pick[x] || 0), 0) >= 2 * p.g), 'A forced team picks at least 2 of its abusers every game');
+  ok(S.move['trick-room']?.uses > 0, 'Forced Trick Room teams set Trick Room up');
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }

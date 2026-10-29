@@ -3,6 +3,7 @@ import { prepare } from './battle.js';
 import { runBatch, watchBattle } from './batch.js';
 import { RULES, ITEMS, NATURES, natureName, TYPES, TRAINING } from './rules.js';
 import { PRESETS } from './builds.js';
+import { ARCHETYPES } from './archetypes.js';
 
 let data = null;
 
@@ -20,6 +21,7 @@ self.onmessage = ({ data: msg }) => {
         unsupported,
         items: ITEMS, types: TYPES, training: TRAINING, presets: Object.fromEntries(Object.entries(PRESETS).map(([k, v]) => [k, v.name])),
         natures: NATURES.map(n => ({ id: n, name: natureName(n) })),
+        archetypes: ARCHETYPES.map(a => ({ id: a.id, name: a.name, note: a.note })),
       });
     }
     if (msg.cmd === 'run') {

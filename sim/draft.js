@@ -193,7 +193,15 @@ export function draftSide(data, mine, theirSeen, opts, r) {
   const SA = synOf(mine, rm), SB = synOf(theirs, rt);
   const sa = SA.map(row => row.map(x => x.v)), sb = SB.map(row => row.map(x => x.v));
   const all = n => Array.from({ length: n }, (_, i) => i);
-  const myTeams = sixes(mine.map(b => b.e), size, cap), theirTeams = sixes(theirs.map(b => b.e), size, cap);
+  let myTeams = sixes(mine.map(b => b.e), size, cap);
+  const theirTeams = sixes(theirs.map(b => b.e), size, cap);
+  // opts.must: a forced archetype's members (indices) and how many of them the 6 must hold
+  if (opts.must) {
+    const { setters, abusers, need } = opts.must;
+    const ok = t => { const s = t.filter(i => setters.includes(i)), a = t.filter(i => abusers.includes(i)); return s.length >= need.setters && a.length >= need.abusers && new Set([...s, ...a]).size >= need.setters + need.abusers; };
+    const kept = myTeams.filter(ok);
+    if (kept.length) myTeams = kept;
+  }
 
   // level 1: what each side looks best with against the other's whole bring
   const P1 = softmax(theirTeams.map(t => teamScore(MB, t, all(mine.length), null, sb)), KEEP);
@@ -238,8 +246,11 @@ export function draftSide(data, mine, theirSeen, opts, r) {
   };
   const leadGuess = P.slice(0, 6).map(x => ({ p: x.p, leads: theirLeads(theirTeams[x.i]), team: theirTeams[x.i] }));
   let lead = null, lv = -9;
+  // a forced archetype opens with its setter, so the plan is up from turn 1
+  const setterIn = opts.must && six.some(i => opts.must.setters.includes(i));
   for (let i = 0; i < six.length; i++) for (let j = i + 1; j < six.length; j++) {
     const pair = [six[i], six[j]];
+    if (setterIn && !pair.some(x => opts.must.setters.includes(x))) continue;
     let v = leadBonus(rm[six[i]]) + leadBonus(rm[six[j]]) + 0.3 * sa[six[i]][six[j]];
     for (const g of leadGuess) v += g.p * (0.6 * teamScore(MA, pair, g.leads, null, sa) + 0.4 * teamScore(MA, pair, g.team, null, sa));
     if (v > lv) { lv = v; lead = pair; }

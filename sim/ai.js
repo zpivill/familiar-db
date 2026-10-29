@@ -2,6 +2,8 @@
 // heuristics, plus a little noise so the same matchup doesn't always play out the same way.
 // Both sides use the same AI with full knowledge, so differences in results come from the characters.
 
+import { archetypeById } from './archetypes.js';
+
 const STATS = ['pow', 'grd', 'ene', 'wil', 'spe'];
 const NOISE = 0.3;
 
@@ -106,6 +108,10 @@ function duosSupportValue(B, api, u, mv, foes) {
     }
   }
   if (fx.followMe && ally) {
+    // redirection + setup: draw the hits while the ally boosts
+    const allySetup = ally.moves.some(x => x.pp > 0 && x.m.cat === 'Status' && x.m.fx.boosts?.some(b => b.who === 'self' && Object.values(b.stats).some(n => n >= 2)));
+    const main = ally.raw.pow >= ally.raw.ene ? 'pow' : 'ene';
+    if (allySetup && (ally.boosts[main] || 0) < 2) v += 35;
     const allyRisk = Math.max(...foes.map(f => bestHit(api, f, ally) / left(ally))), myRisk = Math.max(...foes.map(f => bestHit(api, f, u) / left(u)));
     if (allyRisk >= 1 && myRisk < 1) v += 45;
   }
@@ -291,6 +297,12 @@ function duosTargetBonus(api, u, mv, t, info) {
   return info.threat + (info.ally && d < left && d + info.ally >= left ? 15 : 0);
 }
 
+// A side forced to play an archetype (side.plan, from a meta chain's archetype round) puts its plan up first.
+function planBonus(B, m, mv) {
+  const plan = m.side.plan && archetypeById(m.side.plan)?.plan;
+  return plan && plan(mv.m.fx, B, m.side) ? 45 : 0;
+}
+
 export function chooseAction(B, m, api) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
@@ -305,7 +317,7 @@ export function chooseAction(B, m, api) {
   const consider = (act, score) => { const s = score * (1 - NOISE / 2 + r() * NOISE) + r(); if (s > best.score) best = { ...act, score: s }; };
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
-    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0));
+    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0) + planBonus(B, m, mv));
     const fx = mv.m.fx;
     if (B.duos && (fx.spread || api.abOf(m).spreadType === mv.m.type)) {
       let v = 0;
