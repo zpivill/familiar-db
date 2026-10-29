@@ -4,6 +4,7 @@ import { prepare, runBattle, rng } from '../battle.js';
 import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
 import { makeBuild, runBatch, watchBattle } from '../batch.js';
+import { draftSide, guessBuilds } from '../draft.js';
 
 const root = new URL('../../', import.meta.url);
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', root))), JSON.parse(fs.readFileSync(new URL('data/moves.json', root))).moves);
@@ -168,6 +169,29 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(picked, 'Builds scaled to Lv50 still pick moves learned after Lv50');
   const cap = runBattle(data, [[build('saitama', ['splash'])], [build('saitama', ['splash'])]], { rng: rng(1), turnCap: 50 });
   ok(cap.winner === -1 && cap.turn === 51, 'A battle still going at the turn limit is a draw', String(cap.turn));
+}
+
+// ---- the draft ----
+{
+  const LEG = e => ['legendary', 'mythical'].includes(e.rarity);
+  const fin = data.entrants.filter(e => e.final && e.sig);
+  const legs = fin.filter(LEG), regs = fin.filter(e => !LEG(e));
+  const r = rng(31);
+  const bring = ents => trainTeam(data, ents.map(e => makeBuild(data, e, r, { level: 50, learnLevel: 100 })), r, { training: 'ai', items: 'ai' });
+  const mine = bring([...legs.slice(0, 2), ...regs.slice(0, 8)]);
+  const fiveLeg = [...legs.slice(2, 7), ...regs.slice(8, 13)];
+  const theirs = guessBuilds(data, fiveLeg, makeBuild, { level: 50, learnLevel: 100 });
+  const d = draftSide(data, mine, theirs, { level: 50, pickLegendCap: 1 }, rng(2));
+  ok(d.order.length === 6 && new Set(d.order).size === 6 && d.order.every(i => i >= 0 && i < 10), 'The draft picks 6 different characters from the 10');
+  ok(d.order.filter(i => LEG(mine[i].e)).length <= 1, 'The draft picks at most 1 legendary or mythical');
+  ok(d.predicted.length && d.predicted.every(x => [5, 6, 7, 8, 9].every(i => x.team.includes(i))), 'Against 5 legendaries, every predicted 6 holds all 5 of their others');
+  ok(['Reading their 10', 'Prediction', 'My 6'].every(h => d.log.some(l => l.includes(h))) && d.log.some(l => /certain picks/.test(l)), 'The reasoning log explains the read, the prediction and the picks', d.log[0]);
+  const S = runBatch(data, { format: 'comp', draft: true, count: 12, seed: 8 });
+  ok(S.draft.g === S.battles * 2 && Object.values(S.bring).reduce((n, b) => n + b.b, 0) === S.battles * 20, 'Draft runs record every brought character and both predictions');
+  const w8 = watchBattle(data, { format: 'comp', draft: true, bring: 8, seed: 3 });
+  ok(w8.drafts.every(x => x.bring.length === 8) && w8.teams.every(t => t.length === 6), 'Bring 8, pick 6 works');
+  const w = watchBattle(data, { format: 'comp', draft: true, seed: 5 });
+  ok(w.drafts.every(x => x.bring.filter(b => LEG(b)).length <= 5), 'A brought 10 holds at most 5 legendaries or mythicals');
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }

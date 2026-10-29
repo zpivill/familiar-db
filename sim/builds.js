@@ -16,7 +16,7 @@ export const PRESETS = {
 };
 
 // What a build's moves and ability say about its job.
-function kit(data, b) {
+export function kit(data, b) {
   const ms = b.moves.map(l => data.moves.get(l.id)).filter(Boolean);
   const st = b.e.stats;
   const phys = ms.filter(m => m.category === 'Physical'), ene = ms.filter(m => m.category === 'Energy');
