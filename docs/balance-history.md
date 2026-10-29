@@ -159,6 +159,6 @@ Step 1 (this PR): team search moved to sim/search.js, meta chains from the termi
 - Top-12 meta characters shared between two runs: 4.3 of 12 on average.
 - Rank correlation of win rate when picked (characters with 200+ picks): 0.48.
 - Archetype win rate across the three runs. Only Snow (46 / 46 / 49%), Screens + setup (51 / 52 / 54%) and Spread (40 / 39 / 35%) held within 6 points. Trick Room (26 / 54 / 35%), Redirection + setup (47 / 21 / 39%), Fire field (32 / 56 / 40%) and Tailwind (43 / 28 / 49%) swung 20+ points. Largest spread 28 points.
-- What repeated in all three: Devil Union Asta was in 15 of the 18 meta teams and Six Paths Sage Naruto in 14; Final Arc Gintoki, Hero of Hell Chainsaw Man and Pain were in most.
+- What repeated in all three: Devil Union Asta was in 16 of the 18 meta teams and Six Paths Sage Naruto in 15. Next came Final Arc Gintoki (11), Hero of Hell Chainsaw Man (9, none in run 1) and Pain (8, 6 of them in run 3).
 
 Targets for later steps: overlap 9 of 12, correlation 0.8, archetype spread under 6 points.
