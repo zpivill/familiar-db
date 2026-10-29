@@ -53,6 +53,10 @@ export const RULES = {
   ownTypeStatusImmune: true,  // Fire can't be Burned, Ice can't be Frozen, Lightning can't be Stunned, Blood can't Bleed
 };
 
+// The competitive format: 6 a side in doubles at Lv50, AI-trained builds with held items, and a battle
+// still going after 50 turns is a draw that counts as a non-win for both sides (so stalling gains nothing).
+export const COMPETITIVE = { teamSize: 6, level: 50, turnCap: 50, drawScore: 0, legendCap: 1 };  // legendCap: legendaries + mythicals per team
+
 // Training for the competitive format (and any run with "AI-trained" builds).
 // EV points: each point adds level / 50 to that stat (+1 at Lv50, +2 at Lv100).
 // A nature raises one stat other than Vitality by 10% and lowers another by 10%, or changes nothing.

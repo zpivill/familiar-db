@@ -3,7 +3,7 @@ import fs from 'fs';
 import { prepare, runBattle, rng } from '../battle.js';
 import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
-import { makeBuild } from '../batch.js';
+import { makeBuild, runBatch, watchBattle } from '../batch.js';
 
 const root = new URL('../../', import.meta.url);
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', root))), JSON.parse(fs.readFileSync(new URL('data/moves.json', root))).moves);
@@ -150,6 +150,24 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(new Set(team.map(b => b.item)).size === team.length && team.every(b => b.item), 'AI items: one each, no repeats on a team', team.map(b => b.item).join(', '));
   const ov = trainTeam(data, [makeBuild(data, team[0].e, r, { level: 50 })], r, { training: 'ai', items: 'ai', overrides: { [team[0].e.key]: { nature: 'grd-spe', item: 'bento-box' } } });
   ok(ov[0].nature === 'grd-spe' && ov[0].item === 'bento-box', 'Page overrides replace the AI pick');
+}
+
+// ---- competitive doubles ----
+{
+  const w = watchBattle(data, { format: 'comp', seed: 21 });
+  const legends = seed => watchBattle(data, { format: 'comp', seed }).teams.map(t => t.filter(m => ['legendary', 'mythical'].includes(data.entrants.find(e => e.key === m.key).rarity)).length);
+  ok([21, 22, 23, 24, 25].every(sd => legends(sd).every(n => n <= 1)), 'Competitive teams have at most 1 legendary or mythical');
+  ok(w.teams.every(t => t.length === 6 && t.every(m => m.item && m.nature)), 'Competitive doubles: 6 a side, every character trained and holding an item');
+  ok(w.turns <= 51, 'Competitive doubles ends by turn 50', String(w.turns));
+  const S = runBatch(data, { format: 'comp', count: 30, seed: 4 });
+  const games = Object.values(S.ent).reduce((n, e) => n + e.g, 0), wins = Object.values(S.ent).reduce((n, e) => n + e.w, 0);
+  ok(games === S.battles * 12 && Math.abs(wins - (S.battles - S.draws) * 6) < 1e-9, 'A competitive draw counts as a non-win for both sides');
+  const late = data.entrants.find(e => e.final && e.sig && e.learn.some(l => l.lv > 50));
+  const lateIds = new Set(late.learn.filter(l => l.lv > 50).map(l => l.id)), r2 = rng(3);
+  const picked = Array.from({ length: 60 }, () => makeBuild(data, late, r2, { level: 50, learnLevel: 100, movesets: 'random' })).some(b => b.moves.some(l => lateIds.has(l.id)));
+  ok(picked, 'Builds scaled to Lv50 still pick moves learned after Lv50');
+  const cap = runBattle(data, [[build('saitama', ['splash'])], [build('saitama', ['splash'])]], { rng: rng(1), turnCap: 50 });
+  ok(cap.winner === -1 && cap.turn === 51, 'A battle still going at the turn limit is a draw', String(cap.turn));
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }

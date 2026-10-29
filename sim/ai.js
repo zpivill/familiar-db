@@ -48,6 +48,13 @@ function matchup(api, m, f) {
   return deal - take + faster;
 }
 
+// Speed of a side for speed control: the characters on the field, plus a lighter weight for the back.
+function sideSpeed(B, api, side) {
+  const on = api.actives(side), back = api.bench(side);
+  const avg = xs => xs.length ? xs.reduce((n, x) => n + x, 0) / xs.length : 0;
+  return on.length ? avg(on.map(m => api.speed(m))) * 0.7 + (back.length ? avg(back.map(m => m.raw.spe)) : avg(on.map(m => api.speed(m)))) * 0.3 : 0;
+}
+
 function statusValue(B, api, u, mv, foes) {
   const fx = mv.m.fx, a = api.abOf(u);
   const foe = foes[0];
@@ -93,10 +100,12 @@ function statusValue(B, api, u, mv, foes) {
     v += set || left < 2 ? 0 : 12 + 6 * left;
   }
   if (fx.screen) v += u.side.screens[fx.screen] ? 0 : 20;
-  if (fx.tailwind) v += u.side.tailwind ? 0 : api.speed(u) < api.speed(foe) ? 28 : 8;
+  // speed control: in duos it's worth what it does for the whole side, not just the user
+  const mySpd = B.duos ? sideSpeed(B, api, u.side) : api.speed(u), foeSpd = B.duos ? sideSpeed(B, api, foe.side) : api.speed(foe);
+  if (fx.tailwind) v += u.side.tailwind ? 0 : mySpd < foeSpd ? (B.duos ? 34 : 28) : 8;
   if (fx.field) {
     const f = fx.field, cur = B.field;
-    if (f.trickRoom) v += cur?.trickRoom ? -20 : api.speed(u) < api.speed(foe) ? 32 : -10;
+    if (f.trickRoom) v += cur?.trickRoom ? (mySpd > foeSpd ? 25 : -20) : mySpd < foeSpd ? (B.duos ? 38 : 32) : -10;
     else if (f.boostType) v += cur?.boostType === f.boostType ? 0 : u.moves.some(x => x.m.type === f.boostType && x.m.cat !== 'Status') ? 22 : 4;
     else if (f.foeSlow) v += cur?.foeSlow ? 0 : api.speed(u) < api.speed(foe) ? 26 : 6;
     else if (f.gravity) v += cur?.gravity ? 0 : a.atk.some(w => w.gravity) ? 35 : 5;
@@ -109,6 +118,13 @@ function statusValue(B, api, u, mv, foes) {
     if (a.endTurn.some(o => o.op === 'heal')) v += 6;
     if (u.vol.countdown) v += 0;
     if (fx.heal) v += (1 - hp) * 40;
+    // duos: both foes can hit it hard this turn, or the ally can land a knockout while it waits
+    if (B.duos && !((u.vol.protectChain || 0) && !fx.protect.repeat && !a.protectAlways)) {
+      const incoming = foes.reduce((n, f) => n + bestHit(api, f, u) * u.maxhp / Math.max(1, u.hp), 0);
+      if (incoming >= 1 && threat < 1) v += 16;
+      const al = api.allyOf(u);
+      if (al && foes.some(f => bestHit(api, al, f) * f.maxhp >= f.hp)) v += 5;
+    }
   }
   if (fx.endure) v += hp > 0.9 ? 2 : 4;
   if (fx.substitute) v += !u.vol.sub && hp > 0.55 ? (threat > 0.5 ? 4 : 18) : -10;
@@ -177,6 +193,20 @@ function attackValue(B, api, u, mv, t, foesN) {
   return v;
 }
 
+// Duos targeting: lean toward the foe that threatens this side most, and toward a knockout the ally
+// can finish this turn. Worked out once per foe, since it doesn't depend on the move.
+function duosTargets(api, u, foes) {
+  const mine = api.actives(u.side), al = api.allyOf(u);
+  return new Map(foes.map(t => [t, {
+    threat: Math.min(1.2, Math.max(...mine.map(x => bestHit(api, t, x) * x.maxhp / Math.max(1, x.hp)))) * 12,
+    ally: al ? bestHit(api, al, t) : 0,
+  }]));
+}
+function duosTargetBonus(api, u, mv, t, info) {
+  const left = t.hp / t.maxhp, d = estDamage(api, u, mv, t);
+  return info.threat + (info.ally && d < left && d + info.ally >= left ? 15 : 0);
+}
+
 export function chooseAction(B, m, api) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
@@ -187,6 +217,7 @@ export function chooseAction(B, m, api) {
   }
   const foes = api.foesOf(m);
   let best = { type: 'move', slot: 0, target: foes[0], score: -1e9 };
+  let tInfo = null;
   const consider = (act, score) => { const s = score * (1 - NOISE / 2 + r() * NOISE) + r(); if (s > best.score) best = { ...act, score: s }; };
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
@@ -198,7 +229,11 @@ export function chooseAction(B, m, api) {
       if (fx.spread === 'all') { const al = api.allyOf(m); if (al && !al.fainted) v -= estDamage(api, m, mv, al) * 120; }
       return consider({ type: 'move', slot: i, target: foes[0] }, v);
     }
-    for (const f of foes) consider({ type: 'move', slot: i, target: f }, attackValue(B, api, m, mv, f, foes.length));
+    for (const f of foes) {
+      let v = attackValue(B, api, m, mv, f, foes.length);
+      if (B.duos && v > 0) v += duosTargetBonus(api, m, mv, f, (tInfo || (tInfo = duosTargets(api, m, foes))).get(f));
+      consider({ type: 'move', slot: i, target: f }, v);
+    }
   });
   if (best.score < -1e8) {
     // nothing usable: use whatever still has PP, or the first move

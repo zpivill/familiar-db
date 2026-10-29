@@ -73,6 +73,7 @@ function makeMon(data, e, build, level) {
 // opts.decide(kind, B, mon or side, options, extra) lets a player make a side's choices instead of the AI:
 // kind 'action' returns { type: 'move', slot, target } or { type: 'switch', to }, kind 'replace' returns the
 // character to bring in. Returning nothing leaves the choice to the AI. The Battle vs AI page uses it.
+// opts.turnCap overrides RULES.turnCap (the competitive format draws at 50 turns).
 export function runBattle(data, teams, opts = {}) {
   const r = opts.rng || rng(opts.seed || 1);
   const level = opts.level || RULES.level;
@@ -1122,7 +1123,7 @@ export function runBattle(data, teams, opts = {}) {
 
   while (!B.over) {
     B.turn++;
-    if (B.turn > RULES.turnCap) { B.over = true; B.winner = -1; break; }
+    if (B.turn > (opts.turnCap || RULES.turnCap)) { B.over = true; B.winner = -1; break; }
     const acts = [];
     for (const s of B.sides) for (const m of actives(s)) if (held(m, 'calm-incense') && (m.vol.taunt > 0 || m.vol.encore)) {
       useItem(m, 'calms down with its Calm Incense'); m.vol.taunt = 0; m.vol.encore = null;
