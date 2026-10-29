@@ -335,6 +335,12 @@
             "as": "Glacier"
           },
           {
+            "lv": 30,
+            "move": "wide-guard",
+            "as": "Ice Wall",
+            "why": "Team tool: throws up a wall of ice to shield his classmates, as against the Nomu and Stain in Hosu."
+          },
+          {
             "lv": 32,
             "move": "flamethrower",
             "as": "Flashfire"
@@ -1413,6 +1419,12 @@
             "lv": 38,
             "move": "swords-dance",
             "as": "Total Concentration"
+          },
+          {
+            "lv": 41,
+            "move": "wide-guard",
+            "as": "Eleventh Form: Dead Calm",
+            "why": "Team tool: his own Water Breathing form that cuts down every attack inside his reach, from the fight with Rui."
           },
           {
             "lv": 45,
@@ -4142,6 +4154,12 @@
             "lv": 26,
             "move": "air-slash",
             "as": "Fourth Form: Rising Dust Storm"
+          },
+          {
+            "lv": 26,
+            "move": "follow-me",
+            "as": "Marechi Scent",
+            "why": "Team tool: his rare Marechi blood draws demons to him and leaves them drunk."
           },
           {
             "lv": 32,
@@ -7859,6 +7877,12 @@
             "as": "Exorcism Salt"
           },
           {
+            "lv": 30,
+            "move": "wide-guard",
+            "as": "Barrier Dome",
+            "why": "Team tool: spreads his psychic barrier over everyone behind him, as when he shields the others from Claw."
+          },
+          {
             "lv": 33,
             "move": "curse",
             "as": "Spirit Seal"
@@ -8626,6 +8650,12 @@
             "as": "Snipe"
           },
           {
+            "lv": 12,
+            "move": "fake-out",
+            "as": "Create Earth + Wind Breath",
+            "why": "Team tool: his sand-in-the-eyes combo, Create Earth blown into a foe's face with Wind Breath."
+          },
+          {
             "lv": 14,
             "move": "water-gun",
             "as": "Create Water",
@@ -9295,6 +9325,12 @@
             "move": "taunt",
             "as": "Leader of Toman",
             "why": "Off-type (Dark): he bluffs his way into leading a gang."
+          },
+          {
+            "lv": 30,
+            "move": "follow-me",
+            "as": "Stand in the Way",
+            "why": "Team tool: he never runs and steps in front of his friends to take the hits meant for them."
           },
           {
             "lv": 34,
@@ -20250,7 +20286,7 @@
     "abilities": [
       {
         "name": "Strongest Creature",
-        "text": "He takes 0.75x damage, and at full Vitality a hit that would knock him out leaves him at 1.",
+        "text": "At full Vitality he takes 0.75x damage, and a hit that would knock him out leaves him at 1.",
         "like": "Multiscale + Sturdy"
       },
       {

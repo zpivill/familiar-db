@@ -536,6 +536,7 @@ export function runBattle(data, teams, opts = {}) {
     if (w.contact && !mv.flags.contact) return false;
     if (w.superEff && !(eff > 1)) return false;
     if (w.lowHp && pct(t) >= w.lowHp) return false;
+    if (w.fullHp && t.hp < t.maxhp) return false;
     return true;
   }
 
@@ -695,6 +696,7 @@ export function runBattle(data, teams, opts = {}) {
       return false;
     }
     if (prio && t.side.quickGuard === B.turn) { say('quick guard blocks it'); return false; }
+    if (nTargets > 1 && t.side !== u.side && t.side.wideGuard === B.turn) { say('the guard blocks it for', nm(t)); return false; }
     if (prio && B.field?.noPriority && t.side !== u.side) { say('the field blocks quick moves'); return false; }
     if (prio && t.side !== u.side && ta.block.has('priority')) { say(nm(t), 'senses it'); return false; }
     if (prio && t.side !== u.side && ta.priorityDodgeOnce && !t.once.pdodge) { t.once.pdodge = true; say(nm(t), 'dodges'); return false; }
@@ -936,6 +938,7 @@ export function runBattle(data, teams, opts = {}) {
       u.vol.endure = B.turn; u.vol.protectChain = chain + 1; return;
     }
     if (fx.quickGuard) { u.side.quickGuard = B.turn; return; }
+    if (fx.wideGuard) { u.side.wideGuard = B.turn; return; }
     if (fx.followMe) u.vol.followMe = B.turn;
     if (fx.helpingHand) { const al = allyOf(u); if (al) al.vol.helped = true; }
     if (fx.substitute) {
