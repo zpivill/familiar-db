@@ -48,9 +48,10 @@ function simMessage(msg, i, onReady) {
   if (msg.type === 'error') { SIM.error = msg.message; SIM.running = false; SIM.resolve = null; simDraw(); }
 }
 
-const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 } });
+const simEmpty = () => ({ battles: 0, draws: 0, turns: 0, turnHist: {}, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 } });
 function simMerge(T, S) {
   T.battles += S.battles; T.draws += S.draws; T.turns += S.turns;
+  for (const [t, n] of Object.entries(S.turnHist || {})) T.turnHist[t] = (T.turnHist[t] || 0) + n;
   if (S.draft) for (const f of ['g', 'overlap', 'exact']) T.draft[f] += S.draft[f];
   for (const k of ['ent', 'abil', 'move', 'moveBy', 'combo', 'pairs', 'vs', 'item', 'nature', 'bring', 'core', 'leadPair', 'vsChar']) for (const [key, v] of Object.entries(S[k] || {})) {
     const t = T[k][key] || (T[k][key] = {});
@@ -64,13 +65,19 @@ const simAddWins = (T, S) => { for (const [k, v] of Object.entries(S || {})) { c
 function simMergeTeams(T, S) {
   if (!T) return;
   simAddWins(T.full, S.full); simAddWins(T.h2h, S.h2h);
+  for (const [k, P] of Object.entries(S.teamPick || {})) {
+    const t = T.pick[k] || (T.pick[k] = { g: 0, w: 0, turns: 0, pick: {}, lead: {}, pickW: {} });
+    t.g += P.g; t.w += P.w; t.turns += P.turns;
+    for (const f of ['pick', 'lead', 'pickW']) for (const [x, v] of Object.entries(P[f])) t[f][x] = (t[f][x] || 0) + v;
+  }
   for (const [k, D] of Object.entries(S.detail || {})) {
     const t = T.detail[k] || (T.detail[k] = { g: 0, w: 0, winTurns: 0, kos: {}, dmg: {}, use: {} });
     t.g += D.g; t.w += D.w; t.winTurns += D.winTurns;
     for (const f of ['kos', 'dmg', 'use']) for (const [x, v] of Object.entries(D[f])) t[f][x] = (t[f][x] || 0) + v;
   }
 }
-function simMergeDetail(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: T }, { detail: S }); return T; }
+function simMergeDetail(T, S) { simMergeTeams({ full: {}, h2h: {}, pick: {}, detail: T }, { detail: S }); return T; }
+function simMergePick(T, S) { simMergeTeams({ full: {}, h2h: {}, detail: {}, pick: T }, { teamPick: S }); return T; }
 
 const simRules = () => ({ level: +SIM.opts.level, hpScale: +SIM.opts.hpScale });
 // Training and items options sent with every run: AI picks plus the overrides from the Builds tab.
@@ -82,7 +89,7 @@ const simBuildOpts = o => ({ training: o.training === 'ai' ? 'ai' : 'none', item
 function simSend(total, ladder, ladderSize) {
   const o = SIM.lastOpts, n = SIM.workers.length;
   const seed = Math.floor(Math.random() * 1e9);
-  SIM.runId++; SIM.left = n; SIM.batch = { full: {}, h2h: {}, detail: {} };
+  SIM.runId++; SIM.left = n; SIM.batch = { full: {}, h2h: {}, detail: {}, pick: {} };
   const done = new Promise(res => { SIM.resolve = res; });
   SIM.workers.forEach((w, i) => {
     const count = Math.floor(total / n) + (i < total % n ? 1 : 0);
@@ -123,7 +130,7 @@ async function simSearch(total, field, start, ban) {
     if (last) { ladder = { top: prev.slice(0, SIM_FINAL_TEAMS).map(r => r.keys), detail: true, seed, ...vs }; size = ladder.top.length; }
     else {
       const pop = Math.max(30, Math.min(160, Math.round(battles * 2 / 80))), keep = Math.round(pop / 5);
-      ladder = { top: prev.slice(0, keep).map(r => r.keys), variants: 2, crosses: keep, fresh: keep, weights, seed, ...vs };
+      ladder = { top: prev.slice(0, keep).map(r => r.keys), variants: 2, crosses: keep, fresh: keep, weights, seed, picks: simPickRates(res.pick, prev.slice(0, keep)), ...vs };
       size = keep * 5;
     }
     for (const t of ladder.top) for (const k of t) SIM.kept[k] = (SIM.kept[k] || 0) + 1;
@@ -131,7 +138,13 @@ async function simSearch(total, field, start, ban) {
     res = await simSend(battles, ladder, size);
   }
   SIM.gen = SIM.plan.length - 1;
-  return { rows: simRows(res.full), detail: res.detail };
+  return { rows: simRows(res.full), detail: res.detail, pick: res.pick };
+}
+// How often the draft picked each member of these teams, as team key -> { member: share of games }.
+function simPickRates(pick, rows) {
+  const out = {};
+  for (const r of rows) { const P = pick?.[r.k]; if (P?.g) out[r.k] = Object.fromEntries(r.keys.map(x => [x, (P.pick[x] || 0) / P.g])); }
+  return out;
 }
 
 // Meta chain: find the strongest team, then the best counter to it, then the best counter to that one, and so on.
@@ -146,7 +159,7 @@ async function simMetaChain(total) {
   C.round = 0;
   let res = await simSearch(firstBudget);
   if (!res || id !== SIM.jobId) return;
-  C.teams.push({ keys: res.rows[0].keys, wr: res.rows[0].wr, g: res.rows[0].g, vsField: 'the strongest teams found' });
+  C.teams.push({ keys: res.rows[0].keys, wr: res.rows[0].wr, g: res.rows[0].g, vsField: 'the strongest teams found', pick: res.pick?.[res.rows[0].k] });
   simMergeDetail(C.detail, res.detail);
   for (let k = 1; k <= rounds; k++) {
     C.round = k;
@@ -163,7 +176,7 @@ async function simMetaChain(total) {
     res = await simSearch(each, { vs: C.teams.map(t => t.keys), weights }, start, ban);
     if (!res || id !== SIM.jobId) return;
     const best = res.rows.find(r => !prevKeys.includes(r.k)) || res.rows[0];
-    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g, banned: ban });
+    C.teams.push({ keys: best.keys, wr: best.wr, g: best.g, banned: ban, pick: res.pick?.[best.k] });
     simMergeDetail(C.detail, res.detail);
   }
   C.round = rounds + 1; C.matrix = true;
@@ -171,6 +184,7 @@ async function simMetaChain(total) {
   res = await simSend(SIM.target - SIM.done, { top: C.teams.map(t => t.keys), h2h: true, detail: true, seed: Math.floor(Math.random() * 1e9) }, C.teams.length);
   if (id !== SIM.jobId) return;
   simAddWins(C.h2h, res.h2h); simMergeDetail(C.detail, res.detail);
+  for (const t of C.teams) { const P = res.pick?.[t.keys.join('+')]; if (P?.g) t.pick = P; }
 }
 
 async function simRun() {
@@ -264,21 +278,43 @@ function simOverview() {
   rows.forEach(r => { const x = r.e.types?.length > 1 ? dual : mono; x.g += r.g; x.w += r.w; });
   const stat = (n, l) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`;
   const list = rs => `<ol class="simlist">${rs.map(r => `<li>${entLink(r.k)} <span class="hint">${rarityName(r.e.rarity)}</span> <b>${pctf(r.wr)}</b></li>`).join('')}</ol>`;
-  const avgTurns = S.turns / S.battles;
+  const avgTurns = S.turns / S.battles, len = simTurnStats(S);
   const flags = [];
   if (avgTurns < 3 && o.format === 'duel') flags.push(`One on one battles last ${num1(avgTurns)} turns on average, so most fights are decided by one or two hits. Setup, status and healing moves barely get a chance. Try Vitality ×1.5 or ×2 in the settings to see how longer fights change things.`);
+  if (len && o.format !== 'duel' && len.p90 <= 10) flags.push(`Nine in ten battles end by turn ${len.p90} (middle 80%: turns ${len.p10} to ${len.p90}), so almost every game is a short race. Supports, setup and speed control have little time to pay off.`);
   if (sigD / allD > 0.4) flags.push(`Signature moves deal ${pctf(sigD / allD)} of all damage and land ${pctf(sigK / allK)} of knockouts. They are always equipped, so a strong signature lifts a character a lot.`);
   const top = rows[0], bottom = rows.at(-1);
   if (top && top.wr > 0.85) flags.push(`${esc(top.e.name)} wins ${pctf(top.wr)} of its battles.`);
   if (o.format === 'duel' && S.faster.g) flags.push(`The faster character wins ${pctf(S.faster.w / S.faster.g)} of one on one battles.`);
   const tiers = RARITY.map(([k, l]) => tierRows[k] ? `<div><span>${l}</span><em style="--t:var(--accent);width:${tierRows[k].w / tierRows[k].g * 100}%"></em><span>${pctf(tierRows[k].w / tierRows[k].g)}</span></div>` : '').join('');
-  return `<div class="stats">${stat(S.battles.toLocaleString(), 'battles')}${stat(num1(avgTurns), 'turns on average')}${stat(pctf(S.draws / S.battles, 1), 'draws')}
+  return `<div class="stats">${stat(S.battles.toLocaleString(), 'battles')}${stat(num1(avgTurns), 'turns on average')}${len ? stat(num1(len.sd), 'turns spread (std)') : ''}${stat(pctf(S.draws / S.battles, 1), 'draws')}
       ${stat(pctf(sigD / allD), 'of damage from signatures')}${stat(pctf(mono.w / mono.g), 'mono-type win rate')}${stat(pctf(dual.w / dual.g), 'dual-type win rate')}</div>
     ${flags.length ? `<h3>What stands out</h3><ul class="simflags">${flags.map(f => `<li>${f}</li>`).join('')}</ul>` : ''}
     <div class="simcols"><section><h3>Strongest</h3>${list(rows.slice(0, 10))}</section><section><h3>Weakest</h3>${list(rows.slice(-10).reverse())}</section></div>
+    ${len ? simTurnBars(len) : ''}
     <h3>Win rate by tier</h3><p class="hint">${o.sameTier ? 'Battles were within one tier, so every tier sits near 50% and this shows nothing.' : 'Battles mix tiers, so later tiers should win more. Turn on "Same tier only" to compare characters with their own tier.'}</p>
     <div class="bars simbars">${tiers}</div>
     <p class="hint">Characters with fewer than ${minGames()} battles are left out of the lists. ± is the 95% margin: two win rates closer than that may just be luck.</p>`;
+}
+
+// Battle length from the turn counts: average, spread and the share of battles ending on each turn.
+function simTurnStats(S) {
+  const H = Object.entries(S.turnHist || {}).map(([t, n]) => [+t, n]).sort((a, b) => a[0] - b[0]);
+  const N = H.reduce((s, x) => s + x[1], 0);
+  if (!N) return null;
+  const mean = H.reduce((s, [t, n]) => s + t * n, 0) / N;
+  const q = p => { let c = 0; for (const [t, n] of H) if ((c += n) >= p * N) return t; return H.at(-1)[0]; };
+  return { H, N, mean, sd: Math.sqrt(H.reduce((s, [t, n]) => s + n * (t - mean) ** 2, 0) / N), p10: q(0.1), median: q(0.5), p90: q(0.9) };
+}
+function simTurnBars(L) {
+  const buckets = [];
+  const add = (label, lo, hi) => { const n = L.H.filter(([t]) => t >= lo && t <= hi).reduce((s, x) => s + x[1], 0); if (n) buckets.push([label, n / L.N]); };
+  add('1-3', 1, 3);
+  for (let t = 4; t <= 15; t++) add(String(t), t, t);
+  add('16-25', 16, 25); add('26-49', 26, 49); add('50+', 50, 1e9);
+  const top = Math.max(...buckets.map(b => b[1]));
+  return `<h3>Battle length</h3><p class="hint">Average ${num1(L.mean)} turns, spread (standard deviation) ${num1(L.sd)}, median ${L.median}. The middle 80% of battles end between turn ${L.p10} and turn ${L.p90}. Each bar is the share of battles that ended on that turn.</p>
+    <div class="bars simbars">${buckets.map(([l, f]) => `<div><span>${l}</span><em style="--t:var(--accent);width:${f / top * 100}%"></em><span>${pctf(f, 1)}</span></div>`).join('')}</div>`;
 }
 
 function simChars() {
@@ -447,8 +483,24 @@ function simMetaView() {
     <p class="hint">Meta team 1 is the strongest team the search found. Each next one is the best counter found against the teams before it: it plays the latest meta team 60% of the time and the earlier ones the rest, so it has to beat the current top team without folding to the older ones. "Beats previous" and "Vs other meta teams" come from a final round where every meta team plays every other one. The playstyle line is worked out from how the team actually won.</p>
     ${status ? `<p class="hint"><strong>${status}</strong></p>` : ''}
     ${n ? `<div class="scroll"><table class="moves simt"><thead><tr><th class="sv">#</th><th>Team</th><th>Playstyle</th><th class="sv">Beats previous</th><th class="sv">Vs other meta teams</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
-    ${matrix}`;
+    ${matrix}
+    ${T.some(t => t.pick?.g) ? `<h3>Brought 10 vs picked 6</h3><p class="hint">${SIM_PICK_NOTE}${C.matrix ? ' From the final round where every meta team plays every other one.' : ''}</p>${T.map((t, i) => simPickTable(t, t.pick, `Meta team ${i + 1}`)).join('')}` : ''}`;
 }
+
+// Brought 10 vs picked 6: for each member of a brought list, how often the draft put it in the 6 and in the
+// opening pair, how the team did when it played, and its hidden roles, so a member that never plays stands out.
+function simPickTable(t, P, label) {
+  if (!P?.g) return '';
+  const rows = t.keys.map(x => ({ x, e: SIM.meta.byKey.get(x) || {}, p: (P.pick[x] || 0) / P.g, l: (P.lead[x] || 0) / P.g, n: P.pick[x] || 0, w: P.pick[x] ? P.pickW[x] / P.pick[x] : NaN }))
+    .sort((a, b) => b.p - a.p);
+  const roles = e => (find(roster, e.cid)?.roles || []).map(r => `<span class="badge role">${esc(r)}</span>`).join(' ') || '—';
+  const body = rows.map(r => `<tr${r.p < 0.1 ? ' class="tbd"' : ''}><td>${entLink(r.x)}</td><td>${esc(rarityName(r.e.rarity))}${r.e.final === false ? ' <span class="hint">(not final form)</span>' : ''}</td><td>${roles(r.e)}</td>
+    <td class="sv">${pctf(r.p)}</td><td class="sv">${pctf(r.l)}</td><td class="sv">${isFinite(r.w) ? winCell(r.w * r.n, r.n) : '—'}</td></tr>`).join('');
+  const benched = rows.filter(r => r.p < 0.1).length;
+  return `<h4>${label} <span class="hint">${P.g.toLocaleString()} games, ${num1(P.turns / P.g)} turns on average${benched ? `, ${benched} member${benched > 1 ? 's' : ''} picked under 10%` : ''}</span></h4>
+    <div class="scroll"><table class="moves simt"><thead><tr><th>Brought</th><th>Tier</th><th>Roles</th><th class="sv">Picked</th><th class="sv">Opens</th><th class="sv">Win % when picked</th></tr></thead><tbody>${body}</tbody></table></div>`;
+}
+const SIM_PICK_NOTE = 'How often the draft put each member of the brought 10 into the final 6 and into the opening pair, and the team\'s win rate in the games that member played. Members picked under 10% of the time are greyed out: they hardly ever fight, so the team is really the other members.';
 
 function simRanking() {
   if (SIM.chain) return simMetaView() + (SIM.running && SIM.plan ? `<h3>Current search</h3>${simRankingTable()}` : '') + '<h2>Teammate pairs</h2>';
@@ -484,6 +536,7 @@ function simRankingTable() {
     ${status ? `<p class="hint"><strong>${status}</strong> ${finalGen ? '' : 'The table shows the current generation, which still includes untested new teams.'}</p>` : ''}
     <h3>${done ? 'Final ranking' : `Generation ${SIM.gen + 1}`}</h3>
     ${simTable('fullteams', rows, cols, { sortBy: 3, search, limit: finalGen ? 300 : 50 })}
+    ${done && SIM.best?.pick ? `<h3>Brought 10 vs picked 6, top 5 teams</h3><p class="hint">${SIM_PICK_NOTE}</p>${SIM.best.rows.slice(0, 5).map((r, i) => simPickTable(r, SIM.best.pick[r.k], `Team ${i + 1}`)).join('')}` : ''}
     <h3>Most common members of the top 16 teams</h3>
     <p class="hint">"In top 16" counts teams in ${finalGen ? 'the final ranking' : 'the last finished generation'}. "Kept" counts how many times across all generations the character was in a kept team: high means it keeps winning its place, not just one lucky team. Characters below the top tier present, or not in a final form, are marked, so you can see which ones earn a spot anyway.</p>
     ${simTable('members', memRows, [
@@ -637,7 +690,8 @@ function simMetaSummary() {
   if (!SIM.metaMod) { import('./meta.js').then(m => { SIM.metaMod = m; simDraw(); }); return null; }
   const S = SIM.stats, lo = SIM.lastOpts || {};
   let teams = [];
-  if (SIM.plan && SIM.full.length) teams = simFullRows(SIM.full.length - 1).filter(r => r.g >= 5).sort((a, b) => b.sure - a.sure);
+  if (SIM.chain?.teams.length) teams = SIM.chain.teams;
+  else if (SIM.plan && SIM.full.length) teams = simFullRows(SIM.full.length - 1).filter(r => r.g >= 5).sort((a, b) => b.sure - a.sure).map(r => ({ ...r, pick: SIM.best?.pick?.[r.k] }));
   const title = `${S.battles.toLocaleString()} battles, ${lo.draft === 'off' ? 'no draft' : `bring ${lo.draft}, pick 6`}, ${lo.tiers?.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}.`;
   return SIM.metaMod.metaSummary(S, { byKey: SIM.meta.byKey, teams, minGames: Math.max(8, Math.round(minGames() / 2)), title,
     fmt: { item: simItemName, nature: simNatureName, preset: id => SIM.meta.presets?.[id] || id } });
@@ -654,11 +708,13 @@ function simMetaTab() {
   return `<div class="article">${m.lead.map(l => `<p>${esc(l)}</p>`).join('')}
       <p class="hint">${SIM.running ? 'Still running: these fill in and settle as more battles come in. ' : ''}Small samples move a lot, so treat a row with few games as a lead to check, not a verdict. <button type="button" class="linkb" id="simmetamd">Download summary (.md)</button></p></div>
     ${sec('Best teams', 'The strongest brought lists from the team search.', m.best, [
-      ['Team (brought)', r => r.keys.map(entName).join(', '), team, 'wrap'], ['Battles', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
-      ['Cores in it', r => r.cores.map(c => c.label).join(', '), r => r.cores.map(c => `${pair(c.keys)} <span class="hint">(${esc(c.label)})</span>`).join('<br>') || '—']], 'metabest', m.hasTeams ? '' : 'Run with Team search set to Strongest teams to rank whole brought lists.', 2)}
-    ${sec('Cores', 'Pairs the draft picked together because one makes the other better (Tailwind or Trick Room with attackers, redirection or screens with setup, Helping Hand, fields) or because they cover each other\'s weaknesses. "Vs. members alone" is the pair\'s win rate minus the average of each one\'s usual win rate.', m.cores, [
+      ['Team (picked half the time or more)', r => r.plays.map(entName).join(', '), r => r.plays.map(entLink).join(', '), 'wrap'], ['Rarely picked', r => r.bench.map(entName).join(', '), r => r.bench.map(entLink).join(', ') || '—', 'wrap'],
+      ['Battles', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
+      ['Cores in it', r => r.cores.map(c => c.label).join(', '), r => r.cores.map(c => `${pair(c.keys)} <span class="hint">(${esc(c.label)})</span>`).join('<br>') || '—']], 'metabest', m.hasTeams ? '' : 'Run with Team search set to Strongest teams to rank whole brought lists.', 3)}
+    ${sec('Cores', (m.hasPicks ? 'Cores a top team\'s draft actually picks together (both in at least half its games) are listed first. ' : '') + 'Pairs the draft picked together because one makes the other better (Tailwind or Trick Room with attackers, redirection or screens with setup, Helping Hand, fields) or because they cover each other\'s weaknesses. "Vs. members alone" is the pair\'s win rate minus the average of each one\'s usual win rate.', m.cores, [
       ['Core', r => r.keys.map(entName).join(' + '), r => pair(r.keys)], ['Kind', r => r.label], ['Games', r => r.g, null, 'sv'], ['Win %', r => r.wr, wr('wr', 'g'), 'sv'],
-      ['Vs. members alone', r => r.lift, r => `${r.lift >= 0 ? '+' : ''}${Math.round(r.lift * 100)}`, 'sv']], 'metacores', '', 3)}
+      ['Vs. members alone', r => r.lift, r => `${r.lift >= 0 ? '+' : ''}${Math.round(r.lift * 100)}`, 'sv'],
+      ...(m.hasPicks ? [['Top team plays it', r => r.inTeam ? r.inTeam.rate : -1, r => r.inTeam ? `Team ${r.inTeam.team + 1}, ${pctf(r.inTeam.rate)}` : '—', 'sv']] : [])], 'metacores', '', m.hasPicks ? 5 : 3)}
     ${sec('General supports', 'Characters that enable cores with many different partners and still win at least half the time: safe picks for almost any 10.', m.general, [
       ['Support', r => entName(r.key), r => entLink(r.key)], ['Core partners', r => r.partners, null, 'sv'], ['Picked', r => r.picks, null, 'sv'], ['Win % when picked', r => r.wr, r => pctf(r.wr), 'sv']], 'metagen', '', 1)}
     ${sec('Specific supports', 'Characters that win far more with one partner than they usually do: build the pair, not the support alone.', m.specific, [
@@ -780,7 +836,7 @@ function simSettings() {
     <label>Movesets <select name="movesets">${opt('smart', 'Sensible picks', o.movesets)}${opt('random', 'Fully random', o.movesets)}</select></label>
     ${o.format === 'comp' ? '' : `<label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>`}
     ${o.format === 'comp' ? `<label>Team preview <select name="draft">${opt('10', 'Bring 10, pick 6', o.draft)}${opt('8', 'Bring 8, pick 6', o.draft)}${opt('off', 'Off (random 6)', o.draft)}</select></label>` : ''}
-    <label>Vitality <select name="hpScale">${[1, 1.5, 2].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
+    <label>Vitality <select name="hpScale">${[1, 1.5, 2, 3].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
     ${o.format === 'comp' ? '' : `<label>Training <select name="training">${opt('base', 'None (base stats only)', o.training)}${opt('ai', 'AI picks EVs, nature, IVs', o.training)}</select></label>
     <label>Held items <select name="items">${opt('none', 'None', o.items)}${opt('ai', 'AI picks (one of each per team)', o.items)}</select></label>`}
     <label>Always include <select name="focus"><option value="">Nobody</option>${ents.map(e => opt(e.key, esc(e.name), o.focus)).join('')}</select></label>

@@ -3,7 +3,7 @@ import fs from 'fs';
 import { prepare, runBattle, rng } from '../battle.js';
 import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
-import { makeBuild, runBatch, watchBattle } from '../batch.js';
+import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey } from '../batch.js';
 import { draftSide, guessBuilds } from '../draft.js';
 import { metaSummary } from '../meta.js';
 
@@ -189,6 +189,16 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(['Reading their 10', 'Prediction', 'My 6'].every(h => d.log.some(l => l.includes(h))) && d.log.some(l => /certain picks/.test(l)), 'The reasoning log explains the read, the prediction and the picks', d.log[0]);
   const S = runBatch(data, { format: 'comp', draft: true, count: 12, seed: 8 });
   ok(S.draft.g === S.battles * 2 && Object.values(S.bring).reduce((n, b) => n + b.b, 0) === S.battles * 20, 'Draft runs record every brought character and both predictions');
+  ok(Object.values(S.turnHist).reduce((n, x) => n + x, 0) === S.battles, 'Every battle adds its length to the turn counts');
+  const Lt = ladderTeams(data, { format: 'comp', draft: true, ladder: { fresh: 4, seed: 4 } });
+  const SL = runBatch(data, { format: 'comp', draft: true, count: 8, seed: 9, ladder: { top: Lt.map(t => t.map(e => e.key)), seed: 4 } });
+  const P = Object.values(SL.teamPick);
+  ok(P.length && P.every(x => Object.values(x.pick).reduce((n, v) => n + v, 0) === x.g * 6 && Object.values(x.lead).reduce((n, v) => n + v, 0) === x.g * 2), 'Team runs record which 6 of each brought 10 were picked and which 2 opened');
+  // a member the draft never picks is the one swapped out
+  const base = Lt[0], k = teamKey(base), never = base[3].key;
+  const picks = { [k]: Object.fromEntries(base.map(e => [e.key, e.key === never ? 0 : 1])) };
+  const V = ladderTeams(data, { format: 'comp', draft: true, ladder: { top: [base.map(e => e.key)], variants: 6, picks, seed: 11 } }).slice(1);
+  ok(V.filter(t => !t.some(e => e.key === never)).length >= 4, 'Search swaps out the members a team never picks first', V.length);
   const w8 = watchBattle(data, { format: 'comp', draft: true, bring: 8, seed: 3 });
   ok(w8.drafts.every(x => x.bring.length === 8) && w8.teams.every(t => t.length === 6), 'Bring 8, pick 6 works');
   const w = watchBattle(data, { format: 'comp', draft: true, seed: 5 });
@@ -217,6 +227,8 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(!m.hasTeams && /## Cores/.test(m.markdown) && /\| A \+ B \| Tailwind \|/.test(m.markdown), 'The summary renders as Markdown');
   const t = metaSummary(S, { byKey, minGames: 8, teams: [{ keys: ['a', 'b', 'd'], wr: 0.6, g: 20 }] });
   ok(t.best[0].cores.some(c => c.keys.join('+') === 'a+b'), 'Best teams list the cores inside them');
+  const pk = metaSummary(S, { byKey, minGames: 8, teams: [{ keys: ['b', 'c', 'd'], wr: 0.6, g: 20, pick: { g: 20, pick: { b: 20, c: 2, d: 18 }, lead: {}, pickW: {} } }] });
+  ok(pk.cores[0].keys.join('+') === 'b+d' && pk.cores[0].inTeam?.team === 0 && pk.best[0].bench.join() === 'c', 'Cores a top team actually picks come first, and its rarely picked members are set apart', pk.cores[0]);
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
