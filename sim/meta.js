@@ -32,11 +32,27 @@ export function metaSummary(S, ctx) {
     P.g += v.g; P.w += v.w; P.kinds[kind] = (P.kinds[kind] || 0) + v.g;
     if (pk.includes('>')) { const E = enables[keys[0]] || (enables[keys[0]] = {}), e = E[keys[1]] || (E[keys[1]] = { g: 0, w: 0 }); e.g += v.g; e.w += v.w; }
   }
-  const cores = Object.values(pairs).filter(p => p.g >= min).map(p => {
+  // a core needs at least 1 in 1,000 drafts behind it, so a lucky pair from a handful of games can't top a big run
+  const coreMin = Math.max(min, Math.round((S.draft?.g || 0) / 1000));
+  // with a team search, how often the best teams' drafts actually picked both members (teams[i].pick from the
+  // run): cores the top teams really play go first
+  const teams = (ctx.teams || []).slice(0, 32);
+  const rate = (t, k) => t.pick?.g ? (t.pick.pick[k] || 0) / t.pick.g : null;
+  const together = keys => {
+    let best = null;
+    teams.forEach((t, i) => {
+      if (!keys.every(k => t.keys.includes(k))) return;
+      const r = Math.min(...keys.map(k => rate(t, k) ?? 0));
+      if (!best || r > best.rate) best = { team: i, rate: r };
+    });
+    return best;
+  };
+  const hasPicks = teams.some(t => t.pick?.g);
+  const cores = Object.values(pairs).filter(p => p.g >= coreMin).map(p => {
     const kind = Object.entries(p.kinds).sort((a, b) => b[1] - a[1])[0][0];
-    const wr = p.w / p.g;
-    return { ...p, kind, label: CORE_KINDS[kind] || kind, wr, sure: sure(p.w, p.g), lift: wr - (pickedWr(p.keys[0]) + pickedWr(p.keys[1])) / 2 };
-  }).sort((a, b) => b.sure - a.sure);
+    const wr = p.w / p.g, inTeam = hasPicks ? together(p.keys) : null;
+    return { ...p, kind, label: CORE_KINDS[kind] || kind, wr, sure: sure(p.w, p.g), lift: wr - (pickedWr(p.keys[0]) + pickedWr(p.keys[1])) / 2, inTeam: inTeam && inTeam.rate >= 0.5 ? inTeam : null };
+  }).sort((a, b) => (b.inTeam ? 1 : 0) - (a.inTeam ? 1 : 0) || b.sure - a.sure);
 
   // supports: characters that enable cores (set Tailwind or Trick Room, redirect, Helping Hand, fields, screens)
   // general: fits many partners and wins anyway; specific: wins far more with one partner than usual
@@ -86,14 +102,16 @@ export function metaSummary(S, ctx) {
   }));
 
   // best and niche teams, from a team search
-  const teams = (ctx.teams || []).slice(0, 32);
   const inTeams = {};
   teams.forEach(t => t.keys.forEach(k => { inTeams[k] = (inTeams[k] || 0) + 1; }));
-  const best = teams.slice(0, 5).map(t => ({ ...t, cores: cores.filter(c => c.keys.every(k => t.keys.includes(k))).slice(0, 3) }));
+  // a best team's cores and core members are the ones its draft actually picks (half the games or more)
+  const plays = (t, k) => rate(t, k) == null || rate(t, k) >= 0.5;
+  const best = teams.slice(0, 5).map(t => ({ ...t, plays: t.keys.filter(k => plays(t, k)), bench: t.keys.filter(k => !plays(t, k)),
+    cores: cores.filter(c => c.keys.every(k => t.keys.includes(k) && plays(t, k))).slice(0, 3) }));
   const niche = teams.slice(5).filter(t => t.wr >= 0.55 && t.keys.filter(k => (inTeams[k] || 0) <= 2).length >= 3).slice(0, 5)
     .map(t => ({ ...t, rare: t.keys.filter(k => (inTeams[k] || 0) <= 2) }));
 
-  const out = { cores: cores.slice(0, 15), general: general.slice(0, 10), specific: specific.slice(0, 10), answers: answers.slice(0, 16), legends, openers: openers.slice(0, 10), builds, best, niche, hasTeams: teams.length > 0 };
+  const out = { hasPicks, cores: cores.slice(0, 15), general: general.slice(0, 10), specific: specific.slice(0, 10), answers: answers.slice(0, 16), legends, openers: openers.slice(0, 10), builds, best, niche, hasTeams: teams.length > 0 };
   out.lead = leadLines(out, name);
   out.markdown = toMarkdown(out, name, ctx);
   return out;
@@ -109,7 +127,8 @@ function leadLines(m, name) {
     const kinds = {};
     m.cores.slice(0, 8).forEach(c => { kinds[c.label] = (kinds[c.label] || 0) + 1; });
     const top = m.cores[0];
-    L.push(`The strongest core is ${name(top.keys[0])} + ${name(top.keys[1])} (${top.label}), winning ${pct(top.wr)} of ${top.g} games together. The top cores are mostly ${list(Object.entries(kinds).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`))}.`);
+    const where = top.inTeam ? ` and picked together in ${pct(top.inTeam.rate)} of top team ${top.inTeam.team + 1}'s drafts` : '';
+    L.push(`The strongest core is ${name(top.keys[0])} + ${name(top.keys[1])} (${top.label}), winning ${pct(top.wr)} of ${top.g} games together${where}. The top cores are mostly ${list(Object.entries(kinds).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`))}.`);
   } else L.push('No core was picked together often enough yet. More battles, or a team search, will show them.');
   if (m.general.length) L.push(`General supports that fit many cores: ${list(m.general.slice(0, 3).map(s => `${name(s.key)} (${s.partners} partners)`))}.`);
   if (m.specific.length) L.push(`Specific supports: ${list(m.specific.slice(0, 3).map(s => `${name(s.key)} with ${name(s.top.key)} (${pct(s.top.wr)})`))}.`);
@@ -122,8 +141,8 @@ function leadLines(m, name) {
 function toMarkdown(m, name, ctx) {
   const L = [`# Meta summary`, '', ctx.title || '', '', ...m.lead.map(x => `- ${x}`), ''];
   const table = (head, rows) => { if (!rows.length) return ['_None yet._', '']; return [`| ${head.join(' | ')} |`, `| ${head.map(() => '---').join(' | ')} |`, ...rows.map(r => `| ${r.join(' | ')} |`), '']; };
-  L.push('## Best teams', '', ...(m.hasTeams ? table(['Team (brought)', 'Win %', 'Games', 'Cores'], m.best.map(t => [t.keys.map(name).join(', '), pct(t.wr), t.g, t.cores.map(c => `${name(c.keys[0])} + ${name(c.keys[1])} (${c.label})`).join('; ')])) : ['_Run with Team search to rank whole teams._', '']));
-  L.push('## Cores', '', ...table(['Core', 'Kind', 'Games', 'Win %', 'Vs. members alone'], m.cores.map(c => [`${name(c.keys[0])} + ${name(c.keys[1])}`, c.label, c.g, pct(c.wr), `${c.lift >= 0 ? '+' : ''}${Math.round(c.lift * 100)}`])));
+  L.push('## Best teams', '', ...(m.hasTeams ? table(['Team (brought)', 'Win %', 'Games', 'Rarely picked', 'Cores'], m.best.map(t => [t.plays.map(name).join(', '), pct(t.wr), t.g, t.bench.map(name).join(', ') || '—', t.cores.map(c => `${name(c.keys[0])} + ${name(c.keys[1])} (${c.label})`).join('; ')])) : ['_Run with Team search to rank whole teams._', '']));
+  L.push('## Cores', '', ...table(['Core', 'Kind', 'Games', 'Win %', 'Vs. members alone', ...(m.hasPicks ? ['Picked together by a top team'] : [])], m.cores.map(c => [`${name(c.keys[0])} + ${name(c.keys[1])}`, c.label, c.g, pct(c.wr), `${c.lift >= 0 ? '+' : ''}${Math.round(c.lift * 100)}`, ...(m.hasPicks ? [c.inTeam ? `Team ${c.inTeam.team + 1}, ${pct(c.inTeam.rate)}` : '—'] : [])])));
   L.push('## General supports', '', ...table(['Support', 'Core partners', 'Picked', 'Win % when picked'], m.general.map(s => [name(s.key), s.partners, s.picks, pct(s.wr)])));
   L.push('## Specific supports', '', ...table(['Support', 'Best with', 'Games together', 'Win % together', 'Win % usually'], m.specific.map(s => [name(s.key), name(s.top.key), s.top.g, pct(s.top.wr), pct(s.wr)])));
   L.push('## Niche teams', '', ...(m.hasTeams ? table(['Team (brought)', 'Win %', 'Rare picks'], m.niche.map(t => [t.keys.map(name).join(', '), pct(t.wr), t.rare.map(name).join(', ')])) : ['_Run with Team search to find niche teams._', '']));

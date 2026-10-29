@@ -55,6 +55,51 @@ function sideSpeed(B, api, side) {
   return on.length ? avg(on.map(m => api.speed(m))) * 0.7 + (back.length ? avg(back.map(m => m.raw.spe)) : avg(on.map(m => api.speed(m)))) * 0.3 : 0;
 }
 
+// Doubles support moves, on the same scale as attacks (share of a foe's Vitality x 100, +55 for a knockout),
+// so the AI weighs what the move does for the side this turn and the next few against just attacking.
+// Added on top of statusValue's base score. Without this, an attack outscores Protect, Tailwind or
+// Helping Hand almost every turn and battles become pure damage races.
+function duosSupportValue(B, api, u, mv, foes) {
+  const fx = mv.m.fx, a = api.abOf(u), al = api.allyOf(u);
+  const ally = al && !al.fainted ? al : null;
+  const left = f => Math.max(1, f.hp) / f.maxhp;
+  let v = 0;
+  if (fx.helpingHand && ally) {
+    // the ally's best hit gets 1.5x: worth the extra damage, and more if that turns a hit into a knockout
+    let best = 0;
+    for (const f of foes) {
+      const h = bestHit(api, ally, f);
+      best = Math.max(best, Math.min(h * 0.5, left(f)) * 100 + (h < left(f) && h * 1.5 >= left(f) ? 45 : 0));
+    }
+    v += best;
+  }
+  const mine = [...api.actives(u.side).map(m => [m, 1]), ...api.bench(u.side).map(m => [m, 0.5])];
+  const flips = (mult, reverse) => {
+    let n = 0;
+    for (const [m, w] of mine) for (const f of foes) {
+      const now = api.speed(m) > api.speed(f), after = reverse ? api.speed(m) < api.speed(f) : api.speed(m) * mult > api.speed(f);
+      n += (after && !now ? 1 : !after && now ? -1 : 0) * w;
+    }
+    return n;
+  };
+  if (fx.tailwind && !u.side.tailwind) v += Math.max(0, flips(2, false)) * 18;
+  if (fx.field?.trickRoom && !B.field?.trickRoom) v += Math.max(0, flips(1, true)) * 18;
+  const chained = (u.vol.protectChain || 0) && !fx.protect?.repeat && !a.protectAlways;
+  if (fx.protect && !chained) {
+    // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally
+    const one = Math.max(...foes.map(f => bestHit(api, f, u))), both = foes.reduce((n, f) => n + bestHit(api, f, u), 0);
+    if (one >= left(u) || (foes.length > 1 && both >= left(u))) {
+      v += 40;
+      if (ally) v += 10 + (foes.some(f => bestHit(api, ally, f) >= left(f)) ? 15 : 0);
+    }
+  }
+  if (fx.followMe && ally) {
+    const allyRisk = Math.max(...foes.map(f => bestHit(api, f, ally) / left(ally))), myRisk = Math.max(...foes.map(f => bestHit(api, f, u) / left(u)));
+    if (allyRisk >= 1 && myRisk < 1) v += 45;
+  }
+  return v;
+}
+
 function statusValue(B, api, u, mv, foes) {
   const fx = mv.m.fx, a = api.abOf(u);
   const foe = foes[0];
@@ -221,7 +266,7 @@ export function chooseAction(B, m, api) {
   const consider = (act, score) => { const s = score * (1 - NOISE / 2 + r() * NOISE) + r(); if (s > best.score) best = { ...act, score: s }; };
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
-    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, statusValue(B, api, m, mv, foes));
+    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0));
     const fx = mv.m.fx;
     if (B.duos && (fx.spread || api.abOf(m).spreadType === mv.m.type)) {
       let v = 0;

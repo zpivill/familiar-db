@@ -284,7 +284,7 @@ function setupView() {
       <label>Team size <select name="size">${(o.format === 'duos' ? [2, 3, 4, 5, 6] : [1, 2, 3, 4, 5, 6]).map(n => opt(n, n, o.size)).join('')}</select></label>
       <label>Characters <select name="forms">${opt('final', 'Final forms', o.forms)}${opt('all', 'Every form', o.forms)}</select></label>
       <label>Level <select name="level">${[30, 50, 70, 100].map(n => opt(n, n, o.level)).join('')}</select></label>
-      <label>Vitality <select name="hpScale">${[1, 1.5, 2].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
+      <label>Vitality <select name="hpScale">${[1, 1.5, 2, 3].map(n => opt(n, '×' + n, o.hpScale)).join('')}</select></label>
     </form>
     <div class="simcols">${team(0)}${team(1)}</div>
     <p class="hint">Empty slots are filled at random when the battle starts. Each character gets four moves from its learnset (up to the battle level) plus its signature move, which is always on.</p>

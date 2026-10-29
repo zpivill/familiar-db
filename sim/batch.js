@@ -71,7 +71,7 @@ export function entrantPool(data, opts = {}) {
 }
 
 export function emptyStats() {
-  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
+  return { battles: 0, draws: 0, turns: 0, ent: {}, abil: {}, move: {}, moveBy: {}, combo: {}, pairs: {}, vs: {}, full: {}, detail: {}, h2h: {}, item: {}, nature: {}, bring: {}, core: {}, leadPair: {}, vsChar: {}, turnHist: {}, teamPick: {}, draft: { g: 0, overlap: 0, exact: 0 }, faster: { g: 0, w: 0 }, lead: { g: 0, w: 0 } };
 }
 
 const inc = (o, k, f) => (o[k] || (o[k] = f()));
@@ -110,6 +110,7 @@ function recordDetail(S, data, B, si, key, opts) {
 function record(S, B, builds, opts) {
   S.battles++;
   S.turns += B.turn;
+  S.turnHist[B.turn] = (S.turnHist[B.turn] || 0) + 1;
   if (B.winner < 0) S.draws++;
   B.sides.forEach((s, si) => {
     const won = B.winner === si ? 1 : 0, half = B.winner < 0 ? drawScore(opts) : 0;
@@ -129,8 +130,8 @@ function record(S, B, builds, opts) {
         M.eq++; M.w += w;
         const t = m.t.moves[mv.id];
         if (t) { M.uses += t.uses; M.hits += t.hits; M.dmg += t.dmg; M.kos += t.kos; M.crits += t.crits; M.misses += t.misses; M.sup += t.sup; }
-        const MB = inc(S.moveBy, m.key + '|' + mv.id, () => ({ eq: 0, w: 0, uses: 0 }));
-        MB.eq++; MB.w += w; MB.uses += t?.uses || 0;
+        const MB = inc(S.moveBy, m.key + '|' + mv.id, () => ({ eq: 0, w: 0, uses: 0, dmg: 0, kos: 0 }));
+        MB.eq++; MB.w += w; MB.uses += t?.uses || 0; MB.dmg += t?.dmg || 0; MB.kos += t?.kos || 0;
       }
       const C = inc(S.combo, m.e.types.join('/'), () => ({ g: 0, w: 0 }));
       C.g++; C.w += w;
@@ -218,6 +219,7 @@ const legal = (t, e, opts) => !opts.legendCap || !LEGEND.has(e.rarity) || t.filt
 // What a draw is worth to each side: half a win, or nothing in the competitive format.
 const drawScore = opts => opts.drawScore ?? 0.5;
 export const teamKey = t => t.map(e => e.key).sort().join('+');
+const weightedPick = (r, xs, wf) => { const w = xs.map(wf); let x = r() * w.reduce((a, b) => a + b, 0), i = 0; while (i < xs.length - 1 && (x -= w[i]) > 0) i++; return xs[i]; };
 
 // Whole teams for team ranking. Every worker builds the same list from the same seed.
 // A generation is the kept teams (`top`), plus for each kept team `variants` copies with one member swapped,
@@ -262,8 +264,11 @@ export function ladderTeams(data, opts) {
   for (const t of top) {
     const swappable = t.filter(e => e !== focus);
     for (let v = 0; v < (L.variants || 0) && swappable.length; v++) {
+      // with the draft, L.picks says how often each member made the 6: a member that rarely gets picked
+      // never fights, so the search would never feel it and it would sit in the 10 by chance. Swap those first.
+      const rate = L.picks?.[teamKey(t)];
       for (let tries = 0; tries < 10; tries++) {
-        const gone = r.pick(swappable);
+        const gone = rate ? weightedPick(r, swappable, e => (1 - (rate[e.key] ?? 0.5)) ** 2 + 0.05) : r.pick(swappable);
         if (add(fill(t.filter(e => e !== gone), srcOf(t)))) break;
       }
     }
@@ -342,6 +347,11 @@ export function runBatch(data, opts, onChunk) {
       const F = inc(S.full, k, () => ({ g: 0, w: 0 }));
       const w = B.winner === si ? 1 : B.winner < 0 ? drawScore(opts) : 0;
       F.g++; F.w += w;
+      if (D) {
+        const P = inc(S.teamPick, k, () => ({ g: 0, w: 0, turns: 0, pick: {}, lead: {}, pickW: {} }));
+        P.g++; P.w += w; P.turns += B.turn;
+        D.drafts[si].order.forEach((i, j) => { const x = sides[si][i].key; P.pick[x] = (P.pick[x] || 0) + 1; P.pickW[x] = (P.pickW[x] || 0) + w; if (j < 2) P.lead[x] = (P.lead[x] || 0) + 1; });
+      }
       if (opts.ladder.detail) recordDetail(S, data, B, si, k, opts);
       if (opts.ladder.h2h) { const H = inc(S.h2h, k + '|' + teamKey(sides[1 - si]), () => ({ g: 0, w: 0 })); H.g++; H.w += w; }
     }
