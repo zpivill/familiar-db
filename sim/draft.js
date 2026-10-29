@@ -187,7 +187,8 @@ export function draftSide(data, mine, theirSeen, opts, r) {
   const level = opts.level || COMPETITIVE.level, size = COMPETITIVE.teamSize, cap = opts.pickLegendCap ?? 1;
   const theirs = theirSeen;
   const MA = matchups(data, mine, theirs, level);
-  const MB = matchups(data, theirs, mine, level);
+  // their view of the same races is the mirror image: MB[j][i] = -MA[i][j]
+  const MB = theirs.map((_, j) => mine.map((_, i) => -MA[i][j]));
   const rm = mine.map(b => roles(data, b)), rt = theirs.map(b => roles(data, b));
   const synOf = (bs, rs) => bs.map((a, i) => bs.map((b, j) => i === j ? { v: 0, why: [], kinds: [] } : synergy(a, b, rs[i], rs[j])));
   const SA = synOf(mine, rm), SB = synOf(theirs, rt);

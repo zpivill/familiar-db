@@ -1131,12 +1131,14 @@ export function runBattle(data, teams, opts = {}) {
     for (const s of B.sides) for (const m of actives(s)) if (held(m, 'calm-incense') && (m.vol.taunt > 0 || m.vol.encore)) {
       useItem(m, 'calms down with its Calm Incense'); m.vol.taunt = 0; m.vol.encore = null;
     }
+    api.cache = new Map();
     for (const s of B.sides) for (const m of actives(s)) {
       const act = opts.decide?.('action', B, m) || chooseAction(B, m, api);
       act.m = m;
       if (act.type === 'move') m.vol.plannedAttack = m.moves[act.slot]?.m.cat !== 'Status';
       acts.push(act);
     }
+    api.cache = null;
     const order = a => a.type === 'switch' ? 10 : effPriority(a.m, a.m.moves[a.slot]);
     acts.forEach(a => { a.pri = order(a); a.spd = speed(a.m, foesOf(a.m).some(f => abOf(f).targetLock)); a.tie = r(); if (a.m.vol.slowTurn === B.turn) a.pri -= 9; });
     const tr = B.field?.trickRoom ? -1 : 1;

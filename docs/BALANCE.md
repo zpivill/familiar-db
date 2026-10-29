@@ -134,12 +134,14 @@ batch.runBatch(opts) ─ for each battle:
 | `batch.js` | Runs many battles keeping only running totals. `makeBuild` (moveset picking, "smart" weighted by `rateMove` or random), `entrantPool` (tier / form / gag filters, bans), `ladderTeams` (team search generations: keep, swap, cross, fresh), `runBatch`, `watchBattle` (one battle with a full log), `withFormat`. |
 | `meta.js` | `metaSummary`: the Meta tab and its Markdown download (cores by kind, general / specific supports, answers, legendaries, openers, builds). |
 | `worker.js` | Web Worker wrapper: `init`, `run` (posts progress chunks), `watch`. |
-| `page.js` | The Simulator page `#sim` (classic script using app.js globals): settings, splitting runs across workers, **Team search** (Strongest teams, Meta chain, bans, archetype rounds), all the report tabs. |
+| `search.js` | **Team search** (Strongest teams, Meta chain, bans, archetype rounds), shared by the page and the CLI. Runs battles through a `ctx.send` it is given and keeps its progress on `ctx`. |
+| `page.js` | The Simulator page `#sim` (classic script using app.js globals): settings, splitting runs across workers, all the report tabs. Loads search.js for team searches. |
 | `play.js` | The Battle vs AI page `#play`: a human plays one side, including Competitive doubles with team preview. It replays the battle from its seed up to each player choice, using `runBattle`'s `opts.decide` hook. |
-| `cli.mjs` | Terminal runner (see section 10). |
-| `test/mechanics.mjs` | 61 rule checks. Run after every engine, AI, draft or data change. |
+| `cli.mjs` | Terminal runner (see section 10): plain batches, team searches and meta chains, split across every core with `node-worker.mjs` (runs worker.js in a Node worker thread). |
+| `bench.mjs` | AI test bench (see section 10): strength against fixed opponents, and how far saved meta chains agree. |
+| `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
+| `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 
-Important: **Team search (Strongest teams, Meta chain, archetype rounds) lives in page.js, not in the CLI.** The CLI runs plain batches and single watched battles. The 200k meta-chain runs in the history were done with a scratch Node script that imported page.js's search logic; if you need them from the terminal, the clean fix is to move the search loop from page.js into a shared module.
 
 ## 6. How the battle AI chooses moves
 
@@ -204,15 +206,21 @@ Settings used for the competitive balance runs: Competitive doubles, bring 8, ev
 Node 18+, no install needed.
 
 ```sh
-node sim/test/mechanics.mjs                    # 61 rule checks, exits non-zero on failure
+node sim/test/mechanics.mjs                    # rule checks, exits non-zero on failure
 node sim/cli.mjs 5000 duel                     # 5,000 one on one battles: top and bottom 12 by win rate
 node sim/cli.mjs 5000 team --trained --level=50 --size=6
 node sim/cli.mjs 20000 comp 1 --draft          # competitive doubles, bring 8, seed 1
 node sim/cli.mjs 20000 comp 1 --draft --bring=10
 node sim/cli.mjs 1 comp 5 watch --draft        # one battle's draft reasoning and full log
+# the balance-run setting: a 200k meta chain with archetype rounds, Vitality x3, saved for the bench
+node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
+node sim/bench.mjs strength 1000               # the AI against random, greedy, frozen v1 and itself
+node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains with different seeds agree
 ```
 
-Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. The CLI uses `RULES` as written in rules.js, so to test Vitality x3 from the terminal either edit `hpScale` temporarily or write a short script:
+Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. Flags: `--hp=3` (Vitality multiplier), `--forms=all`, `--search=best|meta` (Strongest teams / Meta chain, the same code as the page), `--arch` (archetype rounds), `--ban=3`, `--json=file`, `--workers=N` (default: every core). Results repeat exactly for the same seed and worker count. A 200k meta chain takes about 13 minutes on 4 cores.
+
+**Before and after any AI change,** run `bench.mjs strength` on 2 seeds and 3 meta chains with `bench.mjs stability`, and add both to balance-history.md. The strength ladder plays mirror matches (the same 6 on both sides) in pairs with the same luck and sides swapped, so only the AI differs. For scripts, `runBatch` in batch.js does a plain batch in-process:
 
 ```js
 import fs from 'fs';
@@ -253,7 +261,6 @@ AI and draft:
 - **Draft quick matchup ignores abilities** (only type immunities count). It can't see Kaido's damage reduction, Intimidate's effect on the race, etc. It overrates raw-stat bruisers.
 - **Benched members:** search 10s keep 1-3 members that are picked 0-14% of the time; the swap rule replaces them over generations, but short counter rounds leave a few.
 - **Meta summary small samples:** best opening pair and specific supports can still come from small samples; a 1-in-1,000 floor like the cores would help.
-- Team search is only in page.js (see section 5).
 
 Balance (bring these to r, don't fix alone):
 
