@@ -109,8 +109,9 @@ function itemScores(data, b, k, training) {
 
 // Gives every build of one team its training and item. r = the battle's random numbers, for variety.
 // overrides: { [character key]: { nature, evs, ivs, item } }, any part optional.
+// opts.noItem: character keys the AI hands no item to (the Battle vs AI page's "None").
 export function trainTeam(data, builds, r, opts = {}) {
-  const train = opts.training === 'ai', items = opts.items === 'ai', ov = opts.overrides || {};
+  const train = opts.training === 'ai', items = opts.items === 'ai', ov = opts.overrides || {}, none = new Set(opts.noItem || []);
   if (!train && !items && !Object.keys(ov).length) return builds;
   const kits = builds.map(b => kit(data, b));
   builds.forEach((b, i) => {
@@ -124,7 +125,7 @@ export function trainTeam(data, builds, r, opts = {}) {
     builds.forEach(b => { const o = ov[b.e.key]; if (o?.item && itemDef(o.item)) { b.item = o.item; taken.add(o.item); } });
     // greedy: the strongest (build, item) fits first, with a little noise so teams vary
     const cand = [];
-    builds.forEach((b, i) => { if (!b.item) for (const [id, v] of itemScores(data, b, kits[i], b)) cand.push({ i, id, v: v + r() * 4 }); });
+    builds.forEach((b, i) => { if (!b.item && !none.has(b.e.key)) for (const [id, v] of itemScores(data, b, kits[i], b)) cand.push({ i, id, v: v + r() * 4 }); });
     cand.sort((x, y) => y.v - x.v);
     for (const c of cand) if (!builds[c.i].item && !taken.has(c.id)) { builds[c.i].item = c.id; taken.add(c.id); }
   } else builds.forEach(b => { const o = ov[b.e.key]; if (o?.item && itemDef(o.item)) b.item = o.item; });
