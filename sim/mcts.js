@@ -34,17 +34,18 @@ const dec = (B, m, a) => a.type === 'switch' ? { type: 'switch', to: m.side.mons
 const withRng = (B, r, f) => { const keep = B.r; B.r = r; try { return f(); } finally { B.r = keep; } };
 
 // Plays one battle with side `me` run by the search and the other side by `foe` (a bot from bots/baselines.js).
+// me can be [0, 1] for both sides searching (foe is then unused), as the meta re-check does.
 // bo: runBattle options with bo.rng a seeded rng. Returns the finished battle.
-export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}) {
+// With record set, B.replay.positions keeps every turn's options and how each scored, for teaching the fast AI.
+export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false } = {}) {
   const seed = Math.floor(bo.rng() * 1e9);              // every replay starts from this luck
   const mine = srng(seed + 1), theirs = srng(seed + 2), search = srng(seed + 3);
-  const rec = [], turnStart = {};
-  let plan = null;
+  const rec = [], turnStart = {}, positions = [], searching = [].concat(me), plan = [null, null];
 
   // One playout: replay the first `upto` recorded choices, then from turn T on our side plays `pair` this turn
   // and the fast AI after it, and the foe plays `style` throughout. Returns win (1) or not (0), plus a little
   // for the Vitality lead so close results still rank.
-  function playout(upto, T, pair, style, luck) {
+  function playout(upto, T, me, pair, style, luck) {
     const r = srng(seed), bot = BOTS[style];
     let i = 0, branched = false;
     const B = runBattle(data, teams, { ...bo, rng: r, decide: (kind, B, x, opts, extra) => {
@@ -59,7 +60,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
   }
 
   // The pair for this turn: candidates per character, then UCB1 over the pairs.
-  function think(B, T) {
+  function think(B, T, me) {
     const api = B.api, team = api.actives(B.sides[me]);
     const lists = team.map(m => {
       const opts = withRng(B, search, () => options(B, m, api)).slice(0, k);
@@ -77,33 +78,35 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
     for (let it = 0; it < Math.max(iters, pairs.length); it++) {
       let j = N.indexOf(0);
       if (j < 0) { const ln = Math.log(it); j = 0; let bv = -1; N.forEach((n, x) => { const v = S[x] / n + 0.5 * Math.sqrt(ln / n); if (v > bv) { bv = v; j = x; } }); }
-      N[j]++; S[j] += playout(turnStart[T], T, asMap(pairs[j]), STYLES[Math.floor(search() * STYLES.length)], Math.floor(search() * 1e9));
+      N[j]++; S[j] += playout(turnStart[T], T, me, asMap(pairs[j]), STYLES[Math.floor(search() * STYLES.length)], Math.floor(search() * 1e9));
     }
     let best = 0;
     N.forEach((n, x) => { if (n > N[best] || (n === N[best] && S[x] > S[best])) best = x; });
+    if (record) positions.push({ at: rec.length, slots, pairs: pairs.map((p, x) => ({ a: p, n: N[x], v: N[x] ? S[x] / N[x] : 0 })) });
     return asMap(pairs[best]);
   }
 
   const B = runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x, opts, extra) => {
     if (kind === 'replace') {
-      const pick = x.i === me ? withRng(B, mine, () => chooseReplacement(B, x, opts, B.api))
+      const pick = searching.includes(x.i) ? withRng(B, mine, () => chooseReplacement(B, x, opts, B.api))
         : withRng(B, theirs, () => (foe.replace && foe.replace(B, x, opts)) || chooseReplacement(B, x, opts, B.api));
       rec.push(x.mons.indexOf(pick));
       return pick;
     }
     if (turnStart[B.turn] == null) turnStart[B.turn] = rec.length;
     let act;
-    if (x.side.i !== me) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
+    const si = x.side.i;
+    if (!searching.includes(si)) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
     else if (extra) act = withRng(B, mine, () => chooseAction(B, x, B.api));
     else {
-      if (!plan || plan.turn !== B.turn) plan = { turn: B.turn, acts: think(B, B.turn) };
-      const a = plan.acts.get(x.side.mons.indexOf(x));
+      if (plan[si]?.turn !== B.turn) plan[si] = { turn: B.turn, acts: think(B, B.turn, si) };
+      const a = plan[si].acts.get(x.side.mons.indexOf(x));
       act = a ? dec(B, x, a) : withRng(B, mine, () => chooseAction(B, x, B.api));
     }
     rec.push(enc(act));
     return act;
   } });
-  B.replay = { seed, choices: rec };                    // for checking that replays give back this battle
+  B.replay = { seed, choices: rec, ...(record ? { positions } : {}) };                    // for checking that replays give back this battle
   return B;
 }
 
@@ -111,4 +114,25 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
 export function replay(data, teams, bo, { seed, choices }) {
   let i = 0;
   return runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x) => { const d = choices[i++]; return kind === 'replace' ? x.mons[d] : dec(B, x, d); } });
+}
+
+// How close the fast AI (ai.js, with whatever weights W holds now) comes to the search's choices in a recorded
+// battle: replays it, and at each recorded turn asks the fast AI for its pair. Regret is how much worse the
+// search found that pair than its best one (a pair the search never tried counts as its worst tried).
+export function judge(data, teams, bo, me, { seed, choices, positions }) {
+  const at = new Map(positions.map(p => [p.at, p])), fast = srng(seed + 4), out = [];
+  let i = 0;
+  runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x) => {
+    const P = at.get(i), d = choices[i++];
+    if (P) {
+      const act = withRng(B, fast, () => chooseAction(B, x, B.api));
+      const plan = x.side.jointPlan?.turn === B.turn ? x.side.jointPlan.acts : null;
+      const mine = P.slots.map(s => { const m = B.sides[me].mons[s]; return JSON.stringify(enc(m === x ? act : plan?.get(m) || act)); });
+      const tried = P.pairs.filter(p => p.n), best = Math.max(...tried.map(p => p.v)), worst = Math.min(...tried.map(p => p.v));
+      const hit = P.pairs.find(p => p.n && p.a.every((a, j) => JSON.stringify(a) === mine[j]));
+      out.push({ regret: best - (hit ? hit.v : worst), agree: hit && hit.v === best ? 1 : 0, fast: mine.map(x => JSON.parse(x)), best: tried.find(p => p.v === best).a, slots: P.slots });
+    }
+    return kind === 'replace' ? x.mons[d] : dec(B, x, d);
+  } });
+  return out;
 }

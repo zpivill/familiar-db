@@ -3,30 +3,42 @@
 // all on the same fresh battles (paired mirror matches against frozen v1 and greedy, see bench.mjs),
 // and moves the weights toward the best few. Runs on every core.
 //
-//   node sim/tune.mjs [generations = 40] [battles per opponent per candidate = 200] [seed = 1]
+//   node sim/tune.mjs [generations = 40] [battles per opponent per candidate = 200] [seed = 1] [--distill=file]
 //
 // Prints each generation and writes the best weights to sim/tuned-weights.json, which you then check
 // with bench.mjs on new seeds before copying them into W. Fitness only uses seeds 1000+, so bench.mjs
 // seeds 1-999 stay unseen.
 import fs from 'fs';
 import os from 'os';
-import { Worker, isMainThread, parentPort } from 'worker_threads';
+import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
 import { W } from './ai.js';
 import { rng } from './battle.js';
 
 const OPPONENTS = ['v1', 'greedy'];
 
+// --distill=file: fitness is instead how closely the fast AI agrees with the search AI's recorded choices
+// (from  node sim/bench.mjs search ... --record=file): 1 - its average regret, the share of a win it gives up
+// per turn by not choosing what the search found best. No battles are played, only replays.
+const distill = process.argv.find(a => a.startsWith('--distill='))?.slice(10);
+
 if (!isMainThread) {
   const { arena } = await import('./bench.mjs');
   const play = arena();
+  const { judge } = await import('./mcts.js');
+  const recs = workerData.distill ? JSON.parse(fs.readFileSync(workerData.distill)).map(r => ({ ...r, ...play.setup(r.seed, r.n) })) : null;
   parentPort.on('message', ({ w, seed, battles }) => {
     Object.assign(W, w);
+    if (recs) {
+      let regret = 0, n = 0;
+      for (const r of recs) for (const p of judge(r.data, r.teams, r.bo, r.me, r.replay)) { regret += p.regret; n++; }
+      return parentPort.postMessage(1 - regret / n);
+    }
     let score = 0;
     for (const name of OPPONENTS) for (let n = 0; n < battles; n++) if (play(name, seed, n).res === 'w') score++;
     parentPort.postMessage(score / (battles * OPPONENTS.length));
   });
 } else {
-  const [gens = 40, battles = 200, seed = 1] = process.argv.slice(2).map(Number);
+  const [gens = 40, battles = 200, seed = 1] = process.argv.slice(2).filter(a => !a.startsWith('--')).map(Number);
   const r = rng(seed);
   const gauss = () => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
   const keys = Object.keys(W);
@@ -37,7 +49,7 @@ if (!isMainThread) {
   const clamp = w => { w.noise = Math.min(w.noise, 1); w.switchP = Math.min(w.switchP, 1); return w; };
 
   const n = os.availableParallelism?.() || os.cpus().length;
-  const workers = Array.from({ length: n }, () => new Worker(new URL(import.meta.url)));
+  const workers = Array.from({ length: n }, () => new Worker(new URL(import.meta.url), { workerData: { distill } }));
   const evalAll = (cands, s) => new Promise(done => {
     const out = new Array(cands.length);
     let next = 0, left = cands.length;

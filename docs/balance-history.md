@@ -214,3 +214,35 @@ Redirection + setup rose 18 points and now holds steady across runs (53-56%), so
 Margins are about ±7-10 points at these sample sizes. 128 playouts is now the default. Caveat: greedy and v1 are among the styles the search assumes for its foe, so part of its edge against them is knowing how they play; the current AI is the fairest test, and it still wins 85-90% at 128 playouts.
 
 At 5-7 seconds a battle, the search AI is for benches and spot checks of top teams (a few hundred battles), not for meta chains. Step 4 is to teach the fast AI to choose like it.
+
+## AI step 4: teaching the fast AI from the search AI (2026-10-30) — no gain yet
+
+Tried to make the fast AI choose like the search AI by tuning its weights to agree with the search's recorded choices. **It didn't work, and the reason is measured:**
+
+- Recorded 300 search battles at 128 playouts a turn (seed 21; the search won 85-90%), 4,033 turns. The fast AI picks the search's top pair on 21% of turns.
+- Weights tuned for agreement (`tune.mjs --distill`, 60 generations) only cut the average regret from 0.165 to 0.159, and **lost to the step-2 AI 42.5% to 50.8%** (600 battles). Not adopted.
+- Why: each turn the search splits 128 playouts over about 16 pairs, so its best pair beats its second best by 0.03 of a win on average while the noise on that gap is 0.19. Its pick is never clearly best on a single turn (0% of turns past 2 standard errors). The search wins by being slightly better on average across many turns, so its single-turn picks are mostly noise as labels.
+- The biggest disagreement looked like the fast AI spending its signature too readily (fast picks the signature in 34% of the different-attack cases, the search in 20%), but a cost for spending scarce moves made the fast AI worse against v2 (0: 47/47, 10: 47.5/47, 25: 43/51, 60: 39/54). Dropped.
+
+Kept as tools: `bench.mjs search ... --record=file` (record the search's choices), `judge()` in mcts.js (how far the fast AI is from them), `tune.mjs --distill=file`, and `bots/ai-v2.js` (the step-2 AI frozen; bench now includes it). Clean labels would need about 2,000 playouts per turn (16x), roughly an hour of compute per 500 turns here.
+
+### Re-checking a meta with the search AI (2026-10-30)
+
+r's pick after step 4: re-check finished metas with the search AI instead. `cli.mjs --recheck=meta.json` replays a saved meta chain's final round robin with the search AI on **both** sides. Run 1 of the step-2 stability runs (6 meta teams + 11 archetype teams) was replayed for 800 battles at 64 playouts a turn (21 minutes on 4 cores, about 90 games per team, ±10 points):
+
+| Team | Fast AI | Search AI |
+|---|---|---|
+| Meta 1-6 | 64 / 56 / 62 / 66 / 61 / 63% | 67 / 55 / 65 / 61 / 62 / 66% |
+| Snow | 59% | 66% |
+| Screens + setup | 59% | 62% |
+| Intimidate + Fake Out balance | 55% | 50% |
+| Redirection + setup | 53% | 49% |
+| Fire field | 46% | 43% |
+| Trick Room | 42% | 40% |
+| Water field | 40% | 38% |
+| Lightning field | 37% | 44% |
+| Tailwind offense | 30% | 21% |
+| Gravity | 27% | 38% |
+| Spread offense | 25% | 22% |
+
+**Under strong play the ranking holds:** rank correlation 0.89, average change 4 points, largest 11 (Gravity up, Tailwind down), all within the margins. So with the step-2 AI, one run's results are close to what good play gives. The open problem is that different runs land in different metas, which is step 5's job.

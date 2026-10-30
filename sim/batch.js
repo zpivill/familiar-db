@@ -6,6 +6,7 @@ import { RULES, COMPETITIVE, bringLegendCap, itemName, natureName } from './rule
 import { trainTeam } from './builds.js';
 import { guessBuilds, draftSide, predictionHit } from './draft.js';
 import { archetypeById, roster, fits, forced, BRING, PICK } from './archetypes.js';
+import { playSearch } from './mcts.js';
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
@@ -392,7 +393,9 @@ export function runBatch(data, opts, onChunk) {
     const arch = archIds.map(id => id ? archRoster(data, id, opts) : null);
     const builds = sides.map((t, i) => trainTeam(data, t.map(e => makeBuild(data, e, r, arch[i] ? { ...opts, force: forced(arch[i], e.key) } : opts)), r, opts));
     const D = opts.draft ? runDraft(data, sides, builds, r, opts, arch) : null;
-    const B = runBattle(data, D ? D.six : builds, { rng: r, ...battleOpts(opts), plans: archIds });
+    // opts.ai 'search': both sides play with the slow search AI (sim/mcts.js), for re-checking a finished meta
+    const bo = { rng: r, ...battleOpts(opts), plans: archIds };
+    const B = opts.ai === 'search' ? playSearch(data, D ? D.six : builds, bo, [0, 1], null, { iters: opts.iters }) : runBattle(data, D ? D.six : builds, bo);
     record(S, B, D ? D.six : builds, opts);
     if (D) recordDraft(S, B, builds, D, opts);
     if (ladder) for (const si of scored) {
