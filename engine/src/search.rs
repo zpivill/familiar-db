@@ -44,7 +44,7 @@ impl<'a> Ctx<'a> {
     pub fn new(d: &'a Data, base: Opts, workers: usize, target: usize, seed: f64, arch: bool, ban: usize) -> Ctx<'a> {
         Ctx { d, base, workers, caches: vec![HashMap::new(); workers], stats: Stats::default(), done: 0, target, r: rng(seed), arch, ban, chain: Chain::default() }
     }
-    fn seed(&mut self) -> f64 { (self.r.next() * 1e9).floor() }
+    pub fn seed(&mut self) -> f64 { (self.r.next() * 1e9).floor() }
     // split `total` battles over the workers, each starting at a different ladder team, like cli.mjs; merged in worker order
     pub fn send(&mut self, total: usize, ladder: Option<Ladder>, ladder_size: usize) -> Res {
         let n = self.workers; let base = self.seed();

@@ -33,6 +33,7 @@ pub struct Opts {
     pub level: f64, pub learn_level: f64, pub training: bool, pub items: bool, pub turn_cap: i32, pub draw_score: f64,
     pub legend_cap: Option<usize>, pub pick_legend_cap: usize, pub forms_all: bool, pub movesets: Movesets,
     pub ladder: Option<Ladder>, pub offset: usize,
+    pub search_ai: Option<usize>,   // opts.ai 'search' with this many playouts a turn: both sides play with the search AI (mcts.rs)
 }
 impl Opts {
     // opts as the CLI gives them, then withFormat() and teamSize()
@@ -44,7 +45,7 @@ impl Opts {
         Opts { format, count, seed, draft: comp && draft, bring, team_size, level: lv, learn_level: if comp { 100.0 } else { lv },
             training: comp || trained, items: comp || trained, turn_cap: if comp { COMP_TURN_CAP } else { TURN_CAP }, draw_score: if comp { COMP_DRAW } else { 0.5 },
             legend_cap: if comp { Some(if draft { bring_legend_cap(bring) } else { COMP_LEGEND_CAP }) } else { None },
-            pick_legend_cap: COMP_LEGEND_CAP, forms_all, movesets: Movesets::Smart, ladder: None, offset: 0 }
+            pick_legend_cap: COMP_LEGEND_CAP, forms_all, movesets: Movesets::Smart, ladder: None, offset: 0, search_ai: None }
     }
     fn duos(&self) -> bool { matches!(self.format, Format::Duos | Format::Comp) }
 }
@@ -432,8 +433,10 @@ pub fn run_batch(d: &Data, o: &Opts, s: &mut Stats, cache: &mut HashMap<String, 
         let dr = if o.draft { Some(run_draft(d, &sides, &builds, &mut r, o, &arch_ids, cache)) } else { None };
         let bo = BattleOpts { plans: arch_ids, ..bo };
         let fight: [&[Build]; 2] = match &dr { Some(x) => [&x.six[0], &x.six[1]], None => [&builds[0], &builds[1]] };
-        let b = run_battle(d, fight, r.clone(), &bo);
-        r = b.r.clone();
+        let b = match o.search_ai {
+            Some(iters) => crate::mcts::play_search(d, fight, &mut r, &bo, &[0, 1], crate::mcts::Bot::Mirror, iters, 4).b,
+            None => { let b = run_battle(d, fight, r.clone(), &bo); r = b.r.clone(); b }
+        };
         record(s, d, &b, fight, o);
         if let Some(x) = &dr { record_draft(s, d, &b, &builds, x, o); }
         if let (Some(_), Some(l)) = (&ladder, lo) {

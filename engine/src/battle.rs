@@ -145,11 +145,18 @@ pub struct Field { pub fx: FieldFx, pub owner: usize, pub by: MonId }
 
 pub struct BattleOpts { pub duos: bool, pub level: f64, pub turn_cap: i32, pub plans: [Option<usize>; 2] }
 
+// What the engine asks opts.decide (battle.js): a replacement for side s from `options`, or mon m's action
+// (extra: a second action the same turn). None leaves it to the AI.
+pub enum Ask<'x> { Replace { s: usize, options: &'x [MonId] }, Action { m: MonId, extra: bool } }
+pub type Decide<'a> = Box<dyn FnMut(&mut Battle<'a>, Ask) -> Option<Act> + 'a>;
+
 pub struct Battle<'a> {
     pub d: &'a Data, pub r: Rng, pub duos: bool, pub turn: i32, pub field: Option<Field>, pub over: bool, pub winner: i32,
     pub sides: [Side; 2], pub mons: Vec<Mon>,
     pub cache: Option<Vec<f64>>,   // the AI's damage estimates while both sides choose (api.cache)
     pub turn_cap: i32,
+    pub w: &'static ai::Weights,   // the AI's weights (the v1 bot swaps in its own)
+    pub decide: Option<Decide<'a>>,
 }
 
 const OWN_STATUS: [(St, Type); 4] = [(St::Burn, 0), (St::Freeze, 2), (St::Stun, 5), (St::Bleed, 13)];
@@ -456,10 +463,19 @@ impl<'a> Battle<'a> {
     fn bring_in(&mut self, s: usize, slot: usize, how: &str, pick_random: bool) -> bool {
         let options = self.bench(s);
         if options.is_empty() { return false; }
-        let next = if pick_random { options[self.r.pick_i(options.len())] } else { ai::choose_replacement(self, s, &options) };
+        let next = if pick_random { options[self.r.pick_i(options.len())] } else {
+            match self.ask(Ask::Replace { s, options: &options }) { Some(Act::Switch { to }) => to, _ => ai::choose_replacement(self, s, &options) }
+        };
         self.switch_in(next, slot, how);
         true
     }
+    fn ask(&mut self, q: Ask) -> Option<Act> {
+        let mut f = self.decide.take()?;
+        let a = f(self, q);
+        self.decide = Some(f);
+        a
+    }
+    fn action(&mut self, m: MonId, extra: bool) -> Act { match self.ask(Ask::Action { m, extra }) { Some(a) => a, None => ai::choose_action(self, m).act } }
     fn set_field(&mut self, f: &FieldFx, by: MonId) {
         let mut fx = f.clone();
         if matches!(self.mons[by].item, Some(i) if i.id == I_ANCHOR) { fx.turns = ANCHOR_TURNS; }
@@ -1250,7 +1266,8 @@ fn make_mon(d: &Data, b: &Build, level: f64, side: usize) -> Mon {
     }
 }
 
-pub fn run_battle<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts) -> Battle<'a> {
+pub fn run_battle<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts) -> Battle<'a> { run_battle_with(d, teams, r, o, None) }
+pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts, decide: Option<Decide<'a>>) -> Battle<'a> {
     let mut mons = vec![];
     let mut sides: Vec<Side> = vec![];
     for (i, team) in teams.iter().enumerate() {
@@ -1259,7 +1276,7 @@ pub fn run_battle<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts)
             futures: vec![], faint_turn: -9, time_stop: -1, gift: None, plan: o.plans[i], baton: None, quick_guard: NONE, wide_guard: NONE, joint_plan: None });
     }
     let s1 = sides.pop().unwrap(); let s0 = sides.pop().unwrap();
-    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap };
+    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: &ai::W, decide };
     let slots = if o.duos { 2 } else { 1 };
     for s in 0..2 {
         b.sides[s].active = vec![None; slots];
@@ -1282,9 +1299,9 @@ pub fn run_battle<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts)
         b.cache = Some(vec![f64::NAN; n_cache]);
         let mut acts: Vec<(MonId, Act, f64, f64, f64)> = vec![]; // mon, act, pri, spd, tie
         for s in 0..2 { for m in b.actives(s) {
-            let act = ai::choose_action(&mut b, m);
-            if let Act::Move { slot, .. } = act.act { b.mons[m].vol.planned_attack = b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status); }
-            acts.push((m, act.act, 0.0, 0.0, 0.0));
+            let act = b.action(m, false);
+            if let Act::Move { slot, .. } = act { b.mons[m].vol.planned_attack = b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status); }
+            acts.push((m, act, 0.0, 0.0, 0.0));
         } }
         b.cache = None;
         for a in acts.iter_mut() {
@@ -1312,8 +1329,8 @@ pub fn run_battle<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &BattleOpts)
                     if b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status) { b.mons[m].vol.last_attack_turn = b.turn; }
                     if b.mons[m].vol.extra_turn == b.turn && !b.mons[m].fainted && b.is_active(m) {
                         b.mons[m].vol.extra_turn = 0;
-                        let again = ai::choose_action(&mut b, m);
-                        if let Act::Move { slot, target } = again.act { b.use_move(m, slot, target); }
+                        let again = b.action(m, true);
+                        if let Act::Move { slot, target } = again { b.use_move(m, slot, target); }
                     }
                 }
             }
