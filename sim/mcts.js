@@ -35,10 +35,11 @@ const withRng = (B, r, f) => { const keep = B.r; B.r = r; try { return f(); } fi
 
 // Plays one battle with side `me` run by the search and the other side by `foe` (a bot from bots/baselines.js).
 // bo: runBattle options with bo.rng a seeded rng. Returns the finished battle.
-export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}) {
+// With record set, B.replay.positions keeps every turn's options and how each scored, for teaching the fast AI.
+export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false } = {}) {
   const seed = Math.floor(bo.rng() * 1e9);              // every replay starts from this luck
   const mine = srng(seed + 1), theirs = srng(seed + 2), search = srng(seed + 3);
-  const rec = [], turnStart = {};
+  const rec = [], turnStart = {}, positions = [];
   let plan = null;
 
   // One playout: replay the first `upto` recorded choices, then from turn T on our side plays `pair` this turn
@@ -81,6 +82,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
     }
     let best = 0;
     N.forEach((n, x) => { if (n > N[best] || (n === N[best] && S[x] > S[best])) best = x; });
+    if (record) positions.push({ at: rec.length, slots, pairs: pairs.map((p, x) => ({ a: p, n: N[x], v: N[x] ? S[x] / N[x] : 0 })) });
     return asMap(pairs[best]);
   }
 
@@ -103,7 +105,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
     rec.push(enc(act));
     return act;
   } });
-  B.replay = { seed, choices: rec };                    // for checking that replays give back this battle
+  B.replay = { seed, choices: rec, ...(record ? { positions } : {}) };                    // for checking that replays give back this battle
   return B;
 }
 
@@ -111,4 +113,25 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4 } = {}
 export function replay(data, teams, bo, { seed, choices }) {
   let i = 0;
   return runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x) => { const d = choices[i++]; return kind === 'replace' ? x.mons[d] : dec(B, x, d); } });
+}
+
+// How close the fast AI (ai.js, with whatever weights W holds now) comes to the search's choices in a recorded
+// battle: replays it, and at each recorded turn asks the fast AI for its pair. Regret is how much worse the
+// search found that pair than its best one (a pair the search never tried counts as its worst tried).
+export function judge(data, teams, bo, me, { seed, choices, positions }) {
+  const at = new Map(positions.map(p => [p.at, p])), fast = srng(seed + 4), out = [];
+  let i = 0;
+  runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x) => {
+    const P = at.get(i), d = choices[i++];
+    if (P) {
+      const act = withRng(B, fast, () => chooseAction(B, x, B.api));
+      const plan = x.side.jointPlan?.turn === B.turn ? x.side.jointPlan.acts : null;
+      const mine = P.slots.map(s => { const m = B.sides[me].mons[s]; return JSON.stringify(enc(m === x ? act : plan?.get(m) || act)); });
+      const tried = P.pairs.filter(p => p.n), best = Math.max(...tried.map(p => p.v)), worst = Math.min(...tried.map(p => p.v));
+      const hit = P.pairs.find(p => p.n && p.a.every((a, j) => JSON.stringify(a) === mine[j]));
+      out.push({ regret: best - (hit ? hit.v : worst), agree: hit && hit.v === best ? 1 : 0, fast: mine.map(x => JSON.parse(x)), best: tried.find(p => p.v === best).a, slots: P.slots });
+    }
+    return kind === 'replace' ? x.mons[d] : dec(B, x, d);
+  } });
+  return out;
 }

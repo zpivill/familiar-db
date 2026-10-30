@@ -37,14 +37,17 @@ export function arena() {
     return trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts);
   };
   // player(data, teams, battleOpts, me, bot) plays our side instead of the current AI (the search AI does)
-  return (name, seed, n, player) => {
+  const play = (name, seed, n, player) => {
     const bot = BOTS[name], k = Math.floor(n / 2), me = n % 2;
     const tm = team(rng(seed * 1e6 + k));
     const bo = { format: 'duos', level: opts.level, turnCap: opts.turnCap, rng: rng(seed * 1e6 + k + 5e5) };
     const B = player ? player(data, [tm, tm], bo, me, bot) : runBattle(data, [tm, tm], { ...bo,
       decide: (kind, B, x, options) => kind === 'action' ? (x.side.i !== me ? bot.action(B, x) : null) : (x.i !== me && bot.replace ? bot.replace(B, x, options) : null) });
-    return { res: B.winner === me ? 'w' : B.winner < 0 ? 'd' : 'l', turns: B.turn };
+    return { res: B.winner === me ? 'w' : B.winner < 0 ? 'd' : 'l', turns: B.turn, B };
   };
+  // the same battle's setup, for replaying it (sim/mcts.js judge)
+  play.setup = (seed, n) => { const tm = team(rng(seed * 1e6 + Math.floor(n / 2))); return { data, teams: [tm, tm], bo: { format: 'duos', level: opts.level, turnCap: opts.turnCap }, me: n % 2 }; };
+  return play;
 }
 
 function strength(battles = 1000, seed = 1) {
@@ -94,29 +97,32 @@ function stability(files) {
 
 // ---- the search AI (sim/mcts.js) against the fixed opponents, split over every core ----
 const SEARCH_FOES = ['mirror', 'v1', 'greedy'];
-async function searchStrength(battles = 100, seed = 1, iters = 128) {
+async function searchStrength(battles = 100, seed = 1, iters = 128, record = null) {
+  const recs = [];
   const n = os.availableParallelism?.() || os.cpus().length;
   console.log(`Search AI (${iters} playouts a turn) vs each opponent: ${battles} mirror battles each, Vitality x3, seed ${seed}, ${n} workers`);
   for (const name of SEARCH_FOES) {
     const t0 = performance.now(), tally = { w: 0, l: 0, d: 0, turns: 0 };
     await Promise.all(Array.from({ length: n }, (_, i) => new Promise((done, fail) => {
-      const w = new Worker(new URL(import.meta.url), { workerData: { searchJob: { name, seed, iters, games: Array.from({ length: battles }, (_, g) => g).filter(g => g % n === i) } } });
-      w.once('message', t => { for (const k in tally) tally[k] += t[k]; w.terminate(); done(); });
+      const w = new Worker(new URL(import.meta.url), { workerData: { searchJob: { name, seed, iters, record: !!record, games: Array.from({ length: battles }, (_, g) => g).filter(g => g % n === i) } } });
+      w.once('message', t => { for (const k in tally) tally[k] += t[k]; recs.push(...t.recs); w.terminate(); done(); });
       w.once('error', fail);
     })));
     const p = tally.w / battles, moe = 1.96 * Math.sqrt(p * (1 - p) / battles);
     console.log(`${name.padEnd(7)} won ${(100 * p).toFixed(1)}% ±${(100 * moe).toFixed(1)}, lost ${(100 * tally.l / battles).toFixed(1)}%, drew ${(100 * tally.d / battles).toFixed(1)}%, ${(tally.turns / battles).toFixed(1)} turns, ${((performance.now() - t0) / battles * n / 1000).toFixed(1)} s/battle per core`);
   }
+  // the search's choices, for teaching the fast AI:  node sim/tune.mjs 40 0 1 --distill=file
+  if (record) fs.writeFileSync(record, JSON.stringify(recs));
 }
 
 if (!isMainThread && workerData?.searchJob) {
-  const { name, seed, iters, games } = workerData.searchJob, play = arena(), t = { w: 0, l: 0, d: 0, turns: 0 };
-  const player = (data, teams, bo, me, bot) => playSearch(data, teams, bo, me, bot, { iters });
-  for (const g of games) { const x = play(name, seed, g, player); t[x.res]++; t.turns += x.turns; }
-  parentPort.postMessage(t);
+  const { name, seed, iters, games, record } = workerData.searchJob, play = arena(), t = { w: 0, l: 0, d: 0, turns: 0 }, recs = [];
+  const player = (data, teams, bo, me, bot) => playSearch(data, teams, bo, me, bot, { iters, record });
+  for (const g of games) { const x = play(name, seed, g, player); t[x.res]++; t.turns += x.turns; if (record) recs.push({ seed, n: g, replay: x.B.replay }); }
+  parentPort.postMessage({ ...t, recs });
 }
 else if (!isMainThread || import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
 else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
-else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128);
+else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128, process.argv.find(a => a.startsWith('--record='))?.slice(9));
 else if (cmd === 'stability') stability(rest);
 else console.log('usage: node sim/bench.mjs strength [battles] [seed] | search [battles] [seed] [playouts] | stability run1.json run2.json ...');
