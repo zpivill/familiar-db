@@ -270,3 +270,18 @@ Stability, Competitive doubles, bring 8, Vitality x3, every form, archetype roun
 - Archetype scores against the mix still swing 10-42 points between runs; no archetype is clearly above the others.
 
 A first version (Nash on the raw table, archetype teams inside the pool, stop when the counter's 95% lower bound passed 50%) was worse: 2.0 / 12, 26% overlap, and two runs collapsed onto one team. Kept as a CLI tool, not on the page and not the default for balance runs.
+
+## Rust sim (2026-10-30)
+
+**Bigger single runs don't make results agree.** Two meta chains of 400k each (seeds 1 and 2, same setting as step 5) shared 47% of their character shares and 5 of 12 top characters, the same as pairs of 200k runs (39-53%). So the noise is in which teams the search finds, not in too few battles per team. What helps is aggregating characters over several seeds, which needs speed.
+
+**Port:** `engine/` is a Rust port of the whole fast sim (engine, battle AI, builds, draft, batch, team search, meta chain, cli). It matches the JS sim exactly: every format battle by battle (duel, team, duos, comp with and without draft, bring 10, Vitality x3, every form, trained), and full meta chains with archetype rounds and bans on one worker, compared field by field. Speed on 4 cores:
+
+| Run | JS | Rust |
+|---|---|---|
+| One comp draft battle, one core | ~13 ms | ~1.4 ms |
+| 20k meta chain + archetypes, 4 workers | 67 s | 4.5 s |
+| 200k meta chain + archetypes, 4 workers | ~11 min | 39 s |
+
+No balance or AI changes: results are the same as the JS sim's for the same seed.
+

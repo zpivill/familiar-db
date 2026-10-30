@@ -121,6 +121,22 @@ async function simRun() {
   SIM.running = false; SIM.ms = performance.now() - SIM.t0;
   simDraw();
 }
+// Results saved from the terminal (familiar-sim or node sim/cli.mjs with --json=out.json), shown as if this page had run them.
+function simLoad(file) {
+  file.text().then(t => {
+    const J = JSON.parse(t), a = J.args || [], pos = a.filter(x => !x.startsWith('--')), format = pos[1] || 'duel';
+    const fl = n => a.find(x => x.startsWith('--' + n + '='))?.split('=')[1] ?? (a.includes('--' + n) ? true : undefined);
+    SIM.lastOpts = { ...SIM.opts, format, teamSize: format === 'comp' ? 6 : +fl('size') || (format === 'duos' ? 4 : 3), forms: fl('forms') === 'all' ? 'all' : 'final', tiers: [], sameTier: false,
+      level: +fl('level') || 100, hpScale: +fl('hp') || 1, training: fl('trained') ? 'ai' : 'base', items: fl('trained') ? 'ai' : 'none', draft: fl('draft') ? String(+fl('bring') || 8) : 'off',
+      arch: fl('arch') ? 'all' : '', ban: +fl('ban') || 0, teamSearch: J.chain ? 'meta' : J.best ? 'best' : '' };
+    SIM.stats = J.stats; SIM.done = SIM.target = J.stats.battles; SIM.ms = J.ms; SIM.running = SIM.stopped = false; SIM.error = '';
+    SIM.mode = SIM.lastOpts.teamSearch; SIM.chain = J.chain || null; SIM.kept = {}; SIM.gen = 0;
+    // a Strongest teams run saves only its final ranking, so it shows as a one-generation search
+    SIM.plan = J.best ? [0] : null; SIM.full = J.best ? [Object.fromEntries(J.best.map(r => [r.k, { g: r.g, w: r.w }]))] : []; SIM.best = J.best ? { rows: J.best } : null;
+    SIM.tab = SIM.mode ? 'teams' : 'overview';
+    simDraw();
+  }).catch(e => { SIM.error = 'Could not read that results file: ' + e.message; simDraw(); });
+}
 function simStop() {
   SIM.workers.forEach(w => w.terminate());
   SIM.workers = []; SIM.ready = false; SIM.running = false; SIM.stopped = true; SIM.resolve = null; SIM.jobId = (SIM.jobId || 0) + 1;
@@ -788,7 +804,7 @@ function renderSim() {
       <p class="hint">Each character battles with four moves from its learnset plus its signature, and one of its abilities. Battles run in the background in ${SIM.workers.length} worker${SIM.workers.length > 1 ? 's' : ''}, so the page stays responsive. Results are for the team and change whenever stats, moves or abilities change.</p></div>
     ${simSettings()}
     <div class="row"><button type="button" id="simrun" class="primary"${SIM.ready && !SIM.running ? '' : ' disabled'}>${SIM.ready ? 'Run' : 'Starting…'}</button>
-      ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : ''}${prog}</div>
+      ${SIM.running ? '<button type="button" id="simstop">Stop</button>' : '<button type="button" id="simloadb">Load results</button><input type="file" id="simload" accept=".json,application/json" hidden>'}${prog}</div>
     ${SIM.error ? `<p class="danger">${esc(SIM.error)}</p>` : ''}
     ${lo && S?.battles ? `<p class="hint">Results for: ${esc(FORMATS.find(f => f[0] === lo.format)[1])}${lo.format !== 'duel' ? `, teams of ${lo.teamSize}` : ''}, ${lo.forms === 'all' ? 'every form' : 'final forms'}, ${lo.tiers.length ? lo.tiers.map(rarityName).join(', ') : 'all tiers'}${lo.sameTier ? ' (same tier only)' : ''}, ${lo.format === 'comp' ? (lo.draft === 'off' ? 'no draft, ' : `bring ${lo.draft} and pick 6, `) : ''}level ${lo.format === 'comp' ? 50 : lo.level}, Vitality ×${lo.hpScale}${lo.training === 'ai' || lo.format === 'comp' ? ', AI training' : ''}${lo.items === 'ai' || lo.format === 'comp' ? ', held items' : ''}${Object.keys(SIM.overrides).length ? `, ${Object.keys(SIM.overrides).length} build override${Object.keys(SIM.overrides).length > 1 ? 's' : ''}` : ''}${lo.focus ? `, always with ${esc(entName(lo.focus))}` : ''}${SIM.mode ? '. Team search run: later rounds replay the best teams a lot, so the other tabs lean toward them' : ''}.</p>` : ''}
     <nav class="tabs simtabs" aria-label="Simulator views">${SIM_TABS.map(([k, l]) => `<a href="#sim" data-simtab="${k}"${k === SIM.tab ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
@@ -820,6 +836,7 @@ document.addEventListener('click', e => {
   if (e.target.id === 'simovdel') { delete SIM.overrides[SIM.ovEdit?.key]; return simDraw(); }
   if (e.target.id === 'simrun') simRun();
   if (e.target.id === 'simstop') simStop();
+  if (e.target.id === 'simloadb') $('#simload').click();
   if (e.target.id === 'simwatch' && SIM.ready && !SIM.watching) {
     SIM.watching = true;
     const o = SIM.opts;
@@ -842,6 +859,7 @@ document.addEventListener('change', e => {
   if (ov && e.target.name === 'key') { SIM.ovEdit = { key: e.target.value }; return simDraw(); }
   // a new item saves the form at once, so the Type picker for Ward Charm / Type Emblem shows up
   if (ov && e.target.name === 'item') return simSaveOverride();
+  if (e.target.id === 'simload' && e.target.files[0]) return simLoad(e.target.files[0]);
   if (e.target.id === 'simvs') { SIM.vsKey = e.target.value; simDraw(); }
   if (e.target.id === 'simwa') SIM.watchA = e.target.value;
   if (e.target.id === 'simwb') SIM.watchB = e.target.value;

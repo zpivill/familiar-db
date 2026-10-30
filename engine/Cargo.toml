@@ -1,0 +1,17 @@
+[package]
+name = "familiar-sim"
+version = "0.1.0"
+edition = "2021"
+description = "Fast battle simulator for Familiar (a Rust port of sim/)"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+libm = "0.2"
+indexmap = { version = "2", features = ["serde"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

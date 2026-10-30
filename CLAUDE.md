@@ -19,4 +19,5 @@ Rules that always apply:
 ```sh
 node sim/test/mechanics.mjs        # must print "all passed"
 node sim/cli.mjs 2000 comp 1 --draft
+node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # after any sim/ change: the Rust sim (engine/) must still say identical
 ```
