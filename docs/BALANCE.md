@@ -145,6 +145,8 @@ batch.runBatch(opts) ─ for each battle:
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 
+**engine/** is a Rust port of the sim (battle.js, ai.js, builds.js, draft.js, batch.js, search.js and the cli) for big runs, about 15x faster. It gives the same results as the JS sim for the same seed (checked battle by battle by `engine/tests/parity.mjs`, which CI runs on every change to `sim/`, `engine/` or `data/`). The JS sim stays the source of truth and the only one on the page: **a change to how the JS sim plays must be made in engine/ too**, or CI fails. Data changes need nothing: `node sim/export.mjs` writes `engine/data.json` (moves compiled, entrants, archetype rosters) from `data/`. Not ported: the search AI (mcts.js), `--recheck`, `--search=pop`, `watch`, the bench and the tuner.
+
 
 ## 6. How the battle AI chooses moves
 
@@ -232,6 +234,19 @@ node sim/tune.mjs 80 300 1                     # tune the AI's weights (W) again
 ```
 
 Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. Flags: `--hp=3` (Vitality multiplier), `--forms=all`, `--search=best|meta|pop` (Strongest teams / Meta chain, the same code as the page; pop = population meta), `--pool=a.json,b.json` (pop only), `--arch` (archetype rounds), `--ban=3`, `--json=file`, `--workers=N` (default: every core). Results repeat exactly for the same seed and worker count. A 200k meta chain takes about 13 minutes on 4 cores.
+
+### Fast runs with the Rust sim (engine/)
+
+Same arguments and flags as `cli.mjs` (except `--search=pop`, `--recheck` and `watch`), same results, and the `--json` file opens on the Simulator page with **Load results**. A 200k meta chain with archetype rounds takes about 40 seconds on 4 cores (the JS sim: about 11 minutes), so 1M battles is about 3-4 minutes and several seeds are cheap. With several workers, Rust runs repeat exactly for the same seed and worker count; JS runs on several workers can differ slightly because worker results arrive in varying order (on `--workers=1` the two match exactly).
+
+```sh
+node sim/export.mjs                         # after any data change: writes engine/data.json
+cd engine && cargo build --release          # needs Rust (rustup.rs)
+./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
+node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the same single-thread batch: must say identical
+```
+
+**Windows, no install:** every push to main that touches `sim/`, `engine/` or `data/` publishes `familiar-sim-windows.zip` on the repo's [sim release](https://github.com/zpivill/familiar-db/releases/tag/sim) (familiar-sim.exe, data.json from that commit, run-sim.bat). Unzip and double-click `run-sim.bat`: it asks for a seed and runs the 200k balance setting into `results-seedN.json`. Or pass arguments: `run-sim.bat 1000000 comp 2 --draft --hp=3 --forms=all --search=meta --arch --json=big.json`. Download a fresh zip after data changes, since data.json is baked in at build time.
 
 **Tuning:** `tune.mjs` writes `sim/tuned-weights.json` (don't commit it). It only plays seeds 1000 and up, so check the result with `bench.mjs strength` on seeds 1 and 2 before copying the weights into `W`. If the tuned weights beat the current ones there, freeze the old ai.js as the next `bots/ai-vN.js` first.
 

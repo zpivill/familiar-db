@@ -1,0 +1,44 @@
+# Rust battle sim (engine/): checks it still matches the JS sim, and on main publishes the Windows download
+# (familiar-sim.exe + data.json + run-sim.bat) as the "sim" release.
+name: Battle sim
+on:
+  push:
+    branches: [main]
+    paths: ['engine/**', 'sim/**', 'data/**', '.github/workflows/sim.yml']
+  pull_request:
+    paths: ['engine/**', 'sim/**', 'data/**', '.github/workflows/sim.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node sim/test/mechanics.mjs
+      - run: node sim/export.mjs
+      - run: cargo build --release
+        working-directory: engine
+      - run: |
+          node engine/tests/parity.mjs 300 duel 1
+          node engine/tests/parity.mjs 200 duos 2
+          node engine/tests/parity.mjs 200 comp 3 --draft --hp=3 --forms=all
+          node engine/tests/parity.mjs 200 comp 4 --draft --bring=10
+  windows:
+    needs: parity
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node sim/export.mjs
+      - run: cargo build --release
+        working-directory: engine
+      - shell: bash
+        run: |
+          mkdir familiar-sim
+          cp engine/target/release/familiar-sim.exe engine/data.json engine/run-sim.bat familiar-sim/
+          7z a familiar-sim-windows.zip familiar-sim
+          gh release delete sim --yes --cleanup-tag || true
+          gh release create sim familiar-sim-windows.zip --title "Battle sim (Windows)" --notes "Built from ${GITHUB_SHA::7}. Unzip, then double-click run-sim.bat."
+        env:
+          GH_TOKEN: ${{ github.token }}
