@@ -1,6 +1,257 @@
 {
-  "updated": "2026-10-27",
+  "updated": "2026-10-30",
   "pages": [
+    {
+      "id": "design",
+      "title": "Design",
+      "blurb": "The big picture of the world, story and gameplay, and where the design work stands. Unlike the other pages, this one includes proposals and open questions.",
+      "note": "How we plan: 1) the spine below, 2) the two readings table, 3) a beat sheet of the region, 4) build one city fully, feed back, then the next. Tags: Decided = r decided, Proposal = suggested, not accepted yet, Open = needs an answer.",
+      "sections": [
+        {
+          "title": "Where we paused",
+          "items": [
+            {
+              "t": "2026-10-30",
+              "n": "Planning process agreed. Claude drafted the spine (step 1) and a first two readings table from the game map; r to correct them. Next: the companions row (r wants dedicated time on it), then evolution."
+            }
+          ]
+        },
+        {
+          "title": "Spine",
+          "items": [
+            {
+              "t": "Hook",
+              "n": "A Pokémon-style journey where every catch, battle and badge quietly runs the machine the ending reveals.",
+              "s": "proposal"
+            },
+            {
+              "t": "Pillars",
+              "n": "1. Catch, battle, climb. 2. Every clue is true, the conclusion is wrong. 3. Anime made real. 4. Depth to discover. Every idea is checked against them (see Gameplay).",
+              "s": "decided"
+            },
+            {
+              "t": "Hard rule",
+              "n": "No pay to win, ever.",
+              "s": "decided"
+            },
+            {
+              "t": "The one premise",
+              "n": "Kith's tech turns data into matter: characters are rebuilt from everything that exists about them. They are copies, so duplicates exist.",
+              "s": "decided"
+            },
+            {
+              "t": "What the player believes",
+              "n": "Kith made a fun trend. The Ward contained the Frays and keeps the world stable through Keepers and the League. You and your friends suspect Kith and the Ward are one, wiring the world to a city-tearing machine, so you climb to Champion to stop it.",
+              "s": "decided"
+            },
+            {
+              "t": "What is true",
+              "n": "Bindings anchor copies; anything unanchored builds pressure toward a total merge. Frays are vents the Ward opened on purpose. Each Warden's arena sits on a node over a vent, all linked to a core keyed to the Champion. Shutting the core releases the pressure, consumes you, and the system rebuilds you as a familiar.",
+              "s": "decided"
+            },
+            {
+              "t": "Central image: thread and fabric",
+              "n": "Frays, Strays, Binding, Threads, loose threads, kintsugi stitching. New names, visuals and mechanics should fit this language.",
+              "s": "proposal"
+            },
+            {
+              "t": "Tone",
+              "n": "Bright, then dark. Built to read differently the second time, like Attack on Titan.",
+              "s": "decided"
+            },
+            {
+              "t": "What makes it unique",
+              "n": "The Pokémon loop is the conspiracy: the player helps run the system by playing the game normally. Plus real anime characters made real, with reasons inside the world for everything.",
+              "s": "proposal"
+            }
+          ]
+        },
+        {
+          "title": "Two readings",
+          "cols": [
+            "System",
+            "First reading",
+            "The truth",
+            "What the player does",
+            "Status"
+          ],
+          "rows": [
+            [
+              "Binding",
+              "You make a partner and help stabilise the world",
+              "You tie down a loose thread so pressure stops building",
+              "Lower HP, open glitch seams, stitch them shut in gold (kintsugi)",
+              "Decided, device visuals in progress"
+            ],
+            [
+              "The device (Familiar)",
+              "A friendly tech product",
+              "The anchor that makes every Keeper part of the machine",
+              "Flick it open like a lighter, draw the thread like a sword",
+              "Proposal"
+            ],
+            [
+              "Frays",
+              "Dangerous chaos zones the Ward contained",
+              "Vents opened on purpose, sacrificing some cities",
+              "Enter the fray to find hidden strays",
+              "Decided; why here and not there is open"
+            ],
+            [
+              "Strays",
+              "Wild copies, sometimes dangerous (Revenants)",
+              "Unanchored copies pushing toward a total merge",
+              "Battle and bind them",
+              "Decided"
+            ],
+            [
+              "Wardens and the League",
+              "Strong Keepers holding each city stable",
+              "Each arena sits on a node over the city's biggest vent",
+              "Beat them to climb",
+              "Decided"
+            ],
+            [
+              "No-abandoning law",
+              "Protects familiars",
+              "Broken contracts become loose threads",
+              "Open: whether releasing is possible at all",
+              "Decided; release open"
+            ],
+            [
+              "Companions (your two friends)",
+              "The Maker's child and the copycat who idolises you; you stay out of the trend together, then investigate the Ward",
+              "Open. Proposal: the Maker's child's parent quit Kith after seeing the flaw first",
+              "Design both at the start; play as the copycat in the post-game",
+              "Open, needs its own session"
+            ],
+            [
+              "The Unbound",
+              "Villains hunting anime villains to break the nodes by force",
+              "Open",
+              "Clash, then team up; their leader passes you the shutdown key",
+              "Decided; leader open"
+            ],
+            [
+              "The Champion",
+              "The strongest Keeper",
+              "Learns the truth too late; tries to tell you after the ceremony",
+              "Beat them, then shut down the core",
+              "Decided; who they are is open"
+            ],
+            [
+              "Evolution",
+              "Open",
+              "Open. Seed: a copy rebuilds from more data as the bond deepens",
+              "Characters grow into later-arc forms (43 of 126 evolve)",
+              "Open"
+            ],
+            [
+              "The ending",
+              "You beat the Champion and shut it down",
+              "Pressure tears open and the system rebuilds you as a familiar",
+              "Post-game as the copycat; first quest: bind yourself",
+              "Decided"
+            ]
+          ]
+        },
+        {
+          "title": "Region beat sheet",
+          "cols": [
+            "City",
+            "Anime",
+            "Types",
+            "Warden",
+            "Mechanic taught",
+            "Story beat",
+            "Clue planted",
+            "Fray look"
+          ],
+          "rows": [
+            [
+              "City 1 (vertical slice)",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ],
+            [
+              "City 2",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ],
+            [
+              "City 3",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ],
+            [
+              "City 4",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ],
+            [
+              "City 5",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ],
+            [
+              "City 6",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open",
+              "Open"
+            ]
+          ]
+        },
+        {
+          "title": "Decision log",
+          "items": [
+            {
+              "t": "2026-10-30",
+              "n": "Plan the creative half in four steps: spine, two readings table, region beat sheet, then one city at a time. This page tracks it.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-27",
+              "n": "Binding finish: kintsugi (gold fills the seams). Device worn on the right waist, opened like a lighter but drawn like a sword.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-20",
+              "n": "Title, names (Keepers, Strays, Frays, Kith, the Ward, Wardens, the Circle, the Unbound) and the four pillars.",
+              "s": "decided"
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "story",
       "title": "Story",
