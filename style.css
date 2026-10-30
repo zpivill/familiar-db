@@ -107,6 +107,14 @@ input:disabled, select:disabled { border-color: transparent; background: transpa
 .article dt { font-weight: 600; }
 .article dd { margin: 2px 0 0; }
 .badge.plan { color: var(--accent); font-weight: 500; }
+.badge.decided { color: #2f8a4a; }
+.badge.proposal { color: #c08a00; }
+.badge.open { color: #c43a3a; }
+.design { border-collapse: collapse; min-width: 720px; font-size: 14px; }
+.design th { text-align: left; color: var(--muted); font-weight: 500; font-size: 13px; padding: 6px 10px; border-bottom: 2px solid var(--line); }
+.design td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.design td:first-child { font-weight: 600; }
+.article:has(.design) { max-width: 120ch; }
 .soon { background: var(--panel); border: 1px dashed var(--line); border-radius: 10px; padding: 20px; color: var(--muted); }
 .toc { position: sticky; top: 16px; display: grid; gap: 6px; font-size: 14px; border-left: 2px solid var(--line); padding-left: 12px; }
 .toc a { color: var(--muted); text-decoration: none; }
