@@ -302,6 +302,9 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   const bo = { format: 'duos', rng: rng(3) };
   const B = playSearch(data, teams, bo, 0, BOTS.greedy, { iters: 6 });
   const R = replay(data, teams, { format: 'duos' }, B.replay);
+  const B2 = playSearch(data, teams, { format: 'duos', rng: rng(4) }, [0, 1], null, { iters: 4 });
+  const R2 = replay(data, teams, { format: 'duos' }, B2.replay);
+  ok(B2.over && R2.winner === B2.winner && R2.turn === B2.turn, 'Search AI on both sides replays exactly too');
   ok(B.over && R.winner === B.winner && R.turn === B.turn && R.sides.every((s, i) => s.mons.every((m, j) => m.hp === B.sides[i].mons[j].hp)), 'Search AI battles replay exactly from their recorded choices', `${B.winner}/${B.turn} vs ${R.winner}/${R.turn}`);
 }
 

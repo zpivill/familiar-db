@@ -3,7 +3,9 @@
 // --draft (comp only: bring 8 and draft 6), --bring=10, --hp=3 (Vitality multiplier), --forms=all,
 // --workers=4 (default: every core; results repeat for the same seed and worker count),
 // --search=best|meta (Strongest teams / Meta chain, as on the page), --arch (archetype rounds), --ban=2,
-// --json=out.json (save the results, e.g. for sim/bench.mjs)
+// --json=out.json (save the results, e.g. for sim/bench.mjs),
+// --recheck=meta.json (replay a saved meta chain's final round robin with the search AI on both sides, [count]
+// battles in all, --iters=128 playouts a turn, and compare each team's win rate with the fast AI's)
 // Prints the top and bottom characters by win rate (or the meta teams) and how long it took.
 import fs from 'fs';
 import os from 'os';
@@ -21,7 +23,8 @@ const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const flag = n => process.argv.find(a => a.startsWith('--' + n + '='))?.split('=')[1] ?? (process.argv.includes('--' + n) ? true : undefined);
 const [count = '1000', format = 'duel', seed = '1', watch] = args;
 const extra = { ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('level') ? { level: +flag('level') } : {}), ...(flag('size') ? { teamSize: +flag('size') } : {}),
-  ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}) };
+  ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}),
+  ...(flag('recheck') ? { ai: 'search', ...(flag('iters') ? { iters: +flag('iters') } : {}) } : {}) };
 const rules = flag('hp') ? { hpScale: +flag('hp') } : {};
 Object.assign(RULES, rules);
 if (watch) {
@@ -69,14 +72,27 @@ const ctx = {
 const t0 = Date.now();
 const mode = flag('search');
 let out;
-if (mode === 'meta') await metaChain(ctx, +count);
+const recheck = flag('recheck') && JSON.parse(fs.readFileSync(flag('recheck'))).chain;
+if (recheck) {
+  const keys = recheck.teams.map(t => t.keys), forced = Object.fromEntries(recheck.teams.filter(t => t.arch).map(t => [[...t.keys].sort().join('+'), t.arch]));
+  out = await ctx.send(+count, { top: keys, forced, h2h: true, seed: Math.floor(R() * 1e9) }, keys.length);
+}
+else if (mode === 'meta') await metaChain(ctx, +count);
 else if (mode === 'best') out = await searchTeams(ctx, +count);
 else await ctx.send(+count);
 const ms = Date.now() - t0;
 const S = ctx.stats;
 const name = k => ready[0].entrants.find(e => e.key === k)?.name || k;
 console.log(`${S.battles} battles in ${ms} ms on ${n} workers (${(ms / S.battles).toFixed(2)} ms each), avg ${(S.turns / S.battles).toFixed(1)} turns, ${S.draws || 0} draws`);
-if (mode === 'meta') {
+// a team's win rate over a round robin's head-to-head table (keys 'team|opponent')
+const rr = (h2h, k) => { let g = 0, w = 0; for (const [hk, v] of Object.entries(h2h)) if (hk.split('|')[0] === k) { g += v.g; w += v.w; } return [g ? w / g : NaN, g]; };
+if (recheck) {
+  console.log('team                 fast AI   search AI (games)');
+  for (const t of recheck.teams) {
+    const k = [...t.keys].sort().join('+'), [f] = rr(recheck.h2h, k), [s, g] = rr(out.h2h, k);
+    console.log(`${(t.archName || 'meta').padEnd(20)} ${(100 * f).toFixed(0).padStart(4)}%   ${(100 * s).toFixed(0).padStart(4)}% (${g})  ${t.keys.map(name).join(', ')}`);
+  }
+} else if (mode === 'meta') {
   for (const t of ctx.chain.teams) console.log(`${t.archName ? t.archName.padEnd(14) : 'meta'.padEnd(14)} ${(t.wr * 100).toFixed(0)}% (${t.g})  ${t.keys.map(name).join(', ')}`);
 } else if (mode === 'best') {
   for (const r of out.rows.slice(0, 8)) console.log(`${(r.wr * 100).toFixed(0)}% (${r.g})  ${r.keys.map(name).join(', ')}`);
@@ -85,5 +101,5 @@ if (mode === 'meta') {
   console.log('top', rows.slice(0, 12).map(r => `${r[0]} ${(r[1] * 100).toFixed(0)}% (${r[2]})`).join(', '));
   console.log('bottom', rows.slice(-12).map(r => `${r[0]} ${(r[1] * 100).toFixed(0)}% (${r[2]})`).join(', '));
 }
-if (flag('json')) fs.writeFileSync(flag('json'), JSON.stringify({ args: process.argv.slice(2), ms, stats: S, chain: mode === 'meta' ? ctx.chain : undefined, best: out?.rows.slice(0, 32) }));
+if (flag('json')) fs.writeFileSync(flag('json'), JSON.stringify({ args: process.argv.slice(2), ms, stats: S, chain: mode === 'meta' ? ctx.chain : undefined, recheck: recheck ? out.h2h : undefined, best: out?.rows?.slice(0, 32) }));
 await Promise.all(workers.map(w => w.terminate()));

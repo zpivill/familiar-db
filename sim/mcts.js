@@ -34,18 +34,18 @@ const dec = (B, m, a) => a.type === 'switch' ? { type: 'switch', to: m.side.mons
 const withRng = (B, r, f) => { const keep = B.r; B.r = r; try { return f(); } finally { B.r = keep; } };
 
 // Plays one battle with side `me` run by the search and the other side by `foe` (a bot from bots/baselines.js).
+// me can be [0, 1] for both sides searching (foe is then unused), as the meta re-check does.
 // bo: runBattle options with bo.rng a seeded rng. Returns the finished battle.
 // With record set, B.replay.positions keeps every turn's options and how each scored, for teaching the fast AI.
 export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false } = {}) {
   const seed = Math.floor(bo.rng() * 1e9);              // every replay starts from this luck
   const mine = srng(seed + 1), theirs = srng(seed + 2), search = srng(seed + 3);
-  const rec = [], turnStart = {}, positions = [];
-  let plan = null;
+  const rec = [], turnStart = {}, positions = [], searching = [].concat(me), plan = [null, null];
 
   // One playout: replay the first `upto` recorded choices, then from turn T on our side plays `pair` this turn
   // and the fast AI after it, and the foe plays `style` throughout. Returns win (1) or not (0), plus a little
   // for the Vitality lead so close results still rank.
-  function playout(upto, T, pair, style, luck) {
+  function playout(upto, T, me, pair, style, luck) {
     const r = srng(seed), bot = BOTS[style];
     let i = 0, branched = false;
     const B = runBattle(data, teams, { ...bo, rng: r, decide: (kind, B, x, opts, extra) => {
@@ -60,7 +60,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
   }
 
   // The pair for this turn: candidates per character, then UCB1 over the pairs.
-  function think(B, T) {
+  function think(B, T, me) {
     const api = B.api, team = api.actives(B.sides[me]);
     const lists = team.map(m => {
       const opts = withRng(B, search, () => options(B, m, api)).slice(0, k);
@@ -78,7 +78,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
     for (let it = 0; it < Math.max(iters, pairs.length); it++) {
       let j = N.indexOf(0);
       if (j < 0) { const ln = Math.log(it); j = 0; let bv = -1; N.forEach((n, x) => { const v = S[x] / n + 0.5 * Math.sqrt(ln / n); if (v > bv) { bv = v; j = x; } }); }
-      N[j]++; S[j] += playout(turnStart[T], T, asMap(pairs[j]), STYLES[Math.floor(search() * STYLES.length)], Math.floor(search() * 1e9));
+      N[j]++; S[j] += playout(turnStart[T], T, me, asMap(pairs[j]), STYLES[Math.floor(search() * STYLES.length)], Math.floor(search() * 1e9));
     }
     let best = 0;
     N.forEach((n, x) => { if (n > N[best] || (n === N[best] && S[x] > S[best])) best = x; });
@@ -88,18 +88,19 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
 
   const B = runBattle(data, teams, { ...bo, rng: srng(seed), decide: (kind, B, x, opts, extra) => {
     if (kind === 'replace') {
-      const pick = x.i === me ? withRng(B, mine, () => chooseReplacement(B, x, opts, B.api))
+      const pick = searching.includes(x.i) ? withRng(B, mine, () => chooseReplacement(B, x, opts, B.api))
         : withRng(B, theirs, () => (foe.replace && foe.replace(B, x, opts)) || chooseReplacement(B, x, opts, B.api));
       rec.push(x.mons.indexOf(pick));
       return pick;
     }
     if (turnStart[B.turn] == null) turnStart[B.turn] = rec.length;
     let act;
-    if (x.side.i !== me) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
+    const si = x.side.i;
+    if (!searching.includes(si)) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
     else if (extra) act = withRng(B, mine, () => chooseAction(B, x, B.api));
     else {
-      if (!plan || plan.turn !== B.turn) plan = { turn: B.turn, acts: think(B, B.turn) };
-      const a = plan.acts.get(x.side.mons.indexOf(x));
+      if (plan[si]?.turn !== B.turn) plan[si] = { turn: B.turn, acts: think(B, B.turn, si) };
+      const a = plan[si].acts.get(x.side.mons.indexOf(x));
       act = a ? dec(B, x, a) : withRng(B, mine, () => chooseAction(B, x, B.api));
     }
     rec.push(enc(act));
