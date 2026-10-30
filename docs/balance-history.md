@@ -298,3 +298,22 @@ No balance or AI changes: results are the same as the JS sim's for the same seed
 
 Every playout still replays the battle from turn 1 (the JS design, kept for exact parity); branching from a copy of the battle instead would roughly halve the time.
 
+
+## Noise floor before build optimization: 16 worlds (2026-10-30)
+
+Step 1 of the [simulated-meta plan](https://claude.ai/artifact/3B6snowJaAmGMfy82N5SdR): 16 Rust meta chains, seeds 1-16, 200k each, comp, bring 8, Vitality x3, every form, archetype rounds (about 1 minute each on 4 cores). `bench.mjs stability` now also pools the runs: it splits them into two disjoint groups of m runs, averages each group, and checks how far the two groups agree. This is the "before builds" baseline; rerun it the same way once build optimization lands.
+
+**Metric fix:** "meta share overlap" divided by 6 although bring-8 meta teams have 8 members, so every overlap quoted above is 4/3 too high (46% is really about 35%, 47% about 35%). Comparisons between those numbers still hold. Rank correlations now give tied values their average rank, which matters for pooled shares with many zeros.
+
+| Runs pooled per group (m) | Top-12 shared | Share overlap | Share rank corr., top 40 | Picked win rate rank corr. |
+|---|---|---|---|---|
+| 1 | 5.2 / 12 | 41% | -0.14 | 0.43 |
+| 2 | 6.7 / 12 | 47% | -0.06 | 0.54 |
+| 4 | 7.7 / 12 | 59% | 0.21 | 0.66 |
+| 8 | 8.2 / 12 | 67% | 0.42 | 0.75 |
+
+(30 random splits each.) Pooling helps steadily: two groups of 8 runs agree on 8 of their top 12 characters and on win rate when picked (0.75), where single runs agree on 5. Ranks below the top ~12 are still mostly noise (top-40 share 0.42), so 16 worlds is not enough for a full usage ladder; win rate when picked looks reachable at 0.8 with about 16 runs per group.
+
+Pooled over all 16 runs, share of meta team slots (±95% across runs, runs it appears in): Devil Union Asta 11.6% ±0.7 (16/16), Six Paths Sage Naruto 8.7% ±2.2 (14/16), Ultra Instinct Goku 7.6% ±1.9 (16/16), Tsuna (form 3) 6.1% ±2.0 (14/16), Denji (form 3) 5.3% ±2.4 (10/16), Levi 4.7% ±2.3, Kaido 4.4% ±2.1, Poseidon 3.6% ±1.8; everyone else under 2.5%.
+
+Archetype win rate in the final round robin, mean of 16 runs (±95% across runs): Intimidate + Fake Out balance 55% ±3, Screens + setup 51% ±3, Snow 50% ±4, Redirection + setup 45% ±3, Tailwind offense 41% ±5, Fire field 41% ±4, Spread offense 39% ±4, Water field 38% ±4, Trick Room 38% ±4, Gravity 37% ±4, Lightning field 33% ±4. A single run swings each by 18-44 points, but pooled over 16 the error bars are 3-5 points, so the order Balance > Screens/Snow > Redirection > the rest is a real result under the current AI and rule-based builds.
