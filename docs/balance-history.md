@@ -360,3 +360,26 @@ Build search now also tries "survives X" bulk spreads (BALANCE.md section 8). Fo
 - **Picks:** the same ability in all 4 fits for 91 characters, the same moves for 29, the same item for only 5. Items stay near-ties.
 - **Top of the averaged table:** Demon Emperor Lelouch 85.7% (82.5-87.0), Pain 80.4%, Hogyoku Aizen 76.4%, Zero 69.4%, Ultra Instinct Goku 68.7%, Shinfuku Gojo 66.6%, Final Arc Gintoki 66.2%.
 - **Search-AI check:** 8,000 draft battles, both sides fast AI or both search AI, with all 4 books or plain builds, seeds 7 and 8 (about 30 minutes per seed for the two search runs). The win-rate ranking with books holds under the search AI: corr 0.91 fast vs search, while the two seeds agree 0.88-0.91 with each other, so the stronger AI changes nothing beyond noise. The biggest build gains hold or grow (Demon Emperor Lelouch +26 fast, +23 search; Zero +20, +23; Pain +7, +15; Hogyoku Aizen +6, +13). The top 20 fast-AI gains average +8.9 fast and +6.3 search; part of that drop is regression to the mean, since per-character gains at 8,000 battles only repeat across seeds at corr 0.43-0.46.
+
+## Character options tested (2026-10-30), nothing changed in data
+
+Each option was applied to a copy of the data, the changed character re-fitted (2 fits against 3 meta chains each, `--per=2000`), everyone else on the 4 averaged books, then 300k random-team draft battles on 2 seeds. Base: Demon Emperor Lelouch 85.8%, Pain 80.2%, Hogyoku Aizen 76.9%. Re-fitting alone moves a character about 3 points, so smaller changes are noise. Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
+
+| Option | Result |
+|---|---|
+| Zero Requiem: foes' drop only | Demon Emperor Lelouch 64.6%, Zero 49.9% |
+| Zero Requiem: allies' rise only | 80.0%, 61.4% |
+| Zero Requiem: only allies on the field rise | 72.7%, 57.7% |
+| Pain without Calm Mind / Spacial Rend / Recover | 64.5% / 65.0% / 78.1% |
+| Pain Energy 135 to 120 | 78.0% |
+| Preta Path half Energy damage / no heal | 78.9% / 79.2% |
+| Aizen without Calm Mind / Spacial Rend / Recover | 63.4% / 77.0% / 76.5% |
+| Aizen Energy 130 to 115 | 78.6% |
+| All According to Plan 1.3x / 1.2x | 76.8% / 77.7% |
+| Pucci: Confusion to Psychic | 39.0% to 40.3% |
+| Homura: Leer to Iron Head | 39.3% to 40.8% |
+
+- Zero Requiem drives both Lelouch forms, mostly through the team-wide +1 to all stats.
+- Pain and Aizen are Calm Mind + Recover walls: their abilities are near-ties, and only removing Calm Mind (or Spacial Rend for Pain) moves them.
+- Weak legendaries (Pucci, Homura, Blackbeard, about 39%) gain only 1-2 points from one better move.
+- The Zero Requiem variants used a throwaway engine switch that is not in the repo.
