@@ -130,30 +130,33 @@ fn auto_build(d: &Data, e: usize, moves: Vec<(usize, Flags)>) -> Build {
 fn speed_of(d: &Data, b: &Build, level: f64) -> f64 {
     battle_stat(d.entrants[b.e].stats.as_ref().unwrap().spe, level, false, b.evs.unwrap()[5], b.ivs.unwrap()[5], b.nature.unwrap_or_default().mult(SPE))
 }
-// The field's characters and their Speed as they usually play (their book build, else the plain build).
-pub fn threats(d: &Data, o: &Opts, field: &Field) -> Vec<(String, f64)> {
-    let mut out: Vec<(usize, String, f64)> = vec![];
+// The field's characters as they usually play (their book build, else the plain build), with their Speed and
+// how many field teams carry them, most common first.
+pub struct Threat { pub name: String, pub spd: f64, pub b: Build, pub n: usize }
+pub fn threats(d: &Data, o: &Opts, field: &Field) -> Vec<Threat> {
+    let mut out: Vec<Threat> = vec![];
     for (t, _) in &field.teams { for &x in t {
-        if out.iter().any(|y| y.0 == x) { continue; }
+        if let Some(y) = out.iter_mut().find(|y| y.b.e == x) { y.n += 1; continue; }
         let b = d.book.get(&x).map(|v| v[0].clone()).unwrap_or_else(|| auto_build(d, x, movesets(d, x, o, 1).remove(0)));
-        out.push((x, d.entrants[x].name.clone(), speed_of(d, &b, o.level)));
+        out.push(Threat { name: d.entrants[x].name.clone(), spd: speed_of(d, &b, o.level), b, n: 1 });
     } }
-    out.into_iter().map(|x| (x.1, x.2)).collect()
+    out.sort_by(|a, b| b.n.cmp(&a.n));
+    out
 }
 // Speed creep: the fewest Speed EVs that outspeed each threat (keeping the nature unless it lowers Speed, else
 // +Speed), the attack stat at the cap and the rest in Vitality. One option per distinct spread.
-fn speed_spreads(d: &Data, cur: &Build, threats: &[(String, f64)], level: f64) -> Vec<(String, Build)> {
+fn speed_spreads(d: &Data, cur: &Build, threats: &[Threat], level: f64) -> Vec<(String, Build)> {
     let st = d.entrants[cur.e].stats.as_ref().unwrap(); let k = kit(d, cur);
     let low = if k.uses_other { if st.grd <= st.wil { GRD } else { WIL } } else { k.other };
     let keep = cur.nature.unwrap_or_default();
     let natures = [if keep.mult(SPE) < 1.0 { Nature(None) } else { keep }, Nature(Some((SPE, low)))];
     let mut out: Vec<(String, Build)> = vec![];
-    let mut sorted: Vec<&(String, f64)> = threats.iter().collect();
+    let mut sorted: Vec<(&String, f64)> = threats.iter().map(|t| (&t.name, t.spd)).collect();
     sorted.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
     for (name, spd) in sorted {
         'n: for nat in natures {
             for ev in 0..=EV_MAX {
-                if battle_stat(st.spe, level, false, ev as f64, 31.0, nat.mult(SPE)) <= *spd { continue; }
+                if battle_stat(st.spe, level, false, ev as f64, 31.0, nat.mult(SPE)) <= spd { continue; }
                 let mut evs = [0.0; 6]; evs[5] = ev as f64; evs[k.atk + 1] = EV_MAX as f64; evs[0] = (EV_TOTAL - EV_MAX - ev).min(EV_MAX) as f64;
                 let mut b = cur.clone(); b.evs = Some(evs); b.nature = Some(nat); let mut iv = cur.ivs.unwrap(); iv[5] = 31.0; b.ivs = Some(iv); b.preset = Some("speed");
                 if !out.iter().any(|x| x.1.evs == b.evs && x.1.nature == b.nature) { out.push((format!("outspeeds {name} ({ev} Spe, {})", nat.name()), b)); }
@@ -164,8 +167,52 @@ fn speed_spreads(d: &Data, cur: &Build, threats: &[(String, f64)], level: f64) -
     out
 }
 
+// The threat's best hit on b, as a share of b's Vitality (expected damage, no crit), and the defence it hits.
+fn best_hit(d: &Data, o: &Opts, t: &Build, b: &Build) -> (f64, usize) {
+    let bo = BattleOpts { duos: false, level: o.level, turn_cap: 0, plans: [None, None] };   // cap 0: set up (entry abilities), no turns
+    let mut x = run_battle_with(d, [std::slice::from_ref(t), std::slice::from_ref(b)], rng(1.0), &bo, None);
+    let (mut best, mut key) = (0.0, GRD);
+    for k in 0..x.mons[0].moves.len() {
+        let v = crate::ai::est_damage(&mut x, 0, k, 1);
+        if v > best { best = v; let m = &d.moves[x.mons[0].moves[k].mv]; key = if m.cat == Cat::Physical || m.fx.psyshock { GRD } else { WIL }; }
+    }
+    (best, key)
+}
+// Bulk: for each of the most common field characters whose best hit KOs b from full (or in two hits), the fewest
+// Vitality plus defence EVs that survive one hit (or two), keeping the Speed EVs and nature, the attack stat on the rest (up to the cap),
+// then the other defence.
+const BULK_THREATS: usize = 15;
+fn bulk_spreads(d: &Data, o: &Opts, cur: &Build, threats: &[Threat]) -> Vec<(String, Build)> {
+    let k = kit(d, cur); let spe = cur.evs.unwrap()[5] as i32;
+    let mut out: Vec<(String, Build)> = vec![];
+    for t in threats.iter().filter(|t| t.b.e != cur.e).take(BULK_THREATS) {
+        let (hit, def) = best_hit(d, o, &t.b, cur);
+        for (need, what) in [(1.0, "a hit from "), (0.5, "two hits from ")] {
+        if hit < need { continue; }
+        let spread = |vit: i32, dv: i32| -> Option<Build> {
+            let atk = (EV_TOTAL - spe - vit - dv).min(EV_MAX);
+            if atk < 0 { return None; }
+            let other = if def == GRD { WIL } else { GRD };
+            let mut evs = [0.0; 6]; evs[5] = spe as f64; evs[0] = vit as f64; evs[def + 1] = dv as f64; evs[k.atk + 1] = atk as f64;
+            evs[other + 1] = (EV_TOTAL - spe - vit - dv - atk).min(EV_MAX) as f64;   // what the capped attack leaves
+            let mut b = cur.clone(); b.evs = Some(evs); Some(b)
+        };
+        'found: for tot in 0..=2 * EV_MAX {
+            for vit in ((tot - EV_MAX).max(0)..=tot.min(EV_MAX)).rev() {   // Vitality first: it helps against every hit
+                let Some(b) = spread(vit, tot - vit) else { continue };
+                if best_hit(d, o, &t.b, &b).0 < need {
+                    if !out.iter().any(|x| x.1.evs == b.evs) { out.push((format!("survives {what}{} ({vit} Vit, {} {})", t.name, tot - vit, STATS[def]), b)); }
+                    break 'found;
+                }
+            }
+        }
+        }
+    }
+    out
+}
+
 // Coordinate descent for one character. Returns its book entry.
-pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[(String, f64)], p: &Opt, cache: &mut HashMap<String, Vec<Build>>) -> Entry {
+pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[Threat], p: &Opt, cache: &mut HashMap<String, Vec<Build>>) -> Entry {
     let sets = movesets(d, e, o, 6);
     let abs = d.ent_abs[e].clone();
     let base0 = auto_build(d, e, sets[0].clone());
@@ -189,6 +236,9 @@ pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[(Str
             opts.extend(speed_spreads(d, &cur, threats, o.level));
             pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "speed", &mut tried);
         }
+        let mut opts: Vec<(String, Build)> = vec![("keep".into(), cur.clone())];
+        opts.extend(bulk_spreads(d, o, &cur, threats));
+        if opts.len() > 1 { pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "bulk", &mut tried); }
         let mut opts: Vec<(String, Build)> = items(d, &cur).into_iter().map(|it| { let mut b = cur.clone(); b.item = it; (it.map_or("none".into(), |i| i.key()), b) }).collect();
         pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "item", &mut tried);
     }
@@ -252,10 +302,14 @@ mod tests {
         for e in entrant_pool(&d, &o).into_iter().step_by(17) {
             let b = auto_build(&d, e, movesets(&d, e, &o, 1).remove(0));
             assert_eq!(spec_of(&d, &build_of(&d, e, &spec_of(&d, &b))), spec_of(&d, &b));
-            let th = vec![("x".to_string(), speed_of(&d, &b, o.level))];
-            for (_, s) in speed_spreads(&d, &b, &th, o.level) {
-                assert!(speed_of(&d, &s, o.level) > th[0].1);
-                assert!(s.evs.unwrap().iter().sum::<f64>() <= EV_TOTAL as f64 && s.evs.unwrap().iter().all(|&v| v <= EV_MAX as f64));
+            let ok = |s: &Build| s.evs.unwrap().iter().sum::<f64>() <= EV_TOTAL as f64 && s.evs.unwrap().iter().all(|&v| v <= EV_MAX as f64);
+            let th = vec![Threat { name: "x".into(), spd: speed_of(&d, &b, o.level), b: b.clone(), n: 1 }];
+            for (_, s) in speed_spreads(&d, &b, &th, o.level) { assert!(speed_of(&d, &s, o.level) > th[0].spd && ok(&s)); }
+            // every bulk spread survives its threat's best hit, which KOs the plain build
+            for t in entrant_pool(&d, &o).into_iter().step_by(23) {
+                let tb = auto_build(&d, t, movesets(&d, t, &o, 1).remove(0));
+                let th = vec![Threat { name: "t".into(), spd: 0.0, b: tb.clone(), n: 1 }];
+                for (n, s) in bulk_spreads(&d, &o, &b, &th) { let need = if n.contains("two hits") { 0.5 } else { 1.0 }; assert!(best_hit(&d, &o, &tb, &b).0 >= need && best_hit(&d, &o, &tb, &s).0 < need && ok(&s)); }
             }
         }
     }
