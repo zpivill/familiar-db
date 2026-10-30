@@ -35,7 +35,7 @@ export function searchPlan(total) {
 export async function searchTeams(ctx, total, field, start, ban, archetype) {
   const id = ctx.jobId;
   ctx.plan = searchPlan(total); ctx.gen = 0; ctx.full = [{}]; ctx.kept = {};
-  const vs = { ...(field ? { vs: field.vs, vsWeights: field.weights } : {}), ...(ban?.length ? { ban } : {}), ...(archetype ? { archetype } : {}) };
+  const vs = { ...(field ? { vs: field.vs, vsWeights: field.weights, ...(field.forced ? { forced: field.forced } : {}) } : {}), ...(ban?.length ? { ban } : {}), ...(archetype ? { archetype } : {}) };
   const first = Math.max(40, Math.min(400, Math.round(ctx.plan[0] * 2 / 60)));
   let res = await ctx.send(ctx.plan[0], { fresh: first, top: start || [], variants: start ? 1 : 0, seed: seedOf(ctx), ...vs }, first + (start?.length || 0) * 2);
   for (ctx.gen = 1; ctx.gen < ctx.plan.length; ctx.gen++) {
@@ -121,4 +121,94 @@ export async function metaChain(ctx, total) {
   if (id !== ctx.jobId) return;
   addWins(C.h2h, res.h2h); addDetail(C.detail, res.detail);
   for (const t of C.teams) { const P = res.pick?.[t.keys.join('+')]; if (P?.g) t.pick = P; }
+}
+
+// The best mix of teams for a symmetric zero-sum payoff table A (A[i][j] = how much team i out-wins team j,
+// -1..1): regret matching in self-play, whose average strategy approaches a Nash equilibrium. Returns weights.
+export function nashMix(A, iters = 20000) {
+  const n = A.length, regret = new Array(n).fill(0), sum = new Array(n).fill(0);
+  for (let t = 0; t < iters; t++) {
+    const pos = regret.map(r => Math.max(0, r)), z = pos.reduce((a, b) => a + b, 0);
+    const x = z > 0 ? pos.map(r => r / z) : new Array(n).fill(1 / n);
+    x.forEach((v, i) => { sum[i] += v; });
+    const u = A.map(row => row.reduce((acc, a, j) => acc + a * x[j], 0)), ev = u.reduce((acc, v, i) => acc + v * x[i], 0);
+    u.forEach((v, i) => { regret[i] += v - ev; });
+  }
+  const z = sum.reduce((a, b) => a + b, 0);
+  return sum.map(v => v / z);
+}
+
+// Population meta (double oracle): instead of one chain of counters, keep a pool of teams, play every pair,
+// find the mix of teams that no other team in the pool beats (nashMix), then search for the best counter to
+// that mix and add it if it beats the mix. Repeat until no counter is found or the rounds run out. The meta is
+// that final mix: each team's weight, and each character's share (the weight of the teams that bring it).
+// A few dozen games per pair leave each win rate a few points off, and an exact Nash mix jumps on that noise,
+// so the mix is averaged over resamples of the table (each pair's wins redrawn from its games).
+// With archetype rounds on, each archetype then gets a search for its best team against the mix; those teams
+// join the final round robin (still forced to play their plan) and are scored against the mix, outside it.
+// `seeds` (team key lists, e.g. the pools of earlier runs) start the pool instead of a fresh search, so several
+// runs' teams compete in one mix.
+// ctx.pop holds the result: { teams: [{ keys, arch, archName, weight, vsMix }], chars: { key: share }, rounds }.
+export async function populationMeta(ctx, total, seeds) {
+  const id = ctx.jobId, P = ctx.pop = { teams: [], chars: {}, rounds: [] }, H = {}, R = ctx.random || Math.random;
+  const archs = ctx.lastOpts.arch === 'all' && ctx.lastOpts.format === 'comp' ? ctx.meta.archetypes || [] : [];
+  const rounds = Math.max(3, Math.min(8, Math.round(total / 25000)));
+  const start = seeds ? 0 : Math.round(total * 0.2), archEach = archs.length ? Math.floor(total * 0.15 / archs.length) : 0;
+  const per = Math.floor((total - start - archEach * archs.length - Math.round(total * 0.1)) / rounds), brBudget = Math.round(per * 0.6);
+  const key = t => [...t.keys].sort().join('+');
+  const forcedMap = () => Object.fromEntries(P.teams.filter(t => t.arch).map(t => [key(t), t.arch]));
+  const add = t => { if (!P.teams.some(x => key(x) === key(t))) P.teams.push(t); };
+  const playAll = async budget => {
+    const res = await ctx.send(budget, { top: P.teams.map(t => t.keys), forced: forcedMap(), h2h: true, seed: seedOf(ctx) }, P.teams.length);
+    addWins(H, res.h2h);
+  };
+  const gauss = () => Math.sqrt(-2 * Math.log(1 - R())) * Math.cos(2 * Math.PI * R());
+  const solve = (draws = 40) => {
+    const meta = P.teams.filter(t => !t.arch), ks = meta.map(key);
+    const cell = (a, b) => H[a + '|' + b] || { g: 0, w: 0 };
+    const table = redraw => ks.map(a => ks.map(b => {
+      if (a === b) return 0;
+      const c = cell(a, b), d = cell(b, a), g = c.g + d.g;
+      let p = (c.w + (d.g - d.w) + 1) / (g + 2);                   // a's wins over both sides' games, smoothed
+      if (redraw) p = Math.min(1, Math.max(0, p + gauss() * Math.sqrt(p * (1 - p) / (g + 2))));
+      return 2 * p - 1;
+    }));
+    const x = new Array(ks.length).fill(0);
+    for (let d = 0; d < draws; d++) nashMix(table(true), 5000).forEach((v, i) => { x[i] += v / draws; });
+    const A = table(false), wr = (a, b) => { const c = cell(a, b), d = cell(b, a), g = c.g + d.g; return g ? (c.w + d.g - d.w) / g : 0.5; };
+    meta.forEach((t, i) => { t.weight = x[i]; t.vsMix = 0.5 + A[i].reduce((acc, v, j) => acc + v * x[j], 0) / 2; });
+    for (const t of P.teams.filter(t => t.arch)) { t.weight = 0; t.vsMix = meta.reduce((acc, m, j) => acc + x[j] * wr(key(t), ks[j]), 0); }
+  };
+  if (seeds) seeds.forEach(keys => add({ keys }));
+  else {
+    const first = await searchTeams(ctx, start);
+    if (!first || id !== ctx.jobId) return;
+    first.rows.slice(0, 4).forEach(r => add({ keys: r.keys }));
+  }
+  for (let k = 0; k < rounds; k++) {
+    P.round = k + 1; ctx.draw?.();
+    await playAll(per - brBudget);
+    if (id !== ctx.jobId) return;
+    solve();
+    const mix = P.teams.filter(t => t.weight > 0.01);
+    const res = await searchTeams(ctx, brBudget, { vs: mix.map(t => t.keys), weights: mix.map(t => t.weight) });
+    if (!res || id !== ctx.jobId) return;
+    const best = res.rows.find(r => !P.teams.some(t => key(t) === r.keys.slice().sort().join('+')));
+    P.rounds.push({ pool: P.teams.length, counter: best?.keys, counterWr: best?.wr });
+    // stop when nothing new beats the mix (point win rate: the 95% margin of a counter search's last generation is ~11 points)
+    if (!best || best.wr <= 0.5) break;
+    add({ keys: best.keys });
+  }
+  const mix = P.teams.filter(t => t.weight > 0.01);
+  for (const a of archs) {
+    const res = await searchTeams(ctx, archEach, { vs: mix.map(t => t.keys), weights: mix.map(t => t.weight) }, null, null, a.id);
+    if (!res || id !== ctx.jobId) return;
+    const best = res.rows.find(r => !P.teams.some(t => key(t) === r.keys.slice().sort().join('+')));
+    if (best) add({ keys: best.keys, arch: a.id, archName: a.name });
+  }
+  await playAll(Math.max(0, ctx.target - ctx.done));
+  if (id !== ctx.jobId) return;
+  solve(100);
+  P.teams.sort((a, b) => b.weight - a.weight || b.vsMix - a.vsMix);
+  for (const t of P.teams) for (const c of t.keys) P.chars[c] = (P.chars[c] || 0) + t.weight;
 }

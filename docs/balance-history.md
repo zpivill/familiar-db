@@ -246,3 +246,27 @@ r's pick after step 4: re-check finished metas with the search AI instead. `cli.
 | Spread offense | 25% | 22% |
 
 **Under strong play the ranking holds:** rank correlation 0.89, average change 4 points, largest 11 (Gravity up, Tailwind down), all within the margins. So with the step-2 AI, one run's results are close to what good play gives. The open problem is that different runs land in different metas, which is step 5's job.
+
+### Step 5: population meta (2026-10-30)
+
+`cli.mjs --search=pop` replaces the chain of counters with a double oracle: start a pool from the 4 best teams of a 40k search, play every pair, find the pool's Nash mix (the mix no pool team beats; regret matching, averaged over 40 resamples of the win table so a few points of noise don't swing it), search for the best counter to the mix, add it if it beats the mix, repeat. Archetype teams are then searched against the mix and scored against it. `--pool=a.json,...` starts the pool from earlier runs' teams instead. About 8 minutes per 200k run on 4 cores.
+
+Stability, Competitive doubles, bring 8, Vitality x3, every form, archetype rounds, 200k battles per run:
+
+| | Top-12 characters shared | Meta share overlap | Picked win rate rank corr. | Largest archetype spread |
+|---|---|---|---|---|
+| Meta chain, seeds 1-3 (step 2 baseline) | 4.7 / 12 | 46% | 0.49 | 31 |
+| Population meta, seeds 1-3 | 2.0 / 12 | 24% | 0.33 | 42 |
+| Population meta, seeds 4-6 | 1.7 / 12 | 28% | 0.35 | n/a |
+| Merged pools: seeds 1-3 vs seeds 4-6 (100k each on top) | 3.0 / 12 | 34% | 0.37 | 27 |
+
+(Meta share overlap: how much of two runs' character shares match, each meta team counting equally in a chain and by Nash weight in a population meta.)
+
+**It did not make runs agree.** What it showed instead:
+
+- The counter search almost never beats the mix: all 8 runs stopped after 1 or 2 rounds (best counters 29-52% against the mix). Within a run the mix is clear: pool teams outside it lose to it by 4-16 points.
+- So the disagreement isn't in judging teams but in finding them: each seed's search lands on a different handful of strong 8s, and the strongest found team takes most of the mix. Merging three runs' pools helps a little (34% overlap) but stays below the chain, whose 6 equal teams spread the shares wider.
+- What repeats: Devil Union Asta is in the mix of 6 of 8 runs (100% share in four, 87% and 98% in the merged runs), Ultra Instinct Goku in 7 of 8, Six Paths Sage Naruto often. Matches the earlier Asta findings (Black Divider ignores Protect).
+- Archetype scores against the mix still swing 10-42 points between runs; no archetype is clearly above the others.
+
+A first version (Nash on the raw table, archetype teams inside the pool, stop when the counter's 95% lower bound passed 50%) was worse: 2.0 / 12, 26% overlap, and two runs collapsed onto one team. Kept as a CLI tool, not on the page and not the default for balance runs.

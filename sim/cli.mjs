@@ -2,8 +2,9 @@
 // Flags: --trained (AI-chosen EVs, nature, IVs and held items), --level=50, --size=4,
 // --draft (comp only: bring 8 and draft 6), --bring=10, --hp=3 (Vitality multiplier), --forms=all,
 // --workers=4 (default: every core; results repeat for the same seed and worker count),
-// --search=best|meta (Strongest teams / Meta chain, as on the page), --arch (archetype rounds), --ban=2,
-// --json=out.json (save the results, e.g. for sim/bench.mjs),
+// --search=best|meta|pop (Strongest teams / Meta chain, as on the page; pop = population meta, a Nash mix of teams), --arch (archetype rounds), --ban=2,
+// --json=out.json (save the results, e.g. for sim/bench.mjs), --pool=a.json,b.json (with --search=pop: start the
+// pool from the meta teams of saved population metas instead of a fresh search),
 // --recheck=meta.json (replay a saved meta chain's final round robin with the search AI on both sides, [count]
 // battles in all, --iters=128 playouts a turn, and compare each team's win rate with the fast AI's)
 // Prints the top and bottom characters by win rate (or the meta teams) and how long it took.
@@ -13,7 +14,7 @@ import { Worker } from 'worker_threads';
 import { prepare, rng } from './battle.js';
 import { watchBattle } from './batch.js';
 import { RULES } from './rules.js';
-import { searchTeams, metaChain } from './search.js';
+import { searchTeams, metaChain, populationMeta } from './search.js';
 import { ARCHETYPES } from './archetypes.js';
 
 const here = new URL('..', import.meta.url);
@@ -78,6 +79,7 @@ if (recheck) {
   out = await ctx.send(+count, { top: keys, forced, h2h: true, seed: Math.floor(R() * 1e9) }, keys.length);
 }
 else if (mode === 'meta') await metaChain(ctx, +count);
+else if (mode === 'pop') await populationMeta(ctx, +count, flag('pool') && flag('pool').split(',').flatMap(f => JSON.parse(fs.readFileSync(f)).pop.teams.filter(t => !t.arch).map(t => t.keys)));
 else if (mode === 'best') out = await searchTeams(ctx, +count);
 else await ctx.send(+count);
 const ms = Date.now() - t0;
@@ -94,6 +96,11 @@ if (recheck) {
   }
 } else if (mode === 'meta') {
   for (const t of ctx.chain.teams) console.log(`${t.archName ? t.archName.padEnd(14) : 'meta'.padEnd(14)} ${(t.wr * 100).toFixed(0)}% (${t.g})  ${t.keys.map(name).join(', ')}`);
+} else if (mode === 'pop') {
+  console.log(`pool of ${ctx.pop.teams.length} after ${ctx.pop.rounds.length} rounds; teams in the mix (weight, win rate vs the mix):`);
+  for (const t of ctx.pop.teams.filter(t => t.weight > 0.01)) console.log(`${(t.archName || 'meta').padEnd(14)} ${(100 * t.weight).toFixed(0).padStart(3)}%  ${(100 * t.vsMix).toFixed(0)}%  ${t.keys.map(name).join(', ')}`);
+  for (const t of ctx.pop.teams.filter(t => t.arch)) console.log(`${t.archName.padEnd(30)} ${(100 * t.vsMix).toFixed(0)}% vs the mix  ${t.keys.map(name).join(', ')}`);
+  console.log('characters by share', Object.entries(ctx.pop.chars).sort((a, b) => b[1] - a[1]).slice(0, 16).map(([k, v]) => `${name(k)} ${(100 * v).toFixed(0)}%`).join(', '));
 } else if (mode === 'best') {
   for (const r of out.rows.slice(0, 8)) console.log(`${(r.wr * 100).toFixed(0)}% (${r.g})  ${r.keys.map(name).join(', ')}`);
 } else {
@@ -101,5 +108,5 @@ if (recheck) {
   console.log('top', rows.slice(0, 12).map(r => `${r[0]} ${(r[1] * 100).toFixed(0)}% (${r[2]})`).join(', '));
   console.log('bottom', rows.slice(-12).map(r => `${r[0]} ${(r[1] * 100).toFixed(0)}% (${r[2]})`).join(', '));
 }
-if (flag('json')) fs.writeFileSync(flag('json'), JSON.stringify({ args: process.argv.slice(2), ms, stats: S, chain: mode === 'meta' ? ctx.chain : undefined, recheck: recheck ? out.h2h : undefined, best: out?.rows?.slice(0, 32) }));
+if (flag('json')) fs.writeFileSync(flag('json'), JSON.stringify({ args: process.argv.slice(2), ms, stats: S, chain: mode === 'meta' ? ctx.chain : undefined, pop: ctx.pop, recheck: recheck ? out.h2h : undefined, best: out?.rows?.slice(0, 32) }));
 await Promise.all(workers.map(w => w.terminate()));

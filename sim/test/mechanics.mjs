@@ -4,7 +4,7 @@ import { prepare, runBattle, rng } from '../battle.js';
 import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
 import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey, mergeStats, emptyStats } from '../batch.js';
-import { searchTeams, metaChain } from '../search.js';
+import { searchTeams, metaChain, nashMix, populationMeta } from '../search.js';
 import { playSearch, replay } from '../mcts.js';
 import { BOTS } from '../bots/baselines.js';
 import { draftSide, guessBuilds } from '../draft.js';
@@ -283,6 +283,16 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ctx.done = 0;
   await metaChain(ctx, 3000);
   ok(ctx.chain.teams.length >= 3 && Object.keys(ctx.chain.h2h).length > 0, 'Meta chain finds counter teams and plays them against each other', ctx.chain.teams.length);
+  ctx.done = 0;
+  await populationMeta(ctx, 4000);
+  const wsum = ctx.pop.teams.reduce((a, t) => a + t.weight, 0);
+  ok(ctx.pop.teams.length >= 4 && Math.abs(wsum - 1) < 1e-6, 'Population meta builds a pool with Nash weights adding to 1', `${ctx.pop.teams.length} teams, ${wsum}`);
+}
+{
+  const x = nashMix([[0, 1, -1], [-1, 0, 1], [1, -1, 0]]);
+  ok(x.every(v => Math.abs(v - 1 / 3) < 0.02), 'Nash mix of rock-paper-scissors is a third each', x.map(v => v.toFixed(3)));
+  const y = nashMix([[0, 0.4, 0.6], [-0.4, 0, 0.2], [-0.6, -0.2, 0]]);
+  ok(y[0] > 0.98, 'Nash mix puts everything on a team that beats all the others', y.map(v => v.toFixed(3)));
 }
 
 // Joint side actions: two Tailwind users on one side never both use it on the same turn.
