@@ -283,5 +283,15 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(ctx.chain.teams.length >= 3 && Object.keys(ctx.chain.h2h).length > 0, 'Meta chain finds counter teams and plays them against each other', ctx.chain.teams.length);
 }
 
+// Joint side actions: two Tailwind users on one side never both use it on the same turn.
+{
+  let doubled = 0;
+  for (let seed = 1; seed <= 20; seed++) {
+    const B = runBattle(data, [[build('gojo', ['tailwind', 'tackle']), build('saitama', ['tailwind', 'tackle'])], [build('tanjiro/3', ['tackle']), build('giyu', ['tackle'])]], { rng: rng(seed), log: true, format: 'duos', turnCap: 3 });
+    for (let t = 1; t <= 3; t++) if (B.log.filter(l => l.startsWith(`[${t}]`) && /\(A\) uses Tailwind/.test(l)).length > 1) doubled++;
+  }
+  ok(!doubled, 'A side plans together: no doubled Tailwind', doubled);
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');

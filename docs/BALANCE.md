@@ -139,6 +139,7 @@ batch.runBatch(opts) ─ for each battle:
 | `play.js` | The Battle vs AI page `#play`: a human plays one side, including Competitive doubles with team preview. It replays the battle from its seed up to each player choice, using `runBattle`'s `opts.decide` hook. |
 | `cli.mjs` | Terminal runner (see section 10): plain batches, team searches and meta chains, split across every core with `node-worker.mjs` (runs worker.js in a Node worker thread). |
 | `bench.mjs` | AI test bench (see section 10): strength against fixed opponents, and how far saved meta chains agree. |
+| `tune.mjs` | Searches for better AI weights (`W` in ai.js) on every core (see section 10). |
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 
@@ -147,7 +148,9 @@ batch.runBatch(opts) ─ for each battle:
 
 `sim/ai.js`. Both sides use the same AI with full knowledge of both teams, so differences in results should come from the characters, not from information.
 
-Each turn `chooseAction` scores every usable move against every target, adds noise (score x random 0.85-1.15, `NOISE = 0.3`, plus up to +1), and takes the best. Then it considers switching.
+Each turn the AI scores every usable move against every target, adds a little noise (`W.noise`), then considers switching. In doubles the first character asked plans the whole side: it takes each character's 4 best options and picks the best pair, scored together by `pairValue` (no doubled Tailwind, field or screen, no Helping Hand next to a partner that isn't attacking, a small cut for two hits on a foe one of them already knocks out, a bonus for two hits that only knock out together).
+
+**Every number below lives in `W` at the top of ai.js** and was tuned by `sim/tune.mjs` on 2026-10-29 (see section 10). The numbers quoted here are the original hand-set ones, which the frozen `sim/bots/ai-v1.js` still uses. Tuning raised Protect when the foes can knock the user out (40 to 310), setup (x0.8 to x1.78), Tailwind and Trick Room, and every status move's total (x1.47), and lowered noise (0.3 to 0.17).
 
 - **Attacks** (`attackValue`): expected damage as a share of the target's max Vitality (`estDamage`: real `calc` with average roll, multi-hit average, accuracy, immunities), capped at what's left, x100. **+55 for a knockout**, +30 more if priority lets a slower user land it. Side effects add a bit (status chance x18, flinch if faster, boosts), drawbacks subtract (recoil, self damage, recharge, self-confuse). Charge moves x0.55-0.7, delayed x0.6, sucker-type x0.65. Spread moves in doubles: sum over foes x0.75, minus damage to an ally hit by an "all" move.
 - **Doubles targeting** (`duosTargets`): bonus toward the foe that threatens this side most (up to +14) and +15 when the ally can finish a knockout this turn.
@@ -158,7 +161,7 @@ Each turn `chooseAction` scores every usable move against every target, adds noi
 - **Switching:** only after at least one turn in. Uses `matchup` (best hit dealt minus best hit taken, ±Speed). Switches if doomed by a countdown, or if the current matchup is bad (< -0.45) and a bench member is 0.5 better (70% of the time), or if Choice-locked into a weak move.
 - **Replacement after a faint:** the bench member with the best worst-case matchup against the foes on the field.
 
-**What it doesn't do:** it looks one turn ahead. It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and doesn't scout hidden builds in battle (it sees everything). See the checks in section 11.
+**What it doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and doesn't scout hidden builds in battle (it sees everything). See the checks in section 11.
 
 ## 7. How the draft AI picks its 6
 
@@ -216,9 +219,12 @@ node sim/cli.mjs 1 comp 5 watch --draft        # one battle's draft reasoning an
 node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
 node sim/bench.mjs strength 1000               # the AI against random, greedy, frozen v1 and itself
 node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains with different seeds agree
+node sim/tune.mjs 80 300 1                     # tune the AI's weights (W) against v1 + greedy, about 15 minutes on 4 cores
 ```
 
 Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. Flags: `--hp=3` (Vitality multiplier), `--forms=all`, `--search=best|meta` (Strongest teams / Meta chain, the same code as the page), `--arch` (archetype rounds), `--ban=3`, `--json=file`, `--workers=N` (default: every core). Results repeat exactly for the same seed and worker count. A 200k meta chain takes about 13 minutes on 4 cores.
+
+**Tuning:** `tune.mjs` writes `sim/tuned-weights.json` (don't commit it). It only plays seeds 1000 and up, so check the result with `bench.mjs strength` on seeds 1 and 2 before copying the weights into `W`. If the tuned weights beat the current ones there, freeze the old ai.js as the next `bots/ai-vN.js` first.
 
 **Before and after any AI change,** run `bench.mjs strength` on 2 seeds and 3 meta chains with `bench.mjs stability`, and add both to balance-history.md. The strength ladder plays mirror matches (the same 6 on both sides) in pairs with the same luck and sides swapped, so only the AI differs. For scripts, `runBatch` in batch.js does a plain batch in-process:
 
