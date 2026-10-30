@@ -78,8 +78,8 @@ function stability(files) {
   };
   // characters by share, top 12
   const top = R => { const c = share(R); return Object.keys(c).filter(k => c[k] > 0.005).sort((a, b) => c[b] - c[a]).slice(0, 12); };
-  // how much of the meta two runs share: the overlap of their character shares (each run's shares add up to 6)
-  const overlap = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0) / 6;
+  // how much of the meta two runs share: the overlap of their character shares, as a fraction of a run's total (team size; 8 when bringing 8)
+  const overlap = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0) / Object.values(a).reduce((s, x) => s + x, 0);
   // an archetype team's win rate over the final round robin (against the mix, for a population meta)
   const archWr = R => R.pop ? Object.fromEntries(R.pop.teams.filter(t => t.arch).map(t => [t.archName, t.vsMix])) : Object.fromEntries(R.chain.teams.filter(t => t.arch).map(t => {
     const k = [...t.keys].sort().join('+'); let g = 0, w = 0;
@@ -88,8 +88,9 @@ function stability(files) {
   }));
   // win rate when picked, per character with 200+ picks
   const picked = R => Object.fromEntries(Object.entries(R.stats.bring || {}).filter(([, v]) => v.p >= 200).map(([k, v]) => [k, v.pw / v.p]));
-  const rank = xs => { const o = xs.map((x, i) => [x, i]).sort((a, b) => a[0] - b[0]); const r = []; o.forEach(([, i], j) => { r[i] = j; }); return r; };
-  const spearman = (a, b) => { const ks = Object.keys(a).filter(k => k in b); if (ks.length < 5) return NaN; const ra = rank(ks.map(k => a[k])), rb = rank(ks.map(k => b[k])), n = ks.length; return 1 - 6 * ks.reduce((s, _, i) => s + (ra[i] - rb[i]) ** 2, 0) / (n * (n * n - 1)); };
+  // ties share their average rank (pooled shares have many zeros), and the correlation is Pearson's on the ranks
+  const rank = xs => { const o = xs.map((x, i) => [x, i]).sort((a, b) => a[0] - b[0]), r = []; for (let j = 0; j < o.length;) { let e = j; while (e + 1 < o.length && o[e + 1][0] === o[j][0]) e++; for (let q = j; q <= e; q++) r[o[q][1]] = (j + e) / 2; j = e + 1; } return r; };
+  const spearman = (a, b) => { const ks = Object.keys(a).filter(k => k in b); if (ks.length < 5) return NaN; const ra = rank(ks.map(k => a[k])), rb = rank(ks.map(k => b[k])), m = (ks.length - 1) / 2; let sab = 0, saa = 0, sbb = 0; ra.forEach((x, i) => { sab += (x - m) * (rb[i] - m); saa += (x - m) ** 2; sbb += (rb[i] - m) ** 2; }); return sab / Math.sqrt(saa * sbb); };
   const pairs = [];
   for (let i = 0; i < runs.length; i++) for (let j = i + 1; j < runs.length; j++) pairs.push([i, j]);
   const avg = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
@@ -103,6 +104,33 @@ function stability(files) {
   const spreads = names.map(nm => { const xs = A.map(a => a[nm]).filter(isFinite); return [nm, xs.length > 1 ? Math.max(...xs) - Math.min(...xs) : NaN, xs]; });
   console.log(`Archetype win rate spread across runs (largest ${(100 * Math.max(...spreads.map(s => s[1]).filter(isFinite))).toFixed(0)} points):`);
   for (const [nm, sp, xs] of spreads) console.log(`  ${nm.padEnd(30)} ${xs.map(x => (100 * x).toFixed(0) + '%').join(' / ').padEnd(20)} spread ${(100 * sp).toFixed(0)}`);
+  if (runs.length < 4) return;
+
+  // pooled runs: how far two disjoint groups of m runs agree once each group's results are averaged
+  const poolShare = ix => { const c = {}; for (const i of ix) for (const k in SH[i]) c[k] = (c[k] || 0) + SH[i][k] / ix.length; return c; };
+  const poolPicked = ix => { const c = {}; for (const i of ix) for (const [k, v] of Object.entries(runs[i].stats.bring || {})) { c[k] ??= { p: 0, pw: 0 }; c[k].p += v.p; c[k].pw += v.pw; } return Object.fromEntries(Object.entries(c).filter(([, v]) => v.p >= 200 * ix.length).map(([k, v]) => [k, v.pw / v.p])); };
+  const top40 = (a, b) => { const ks = new Set([a, b].flatMap(c => Object.keys(c).sort((x, y) => c[y] - c[x]).slice(0, 40))); const f = c => Object.fromEntries([...ks].map(k => [k, c[k] || 0])); return spearman(f(a), f(b)); };
+  const r = rng(7);
+  console.log(`\nPooled groups (disjoint groups of m runs, averaged over 30 random splits):`);
+  console.log(`   m   top-12 shared   share overlap   share rank corr (top 40)   picked win rate rank corr`);
+  for (let m = 1; 2 * m <= runs.length; m *= 2) {
+    const out = [[], [], [], []];
+    for (let t = 0; t < 30; t++) {
+      const ix = runs.map((_, i) => i); for (let i = ix.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [ix[i], ix[j]] = [ix[j], ix[i]]; }
+      const a = poolShare(ix.slice(0, m)), b = poolShare(ix.slice(m, 2 * m));
+      const ta = Object.keys(a).sort((x, y) => a[y] - a[x]).slice(0, 12), tb = Object.keys(b).sort((x, y) => b[y] - b[x]).slice(0, 12);
+      out[0].push(ta.filter(k => tb.includes(k)).length); out[1].push(overlap(a, b)); out[2].push(top40(a, b)); out[3].push(spearman(poolPicked(ix.slice(0, m)), poolPicked(ix.slice(m, 2 * m))));
+    }
+    console.log(`  ${String(m).padStart(2)}   ${avg(out[0]).toFixed(1).padStart(6)} of 12   ${(100 * avg(out[1])).toFixed(0).padStart(8)}%   ${avg(out[2]).toFixed(2).padStart(14)}   ${avg(out[3]).toFixed(2).padStart(24)}`);
+  }
+  // each top character's share across all runs, with its error bar across runs (not battles)
+  const all = poolShare(runs.map((_, i) => i));
+  const slots = Object.values(all).reduce((s, x) => s + x, 0);
+  console.log(`\nTop 20 by pooled meta share (share of meta team slots; ±95% across runs; runs it appears in):`);
+  for (const k of Object.keys(all).sort((a, b) => all[b] - all[a]).slice(0, 20)) {
+    const xs = SH.map(c => c[k] || 0), sd = Math.sqrt(xs.reduce((s, x) => s + (x - all[k]) ** 2, 0) / (xs.length - 1));
+    console.log(`  ${k.padEnd(34)} ${(100 * all[k] / slots).toFixed(1).padStart(5)}% ±${(100 * 1.96 * sd / Math.sqrt(xs.length) / slots).toFixed(1)}   ${xs.filter(x => x > 0).length}/${xs.length}`);
+  }
 }
 
 // ---- the search AI (sim/mcts.js) against the fixed opponents, split over every core ----
