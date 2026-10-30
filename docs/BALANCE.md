@@ -145,7 +145,7 @@ batch.runBatch(opts) ─ for each battle:
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 
-**engine/** is a Rust port of the sim (battle.js, ai.js, builds.js, draft.js, batch.js, search.js and the cli) for big runs, about 15x faster. It gives the same results as the JS sim for the same seed (checked battle by battle by `engine/tests/parity.mjs`, which CI runs on every change to `sim/`, `engine/` or `data/`). The JS sim stays the source of truth and the only one on the page: **a change to how the JS sim plays must be made in engine/ too**, or CI fails. Data changes need nothing: `node sim/export.mjs` writes `engine/data.json` (moves compiled, entrants, archetype rosters) from `data/`. Not ported: the search AI (mcts.js), `--recheck`, `--search=pop`, `watch`, the bench and the tuner.
+**engine/** is a Rust port of the sim (battle.js, ai.js, builds.js, draft.js, batch.js, search.js and the cli) for big runs, about 15x faster. It gives the same results as the JS sim for the same seed (checked battle by battle by `engine/tests/parity.mjs`, which CI runs on every change to `sim/`, `engine/` or `data/`). The JS sim stays the source of truth and the only one on the page: **a change to how the JS sim plays must be made in engine/ too**, or CI fails. Data changes need nothing: `node sim/export.mjs` writes `engine/data.json` (moves compiled, entrants, archetype rosters) from `data/`. The search AI (mcts.js) and `--recheck` are ported too (`--ai=search --iters=128` plays both sides with it). Not ported: `--search=pop`, `watch`, the bench and the tuner.
 
 
 ## 6. How the battle AI chooses moves
@@ -237,12 +237,13 @@ Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `
 
 ### Fast runs with the Rust sim (engine/)
 
-Same arguments and flags as `cli.mjs` (except `--search=pop`, `--recheck` and `watch`), same results, and the `--json` file opens on the Simulator page with **Load results**. A 200k meta chain with archetype rounds takes about 40 seconds on 4 cores (the JS sim: about 11 minutes), so 1M battles is about 3-4 minutes and several seeds are cheap. With several workers, Rust runs repeat exactly for the same seed and worker count; JS runs on several workers can differ slightly because worker results arrive in varying order (on `--workers=1` the two match exactly).
+Same arguments and flags as `cli.mjs` (except `--search=pop` and `watch`), same results, and the `--json` file opens on the Simulator page with **Load results**. A 200k meta chain with archetype rounds takes about 40 seconds on 4 cores (the JS sim: about 11 minutes), so 1M battles is about 3-4 minutes and several seeds are cheap. With several workers, Rust runs repeat exactly for the same seed and worker count; JS runs on several workers can differ slightly because worker results arrive in varying order (on `--workers=1` the two match exactly).
 
 ```sh
 node sim/export.mjs                         # after any data change: writes engine/data.json
 cd engine && cargo build --release          # needs Rust (rustup.rs)
 ./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
+./target/release/familiar-sim 2000 comp 5 --draft --hp=3 --forms=all --recheck=run1.json   # run1's final round robin with the search AI on both sides (about 4 min on 4 cores)
 node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the same single-thread batch: must say identical
 ```
 

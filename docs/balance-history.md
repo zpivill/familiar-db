@@ -285,3 +285,16 @@ A first version (Nash on the raw table, archetype teams inside the pool, stop wh
 
 No balance or AI changes: results are the same as the JS sim's for the same seed.
 
+### Search AI in Rust (2026-10-30)
+
+`engine/src/mcts.rs` ports the search AI and its playout opponents (the v1 bot as the current AI's scoring with v1's numbers, and greedy). It matches the JS search AI exactly (parity.mjs with `--ai=search`, and `--recheck` output identical). Speed at 128 playouts a turn, competitive doubles with draft:
+
+| | JS | Rust |
+|---|---|---|
+| One battle, one core | ~5.6 s | ~0.43 s |
+| Per battle on 4 cores | ~1.5 s | ~0.11 s |
+| 200k battles on 4 cores | ~3.5 days | ~6 hours |
+| Re-check of a 17-team round robin, 2,000 battles | ~50 min | ~4 min |
+
+Every playout still replays the battle from turn 1 (the JS design, kept for exact parity); branching from a copy of the battle instead would roughly halve the time.
+

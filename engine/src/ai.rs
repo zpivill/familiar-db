@@ -5,6 +5,7 @@ use crate::battle::*;
 use crate::data::*;
 use crate::rules::stage_mult;
 
+#[derive(Debug)]
 pub struct Weights {
     pub noise: f64, pub ko: f64, pub ko_priority: f64, pub status_chance: f64, pub flinch: f64, pub recoil: f64, pub recharge: f64,
     pub threat: f64, pub ally_finish: f64, pub hh_ko: f64, pub speed_flip: f64, pub protect_save: f64, pub protect_ally: f64,
@@ -96,7 +97,7 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
         let mut best = 0.0;
         for &f in foes {
             let h = best_hit(b, al, f); let l = left(b, f);
-            best = mx(best, mn(h * 0.5, l) * 100.0 + if h < l && h * 1.5 >= l { W.hh_ko } else { 0.0 });
+            best = mx(best, mn(h * 0.5, l) * 100.0 + if h < l && h * 1.5 >= l { b.w.hh_ko } else { 0.0 });
         }
         v += best;
     } }
@@ -112,19 +113,19 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
         } }
         n
     };
-    if fx.tailwind != 0 && b.sides[us].tailwind == 0 { v += mx(0.0, flips(b, 2.0, false)) * W.speed_flip; }
-    if fx.field.as_ref().map_or(false, |f| f.trick_room) && !b.field.as_ref().map_or(false, |f| f.fx.trick_room) { v += mx(0.0, flips(b, 1.0, true)) * W.speed_flip; }
+    if fx.tailwind != 0 && b.sides[us].tailwind == 0 { v += mx(0.0, flips(b, 2.0, false)) * b.w.speed_flip; }
+    if fx.field.as_ref().map_or(false, |f| f.trick_room) && !b.field.as_ref().map_or(false, |f| f.fx.trick_room) { v += mx(0.0, flips(b, 1.0, true)) * b.w.speed_flip; }
     let chained = b.mons[u].vol.protect_chain != 0 && !fx.protect.as_ref().map_or(false, |p| p.repeat) && !a.protect_always;
     if fx.protect.is_some() && !chained {
         let hits: Vec<f64> = foes.iter().map(|&f| best_hit(b, f, u)).collect();
         let one = max_of(hits.iter().copied()); let both = hits.iter().fold(0.0, |n, x| n + x);
         let lu = left(b, u);
         if one >= lu || (foes.len() > 1 && both >= lu) {
-            v += W.protect_save;
+            v += b.w.protect_save;
             if let Some(al) = ally {
                 let mut k = false;
                 for &f in foes { if best_hit(b, al, f) >= left(b, f) { k = true; break; } }
-                v += W.protect_ally + if k { 15.0 } else { 0.0 };
+                v += b.w.protect_ally + if k { 15.0 } else { 0.0 };
             }
         }
     }
@@ -139,7 +140,7 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
                 for &m in &mine { let e = est_damage(b, f, fs, m); s += mn(e * 0.75, left(b, m)); }
                 best = mx(best, s);
             }
-            v += best * 100.0 * W.wide_guard;
+            v += best * 100.0 * b.w.wide_guard;
         }
     }
     if fx.follow_me { if let Some(al) = ally {
@@ -147,11 +148,11 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
         let x = &b.mons[al];
         let ally_setup = x.moves.iter().any(|s| { let m = &d.moves[s.mv]; s.pp > 0 && m.cat == Cat::Status && m.fx.boosts.as_ref().map_or(false, |bs| bs.iter().any(|bb| bb.who == "self" && bb.stats.iter().any(|&(_, n)| n >= 2))) });
         let main = if x.raw[POW] >= x.raw[ENE] { POW } else { ENE };
-        if ally_setup && x.boosts[main] < 2 { v += W.follow_setup; }
+        if ally_setup && x.boosts[main] < 2 { v += b.w.follow_setup; }
         let mut ally_risk = f64::NEG_INFINITY; let mut my_risk = f64::NEG_INFINITY;
         for &f in foes { let r = best_hit(b, f, al) / left(b, al); ally_risk = mx(ally_risk, r); }
         for &f in foes { let r = best_hit(b, f, u) / left(b, u); my_risk = mx(my_risk, r); }
-        if ally_risk >= 1.0 && my_risk < 1.0 { v += W.follow_save; }
+        if ally_risk >= 1.0 && my_risk < 1.0 { v += b.w.follow_save; }
     } }
     v
 }
@@ -194,7 +195,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
                         let mut best = f64::NEG_INFINITY;
                         for &f in foes { let h = mn(best_hit(b, u, f), 1.0); best = mx(best, h); }
                         let gain = stage_mult((cur + n).min(6)) / stage_mult(cur) - 1.0;
-                        v += best * 100.0 * gain * turns * W.setup * bb.p;
+                        v += best * 100.0 * gain * turns * b.w.setup * bb.p;
                         continue;
                     }
                     let w = if kk == main { 16.0 } else if kk == SPE { 12.0 } else if kk == POW || kk == ENE { 3.0 } else { 8.0 };
@@ -210,7 +211,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
     }
     if fx.heal != 0.0 {
         let miss = 1.0 - hp;
-        v += if miss < 0.25 { 0.0 } else { miss * W.heal * if a.heal_mult != 0.0 { a.heal_mult } else { 1.0 } };
+        v += if miss < 0.25 { 0.0 } else { miss * b.w.heal * if a.heal_mult != 0.0 { a.heal_mult } else { 1.0 } };
         if fx.rest_sleep { v -= 15.0; }
     }
     if fx.cure.on() && b.mons[u].status.is_some() { v += 20.0; }
@@ -220,7 +221,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
         let fo = &b.mons[foe];
         let base = match k { "sleep" => 45.0, "freeze" => 45.0, "stun" => if b.speed(foe, false) > b.speed(u, false) { 38.0 } else { 26.0 },
             "burn" => if fo.raw[POW] > fo.raw[ENE] { 38.0 } else { 18.0 }, "curse" => if fo.raw[ENE] > fo.raw[POW] { 38.0 } else { 18.0 }, "bleed" => 32.0, _ => 20.0 };
-        v += open as f64 * base * W.status_move * (m.accuracy.filter(|&x| x != 0.0).unwrap_or(100.0) / 100.0);
+        v += open as f64 * base * b.w.status_move * (m.accuracy.filter(|&x| x != 0.0).unwrap_or(100.0) / 100.0);
     }
     if fx.confuse_foes { v += foes.iter().filter(|&&f| !(b.mons[f].vol.confuse > 0)).count() as f64 * 18.0; }
     if let Some(hz) = &fx.hazard {
@@ -228,13 +229,13 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
         let set = match hz.as_str() { "spikes" => h.spikes >= 3, "rocks" => h.rocks != 0, "web" => h.web != 0, "rainbow" => h.rainbow != 0, _ => false };
         v += if set || left < 2 { 0.0 } else { 12.0 + 6.0 * left as f64 };
     }
-    if let Some(sc) = &fx.screen { v += if b.sides[us].screens.get(sc) != 0 { 0.0 } else { W.screen }; }
+    if let Some(sc) = &fx.screen { v += if b.sides[us].screens.get(sc) != 0 { 0.0 } else { b.w.screen }; }
     let my_spd = if b.duos { side_speed(b, us) } else { b.speed(u, false) };
     let foe_spd = if b.duos { side_speed(b, b.mons[foe].side) } else { b.speed(foe, false) };
-    if fx.tailwind != 0 { v += if b.sides[us].tailwind != 0 { 0.0 } else if my_spd < foe_spd { if b.duos { W.tailwind } else { 28.0 } } else { 8.0 }; }
+    if fx.tailwind != 0 { v += if b.sides[us].tailwind != 0 { 0.0 } else if my_spd < foe_spd { if b.duos { b.w.tailwind } else { 28.0 } } else { 8.0 }; }
     if let Some(f) = &fx.field {
         let cur = b.field.as_ref().map(|x| &x.fx);
-        if f.trick_room { v += if cur.map_or(false, |c| c.trick_room) { if my_spd > foe_spd { 25.0 } else { -20.0 } } else if my_spd < foe_spd { if b.duos { W.trick_room } else { 32.0 } } else { -10.0 }; }
+        if f.trick_room { v += if cur.map_or(false, |c| c.trick_room) { if my_spd > foe_spd { 25.0 } else { -20.0 } } else if my_spd < foe_spd { if b.duos { b.w.trick_room } else { 32.0 } } else { -10.0 }; }
         else if let Some(bt) = f.boost_type { v += if cur.and_then(|c| c.boost_type) == Some(bt) { 0.0 } else if b.mons[u].moves.iter().any(|x| d.moves[x.mv].ty == bt && d.moves[x.mv].cat != Cat::Status) { 22.0 } else { 4.0 }; }
         else if f.foe_slow { v += if cur.map_or(false, |c| c.foe_slow) { 0.0 } else if b.speed(u, false) < b.speed(foe, false) { 26.0 } else { 6.0 }; }
         else if f.gravity { v += if cur.map_or(false, |c| c.gravity) { 0.0 } else if a.atk.iter().any(|w| w.gravity) { 35.0 } else { 5.0 }; }
@@ -243,7 +244,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
     }
     if let Some(pr) = &fx.protect {
         let chained = b.mons[u].vol.protect_chain != 0 && !pr.repeat && !a.protect_always;
-        v += if chained { -10.0 } else { W.protect };
+        v += if chained { -10.0 } else { b.w.protect };
         let fv = &b.mons[foe];
         if fv.vol.charging.is_some() || fv.status == Some(St::Bleed) || fv.status == Some(St::Burn) || fv.vol.seed.is_some() || fv.vol.bind.is_some() { v += 15.0; }
         if a.end_turn.iter().any(|o| o.op == "heal") { v += 6.0; }
@@ -313,21 +314,21 @@ fn attack_value(b: &mut Battle, u: MonId, slot: usize, t: MonId, foes_n: usize) 
     let mut v = share * 100.0;
     let ko = d >= th / tm;
     if ko {
-        v += W.ko;
-        if b.eff_priority(u, Some(&mv)) > 0.0 && b.speed(u, false) < b.speed(t, false) { v += W.ko_priority; }
+        v += b.w.ko;
+        if b.eff_priority(u, Some(&mv)) > 0.0 && b.speed(u, false) < b.speed(t, false) { v += b.w.ko_priority; }
     }
     if d == 0.0 { return -30.0; }
-    if let Some(st) = &fx.status { if b.mons[t].status.is_none() && !ko { v += st.p * W.status_chance; } }
-    if fx.flinch != 0.0 && !ko && b.speed(u, false) > b.speed(t, false) { v += fx.flinch * W.flinch; }
+    if let Some(st) = &fx.status { if b.mons[t].status.is_none() && !ko { v += st.p * b.w.status_chance; } }
+    if fx.flinch != 0.0 && !ko && b.speed(u, false) > b.speed(t, false) { v += fx.flinch * b.w.flinch; }
     if fx.first_turn && fx.flinch != 0.0 { v += 20.0; }
     for bb in fx.boosts.as_deref().unwrap_or(&[]) {
         let n = bb.stats.iter().fold(0.0, |s, &(_, x)| s + x as f64);
         if bb.who == "self" { v += n * (if n > 0.0 { 5.0 } else if ko { 1.0 } else { 3.0 }) * bb.p; }
         if bb.who == "foe" || bb.who == "foes" { v += -n * 4.0 * bb.p; }
     }
-    if fx.recoil != 0.0 { v -= fx.recoil * mn(d * tm, th) / b.mons[u].maxhp * W.recoil; }
+    if fx.recoil != 0.0 { v -= fx.recoil * mn(d * tm, th) / b.mons[u].maxhp * b.w.recoil; }
     if fx.self_dmg != 0.0 { v -= fx.self_dmg * 70.0; }
-    if fx.recharge != 0 && !ko { v -= W.recharge * fx.recharge as f64; }
+    if fx.recharge != 0 && !ko { v -= b.w.recharge * fx.recharge as f64; }
     if fx.self_confuse { v -= 12.0; }
     if fx.switch_out { v += 3.0; }
     if fx.drain != 0.0 || a.drain.is_some() { v += (if fx.drain != 0.0 { fx.drain } else { 0.25 }) * share * 30.0; }
@@ -343,13 +344,13 @@ fn duos_targets(b: &mut Battle, u: MonId, foes: &[MonId]) -> Vec<(MonId, f64, f6
         let mut th = f64::NEG_INFINITY;
         for &x in &mine { let v = best_hit(b, t, x) * b.mons[x].maxhp / mx(1.0, b.mons[x].hp); th = mx(th, v); }
         let ally = match al { Some(al) => best_hit(b, al, t), None => 0.0 };
-        out.push((t, mn(1.2, th) * W.threat, ally));
+        out.push((t, mn(1.2, th) * b.w.threat, ally));
     }
     out
 }
 fn duos_target_bonus(b: &mut Battle, u: MonId, slot: usize, t: MonId, info: (f64, f64)) -> f64 {
     let left = b.mons[t].hp / b.mons[t].maxhp; let d = est_damage(b, u, slot, t);
-    info.0 + if info.1 != 0.0 && d < left && d + info.1 >= left { W.ally_finish } else { 0.0 }
+    info.0 + if info.1 != 0.0 && d < left && d + info.1 >= left { b.w.ally_finish } else { 0.0 }
 }
 
 // A side forced to play an archetype puts its plan up first (archetypes.js plan()).
@@ -374,6 +375,25 @@ fn plan_bonus(b: &Battle, m: MonId, slot: usize) -> f64 {
 }
 
 // Every option for m this turn with its score (noise included), best first.
+// The frozen v1 AI (sim/bots/ai-v1.js): the same scoring with its hand-set numbers, and no joint side plan.
+pub const W_V1: Weights = Weights {
+    noise: 0.3, ko: 55.0, ko_priority: 30.0, status_chance: 18.0, flinch: 14.0, recoil: 60.0, recharge: 25.0,
+    threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
+    follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
+    screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0,
+};
+pub fn v1_action(b: &mut Battle, m: MonId) -> Choice { let keep = b.w; b.w = &W_V1; let c = options(b, m)[0]; b.w = keep; c }
+// the greedy bot (sim/bots/baselines.js): the hardest-hitting attack into the best target, never a status move or a switch
+pub fn greedy_action(b: &mut Battle, m: MonId) -> Option<Act> {
+    let foes = b.foes_of(m); let (mut best, mut bv) = (None, -1.0);
+    for i in 0..b.mons[m].moves.len() {
+        let mv = b.mv(&b.mons[m].moves[i]);
+        if !usable(b, m, i) || mv.cat == Cat::Status { continue; }
+        for &f in &foes { let v = est_damage(b, m, i, f) * if mv.fx.spread.is_some() { foes.len() as f64 * 0.75 } else { 1.0 }; if v > bv { bv = v; best = Some(Act::Move { slot: i, target: Some(f) }); } }
+    }
+    best
+}
+
 pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
     let x = &b.mons[m];
     if x.vol.recharge > 0 || x.vol.charging.is_some() || x.vol.rampage.is_some() {
@@ -386,7 +406,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
     let mut t_info: Option<Vec<(MonId, f64, f64)>> = None;
     let consider = |b: &mut Battle, list: &mut Vec<Choice>, act: Act, score: f64| {
         let r1 = b.r.next(); let r2 = b.r.next();
-        list.push(Choice { act, score: score * (1.0 - W.noise / 2.0 + r1 * W.noise) + r2 });
+        list.push(Choice { act, score: score * (1.0 - b.w.noise / 2.0 + r1 * b.w.noise) + r2 });
     };
     for i in 0..b.mons[m].moves.len() {
         if !usable(b, m, i) { continue; }
@@ -394,7 +414,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
         if mm.cat == Cat::Status {
             let sv = status_value(b, m, i, &foes);
             let ds = if b.duos && !foes.is_empty() { duos_support_value(b, m, i, &foes) } else { 0.0 };
-            let v = (sv + ds) * W.status_scale + plan_bonus(b, m, i);
+            let v = (sv + ds) * b.w.status_scale + plan_bonus(b, m, i);
             consider(b, &mut list, Act::Move { slot: i, target: foes.first().copied() }, v);
             continue;
         }
@@ -440,7 +460,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
         let stuck = x.vol.choice.is_some() && best.score < 25.0;
         if let Some(p) = pick {
             let go = doomed
-                || (here < W.switch_bad && pick_v > here + W.switch_gain && b.r.next() < W.switch_p)
+                || (here < b.w.switch_bad && pick_v > here + b.w.switch_gain && b.r.next() < b.w.switch_p)
                 || (stuck && pick_v > here + 0.2 && b.r.next() < 0.8);
             if go { return vec![Choice { act: Act::Switch { to: p }, score: best.score }]; }
         }
@@ -465,7 +485,7 @@ fn pair_value(b: &mut Battle, m1: MonId, a1: &Choice, m2: MonId, a2: &Choice) ->
     if (f1.tailwind != 0 && f2.tailwind != 0) || (f1.field.is_some() && f2.field.is_some()) || (f1.screen.is_some() && f1.screen == f2.screen) || (f1.follow_me && f2.follow_me) { v -= mn(a1.score, a2.score); }
     if let Some(t) = t1 { if hit1 && hit2 && Some(t) == t2 && f1.spread.is_none() && f2.spread.is_none() && b.ab_of(m1).spread_type.is_none() && b.ab_of(m2).spread_type.is_none() {
         let left = b.mons[t].hp / b.mons[t].maxhp; let d1 = est_damage(b, m1, s1, t); let d2 = est_damage(b, m2, s2, t);
-        if d1 >= left || d2 >= left { v -= mn(a1.score, a2.score) * W.overkill; } else if d1 + d2 >= left { v += W.combo; }
+        if d1 >= left || d2 >= left { v -= mn(a1.score, a2.score) * b.w.overkill; } else if d1 + d2 >= left { v += b.w.combo; }
     } }
     v
 }

@@ -1,6 +1,7 @@
 // Fast battle sim, a port of sim/ with the same results for the same seed and worker count.
 //   familiar-sim [count] [duel|team|duos|comp] [seed]  with the flags of sim/cli.mjs:
 //   --trained --level=50 --size=4 --draft --bring=10 --hp=3 --forms=all --workers=4 --search=best|meta --arch --ban=2 --json=out.json
+//   --ai=search --iters=128 (both sides play with the search AI), --recheck=meta.json (its final round robin with the search AI)
 //   familiar-sim batch [count] [format] [seed] ...  one single-thread batch, totals as JSON (for tests/parity.mjs)
 // Reads data.json (written by `node sim/export.mjs`) from beside the program or the current folder, or --data=path.
 #![allow(dead_code)]
@@ -12,6 +13,7 @@ mod data;
 mod draft;
 mod jsmath;
 mod rules;
+mod mcts;
 mod search;
 use std::collections::HashMap;
 
@@ -29,7 +31,8 @@ fn main() {
     let format = batch::Format::parse(args.get(1).unwrap_or(&"duel"));
     let seed: f64 = args.get(2).unwrap_or(&"1").parse().unwrap();
     let num = |n: &str| flag(n).map(|v| v.parse::<f64>().unwrap());
-    let o = batch::Opts::new(format, count, seed, flag("draft").is_some(), num("bring").map_or(8, |b| b as usize), flag("trained").is_some(), num("level"), num("size").map(|s| s as usize), flag("forms").as_deref() == Some("all"));
+    let mut o = batch::Opts::new(format, count, seed, flag("draft").is_some(), num("bring").map_or(8, |b| b as usize), flag("trained").is_some(), num("level"), num("size").map(|s| s as usize), flag("forms").as_deref() == Some("all"));
+    if flag("ai").as_deref() == Some("search") || flag("recheck").is_some() { o.search_ai = Some(num("iters").map_or(128, |i| i as usize)); }
     if single {
         let mut s = batch::Stats::default();
         batch::run_batch(&d, &o, &mut s, &mut HashMap::new());
@@ -41,18 +44,40 @@ fn main() {
     let mut ctx = search::Ctx::new(&d, o, workers, count, seed, flag("arch").is_some(), num("ban").map_or(0, |b| b as usize));
     let t0 = std::time::Instant::now();
     let mut best = None;
+    // --recheck=meta.json: replay a saved meta chain's final round robin with the search AI on both sides
+    let recheck: Option<serde_json::Value> = flag("recheck").map(|f| serde_json::from_str::<serde_json::Value>(&std::fs::read_to_string(f).unwrap()).unwrap()["chain"].clone());
+    let mut rechecked = None;
+    if let Some(c) = &recheck {
+        let teams = c["teams"].as_array().unwrap();
+        let keys: Vec<Vec<String>> = teams.iter().map(|t| serde_json::from_value(t["keys"].clone()).unwrap()).collect();
+        let forced: HashMap<String, String> = teams.iter().filter_map(|t| t["arch"].as_str().map(|a| { let mut k: Vec<String> = serde_json::from_value(t["keys"].clone()).unwrap(); k.sort(); (k.join("+"), a.to_string()) })).collect();
+        let n = keys.len(); let seed = ctx.seed();
+        rechecked = Some(ctx.send(count, Some(batch::Ladder { top: keys, forced: Some(forced), h2h: true, seed, ..Default::default() }), n).h2h);
+    } else {
     match mode.as_deref() {
         Some("meta") => search::meta_chain(&mut ctx, count),
         Some("best") => best = Some(search::search_teams(&mut ctx, count, None, None, vec![], None)),
         Some(m) => panic!("--search={m} is only in the JS sim (node sim/cli.mjs)"),
         None => { ctx.send(count, None, 0); }
     }
+    }
     let ms = t0.elapsed().as_millis();
     let s = &ctx.stats;
     let name = |k: &str| d.ent_idx.get(k).map_or(k.to_string(), |&e| d.entrants[e].name.clone());
     let names = |ks: &[String]| ks.iter().map(|k| name(k)).collect::<Vec<_>>().join(", ");
     println!("{} battles in {} ms on {} workers ({:.3} ms each), avg {:.1} turns, {} draws", s.battles, ms, workers, ms as f64 / s.battles, s.turns / s.battles, s.draws);
-    if mode.as_deref() == Some("meta") {
+    // a team's win rate over a round robin's head-to-head table (keys 'team|opponent')
+    let rr = |h: &dyn Fn(&str) -> Option<(f64, f64)>, keys: Vec<String>, k: &str| { let (mut g, mut w) = (0.0, 0.0); for hk in keys { if hk.split('|').next() == Some(k) { if let Some((gg, ww)) = h(&hk) { g += gg; w += ww; } } } (if g > 0.0 { w / g } else { f64::NAN }, g) };
+    if let (Some(c), Some(out)) = (&recheck, &rechecked) {
+        println!("team                 fast AI   search AI (games)");
+        let old = c["h2h"].as_object().unwrap();
+        for t in c["teams"].as_array().unwrap() {
+            let mut ks: Vec<String> = serde_json::from_value(t["keys"].clone()).unwrap(); let names_ = names(&ks); ks.sort(); let k = ks.join("+");
+            let (f, _) = rr(&|hk| old.get(hk).map(|v| (v["g"].as_f64().unwrap(), v["w"].as_f64().unwrap())), old.keys().cloned().collect(), &k);
+            let (sr, g) = rr(&|hk| out.get(hk).map(|v| (v.g, v.w)), out.keys().cloned().collect(), &k);
+            println!("{:<20} {:>4.0}%   {:>4.0}% ({})  {}", t["archName"].as_str().unwrap_or("meta"), 100.0 * f, 100.0 * sr, g, names_);
+        }
+    } else if mode.as_deref() == Some("meta") {
         for t in &ctx.chain.teams { println!("{:<14} {:.0}% ({})  {}", t.arch_name.as_deref().unwrap_or("meta"), t.wr * 100.0, t.g, names(&t.keys)); }
     } else if let Some(b) = &best {
         for r in b.rows.iter().take(8) { println!("{:.0}% ({})  {}", r.wr * 100.0, r.g, names(&r.keys)); }
@@ -64,7 +89,7 @@ fn main() {
         println!("bottom {}", fmt(&rows[rows.len().saturating_sub(12)..]));
     }
     if let Some(f) = flag("json") {
-        let out = serde_json::json!({ "args": argv, "ms": ms, "stats": s, "chain": (mode.as_deref() == Some("meta")).then_some(&ctx.chain), "best": best.as_ref().map(|b| &b.rows[..32.min(b.rows.len())]) });
+        let out = serde_json::json!({ "args": argv, "ms": ms, "stats": s, "chain": (mode.as_deref() == Some("meta")).then_some(&ctx.chain), "best": best.as_ref().map(|b| &b.rows[..32.min(b.rows.len())]), "recheck": rechecked });
         std::fs::write(f, serde_json::to_string(&out).unwrap()).unwrap();
     }
 }
