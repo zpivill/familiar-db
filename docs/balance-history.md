@@ -328,5 +328,35 @@ Archetype win rate in the final round robin, mean of 16 runs (±95% across runs)
 - **Fitting to 3 metas at once, from a mix of all earlier builds, twice independently (P and Q):** P and Q differ by 2.0 points on average, up to 13 (21 characters by more than 5). Better than single-meta rounds, but not settled.
 - **What holds in every round:** Demon Emperor Lelouch (Zero Requiem, fast, Flash Cannon / Dark Pulse / Light Screen / Hex), Hogyoku Aizen and Pain stay the top 3, at 73-84% with their best builds. The character ranking with best builds correlates 0.91-0.94 with the plain-build ranking.
 
-Books P and Q and a readable table are in the project files (`familiar/builds/`). Not done yet: bulk spreads ("survives X's best hit"), and a search-AI check of the top builds.
+Books P and Q and a readable table are in the project files (`familiar/builds/`). Bulk spreads, averaged fits and a search-AI check follow below.
 
+
+### Noise floor with build books (2026-10-30)
+
+The 16-seed baseline above, rerun with books (same setting, seeds 1-16), once with `--builds=book-P,book-Q` and once with book P only. Pooled stability from `bench.mjs stability`:
+
+| | top-12 shared | share overlap | picked-wr rank corr |
+|---|---|---|---|
+| groups of 8, before builds | 8.2 | 67% | 0.75 |
+| groups of 8, P+Q | 8.0 | 59% | 0.60 |
+| groups of 8, P only | 7.0 | 58% | 0.49 |
+| groups of 8, fits 1-4 (with bulk spreads) | 8.3 | 60% | 0.56 |
+| single runs, before builds | 5.2 | 41% | 0.43 |
+| single runs, P+Q | 3.4 | 30% | 0.32 |
+| single runs, P only | 3.4 | 30% | 0.30 |
+| single runs, fits 1-4 | 3.7 | 31% | 0.31 |
+
+- **Runs agree less with builds**, and mixing two books isn't the cause (P alone is no better). Likely cause: builds flatten the top. The gap between 1st and 10th character by pooled picked win rate is 6.3 points before and 3.9 with P+Q, so there are more near-equal teams. That guess doesn't hold for fits 1-4: their gap is 6.6 points, as before builds, so the cause is open.
+- **Meta shares, pooled:** Demon Emperor Lelouch 12.0% ±0.6, in 16 of 16 runs. Asta was 11.6% in 16 of 16 before and is now outside the top 20. Next are Pain 5.1% and Poseidon 4.8%.
+- **Archetypes, pooled (±3-6):** Balance 58%, Tailwind 46%, Redirection 41%, Trick Room 40%, Screens 40%, Snow 39%, the rest 29-38%.
+- **With fits 1-4:** Lelouch 12.1% ±0.4 (16 of 16), Pain 5.7% (16 of 16). Archetypes (±3-5): Balance 58%, Tailwind 46%, Screens 40%, Water 39%, Snow 38%, Redirection 37%, the rest 31-34%.
+
+### Bulk spreads, 4 averaged fits and a search-AI check (2026-10-30)
+
+Build search now also tries "survives X" bulk spreads (BALANCE.md section 8). Four independent fits, each against 3 different meta chains (200k, meta + archetype rounds, from the mixed book), seeds 31-34, `--per=2000`, about 42 minutes each. Each book then played 300k random-team battles on 2 seeds. Books and the table are in the project files (`familiar/builds/book-fit1..4.json`, `best-builds-avg.md`).
+
+- **Fits agree about as well as P and Q did.** Pairwise corr 0.93-0.95, mean difference 1.7-1.9 points, max 12-19, 12-19 characters more than 5 points apart. A character's range over the 4 fits: median 2.7 points, 90th percentile 6.3. So one fit's number for a typical character moves about 3 points from fit to fit (6 for the worst tenth), and the mean of 4 fits is about twice as tight.
+- **Bulk spreads are mostly near-ties.** 143-155 of 257 characters pick a bulk spread, but the median margin over keeping the spread is 0.25 points, and only 39 characters pick one in all 4 fits (about 27 would by chance). Small real effect at most, with Vitality x3 few hits KO from full.
+- **Picks:** the same ability in all 4 fits for 91 characters, the same moves for 29, the same item for only 5. Items stay near-ties.
+- **Top of the averaged table:** Demon Emperor Lelouch 85.7% (82.5-87.0), Pain 80.4%, Hogyoku Aizen 76.4%, Zero 69.4%, Ultra Instinct Goku 68.7%, Shinfuku Gojo 66.6%, Final Arc Gintoki 66.2%.
+- **Search-AI check:** 8,000 draft battles, both sides fast AI or both search AI, with all 4 books or plain builds, seeds 7 and 8 (about 30 minutes per seed for the two search runs). The win-rate ranking with books holds under the search AI: corr 0.91 fast vs search, while the two seeds agree 0.88-0.91 with each other, so the stronger AI changes nothing beyond noise. The biggest build gains hold or grow (Demon Emperor Lelouch +26 fast, +23 search; Zero +20, +23; Pain +7, +15; Hogyoku Aizen +6, +13). The top 20 fast-AI gains average +8.9 fast and +6.3 search; part of that drop is regression to the mean, since per-character gains at 8,000 battles only repeat across seeds at corr 0.43-0.46.
