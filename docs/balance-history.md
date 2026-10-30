@@ -317,3 +317,16 @@ Step 1 of the [simulated-meta plan](https://claude.ai/artifact/3B6snowJaAmGMfy82
 Pooled over all 16 runs, share of meta team slots (±95% across runs, runs it appears in): Devil Union Asta 11.6% ±0.7 (16/16), Six Paths Sage Naruto 8.7% ±2.2 (14/16), Ultra Instinct Goku 7.6% ±1.9 (16/16), Tsuna (form 3) 6.1% ±2.0 (14/16), Denji (form 3) 5.3% ±2.4 (10/16), Levi 4.7% ±2.3, Kaido 4.4% ±2.1, Poseidon 3.6% ±1.8; everyone else under 2.5%.
 
 Archetype win rate in the final round robin, mean of 16 runs (±95% across runs): Intimidate + Fake Out balance 55% ±3, Screens + setup 51% ±3, Snow 50% ±4, Redirection + setup 45% ±3, Tailwind offense 41% ±5, Fire field 41% ±4, Spread offense 39% ±4, Water field 38% ±4, Trick Room 38% ±4, Gravity 37% ±4, Lightning field 33% ±4. A single run swings each by 18-44 points, but pooled over 16 the error bars are 3-5 points, so the order Balance > Screens/Snow > Redirection > the rest is a real result under the current AI and rule-based builds.
+
+## Build search (2026-10-30)
+
+`familiar-sim --optimize` (see BALANCE.md section 8). Competitive doubles, bring 8, Vitality x3, every form, 2,000 battles per option with successive halving, about 32 minutes per roster on 4 cores. "Win rate" below is from 300k random-team battles, two seeds averaged (the two seeds agree on every change, corr 0.94-0.97).
+
+- **Picks repeat only with enough battles.** At 400 battles per option, two seeds chose different builds for the same character. At 2,000, the gains repeat (corr 0.83 over the roster, +3.6 points on average over the plain build). Exact picks repeat less (ability 71%, preset 38%, item 42%), because many options are within a point of each other.
+- **Builds matter a lot for some characters.** Round 1 (fitted to one meta chain): Demon Emperor Lelouch 61% to 84%, Zero 51% to 68%, Pain 69% to 84%, Ainz 53% to 64%. Some fall as everyone else improves: Sin Devil Trigger Vergil 60% to 46%, Hybrid Kaido 57% to 47%.
+- **Fitting to one meta doesn't settle.** Rounds 2 and 3 (each re-fitted to the meta the last builds produced) moved win rates again: mean change 1.9 and 2.2 points, up to 11 and 21 (Pain 84%, then 77%, then 56%).
+- **Fitting to 3 metas at once, from a mix of all earlier builds, twice independently (P and Q):** P and Q differ by 2.0 points on average, up to 13 (21 characters by more than 5). Better than single-meta rounds, but not settled.
+- **What holds in every round:** Demon Emperor Lelouch (Zero Requiem, fast, Flash Cannon / Dark Pulse / Light Screen / Hex), Hogyoku Aizen and Pain stay the top 3, at 73-84% with their best builds. The character ranking with best builds correlates 0.91-0.94 with the plain-build ranking.
+
+Books P and Q and a readable table are in the project files (`familiar/builds/`). Not done yet: bulk spreads ("survives X's best hit"), and a search-AI check of the top builds.
+

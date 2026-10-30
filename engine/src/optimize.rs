@@ -44,7 +44,7 @@ pub struct Entry {
 }
 pub fn load_book(d: &mut Data, path: &str) {
     let book: IndexMap<String, Entry> = serde_json::from_str(&std::fs::read_to_string(path).unwrap_or_else(|e| panic!("{path}: {e}"))).unwrap();
-    for (k, en) in book { if let Some(&e) = d.ent_idx.get(&k) { let bs = en.builds.iter().map(|s| build_of(d, e, s)).collect(); d.book.insert(e, bs); } }
+    for (k, en) in book { if let Some(&e) = d.ent_idx.get(&k) { let bs: Vec<Build> = en.builds.iter().map(|s| build_of(d, e, s)).collect(); d.book.entry(e).or_default().extend(bs); } }
 }
 
 pub struct Field { pub teams: Vec<(Vec<usize>, Option<usize>)> }   // opponent teams and their forced archetype
