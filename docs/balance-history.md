@@ -196,3 +196,21 @@ Joint actions alone made no measurable difference (46-48% vs v1); the gain came 
 | Spread offense | 38% | 32% (25 / 39 / 33) |
 
 Redirection + setup rose 18 points and now holds steady across runs (53-56%), so it was under-rated by the simpler AI, as suspected. Balance rose too. Most other gaps are within the noise. Devil Union Asta was in 17 of the 18 meta teams, the most repeated result so far.
+
+## AI step 3: the search AI (2026-10-30)
+
+`sim/mcts.js` is a slow, strong second AI for measuring and (in step 4) teaching the fast one. Each turn it takes each character's 4 best options from the fast AI (plus a switch), plays the rest of the battle out for each pair with new luck, picks which pair to try next by UCB1, and keeps the pair it tried most. Opponents in its playouts are a random mix of the current AI, frozen v1 and greedy. Each playout replays the battle from its seed (a new check confirms replays are exact).
+
+`bench.mjs search`, mirror matches with paired seeds, against each opponent:
+
+| Playouts a turn | Seed (battles) | vs current AI | vs frozen v1 | vs greedy | Seconds a battle per core |
+|---|---|---|---|---|---|
+| 16 | 3 (80) | 61% | 60% | 58% | 1.5 |
+| 48 | 1 (100) | 74% | 83% | 89% | 3-4 |
+| 48 | 2 (100) | 80% | 80% | 88% | 3 |
+| 128 | 3 (80) | 90% | 90% | 90% | 5.5 |
+| 128 | 4 (60) | 85% | 92% | 90% | 6-7 |
+
+Margins are about ±7-10 points at these sample sizes. 128 playouts is now the default. Caveat: greedy and v1 are among the styles the search assumes for its foe, so part of its edge against them is knowing how they play; the current AI is the fairest test, and it still wins 85-90% at 128 playouts.
+
+At 5-7 seconds a battle, the search AI is for benches and spot checks of top teams (a few hundred battles), not for meta chains. Step 4 is to teach the fast AI to choose like it.

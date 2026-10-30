@@ -328,7 +328,7 @@ function planBonus(B, m, mv) {
 
 // Every option for m this turn with its score (noise included), best first. A forced move, a switch or
 // "nothing usable" comes back as the only option.
-function options(B, m, api) {
+export function options(B, m, api) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
   if (forced) {

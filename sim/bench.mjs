@@ -5,47 +5,26 @@
 //     both sides (random legal teams, AI-trained builds), Vitality x3. Games come in pairs with the same team
 //     and the same luck, sides swapped, so team strength, side and luck cancel out. Prints win / loss / draw
 //     with a 95% margin, and ms per battle.
+//   node sim/bench.mjs search [battles per opponent = 100] [seed = 1] [playouts a turn = 128]
+//     The same, for the search AI (sim/mcts.js) against the current AI, frozen v1 and greedy, on every core.
 //   node sim/bench.mjs stability run1.json run2.json [run3.json ...]
 //     Compares meta chains saved with  node sim/cli.mjs 200000 comp <seed> --draft --hp=3 --forms=all
 //     --search=meta --arch --json=runN.json  (use a different seed per run): how far the runs agree.
 import fs from 'fs';
+import os from 'os';
 import { pathToFileURL } from 'url';
+import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
+import { playSearch } from './mcts.js';
 import { prepare, runBattle, rng } from './battle.js';
 import { makeBuild, entrantPool, withFormat } from './batch.js';
 import { trainTeam } from './builds.js';
 import { RULES } from './rules.js';
-import { usable, estDamage } from './ai.js';
-import * as v1 from './bots/ai-v1.js';
+import { BOTS } from './bots/baselines.js';
 
 const [cmd = 'strength', ...rest] = process.argv.slice(2);
 
-// ---- opponents: each returns an action for mon m, or a replacement for side s ----
-const pickOne = (r, xs) => xs[Math.floor(r() * xs.length)];
-const BOTS = {
-  // any usable move into any foe
-  random: { action: (B, m) => {
-    const foes = B.api.foesOf(m), ok = m.moves.map((mv, i) => [mv, i]).filter(([mv]) => usable(m, mv));
-    const [, slot] = ok.length ? pickOne(B.r, ok) : [null, 0];
-    return { type: 'move', slot, target: pickOne(B.r, foes) };
-  } },
-  // the hardest-hitting attack into the best target, never a status move or a switch
-  greedy: { action: (B, m) => {
-    const api = B.api, foes = api.foesOf(m);
-    let best = null, bv = -1;
-    m.moves.forEach((mv, i) => {
-      if (!usable(m, mv) || mv.m.cat === 'Status') return;
-      for (const f of foes) { const v = estDamage(api, m, mv, f) * (mv.m.fx.spread ? foes.length * 0.75 : 1); if (v > bv) { bv = v; best = { type: 'move', slot: i, target: f }; } }
-    });
-    return best;
-  } },
-  // the frozen AI from 2026-10-29
-  v1: { action: (B, m) => v1.chooseAction(B, m, B.api), replace: (B, s, options) => v1.chooseReplacement(B, s, options, B.api) },
-  // the current AI against itself: should come out even
-  mirror: { action: () => null },
-};
-
 // Mirror-match arena: game n of a seed is one half of a pair (same team, same luck, sides swapped).
-// play(bot, seed, n) returns res ('w', 'l' or 'd' for the current AI) and the turns.
+// play(bot, seed, n, player?) returns res ('w', 'l' or 'd' for the current AI) and the turns.
 export function arena() {
   RULES.hpScale = 3;
   const here = new URL('..', import.meta.url);
@@ -57,10 +36,12 @@ export function arena() {
     while (t.length < 6) { const e = r.pick(pool); if (used.has(e.cid) || (LEG.has(e.rarity) && t.some(x => LEG.has(x.rarity)))) continue; used.add(e.cid); t.push(e); }
     return trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts);
   };
-  return (name, seed, n) => {
+  // player(data, teams, battleOpts, me, bot) plays our side instead of the current AI (the search AI does)
+  return (name, seed, n, player) => {
     const bot = BOTS[name], k = Math.floor(n / 2), me = n % 2;
     const tm = team(rng(seed * 1e6 + k));
-    const B = runBattle(data, [tm, tm], { format: 'duos', level: opts.level, turnCap: opts.turnCap, rng: rng(seed * 1e6 + k + 5e5),
+    const bo = { format: 'duos', level: opts.level, turnCap: opts.turnCap, rng: rng(seed * 1e6 + k + 5e5) };
+    const B = player ? player(data, [tm, tm], bo, me, bot) : runBattle(data, [tm, tm], { ...bo,
       decide: (kind, B, x, options) => kind === 'action' ? (x.side.i !== me ? bot.action(B, x) : null) : (x.i !== me && bot.replace ? bot.replace(B, x, options) : null) });
     return { res: B.winner === me ? 'w' : B.winner < 0 ? 'd' : 'l', turns: B.turn };
   };
@@ -111,7 +92,31 @@ function stability(files) {
   for (const [nm, sp, xs] of spreads) console.log(`  ${nm.padEnd(30)} ${xs.map(x => (100 * x).toFixed(0) + '%').join(' / ').padEnd(20)} spread ${(100 * sp).toFixed(0)}`);
 }
 
-if (import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
+// ---- the search AI (sim/mcts.js) against the fixed opponents, split over every core ----
+const SEARCH_FOES = ['mirror', 'v1', 'greedy'];
+async function searchStrength(battles = 100, seed = 1, iters = 128) {
+  const n = os.availableParallelism?.() || os.cpus().length;
+  console.log(`Search AI (${iters} playouts a turn) vs each opponent: ${battles} mirror battles each, Vitality x3, seed ${seed}, ${n} workers`);
+  for (const name of SEARCH_FOES) {
+    const t0 = performance.now(), tally = { w: 0, l: 0, d: 0, turns: 0 };
+    await Promise.all(Array.from({ length: n }, (_, i) => new Promise((done, fail) => {
+      const w = new Worker(new URL(import.meta.url), { workerData: { searchJob: { name, seed, iters, games: Array.from({ length: battles }, (_, g) => g).filter(g => g % n === i) } } });
+      w.once('message', t => { for (const k in tally) tally[k] += t[k]; w.terminate(); done(); });
+      w.once('error', fail);
+    })));
+    const p = tally.w / battles, moe = 1.96 * Math.sqrt(p * (1 - p) / battles);
+    console.log(`${name.padEnd(7)} won ${(100 * p).toFixed(1)}% ±${(100 * moe).toFixed(1)}, lost ${(100 * tally.l / battles).toFixed(1)}%, drew ${(100 * tally.d / battles).toFixed(1)}%, ${(tally.turns / battles).toFixed(1)} turns, ${((performance.now() - t0) / battles * n / 1000).toFixed(1)} s/battle per core`);
+  }
+}
+
+if (!isMainThread && workerData?.searchJob) {
+  const { name, seed, iters, games } = workerData.searchJob, play = arena(), t = { w: 0, l: 0, d: 0, turns: 0 };
+  const player = (data, teams, bo, me, bot) => playSearch(data, teams, bo, me, bot, { iters });
+  for (const g of games) { const x = play(name, seed, g, player); t[x.res]++; t.turns += x.turns; }
+  parentPort.postMessage(t);
+}
+else if (!isMainThread || import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
 else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
+else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128);
 else if (cmd === 'stability') stability(rest);
-else console.log('usage: node sim/bench.mjs strength [battles] [seed] | stability run1.json run2.json ...');
+else console.log('usage: node sim/bench.mjs strength [battles] [seed] | search [battles] [seed] [playouts] | stability run1.json run2.json ...');

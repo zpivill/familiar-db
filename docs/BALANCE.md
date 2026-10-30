@@ -140,6 +140,8 @@ batch.runBatch(opts) ─ for each battle:
 | `cli.mjs` | Terminal runner (see section 10): plain batches, team searches and meta chains, split across every core with `node-worker.mjs` (runs worker.js in a Node worker thread). |
 | `bench.mjs` | AI test bench (see section 10): strength against fixed opponents, and how far saved meta chains agree. |
 | `tune.mjs` | Searches for better AI weights (`W` in ai.js) on every core (see section 10). |
+| `mcts.js` | The **search AI** (see section 6): slow but much stronger, for measuring and later teaching the fast AI, not for big batches. `playSearch` plays one battle, `replay` checks it. |
+| `bots/baselines.js` | The fixed opponents (random, greedy, frozen v1, mirror = current AI) shared by the bench, the tuner and the search AI. |
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 
@@ -161,7 +163,9 @@ Each turn the AI scores every usable move against every target, adds a little no
 - **Switching:** only after at least one turn in. Uses `matchup` (best hit dealt minus best hit taken, ±Speed). Switches if doomed by a countdown, or if the current matchup is bad (< -0.45) and a bench member is 0.5 better (70% of the time), or if Choice-locked into a weak move.
 - **Replacement after a faint:** the bench member with the best worst-case matchup against the foes on the field.
 
-**What it doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and doesn't scout hidden builds in battle (it sees everything). See the checks in section 11.
+**The search AI** (`sim/mcts.js`) is a second, slow AI built on top of this one. Each turn it takes each of its characters' 4 best options from the scoring above (plus a switch) and, for each pair, plays the rest of the battle out with new luck, 128 times a turn in all, choosing which pair to try next by UCB1. It keeps the pair it tried most. In those playouts the opponent plays as the current AI, the frozen v1 or the greedy bot, picked per playout, so the search doesn't count on the foe playing like itself. A battle can't be copied mid-way, so each playout replays the battle from its seed with every recorded choice (both sides' choices are made outside the engine, with their own random numbers, so the replay is exact). It takes a few seconds a battle, so it's for the bench and for checking top teams, not 200k meta chains.
+
+**What the fast AI doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and doesn't scout hidden builds in battle (it sees everything). See the checks in section 11.
 
 ## 7. How the draft AI picks its 6
 
@@ -218,6 +222,7 @@ node sim/cli.mjs 1 comp 5 watch --draft        # one battle's draft reasoning an
 # the balance-run setting: a 200k meta chain with archetype rounds, Vitality x3, saved for the bench
 node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
 node sim/bench.mjs strength 1000               # the AI against random, greedy, frozen v1 and itself
+node sim/bench.mjs search 100 1 128             # the search AI vs the current AI, v1 and greedy, on every core (about 20 min)
 node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains with different seeds agree
 node sim/tune.mjs 80 300 1                     # tune the AI's weights (W) against v1 + greedy, about 15 minutes on 4 cores
 ```

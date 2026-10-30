@@ -5,6 +5,8 @@ import { typeEff, RULES, battleStat, natureMult } from '../rules.js';
 import { trainTeam, cleanStat } from '../builds.js';
 import { makeBuild, runBatch, watchBattle, ladderTeams, teamKey, mergeStats, emptyStats } from '../batch.js';
 import { searchTeams, metaChain } from '../search.js';
+import { playSearch, replay } from '../mcts.js';
+import { BOTS } from '../bots/baselines.js';
 import { draftSide, guessBuilds } from '../draft.js';
 import { metaSummary } from '../meta.js';
 import { ARCHETYPES, archetypeById, roster, fits, forced, BRING } from '../archetypes.js';
@@ -291,6 +293,16 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
     for (let t = 1; t <= 3; t++) if (B.log.filter(l => l.startsWith(`[${t}]`) && /\(A\) uses Tailwind/.test(l)).length > 1) doubled++;
   }
   ok(!doubled, 'A side plans together: no doubled Tailwind', doubled);
+}
+
+// The search AI replays battles exactly: replaying its recorded choices from the seed ends the same way,
+// so every playout really starts from the position it is judging.
+{
+  const teams = [[build('gojo', ['tackle', 'protect']), build('saitama', ['tackle']), build('giyu', ['tackle'])], [build('tanjiro/3', ['tackle']), build('levi', ['tackle']), build('kaido', ['tackle'])]];
+  const bo = { format: 'duos', rng: rng(3) };
+  const B = playSearch(data, teams, bo, 0, BOTS.greedy, { iters: 6 });
+  const R = replay(data, teams, { format: 'duos' }, B.replay);
+  ok(B.over && R.winner === B.winner && R.turn === B.turn && R.sides.every((s, i) => s.mons.every((m, j) => m.hp === B.sides[i].mons[j].hp)), 'Search AI battles replay exactly from their recorded choices', `${B.winner}/${B.turn} vs ${R.winner}/${R.turn}`);
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
