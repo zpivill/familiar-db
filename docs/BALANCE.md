@@ -134,7 +134,7 @@ batch.runBatch(opts) ─ for each battle:
 | `batch.js` | Runs many battles keeping only running totals. `makeBuild` (moveset picking, "smart" weighted by `rateMove` or random), `entrantPool` (tier / form / gag filters, bans), `ladderTeams` (team search generations: keep, swap, cross, fresh), `runBatch`, `watchBattle` (one battle with a full log), `withFormat`. |
 | `meta.js` | `metaSummary`: the Meta tab and its Markdown download (cores by kind, general / specific supports, answers, legendaries, openers, builds). |
 | `worker.js` | Web Worker wrapper: `init`, `run` (posts progress chunks), `watch`. |
-| `search.js` | **Team search** (Strongest teams, Meta chain, bans, archetype rounds), shared by the page and the CLI. Runs battles through a `ctx.send` it is given and keeps its progress on `ctx`. |
+| `search.js` | **Team search** (Strongest teams, Meta chain, bans, archetype rounds; population meta, CLI only), shared by the page and the CLI. Runs battles through a `ctx.send` it is given and keeps its progress on `ctx`. |
 | `page.js` | The Simulator page `#sim` (classic script using app.js globals): settings, splitting runs across workers, all the report tabs. Loads search.js for team searches. |
 | `play.js` | The Battle vs AI page `#play`: a human plays one side, including Competitive doubles with team preview. It replays the battle from its seed up to each player choice, using `runBattle`'s `opts.decide` hook. |
 | `cli.mjs` | Terminal runner (see section 10): plain batches, team searches and meta chains, split across every core with `node-worker.mjs` (runs worker.js in a Node worker thread). |
@@ -224,11 +224,14 @@ node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch -
 node sim/bench.mjs strength 1000               # the AI against random, greedy, frozen v1 and itself
 node sim/bench.mjs search 100 1 128             # the search AI vs the current AI, v1 and greedy, on every core (about 20 min)
 node sim/cli.mjs 800 comp 5 --draft --hp=3 --forms=all --recheck=run1.json --iters=64   # replay run1's final round robin with the search AI on both sides (about 40 min)
-node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains with different seeds agree
+node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains (or population metas) with different seeds agree
+# population meta: a pool of teams, its Nash mix and the best counter each round (about 8 min); --pool merges saved runs' teams
+node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=pop --arch --json=pop1.json
+node sim/cli.mjs 100000 comp 11 --draft --hp=3 --forms=all --search=pop --arch --pool=pop1.json,pop2.json,pop3.json
 node sim/tune.mjs 80 300 1                     # tune the AI's weights (W) against v1 + greedy, about 15 minutes on 4 cores
 ```
 
-Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. Flags: `--hp=3` (Vitality multiplier), `--forms=all`, `--search=best|meta` (Strongest teams / Meta chain, the same code as the page), `--arch` (archetype rounds), `--ban=3`, `--json=file`, `--workers=N` (default: every core). Results repeat exactly for the same seed and worker count. A 200k meta chain takes about 13 minutes on 4 cores.
+Arguments are `count format seed [watch]`; formats are `duel`, `team`, `duos`, `comp`. Flags: `--hp=3` (Vitality multiplier), `--forms=all`, `--search=best|meta|pop` (Strongest teams / Meta chain, the same code as the page; pop = population meta), `--pool=a.json,b.json` (pop only), `--arch` (archetype rounds), `--ban=3`, `--json=file`, `--workers=N` (default: every core). Results repeat exactly for the same seed and worker count. A 200k meta chain takes about 13 minutes on 4 cores.
 
 **Tuning:** `tune.mjs` writes `sim/tuned-weights.json` (don't commit it). It only plays seeds 1000 and up, so check the result with `bench.mjs strength` on seeds 1 and 2 before copying the weights into `W`. If the tuned weights beat the current ones there, freeze the old ai.js as the next `bots/ai-vN.js` first.
 
@@ -272,6 +275,7 @@ AI and draft:
 - **Battle AI is shallow** (one turn ahead, no prediction of the foe's move). Biggest lever for making combo plans testable.
 - **Draft quick matchup ignores abilities** (only type immunities count). It can't see Kaido's damage reduction, Intimidate's effect on the race, etc. It overrates raw-stat bruisers.
 - **Benched members:** search 10s keep 1-3 members that are picked 0-14% of the time; the swap rule replaces them over generations, but short counter rounds leave a few.
+- **Runs disagree on which teams are strongest** (step 5, 2026-10-30): with 8-of-~200 teams there are many near-equal strong teams, and a 200k search finds a different handful each seed. Within a run the result is clear (the population meta's Nash mix beats the rest of its pool by 4-16 points, and the search AI agrees with the fast AI's ranking), but neither the meta chain nor the population meta repeats across seeds at the team or character level. Read single characters that repeat (Devil Union Asta, Ultra Instinct Goku, Six Paths Sage Naruto) rather than whole teams.
 - **Meta summary small samples:** best opening pair and specific supports can still come from small samples; a 1-in-1,000 floor like the cores would help.
 
 Balance (bring these to r, don't fix alone):

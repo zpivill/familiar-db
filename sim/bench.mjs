@@ -10,6 +10,7 @@
 //   node sim/bench.mjs stability run1.json run2.json [run3.json ...]
 //     Compares meta chains saved with  node sim/cli.mjs 200000 comp <seed> --draft --hp=3 --forms=all
 //     --search=meta --arch --json=runN.json  (use a different seed per run): how far the runs agree.
+//     Population metas (--search=pop) compare the same way, with each character weighted by its Nash share.
 import fs from 'fs';
 import os from 'os';
 import { pathToFileURL } from 'url';
@@ -69,11 +70,18 @@ function strength(battles = 1000, seed = 1) {
 // ---- stability across saved meta chains ----
 function stability(files) {
   const runs = files.map(f => JSON.parse(fs.readFileSync(f)));
-  const meta = R => R.chain.teams.filter(t => !t.arch);
-  // characters by how many meta-team spots they hold, top 12
-  const top = R => { const c = {}; meta(R).forEach(t => t.keys.forEach(k => { c[k] = (c[k] || 0) + 1; })); return Object.keys(c).sort((a, b) => c[b] - c[a]).slice(0, 12); };
-  // an archetype team's win rate over the final round robin
-  const archWr = R => Object.fromEntries(R.chain.teams.filter(t => t.arch).map(t => {
+  // each character's share of the meta: a chain counts its meta teams equally, a population meta by Nash weight
+  const share = R => {
+    const c = {}, ts = R.pop ? R.pop.teams.map(t => [t, t.weight]) : R.chain.teams.filter(t => !t.arch).map((t, _, a) => [t, 1 / a.length]);
+    for (const [t, w] of ts) for (const k of t.keys) c[k] = (c[k] || 0) + w;
+    return c;
+  };
+  // characters by share, top 12
+  const top = R => { const c = share(R); return Object.keys(c).filter(k => c[k] > 0.005).sort((a, b) => c[b] - c[a]).slice(0, 12); };
+  // how much of the meta two runs share: the overlap of their character shares (each run's shares add up to 6)
+  const overlap = (a, b) => Object.keys(a).reduce((s, k) => s + Math.min(a[k], b[k] || 0), 0) / 6;
+  // an archetype team's win rate over the final round robin (against the mix, for a population meta)
+  const archWr = R => R.pop ? Object.fromEntries(R.pop.teams.filter(t => t.arch).map(t => [t.archName, t.vsMix])) : Object.fromEntries(R.chain.teams.filter(t => t.arch).map(t => {
     const k = [...t.keys].sort().join('+'); let g = 0, w = 0;
     for (const [hk, v] of Object.entries(R.chain.h2h)) if (hk.split('|')[0] === k) { g += v.g; w += v.w; }
     return [t.archName, g ? w / g : NaN];
@@ -88,6 +96,8 @@ function stability(files) {
   const T = runs.map(top), A = runs.map(archWr), P = runs.map(picked);
   console.log(`${runs.length} runs: ${files.join(', ')}`);
   console.log(`Top-12 meta characters shared, average over pairs: ${avg(pairs.map(([i, j]) => T[i].filter(k => T[j].includes(k)).length)).toFixed(1)} of 12`);
+  const SH = runs.map(share);
+  console.log(`Meta share overlap, average over pairs: ${(100 * avg(pairs.map(([i, j]) => overlap(SH[i], SH[j])))).toFixed(0)}%`);
   console.log(`Win-rate-when-picked rank correlation, average over pairs: ${avg(pairs.map(([i, j]) => spearman(P[i], P[j]))).toFixed(2)}`);
   const names = [...new Set(A.flatMap(a => Object.keys(a)))];
   const spreads = names.map(nm => { const xs = A.map(a => a[nm]).filter(isFinite); return [nm, xs.length > 1 ? Math.max(...xs) - Math.min(...xs) : NaN, xs]; });
