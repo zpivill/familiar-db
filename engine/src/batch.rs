@@ -47,11 +47,11 @@ impl Opts {
             legend_cap: if comp { Some(if draft { bring_legend_cap(bring) } else { COMP_LEGEND_CAP }) } else { None },
             pick_legend_cap: COMP_LEGEND_CAP, forms_all, movesets: Movesets::Smart, ladder: None, offset: 0, search_ai: None }
     }
-    fn duos(&self) -> bool { matches!(self.format, Format::Duos | Format::Comp) }
+    pub fn duos(&self) -> bool { matches!(self.format, Format::Duos | Format::Comp) }
 }
 
 fn is_leg(d: &Data, e: usize) -> bool { let r = &d.entrants[e].rarity; r == "legendary" || r == "mythical" }
-fn legal(d: &Data, t: &[usize], e: usize, o: &Opts) -> bool {
+pub fn legal(d: &Data, t: &[usize], e: usize, o: &Opts) -> bool {
     match o.legend_cap { None | Some(0) => true, Some(c) => !is_leg(d, e) || t.iter().filter(|&&x| is_leg(d, x)).count() < c }
 }
 pub fn team_key(d: &Data, t: &[usize]) -> String { let mut k: Vec<&str> = t.iter().map(|&e| d.entrants[e].key.as_str()).collect(); k.sort(); k.join("+") }
@@ -83,7 +83,7 @@ pub fn fits(d: &Data, keys: &[usize], a: &ArchRoster, ns: usize, na: usize, cap:
         }
     }
 }
-fn forced(a: &ArchRoster, key: &str) -> Option<(Vec<String>, Option<String>)> {
+pub fn forced(a: &ArchRoster, key: &str) -> Option<(Vec<String>, Option<String>)> {
     let s = a.setters.get(key); let ab = a.abusers.get(key);
     if s.is_none() && ab.is_none() { return None; }
     let moves: Vec<String> = [s.and_then(|x| x.r#move.clone()), ab.and_then(|x| x.r#move.clone())].into_iter().flatten().collect();
@@ -223,7 +223,7 @@ fn record(s: &mut Stats, d: &Data, b: &Battle, builds: [&[Build]; 2], o: &Opts) 
 }
 
 pub struct DraftOut { pub six: [Vec<Build>; 2], pub drafts: [Draft; 2] }
-fn run_draft(d: &Data, sides: &[Vec<usize>; 2], builds: &[Vec<Build>; 2], r: &mut Rng, o: &Opts, arch: &[Option<usize>; 2], cache: &mut HashMap<String, Vec<Build>>) -> DraftOut {
+pub fn run_draft(d: &Data, sides: &[Vec<usize>; 2], builds: &[Vec<Build>; 2], r: &mut Rng, o: &Opts, arch: &[Option<usize>; 2], cache: &mut HashMap<String, Vec<Build>>) -> DraftOut {
     let mut guess = |t: &[usize]| -> Vec<Build> {
         let k = team_key(d, t);
         if let Some(g) = cache.get(&k) { return g.clone(); }

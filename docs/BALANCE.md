@@ -189,6 +189,7 @@ Each turn the AI scores every usable move against every target, adds a little no
 - `autoTraining` picks an EV preset: Support (2+ status moves with team tools, or 1 or fewer attacks), Physical / Energy wall, Trick Room attacker (Trick Room team and Speed ≤ 70: 0 Speed IV, -Speed nature), Bulky attacker (Tailwind team or Speed < 75), otherwise Fast attacker. Nature raises what the preset invests in and lowers the unused attack stat. IVs 31, except 0 Speed on Trick Room attackers and 0 in an unused attack stat.
 - `trainTeam` hands out items greedily from per-build `itemScores` (Choice items for pure attackers, Last Thread for frail ones and setters, Bento Box for walls and supports, Ward Charm against the worst weakness...), with a little noise, one of each per team.
 - The Simulator's **Builds** tab overrides any character's build and reports how each item and nature did.
+- **Build search (Rust sim only):** `familiar-sim --optimize=meta.json` finds each character's best build against a saved meta chain's teams and writes a *build book*; `--builds=book.json` then makes every batch, search and meta chain play those builds instead of random movesets and abilities (archetype-forced moves and abilities still win). For each character it tries one choice at a time: ability, the 6 movesets makeBuild draws most, the 6 EV presets, "outspeeds X" Speed spreads (the fewest Speed EVs that beat each meta character's usual Speed, attack stat at the cap, the rest in Vitality), then every item. The candidate joins each non-archetype meta team in turn (replacing a random member, or itself) and plays a random field team; every option of one character plays the same battles, and options are cut by successive halving so the leaders play all `--per` battles (default 200; use 2000, below that the picks are noise). Each entry in the book keeps the win rate of every option tried and `gain`, best minus plain build on fresh battles. Builds from the book keep their item unless a teammate's book build already holds it.
 
 ## 9. Archetypes
 
@@ -244,6 +245,8 @@ node sim/export.mjs                         # after any data change: writes engi
 cd engine && cargo build --release          # needs Rust (rustup.rs)
 ./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
 ./target/release/familiar-sim 2000 comp 5 --draft --hp=3 --forms=all --recheck=run1.json   # run1's final round robin with the search AI on both sides (about 4 min on 4 cores)
+./target/release/familiar-sim 0 comp 1 --draft --hp=3 --forms=all --optimize=run1.json --per=2000 --json=book1.json   # build book for the whole roster against run1's teams (about 32 min on 4 cores)
+./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --builds=book1.json --json=run2.json   # a meta chain with those builds
 node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the same single-thread batch: must say identical
 ```
 
