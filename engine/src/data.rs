@@ -502,6 +502,7 @@ pub struct Data {
     #[serde(skip)] pub ent_idx: HashMap<String, usize>,
     #[serde(skip)] pub abilities: Vec<Ability>,           // every ability, NO_AB first
     #[serde(skip)] pub ent_abs: Vec<Vec<usize>>,         // entrant -> its abilities' ids in `abilities`
+    #[serde(skip)] pub book: HashMap<usize, Vec<crate::battle::Build>>,   // --builds: entrant -> the builds it always plays (optimize.rs)
 }
 pub const NO_AB: usize = 0;
 

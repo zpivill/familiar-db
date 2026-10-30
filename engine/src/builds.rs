@@ -43,6 +43,10 @@ fn rate_move(d: &Data, e: &Entrant, l: &Learn, duos: bool) -> f64 {
 }
 
 pub fn make_build(d: &Data, ei: usize, r: &mut Rng, o: &BuildOpts) -> Build {
+    // a build book (--builds) replaces the random moveset and ability, unless an archetype forces them
+    if let Some(bs) = d.book.get(&ei).filter(|_| o.force_moves.is_empty() && o.force_ability.is_none()) {
+        return bs[if bs.len() > 1 { r.pick_i(bs.len()) } else { 0 }].clone();
+    }
     let e = &d.entrants[ei];
     let sig = e.sig.as_ref().map(|s| s.id.as_str());
     let must = |id: &str| o.force_moves.iter().any(|x| x == id);
@@ -125,6 +129,7 @@ fn bulk(st: &BaseStats) -> f64 { st.vit + st.grd + st.wil }
 // stat name -> index in [vit pow grd ene wil spe]
 fn six(k: &str) -> usize { match k { "vit" => 0, "pow" => 1, "grd" => 2, "ene" => 3, "wil" => 4, "spe" => 5, _ => panic!("{k}") } }
 
+pub const PRESET_NAMES: [&str; 6] = ["fast", "bulky", "trickRoom", "wallPhys", "wallEne", "support"];
 fn auto_training(d: &Data, b: &mut Build, kits: &[Kit], k: &Kit) {
     let st = d.entrants[b.e].stats.as_ref().unwrap();
     let tr_team = kits.iter().any(|x| x.trick_room); let tw_team = kits.iter().any(|x| x.tailwind);
@@ -134,6 +139,12 @@ fn auto_training(d: &Data, b: &mut Build, kits: &[Kit], k: &Kit) {
         else if tr_team && st.spe <= 70.0 { "trickRoom" }
         else if tw_team || st.spe < 75.0 { "bulky" }
         else { "fast" };
+    train_preset(d, b, kits, k, preset);
+}
+// EVs, nature and IVs of one preset, as autoTraining gives them
+pub fn train_preset(d: &Data, b: &mut Build, kits: &[Kit], k: &Kit, preset: &'static str) {
+    let st = d.entrants[b.e].stats.as_ref().unwrap();
+    let tr_team = kits.iter().any(|x| x.trick_room);
     let mut evs = [0.0; 6];
     for &(s, v) in PRESETS.iter().find(|p| p.0 == preset).unwrap().1 { let i = if s == "atk" { k.atk + 1 } else { six(s) }; evs[i] += v; }
     let low = if k.uses_other { if st.grd <= st.wil { GRD } else { WIL } } else { k.other };
@@ -148,7 +159,7 @@ fn auto_training(d: &Data, b: &mut Build, kits: &[Kit], k: &Kit) {
     b.preset = Some(preset); b.evs = Some(evs); b.nature = Some(nature); b.ivs = Some(ivs);
 }
 
-fn item_scores(d: &Data, b: &Build, k: &Kit) -> Vec<(Item, f64)> {
+pub fn item_scores(d: &Data, b: &Build, k: &Kit) -> Vec<(Item, f64)> {
     let st = d.entrants[b.e].stats.as_ref().unwrap();
     let pure = k.status == 0; let fastish = st.spe >= 70.0 && st.spe <= 105.0; let frail = bulk(st) < 190.0;
     let p = b.preset.unwrap_or("");
@@ -183,12 +194,15 @@ fn item_scores(d: &Data, b: &Build, k: &Kit) -> Vec<(Item, f64)> {
 pub fn train_team(d: &Data, builds: &mut [Build], r: &mut Rng, train: bool, items: bool) {
     if !train && !items { return; }
     let kits: Vec<Kit> = builds.iter().map(|b| kit(d, b)).collect();
-    if train { for (i, b) in builds.iter_mut().enumerate() { auto_training(d, b, &kits, &kits[i]); } }
+    // builds from a build book come trained and with their item; a second copy of an item in one team goes back to the handout
+    if train { for (i, b) in builds.iter_mut().enumerate() { if b.evs.is_none() { auto_training(d, b, &kits, &kits[i]); } } }
     if items {
+        let mut fixed: Vec<Item> = vec![];
+        for b in builds.iter_mut() { if let Some(it) = b.item { if fixed.contains(&it) { b.item = None; } else { fixed.push(it); } } }
         let mut cand: Vec<(usize, Item, f64)> = vec![];
         for (i, b) in builds.iter().enumerate() { if b.item.is_none() { for (id, v) in item_scores(d, b, &kits[i]) { cand.push((i, id, v + r.next() * 4.0)); } } }
         cand.sort_by(|x, y| crate::battle::js_cmp(y.2 - x.2));
-        let mut taken: Vec<Item> = vec![];
+        let mut taken: Vec<Item> = fixed;
         for (i, id, _) in cand { if builds[i].item.is_none() && !taken.contains(&id) { builds[i].item = Some(id); taken.push(id); } }
     }
 }

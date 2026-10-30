@@ -2,6 +2,8 @@
 //   familiar-sim [count] [duel|team|duos|comp] [seed]  with the flags of sim/cli.mjs:
 //   --trained --level=50 --size=4 --draft --bring=10 --hp=3 --forms=all --workers=4 --search=best|meta --arch --ban=2 --json=out.json
 //   --ai=search --iters=128 (both sides play with the search AI), --recheck=meta.json (its final round robin with the search AI)
+//   --optimize=meta.json[,more.json] [--per=200 --passes=2 --only=a,b] (build search against their teams, book to --json),
+//   --builds=book.json[,more.json] (play with a book; several books give each character all their builds, picked at random)
 //   familiar-sim batch [count] [format] [seed] ...  one single-thread batch, totals as JSON (for tests/parity.mjs)
 // Reads data.json (written by `node sim/export.mjs`) from beside the program or the current folder, or --data=path.
 #![allow(dead_code)]
@@ -14,6 +16,7 @@ mod draft;
 mod jsmath;
 mod rules;
 mod mcts;
+mod optimize;
 mod search;
 use std::collections::HashMap;
 
@@ -25,8 +28,10 @@ fn main() {
     if single { args.remove(0); }
     // data.json next to the program (the Windows download), else in the current folder
     let beside = std::env::current_exe().ok().and_then(|p| p.parent().map(|d| d.join("data.json"))).filter(|p| p.exists());
-    let d = data::Data::load(&flag("data").unwrap_or_else(|| beside.map_or("data.json".into(), |p| p.to_string_lossy().into_owned())));
+    let mut d = data::Data::load(&flag("data").unwrap_or_else(|| beside.map_or("data.json".into(), |p| p.to_string_lossy().into_owned())));
     if let Some(h) = flag("hp") { rules::set_hp_scale(h.parse().unwrap()); }
+    if let Some(f) = flag("builds") { for f in f.split(',') { optimize::load_book(&mut d, f); } }
+    let d = d;
     let count: usize = args.first().unwrap_or(&"1000").parse().unwrap();
     let format = batch::Format::parse(args.get(1).unwrap_or(&"duel"));
     let seed: f64 = args.get(2).unwrap_or(&"1").parse().unwrap();
@@ -37,6 +42,32 @@ fn main() {
         let mut s = batch::Stats::default();
         batch::run_batch(&d, &o, &mut s, &mut HashMap::new());
         println!("{}", serde_json::to_string(&s).unwrap());
+        return;
+    }
+    let workers0 = num("workers").map_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get()), |w| (w as usize).max(1));
+    if let Some(f) = flag("optimize") {
+        // build search against a saved meta chain's teams (archetype teams keep their plan); writes the build book to --json
+        // several files (a,b,c): the teams of all of them, each team once
+        let mut teams: Vec<(Vec<usize>, Option<usize>)> = vec![];
+        for f in f.split(',') {
+            let c: serde_json::Value = serde_json::from_str::<serde_json::Value>(&std::fs::read_to_string(f).unwrap()).unwrap()["chain"].clone();
+            for t in c["teams"].as_array().unwrap() {
+                let keys: Vec<String> = serde_json::from_value(t["keys"].clone()).unwrap();
+                let x = (keys.iter().map(|k| d.ent_idx[k]).collect::<Vec<_>>(), t["arch"].as_str().map(|a| batch::arch_idx(&d, a)));
+                if !teams.contains(&x) { teams.push(x); }
+            }
+        }
+        let only: Vec<usize> = flag("only").map_or(vec![], |s| s.split(',').map(|k| d.ent_idx[k]).collect());
+        let p = optimize::Opt { battles: num("per").map_or(200, |x| x as usize), passes: num("passes").map_or(2, |x| x as usize), seed };
+        let t0 = std::time::Instant::now();
+        let book = optimize::optimize_all(&d, &o, &optimize::Field { teams }, &p, workers0, &only);
+        let mut rows: Vec<(&String, &optimize::Entry)> = book.iter().collect();
+        rows.sort_by(|a, b| b.1.gain.partial_cmp(&a.1.gain).unwrap());
+        println!("{} characters in {} s; biggest gains (fresh battles):", book.len(), t0.elapsed().as_secs());
+        for (k, en) in rows.iter().take(15) { let b = &en.builds[0]; println!("{:+5.1}  {:<28} {} | {} | {} | {}", en.gain * 100.0, name_of(&d, k), b.ability, b.preset, b.item.as_deref().unwrap_or("none"), b.moves.join(", ")); }
+        let avg = book.values().map(|e| e.gain).sum::<f64>() / book.len() as f64;
+        println!("average gain {:+.1} points", avg * 100.0);
+        if let Some(j) = flag("json") { std::fs::write(j, serde_json::to_string_pretty(&book).unwrap()).unwrap(); }
         return;
     }
     let workers = num("workers").map_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get()), |w| (w as usize).max(1));
@@ -93,3 +124,4 @@ fn main() {
         std::fs::write(f, serde_json::to_string(&out).unwrap()).unwrap();
     }
 }
+fn name_of(d: &data::Data, k: &str) -> String { d.ent_idx.get(k).map_or(k.to_string(), |&e| d.entrants[e].name.clone()) }

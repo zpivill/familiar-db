@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: node sim/test/mechanics.mjs
       - run: node sim/export.mjs
-      - run: cargo build --release
+      - run: cargo build --release && cargo test --release
         working-directory: engine
       - run: |
           node engine/tests/parity.mjs 300 duel 1
