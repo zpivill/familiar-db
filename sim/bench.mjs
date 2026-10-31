@@ -7,6 +7,9 @@
 //     with a 95% margin, and ms per battle.
 //   node sim/bench.mjs search [battles per opponent = 100] [seed = 1] [playouts a turn = 128]
 //     The same, for the search AI (sim/mcts.js) against the current AI, frozen v1 and greedy, on every core.
+//   node sim/bench.mjs hidden [battles = 2000] [seed = 1]
+//     The current AI seeing foe builds only as it guessed them (batch --hidden) against the same AI seeing them
+//     exactly, same mirror matches. A small gap means hiding builds costs little skill.
 //   node sim/bench.mjs stability run1.json run2.json [run3.json ...]
 //     Compares meta chains saved with  node sim/cli.mjs 200000 comp <seed> --draft --hp=3 --forms=all
 //     --search=meta --arch --json=runN.json  (use a different seed per run): how far the runs agree.
@@ -21,6 +24,7 @@ import { makeBuild, entrantPool, withFormat } from './batch.js';
 import { trainTeam } from './builds.js';
 import { RULES } from './rules.js';
 import { BOTS } from './bots/baselines.js';
+import { guessBuilds } from './draft.js';
 
 const [cmd = 'strength', ...rest] = process.argv.slice(2);
 
@@ -49,6 +53,18 @@ export function arena() {
   // the same battle's setup, for replaying it (sim/mcts.js judge)
   play.setup = (seed, n) => { const tm = team(rng(seed * 1e6 + Math.floor(n / 2))); return { data, teams: [tm, tm], bo: { format: 'duos', level: opts.level, turnCap: opts.turnCap }, me: n % 2 }; };
   return play;
+}
+
+function hidden(battles = 2000, seed = 1) {
+  const play = arena(), opts = withFormat({ format: 'comp', forms: 'all', movesets: 'smart' });
+  const guess = (data, t) => { const g = guessBuilds(data, t.map(b => b.e), makeBuild, opts); return t.map(b => g.find(x => x.e.key === b.e.key)); };
+  let w = 0, l = 0;
+  for (let n = 0; n < battles; n++) {
+    const g = play('mirror', seed, n, (data, teams, bo, me) => runBattle(data, teams, { ...bo, beliefs: me === 0 ? [guess(data, teams[1]), null] : [null, guess(data, teams[0])] }));
+    if (g.res === 'w') w++; else if (g.res === 'l') l++;
+  }
+  const p = w / battles;
+  console.log(`hidden-info AI vs full-info AI, ${battles} mirror battles, seed ${seed}: won ${(100 * p).toFixed(1)}% ±${(196 * Math.sqrt(p * (1 - p) / battles)).toFixed(1)}, lost ${(100 * l / battles).toFixed(1)}%`);
 }
 
 function strength(battles = 1000, seed = 1) {
@@ -162,5 +178,6 @@ if (!isMainThread && workerData?.searchJob) {
 else if (!isMainThread || import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
 else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
 else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128, process.argv.find(a => a.startsWith('--record='))?.slice(9));
+else if (cmd === 'hidden') hidden(+rest[0] || 2000, +rest[1] || 1);
 else if (cmd === 'stability') stability(rest);
 else console.log('usage: node sim/bench.mjs strength [battles] [seed] | search [battles] [seed] [playouts] | stability run1.json run2.json ...');

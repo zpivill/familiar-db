@@ -200,8 +200,18 @@ function runDraft(data, sides, builds, r, opts, arch = []) {
   };
   const must = s => arch[s] && { setters: builds[s].map((b, i) => arch[s].setters.has(b.e.key) ? i : -1).filter(i => i >= 0),
     abusers: builds[s].map((b, i) => arch[s].abusers.has(b.e.key) ? i : -1).filter(i => i >= 0), need: PICK };
-  const drafts = [0, 1].map(s => draftSide(data, builds[s], guess(sides[1 - s]), { ...opts, must: must(s) }, r));
-  return { six: drafts.map((d, s) => d.order.map(i => builds[s][i])), drafts };
+  const guesses = [guess(sides[1]), guess(sides[0])];
+  const drafts = [0, 1].map(s => draftSide(data, builds[s], guesses[s], { ...opts, must: must(s) }, r));
+  return { six: drafts.map((d, s) => d.order.map(i => builds[s][i])), drafts, guesses };
+}
+// opts.hidden: each side's battle AI sees the foes' builds as it guessed them (the draft's guess), not their real
+// ones (battle.js opts.beliefs). Without the draft the guess is made the same way.
+function beliefs(data, sides, played, D, opts) {
+  if (!opts.hidden) return undefined;
+  return [0, 1].map(s => {
+    const g = D ? D.guesses[s] : guessBuilds(data, sides[1 - s], makeBuild, opts);
+    return played[1 - s].map(b => g.find(x => x.e.key === b.e.key));
+  });
 }
 function recordDraft(S, B, builds, D, opts) {
   D.drafts.forEach((d, s) => {
@@ -394,7 +404,7 @@ export function runBatch(data, opts, onChunk) {
     const builds = sides.map((t, i) => trainTeam(data, t.map(e => makeBuild(data, e, r, arch[i] ? { ...opts, force: forced(arch[i], e.key) } : opts)), r, opts));
     const D = opts.draft ? runDraft(data, sides, builds, r, opts, arch) : null;
     // opts.ai 'search': both sides play with the slow search AI (sim/mcts.js), for re-checking a finished meta
-    const bo = { rng: r, ...battleOpts(opts), plans: archIds };
+    const bo = { rng: r, ...battleOpts(opts), plans: archIds, beliefs: beliefs(data, sides, D ? D.six : builds, D, opts) };
     const B = opts.ai === 'search' ? playSearch(data, D ? D.six : builds, bo, [0, 1], null, { iters: opts.iters }) : runBattle(data, D ? D.six : builds, bo);
     record(S, B, D ? D.six : builds, opts);
     if (D) recordDraft(S, B, builds, D, opts);
@@ -434,7 +444,7 @@ export function watchBattle(data, opts) {
   const brought = sides.map(t => trainTeam(data, t.map(e => makeBuild(data, e, r, opts)), r, opts));
   const D = opts.draft ? runDraft(data, sides, brought, r, opts) : null;
   const builds = D ? D.six : brought;
-  const B = runBattle(data, builds, { rng: r, ...battleOpts(opts), log: true });
+  const B = runBattle(data, builds, { rng: r, ...battleOpts(opts), log: true, beliefs: beliefs(data, sides, builds, D, opts) });
   return {
     winner: B.winner, turns: B.turn, log: B.log,
     drafts: D && D.drafts.map((d, s) => ({

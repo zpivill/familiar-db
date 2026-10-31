@@ -318,5 +318,18 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(B.over && R.winner === B.winner && R.turn === B.turn && R.sides.every((s, i) => s.mons.every((m, j) => m.hp === B.sides[i].mons[j].hp)), 'Search AI battles replay exactly from their recorded choices', `${B.winner}/${B.turn} vs ${R.winner}/${R.turn}`);
 }
 
+// Hidden builds (opts.beliefs): while side 0 chooses, the foe shows the believed build's moves and stats, a move
+// it has been seen using replaces a believed one, and its real build is back afterwards.
+{
+  const real = build('saitama', ['splash']), believed = { ...build('saitama', ['tackle']), evs: { pow: 252 } };
+  const seen = [];
+  const B = runBattle(data, [[build('saitama', ['splash'])], [real]], { rng: rng(1), turnCap: 2, beliefs: [[believed], null], decide: (kind, B, m) => {
+    if (kind === 'action' && m.side.i === 0) { const f = B.sides[1].mons[0]; seen.push([f.moves.map(x => x.id).join(), f.raw.pow]); }
+    return null;
+  } });
+  const f = B.sides[1].mons[0];
+  ok(seen[0][0] === 'tackle' && seen[0][1] > f.raw.pow && seen[1][0] === 'splash' && f.moves[0].id === 'splash', 'Hidden builds: the AI sees the believed build, then the moves it saw', JSON.stringify(seen));
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');

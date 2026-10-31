@@ -106,6 +106,31 @@ export function runBattle(data, teams, opts = {}) {
   const held = (m, id) => m.item && !m.itemUsed && m.item.id === id;
   const useItem = (m, what) => { m.itemUsed = true; say(nm(m), what || `uses its ${m.item.label}`); };
 
+  // ---- what each side knows of the other's builds (gap #2 of the AI gap list) ----
+  // opts.beliefs[s][k]: the build side s believes the other side's k-th character has (its guess from the
+  // draft). While side s chooses, every foe shows that build's stats, item, ability and moves in place of its
+  // own; the moves it has been seen using and an item it has used up are shown as they really are.
+  // shortcut: an ability stays hidden even after it shows (an immunity, an entry effect); tracking reveals is the upgrade.
+  // A side with no beliefs (null) sees the real builds.
+  const views = opts.beliefs && opts.beliefs.map(bs => bs && bs.map(b => makeMon(data, b.e, b, level)));
+  // opts.assume = { side, turn }: from that turn on the side's foes really have the builds it believes (the search
+  // AI's playouts, gap #3: the future is played out against the builds it guesses, not the real ones).
+  function believe(s, f) {
+    if (!views?.[s.i]) return f();
+    const foes = B.sides[1 - s.i].mons, keep = foes.map(m => ({ moves: m.moves, raw: m.raw, maxhp: m.maxhp, hp: m.hp, item: m.item, ability: m.ability, abilityName: m.abilityName, baseAbility: m.baseAbility }));
+    view(s);
+    try { return f(); } finally { foes.forEach((m, k) => Object.assign(m, keep[k])); }
+  }
+  function view(s) {
+    B.sides[1 - s.i].mons.forEach((m, k) => {
+      const v = views[s.i][k], seen = m.moves.filter(x => m.t.moves[x.id]);
+      m.moves = [...seen, ...v.moves.filter(x => !seen.some(y => y.id === x.id))].slice(0, Math.max(v.moves.length, seen.length));
+      m.raw = v.raw; m.hp = m.hp / m.maxhp * v.maxhp; m.maxhp = v.maxhp;
+      if (!m.itemUsed) m.item = v.item;
+      if (m.ability === m.baseAbility) { m.ability = m.baseAbility = v.ability; m.abilityName = v.abilityName; }
+    });
+  }
+
   // ---- stats ----
   // noBoost: a foe with Target Lock ignores raised Speed when working out who moves first.
   const speed = (m, noBoost) => {
@@ -375,7 +400,7 @@ export function runBattle(data, teams, opts = {}) {
   function bringIn(s, slot, how, pickRandom) {
     const options = bench(s);
     if (!options.length) return false;
-    const next = pickRandom ? r.pick(options) : opts.decide?.('replace', B, s, options) || chooseReplacement(B, s, options, api);
+    const next = pickRandom ? r.pick(options) : believe(s, () => opts.decide?.('replace', B, s, options) || chooseReplacement(B, s, options, api));
     switchIn(next, slot, how);
     return true;
   }
@@ -1129,16 +1154,20 @@ export function runBattle(data, teams, opts = {}) {
   while (!B.over) {
     B.turn++;
     if (B.turn > (opts.turnCap || RULES.turnCap)) { B.over = true; B.winner = -1; break; }
+    if (opts.assume?.turn === B.turn && views?.[opts.assume.side]) view(B.sides[opts.assume.side]);
     const acts = [];
     for (const s of B.sides) for (const m of actives(s)) if (held(m, 'calm-incense') && (m.vol.taunt > 0 || m.vol.encore)) {
       useItem(m, 'calms down with its Calm Incense'); m.vol.taunt = 0; m.vol.encore = null;
     }
     api.cache = new Map();
-    for (const s of B.sides) for (const m of actives(s)) {
-      const act = opts.decide?.('action', B, m) || chooseAction(B, m, api);
-      act.m = m;
-      if (act.type === 'move') m.vol.plannedAttack = m.moves[act.slot]?.m.cat !== 'Status';
-      acts.push(act);
+    for (const s of B.sides) {
+      if (views) api.cache = new Map();     // each side's estimates use its own view of the foes
+      believe(s, () => { for (const m of actives(s)) {
+        const act = opts.decide?.('action', B, m) || chooseAction(B, m, api);
+        act.m = m;
+        if (act.type === 'move') m.vol.plannedAttack = m.moves[act.slot]?.m.cat !== 'Status';
+        acts.push(act);
+      } });
     }
     api.cache = null;
     const order = a => a.type === 'switch' ? 10 : effPriority(a.m, a.m.moves[a.slot]);
@@ -1160,7 +1189,7 @@ export function runBattle(data, teams, opts = {}) {
       if (m.moves[a.slot]?.m.cat !== 'Status') m.vol.lastAttackTurn = B.turn;
       if (m.vol.extraTurn === B.turn && !m.fainted && m.side.active.includes(m)) {
         m.vol.extraTurn = 0;
-        const again = opts.decide?.('action', B, m, null, true) || chooseAction(B, m, api);
+        const again = believe(m.side, () => opts.decide?.('action', B, m, null, true) || chooseAction(B, m, api));
         if (again.type === 'move') useMove(m, again.slot, again.target);
       }
       if (B.sides.some(s => !alive(s).length)) break;

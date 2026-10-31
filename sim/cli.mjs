@@ -1,6 +1,6 @@
 // Run a batch from the command line:  node sim/cli.mjs [count] [duel|team|duos|comp] [seed] [watch]
 // Flags: --trained (AI-chosen EVs, nature, IVs and held items), --level=50, --size=4,
-// --draft (comp only: bring 8 and draft 6), --bring=10, --hp=3 (Vitality multiplier), --forms=all,
+// --draft (comp only: bring 8 and draft 6), --bring=10, --hp=3 (Vitality multiplier), --forms=all, --hidden (each battle AI sees the foes' builds only as it guessed them),
 // --workers=4 (default: every core; results repeat for the same seed and worker count),
 // --search=best|meta|pop (Strongest teams / Meta chain, as on the page; pop = population meta, a Nash mix of teams), --arch (archetype rounds), --ban=2,
 // --json=out.json (save the results, e.g. for sim/bench.mjs), --pool=a.json,b.json (with --search=pop: start the
@@ -24,7 +24,7 @@ const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const flag = n => process.argv.find(a => a.startsWith('--' + n + '='))?.split('=')[1] ?? (process.argv.includes('--' + n) ? true : undefined);
 const [count = '1000', format = 'duel', seed = '1', watch] = args;
 const extra = { ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('level') ? { level: +flag('level') } : {}), ...(flag('size') ? { teamSize: +flag('size') } : {}),
-  ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}),
+  ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}), ...(flag('hidden') ? { hidden: true } : {}),
   ...(flag('recheck') ? { ai: 'search', ...(flag('iters') ? { iters: +flag('iters') } : {}) } : {}) };
 const rules = flag('hp') ? { hpScale: +flag('hp') } : {};
 Object.assign(RULES, rules);
