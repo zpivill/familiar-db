@@ -1,6 +1,6 @@
 // AI test bench. Run it before and after every AI change and add the numbers to docs/balance-history.md.
 //
-//   node sim/bench.mjs strength [battles per opponent = 1000] [seed = 1]
+//   node sim/bench.mjs strength [battles per opponent = 1000] [seed = 1] [opponents = all, e.g. v3,mirror]
 //     The current AI (sim/ai.js) against fixed opponents in competitive doubles mirror matches: the same 6 on
 //     both sides (random legal teams, AI-trained builds), Vitality x3. Games come in pairs with the same team
 //     and the same luck, sides swapped, so team strength, side and luck cancel out. Prints win / loss / draw
@@ -67,10 +67,10 @@ function hidden(battles = 2000, seed = 1) {
   console.log(`hidden-info AI vs full-info AI, ${battles} mirror battles, seed ${seed}: won ${(100 * p).toFixed(1)}% ±${(196 * Math.sqrt(p * (1 - p) / battles)).toFixed(1)}, lost ${(100 * l / battles).toFixed(1)}%`);
 }
 
-function strength(battles = 1000, seed = 1) {
+function strength(battles = 1000, seed = 1, only) {
   const play = arena();
   console.log(`Current AI vs each opponent: ${battles} mirror battles each, Vitality x3, seed ${seed}`);
-  for (const name of Object.keys(BOTS)) {
+  for (const name of only ? only.split(',') : Object.keys(BOTS)) {
     let w = 0, l = 0, d = 0, turns = 0;
     const t0 = performance.now();
     for (let n = 0; n < battles; n++) {
@@ -176,7 +176,7 @@ if (!isMainThread && workerData?.searchJob) {
   parentPort.postMessage({ ...t, recs });
 }
 else if (!isMainThread || import.meta.url !== pathToFileURL(process.argv[1]).href) { /* imported by tune.mjs */ }
-else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1);
+else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1, rest[2]);
 else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128, process.argv.find(a => a.startsWith('--record='))?.slice(9));
 else if (cmd === 'hidden') hidden(+rest[0] || 2000, +rest[1] || 1);
 else if (cmd === 'stability') stability(rest);

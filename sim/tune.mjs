@@ -43,10 +43,10 @@ if (!isMainThread) {
   const gauss = () => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
   const keys = Object.keys(W);
   // weights that can go negative or sit near 0 move additively, the rest by a factor
-  const additive = new Set(['switchBad']);
+  const additive = new Set();
   let mean = { ...W }, sigma = 0.35;
   const nudge = () => Object.fromEntries(keys.map(k => [k, additive.has(k) ? mean[k] + gauss() * sigma * 0.3 : mean[k] * Math.exp(gauss() * sigma)]));
-  const clamp = w => { w.noise = Math.min(w.noise, 1); w.switchP = Math.min(w.switchP, 1); return w; };
+  const clamp = w => { w.noise = Math.min(w.noise, 1); w.predictProtect = Math.min(w.predictProtect, 1); return w; };
 
   const n = os.availableParallelism?.() || os.cpus().length;
   const workers = Array.from({ length: n }, () => new Worker(new URL(import.meta.url), { workerData: { distill } }));

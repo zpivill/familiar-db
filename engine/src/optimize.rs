@@ -49,8 +49,12 @@ pub fn load_book(d: &mut Data, path: &str) {
 
 pub struct Field { pub teams: Vec<(Vec<usize>, Option<usize>)> }   // opponent teams and their forced archetype
 
+// One team's builds for a team-aware search (gap #10): the team and each member's build so far.
+pub type TeamCtx<'a> = Option<(&'a [usize], &'a HashMap<usize, Build>)>;
+
 // Win rate of `cand` (entrant cand.e) over n battles: it joins each meta team in turn, against a random field team.
-fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, seed: f64, cache: &mut HashMap<String, Vec<Build>>) -> f64 {
+// With a team (team-aware search) it always plays in that team, next to the team's builds.
+fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, seed: f64, cache: &mut HashMap<String, Vec<Build>>, team: TeamCtx) -> f64 {
     let e = cand.e;
     let bo0 = BattleOpts { duos: o.duos(), level: o.level, turn_cap: o.turn_cap, plans: [None, None], beliefs: None, assume: None };
     let mut tot = 0.0;
@@ -58,8 +62,7 @@ fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, 
         let mut r = rng(seed + (i * 7919) as f64);
         // the candidate joins a meta team in place of a random member (or keeps its own spot), against another field team
         let homes: Vec<&Vec<usize>> = field.teams.iter().filter(|t| t.1.is_none()).map(|t| &t.0).collect();
-        let home = homes[i % homes.len()];
-        let mut t: Vec<usize> = home.clone();
+        let mut t: Vec<usize> = match team { Some((tm, _)) => tm.to_vec(), None => homes[i % homes.len()].clone() };
         match t.iter().position(|&x| d.entrants[x].ci == d.entrants[e].ci) {
             Some(j) => { t.remove(j); }
             None => {
@@ -78,6 +81,7 @@ fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, 
         for s in 0..2 {
             let mut bs: Vec<Build> = sides[s].iter().enumerate().map(|(j, &x)| {
                 if s == me && j == 0 { return cand.clone(); }
+                if s == me { if let Some(b) = team.and_then(|(_, m)| m.get(&x)) { return b.clone(); } }
                 let f = arch[s].and_then(|a| forced(&d.archetypes[a], &d.entrants[x].key));
                 let empty: Vec<String> = vec![];
                 let (fm, fa) = match &f { Some((m, a)) => (m.as_slice(), a.as_deref()), None => (empty.as_slice(), None) };
@@ -213,54 +217,56 @@ fn bulk_spreads(d: &Data, o: &Opts, cur: &Build, threats: &[Threat]) -> Vec<(Str
 }
 
 // Coordinate descent for one character. Returns its book entry.
-pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[Threat], p: &Opt, cache: &mut HashMap<String, Vec<Build>>) -> Entry {
+pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[Threat], p: &Opt, cache: &mut HashMap<String, Vec<Build>>, team: TeamCtx) -> Entry {
     let sets = movesets(d, e, o, 6);
     let abs = d.ent_abs[e].clone();
-    let base0 = auto_build(d, e, sets[0].clone());
+    // in a team, start from (and compare with) the member's build in that team so far
+    let base0 = team.and_then(|(_, m)| m.get(&e).cloned()).unwrap_or_else(|| auto_build(d, e, sets[0].clone()));
     let seed = p.seed + e as f64 * 1e5;
-    let base = eval(d, o, &base0, field, 0, p.battles, seed, cache);
+    let base = eval(d, o, &base0, field, 0, p.battles, seed, cache, team);
     let (mut cur, mut cur_v) = (base0.clone(), base);
     let mut tried: IndexMap<String, IndexMap<String, f64>> = IndexMap::new();
     for _ in 0..p.passes {
         // ability
         let mut opts: Vec<(String, Build)> = abs.iter().enumerate().map(|(k, &a)| { let mut b = cur.clone(); b.ability = a; b.ability_name = d.entrants[e].abilities[k].name.clone(); (b.ability_name.clone(), b) }).collect();
-        pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "ability", &mut tried);
+        pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "ability", &mut tried);
         // moveset (training follows the moves' attack stat)
         let preset = cur.preset.unwrap_or("fast");
         let mut opts: Vec<(String, Build)> = sets.iter().map(|m| { let mut b = cur.clone(); b.moves = m.clone();
             // a tuned "speed" spread is not a preset: keep it as it is
             let b = if PRESET_NAMES.contains(&preset) { trained(d, b, preset) } else { b };
             (b.moves.iter().map(|x| d.moves[x.0].name.clone()).collect::<Vec<_>>().join(", "), b) }).collect();
-        pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "moves", &mut tried);
+        pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "moves", &mut tried);
         let mut opts: Vec<(String, Build)> = PRESET_NAMES.iter().map(|&pr| (pr.to_string(), trained(d, cur.clone(), pr))).collect();
-        pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "preset", &mut tried);
+        pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "preset", &mut tried);
         if cur.preset != Some("trickRoom") {
             let mut opts: Vec<(String, Build)> = vec![("keep".into(), cur.clone())];
             opts.extend(speed_spreads(d, &cur, threats, o.level));
-            pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "speed", &mut tried);
+            pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "speed", &mut tried);
         }
         let mut opts: Vec<(String, Build)> = vec![("keep".into(), cur.clone())];
         opts.extend(bulk_spreads(d, o, &cur, threats));
-        if opts.len() > 1 { pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "bulk", &mut tried); }
-        let mut opts: Vec<(String, Build)> = items(d, &cur).into_iter().map(|it| { let mut b = cur.clone(); b.item = it; (it.map_or("none".into(), |i| i.key()), b) }).collect();
-        pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "item", &mut tried);
+        if opts.len() > 1 { pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "bulk", &mut tried); }
+        let taken: Vec<u8> = team.map_or(vec![], |(t, m)| t.iter().filter(|&&x| x != e).filter_map(|x| m.get(x).and_then(|b| b.item).map(|i| i.id)).collect());
+        let mut opts: Vec<(String, Build)> = items(d, &cur).into_iter().filter(|it| it.map_or(true, |i| !taken.contains(&i.id))).map(|it| { let mut b = cur.clone(); b.item = it; (it.map_or("none".into(), |i| i.key()), b) }).collect();
+        pick(d, o, field, p, seed, cache, team, &mut cur, &mut cur_v, &mut opts, "item", &mut tried);
     }
     // the honest gain: base and best on battles the search never saw
     let fresh = seed + 5e4;
-    let gain = eval(d, o, &cur, field, 0, p.battles, fresh, cache) - eval(d, o, &base0, field, 0, p.battles, fresh, cache);
+    let gain = eval(d, o, &cur, field, 0, p.battles, fresh, cache, team) - eval(d, o, &base0, field, 0, p.battles, fresh, cache, team);
     Entry { builds: vec![spec_of(d, &cur)], base, best: cur_v, gain, tried }
 }
 // One choice at a time by successive halving: every option plays a quarter of the battles, the better half plays
 // the next quarter on top, and so on, so the leaders end up on all `p.battles` (the same battles for all).
 #[allow(clippy::too_many_arguments)]
-fn pick(d: &Data, o: &Opts, field: &Field, p: &Opt, seed: f64, cache: &mut HashMap<String, Vec<Build>>, cur: &mut Build, cur_v: &mut f64,
+fn pick(d: &Data, o: &Opts, field: &Field, p: &Opt, seed: f64, cache: &mut HashMap<String, Vec<Build>>, team: TeamCtx, cur: &mut Build, cur_v: &mut f64,
         opts: &mut Vec<(String, Build)>, dim: &str, tried: &mut IndexMap<String, IndexMap<String, f64>>) {
     let block = (p.battles / 4).max(1);
     let mut alive: Vec<(String, Build, f64)> = opts.drain(..).map(|(n, b)| (n, b, 0.0)).collect();
     let mut t: IndexMap<String, f64> = IndexMap::new();
     let mut from = 0;
     loop {
-        for a in alive.iter_mut() { a.2 += eval(d, o, &a.1, field, from, block, seed, cache) * block as f64; }
+        for a in alive.iter_mut() { a.2 += eval(d, o, &a.1, field, from, block, seed, cache, team) * block as f64; }
         from += block;
         alive.sort_by(|x, y| y.2.partial_cmp(&x.2).unwrap());
         if alive.len() == 1 || from + block > p.battles { break; }
@@ -283,7 +289,7 @@ pub fn optimize_all(d: &Data, o: &Opts, field: &Field, p: &Opt, workers: usize, 
         let hs: Vec<_> = (0..workers).map(|w| { let (ents, done, threats) = (&ents, &done, &threats); s.spawn(move || {
             let mut cache = HashMap::new(); let mut res = vec![];
             for (i, &e) in ents.iter().enumerate() { if i % workers == w {
-                res.push((i, optimize_one(d, o, e, field, &threats, p, &mut cache)));
+                res.push((i, optimize_one(d, o, e, field, &threats, p, &mut cache, None)));
                 let n = done.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
                 if n % 10 == 0 { eprintln!("{n} of {} characters", ents.len()); }
             } }
@@ -293,6 +299,36 @@ pub fn optimize_all(d: &Data, o: &Opts, field: &Field, p: &Opt, workers: usize, 
     });
     out.sort_by_key(|x| x.0);
     out.into_iter().map(|(i, en)| (d.entrants[ents[i]].key.clone(), en)).collect()
+}
+
+// Team-aware build search (gap #10): each member of one team searched in that team, next to its teammates'
+// current builds (the book's to start), one member after another (so items stay one per team), for `rounds`
+// rounds. A round's builds are kept only if the team does better with them on fresh battles. Returns each
+// member's last entry and the team's win rate with the starting and the kept builds, on other fresh battles.
+pub fn optimize_team(d: &Data, o: &Opts, field: &Field, p: &Opt, team: &[usize], rounds: usize) -> (IndexMap<String, Entry>, f64, f64) {
+    let threats = threats(d, o, field);
+    let mut cache = HashMap::new();
+    let mut mates: HashMap<usize, Build> = team.iter().map(|&x| (x, d.book.get(&x).map(|v| v[0].clone()).unwrap_or_else(|| auto_build(d, x, movesets(d, x, o, 1).remove(0))))).collect();
+    let start = mates.clone();
+    let lead = team[0];
+    let score = |m: &HashMap<usize, Build>, seed: f64, cache: &mut HashMap<String, Vec<Build>>| eval(d, o, &m[&lead], field, 0, p.battles * 2, seed, cache, Some((team, m)));
+    let mut kept_v = score(&mates, p.seed + 6e7, &mut cache);
+    let mut out: IndexMap<String, Entry> = IndexMap::new();
+    for _ in 0..rounds {
+        let mut next = mates.clone();
+        for &e in team {
+            let en = optimize_one(d, o, e, field, &threats, p, &mut cache, Some((team, &next)));
+            next.insert(e, build_of(d, e, &en.builds[0]));
+            out.insert(d.entrants[e].key.clone(), en);
+        }
+        let v = score(&next, p.seed + 6e7, &mut cache);
+        if v > kept_v { kept_v = v; mates = next; }
+    }
+    let fresh = p.seed + 7e7;
+    let before = eval(d, o, &start[&lead], field, 0, p.battles * 4, fresh, &mut cache, Some((team, &start)));
+    let after = eval(d, o, &mates[&lead], field, 0, p.battles * 4, fresh, &mut cache, Some((team, &mates)));
+    for &e in team { if let Some(en) = out.get_mut(&d.entrants[e].key) { en.builds = vec![spec_of(d, &mates[&e])]; } }
+    (out, before, after)
 }
 
 #[cfg(test)]

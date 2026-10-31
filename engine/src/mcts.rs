@@ -76,7 +76,7 @@ fn think(f: &Fixed, rec: &[Enc], upto: usize, b: &mut Battle, me: usize, iters: 
     for &m in &team {
         let mut opts: Vec<Act> = with_rng(b, search, |b| options(b, m)).into_iter().take(k).map(|c| c.act).collect();
         let bench = b.bench(me);
-        if !matches!(opts.first(), Some(Act::Switch { .. })) && !bench.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
+        if !opts.iter().any(|o| matches!(o, Act::Switch { .. })) && !bench.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
             let to = with_rng(b, search, |b| choose_replacement(b, me, &bench));
             opts.push(Act::Switch { to });
         }

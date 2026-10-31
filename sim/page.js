@@ -108,7 +108,7 @@ async function simRun() {
   SIM.jobId = (SIM.jobId || 0) + 1; SIM.stopped = false;
   SIM.plan = null; SIM.full = []; SIM.kept = {}; SIM.best = null;
   SIM.mode = o.format !== 'duel' ? o.teamSearch || '' : '';
-  SIM.chain = SIM.mode === 'meta' ? { teams: [], detail: {}, h2h: {}, round: 0, rounds: 0 } : null;
+  SIM.chain = SIM.mode === 'meta' ? { teams: [], detail: {}, h2h: {}, round: 0, rounds: 0 } : null; SIM.recheck = null;
   simDraw();
   if (!SIM.mode) await simSend(SIM.target);
   else {
@@ -130,7 +130,7 @@ function simLoad(file) {
       level: +fl('level') || 100, hpScale: +fl('hp') || 1, training: fl('trained') ? 'ai' : 'base', items: fl('trained') ? 'ai' : 'none', draft: fl('draft') ? String(+fl('bring') || 8) : 'off',
       arch: fl('arch') ? 'all' : '', ban: +fl('ban') || 0, teamSearch: J.chain ? 'meta' : J.best ? 'best' : '' };
     SIM.stats = J.stats; SIM.done = SIM.target = J.stats.battles; SIM.ms = J.ms; SIM.running = SIM.stopped = false; SIM.error = '';
-    SIM.mode = SIM.lastOpts.teamSearch; SIM.chain = J.chain || null; SIM.kept = {}; SIM.gen = 0;
+    SIM.mode = SIM.lastOpts.teamSearch; SIM.chain = J.chain || null; SIM.recheck = J.chain && J.recheck || null; SIM.kept = {}; SIM.gen = 0;
     // a Strongest teams run saves only its final ranking, so it shows as a one-generation search
     SIM.plan = J.best ? [0] : null; SIM.full = J.best ? [Object.fromEntries(J.best.map(r => [r.k, { g: r.g, w: r.w }]))] : []; SIM.best = J.best ? { rows: J.best } : null;
     SIM.tab = SIM.mode ? 'teams' : 'overview';
@@ -405,10 +405,12 @@ function simMetaView() {
   // real meta teams, and the archetype teams get their own column
   const hasArch = T.some(t => t.arch), avg = xs => xs.length ? pctf(xs.reduce((a, b) => a + b, 0) / xs.length, 1) : '—';
   const vsOf = (i, arch) => T.map((_, j) => j).filter(j => j !== i && !!T[j].arch === arch).map(j => h(i, j)).filter(isFinite);
+  // two skill levels (gap #11): a run saved with --check has the final round played again by the search AI
+  const R = SIM.recheck, all = (H, t) => { const kk = [...t.keys].sort().join('+') + '|'; let g = 0, w = 0; for (const [x, v] of Object.entries(H)) if (x.startsWith(kk)) { g += v.g; w += v.w; } return g ? pctf(w / g, 1) : '—'; };
   const rows = T.map((t, i) => {
     const p = simPlaystyle(t.keys, C.detail[k(t)], ref);
     return `<tr><td class="sv">${i + 1}</td><td>${t.arch ? `<strong>${esc(t.archName)}</strong><br>` : ''}${t.keys.map(entLink).join(' + ')}${t.banned?.length ? `<br><span class="hint">Banned this round: ${esc(t.banned.map(entName).join(', '))}</span>` : ''}</td><td>${playCell(p)}</td>
-      <td class="sv">${i === 0 || t.arch ? '—' : pctf(h(i, i - 1), 1)}</td><td class="sv">${avg(vsOf(i, false))}</td>${hasArch ? `<td class="sv">${t.arch ? '—' : avg(vsOf(i, true))}</td>` : ''}</tr>`;
+      <td class="sv">${i === 0 || t.arch ? '—' : pctf(h(i, i - 1), 1)}</td><td class="sv">${avg(vsOf(i, false))}</td>${hasArch ? `<td class="sv">${t.arch ? '—' : avg(vsOf(i, true))}</td>` : ''}${R ? `<td class="sv">${all(C.h2h, t)}</td><td class="sv">${all(R, t)}</td>` : ''}</tr>`;
   }).join('');
   const matrix = C.matrix && n > 1 ? `<h3>Who beats whom</h3><p class="hint">Win % of the row team against the column team.</p>
     <div class="scroll"><table class="moves simt"><thead><tr><th></th>${T.map((_, j) => `<th class="sv">vs ${j + 1}</th>`).join('')}</tr></thead><tbody>
@@ -416,7 +418,8 @@ function simMetaView() {
   return `<h2>Meta chain</h2>
     <p class="hint">Meta team 1 is the strongest team the search found. Each next one is the best counter found against the teams before it: it plays the latest meta team 60% of the time and the earlier ones the rest, so it has to beat the current top team without folding to the older ones. "Beats previous" and "Vs other meta teams" come from a final round where every meta team plays every other one. The playstyle line is worked out from how the team actually won.${hasArch ? ' The named rows after the meta teams are archetype teams: the best team found that has to play that plan (it brings and picks the setter and the characters the plan is for, and the setter opens), searched against the meta teams. They play the final round still forced to their plan.' : ''}</p>
     ${status ? `<p class="hint"><strong>${status}</strong></p>` : ''}
-    ${n ? `<div class="scroll"><table class="moves simt"><thead><tr><th class="sv">#</th><th>Team</th><th>Playstyle</th><th class="sv">Beats previous</th><th class="sv">Vs other meta teams</th>${hasArch ? '<th class="sv">Vs archetype teams</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>` : ''}
+    ${n ? `<div class="scroll"><table class="moves simt"><thead><tr><th class="sv">#</th><th>Team</th><th>Playstyle</th><th class="sv">Beats previous</th><th class="sv">Vs other meta teams</th>${hasArch ? '<th class="sv">Vs archetype teams</th>' : ''}${R ? '<th class="sv">All, fast AI</th><th class="sv">All, search AI</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>` : ''}
+    ${R && n ? '<p class="hint">"All" is the win rate against every other team in the final round, played by the fast AI (the batch AI) and again by the search AI (stronger and slower, from <code>--check</code>). A team that does much better under one of them depends on that level of play.</p>' : ''}
     ${matrix}
     ${T.some(t => t.pick?.g) ? `<h3>Brought list vs picked 6</h3><p class="hint">${SIM_PICK_NOTE}${C.matrix ? ' From the final round where every meta team plays every other one.' : ''}</p>${T.map((t, i) => simPickTable(t, t.pick, t.arch ? `${i + 1}. ${t.archName}` : `Meta team ${i + 1}`)).join('')}` : ''}`;
 }

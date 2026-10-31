@@ -503,3 +503,132 @@ Tests:
 - New scenario "KO the foe without a Last Thread" (two equal foes, either KO'd by Fire Punch, one holds a Last Thread; `--verify`: Fire Punch the other 28.7 vs 9.2). Fast AI 11/20 before, 20/20 after; search 12/12. All 11 scenarios: fast 100%, search 92% at 128 playouts (misses are the known Trick Room and Protect ones).
 - Strength, 4,000 mirror battles x 2 seeds against frozen v2 (the AI before the scenario fixes; run before the small Calm Incense / Encore line was added): won 47.0% / 47.3%, lost 47.2% / 47.1% (before the item changes 46.5 / 46.8 won, 47.6 / 47.3 lost). Mirror 47.1 / 46.9 each way. So no measurable change in overall strength: these are rare situations, fixed one by one.
 - JS and Rust identical (200 comp draft; 300 comp with AI-trained items and draft; 300 comp hidden; 6 search battles). The Rust v1 bot keeps the old rules, as ai-v1.js does.
+
+## AI gap #7: the fast AI predicts the foe (2026-10-31)
+
+Each side now works out what each foe will most likely do before scoring its own options (`predict` in ai.js / ai.rs: the foe's best option by the same scoring, without noise or switching, once per side per turn; doubles only). Two uses: an attack into a foe expected to Protect keeps 20% of its score (`W.predictProtect` 0.8, unless the move gets through Protect), and Protect's "would be knocked out" bonus only counts foes expected to attack. The AI before this is frozen as `bots/ai-v3.js`.
+
+**Strength** (`bench.mjs strength`-style mirror matches, 4,000 battles a seed for the weight, 2,000 for the rest):
+
+| new AI vs | seed 1 won / lost | seed 2 won / lost | before (current AI then) |
+|---|---|---|---|
+| v3 (the AI before), `predictProtect` 0 | 46.8 / 47.5 | 46.8 / 47.2 | (even) |
+| v3, 0.5 | 51.2 / 43.2 | 50.5 / 43.5 | |
+| v3, **0.8 (kept)** | 53.4 / 41.4 | 52.7 / 41.3 | |
+| v3, 1.0 | 53.3 / 41.3 | 53.0 / 41.0 | |
+| v3, 0.8 without the Protect-bonus part | 52.9 / 41.8 | 52.2 / 42.1 | |
+| v2 | 52.5 / 42.1 | 52.4 / 41.6 | 47.0 / 47.2 |
+| greedy | 61.3 / 35.5 | 62.3 / 34.5 | 63.4 / 33.5, 65.3 / 31.6 |
+
+So it beats the AI-like opponents (v2, v3) by about 11 points net on both seeds, and loses about 2.5 points against greedy, which never protects (predicting a Protect that never comes costs a little). Scenarios: new "Hit the foe that won't Protect" (the weak foe at 15% has Protect and is threatened, the healthy one has none; `--verify` ok at 1,600 playouts: Fire Punch the healthy foe 107.1 vs the weak one 102.6): fast 0/20 before, 17/20 after; the other 11 stay 20/20. Search AI (4 seeds, 128 playouts) 4/4 on it, 92% overall (the known Trick Room miss).
+
+**Fast vs search agreement** (the gap's test: archetype results under both AIs within about 8 points). Two 200k meta chains (seeds 1, 2, comp, bring 8, Vitality x3, every form, archetype rounds), each final round robin replayed by the fast AI (40k battles, new `--recheck ... --ai=fast`) and by the search AI (4k battles, 128 playouts, about 450 games a team, so ±5 points per team):
+
+| | archetype mean gap | largest | within 8 of 11 | meta teams mean gap |
+|---|---|---|---|---|
+| seed 1, before | 6.5 | 18 (Fire field) | 9 | 4.2 |
+| seed 1, after | 5.9 | 21 (Fire field) | 10 | 3.8 |
+| seed 2, before | 6.5 | 20 (Water field) | 8 | 5.2 |
+| seed 2, after | 7.6 | 16 (Snow) | 7 | 6.3 |
+
+**Not passed:** prediction makes the fast AI stronger but doesn't bring it closer to the search AI on archetypes. The big gaps are field teams (Fire field 18-21 points better under search on seed 1, Water field 8-20 worse on both), so the remaining gap looks like how the fast AI plays fields, not Protect.
+
+## AI gap #8: switching scored like a move (2026-10-31)
+
+The fast AI's switch is now one more option on the moves' scale instead of a rule of thumb (BALANCE.md section 6: the damage the incoming character takes instead, a knockout avoided or walked into at 73.7, 100 x its better next-turn hit, minus a cost of 40). It goes through noise and the joint side plan like a move, and the search AI no longer adds a second copy of it. The replacement after a faint is unchanged. JS and Rust identical.
+
+**What tuning showed** (mirror matches against v3, the AI before #7; #7 alone was 53.4 / 41.4 won / lost):
+
+| switching | won / lost, seed 1 | seed 2 |
+|---|---|---|
+| old rule (#7 alone) | 53.4 / 41.4 | 52.7 / 41.3 |
+| scored, Protect-sized knockout save (455), cost 15 | 46.7 / 48.0 | 47.5 / 48.0 |
+| scored, knockout save 73.7, cost 40 (**kept**) | 55.0 / 39.1 | 54.7 / 39.7 |
+| scored, cost 70 | 55.3 / 38.3 | 54.0 / 40.6 |
+| **never switch** | 55.9 / 38.1 | |
+
+So the old rule was costing about 3 points, and the kept version is about as good as never switching. It switches about as often as v3 (6.3 character entries a battle, counting replacements). Against v2 it gets 53.9 / 40.1 and 54.0 / 40.5 (with #7 alone, 52.5 / 42.1). Against greedy it gets 62.6 / 34.5 and 62.0 / 34.5 (with #7 alone, 61.3 / 35.5).
+
+**Scenarios:** "Switch out of a lost matchup" now fails (0/20, it Protects). `--verify` rates switch vs Protect there as a near tie (107.8 vs 107.2 at 1,600 playouts), so the old forced switch wasn't clearly right either. Overall the fast AI gets 11/12.
+
+**Fast vs search** (same two meta round robins as #7): the archetype mean gap is 6.9 on seed 1 and 6.5 on seed 2 (#7: 5.9 and 7.6; before: 6.5 and 6.5). The largest gap is still Fire field (21) on seed 1 and Snow (15) on seed 2. **Not passed:** switching isn't what separates the two AIs. The persistent gap is on field teams (Fire field 18-21 points better under search on seed 1 in all three versions).
+
+## Where the fast and search AIs differ: move usage (2026-10-31)
+
+Since #7 and #8 didn't close the archetype gap, I compared how often each character uses each move under the two AIs in the same round robins (`stats.moveBy` from `--recheck ... --json`, fast vs search). The Fire field team had the biggest gap. Under the fast AI, Bankai Yamamoto used Ennetsu Jigoku 7% of the time (search: 39%), Protect 23% (11%) and Will-o-Wisp 22% (8%). Komatsu used Helping Hand 59% and Protect 26%, and Gourmet Cooking 12% (search: 30%).
+
+That pointed to three kinds of moves the fast AI scored wrongly (JS and Rust; the v1 bot keeps the old scoring):
+- **Bind attacks** (Ennetsu Jigoku, Whirlpool, Blackwhip): the 1/8-a-turn damage for 4-5 turns wasn't counted at all. It now adds that damage, of what the hit leaves, x `W.bind` 0.5.
+- **Ally and team heals** (Gourmet Cooking, Flower Field): these were scored by the user's own missing Vitality. They now use the ally's or the team's.
+- **Ally and team boosts** (Howl, Shikanoko Dance, Gourmet Cooking, Zero's Orders): these were scored on the user's stats only. They now count for each character that gets them, with the setup formula on that character's main attacking stat.
+
+| | archetype mean gap, seed 1 / seed 2 | largest | Fire field fast / search, seed 1 |
+|---|---|---|---|
+| before #7 | 6.5 / 6.5 | 18 / 20 | 27 / 45 |
+| after #8 | 6.9 / 6.5 | 21 / 15 | 25 / 46 |
+| after these fixes | **5.0 / 6.6** | 14 / 15 | 34 / 48 |
+
+The meta teams' mean gap on seed 1 went from 4.2 to 2.8. Strength against v3 is 55.1 / 39.5 and 55.6 / 38.9, about the same as after #8: these moves are rare. JS and Rust identical (1,500 comp draft battles plus the usual set).
+
+The pooled move-usage table also shows what's left. The fast AI uses **Helping Hand** (Hanataro 77% vs 39%, Escanor 48% vs 22%, Shirou, Komatsu, Kita, Baymax) and **setup moves** (Swords Dance, Nasty Plot, Dead Calm) about twice as often as the search AI. It also uses Trick Room and Tailwind more and attacks less. These are weights (`W.setup`, Helping Hand's value, `W.statusScale`) rather than missing effects, so they belong to gap #9 (tuning against the search AI).
+
+## AI gap #9: tuning the weights against the search AI (2026-10-31)
+
+I tried fitting the fast AI's weights to the search AI's choices instead of to wins against fixed bots. The loss was the per-character move-usage difference (total variation, characters with 150+ search uses) plus the archetype gap, on the two round robins above. Each candidate played 20k fast battles a seed, with the weights set through the new `FAMILIAR_W` override. The search reference was the 4k search runs after the move fixes. I ran a coordinate search over 10 weights (setup, statusScale, a new `helpingHand` multiplier, Tailwind, Trick Room, protectSave, speedFlip, heal, protect, threat), each tried at x0.5, x0.75, x1.33 and x2, in 2 passes.
+
+| | usage difference | archetype gap | loss |
+|---|---|---|---|
+| current weights | 17.3% | 5.8 | 23.1 |
+| best found (setup 1.18, statusScale 1.10, Tailwind 42) | 16.3% | 5.5 | 21.8 |
+
+**Result: no real gain.** The best set is about 1 point better, which is within the run-to-run noise: Helping Hand at x0.75 "won" and then lost again in the same pass, and the second pass found nothing. The Helping Hand and setup overuse doesn't go away by turning global weights, so it's in the situations, not the overall weight. **No weights changed.** I didn't run the gap's own test (gains hold against an opponent not used in tuning), because there was no gain to test. Kept as tools: `FAMILIAR_W`, and `W.helpingHand` (1, so no change in play).
+
+## AI gap #10: team-aware builds (2026-10-31)
+
+`familiar-sim --optimize=meta.json --builds=... --teams=N` (Rust only, like the build search). It searches every member of the first N meta teams inside its own team, next to its teammates' current builds (the book's to start). Members go one after another, so the team never ends up with a doubled item: items a teammate holds aren't offered. Each run does 2 rounds, and a round's builds are kept only if the team does better with them on fresh battles. The team's win rate before (book builds) and after is measured on another 8,000 fresh battles, against the same field the search used: the meta chain's teams with book builds. One team per thread, about 20 minutes for 3 teams at `--per=2000`.
+
+A first version optimized all members at once against the previous round's teammates. It gave +6 / +8.5 / +6 on one seed but -0.4 / -5.2 / +9 on the other, because two members could pick the same item and one of them then lost it. Fixed as above.
+
+Meta chain: 200k, seed 1, the 4 averaged books (fits 1-4). Its top 3 meta teams, 2 fits (seeds 3 and 4):
+
+| team | book builds | team-aware, fit 1 | fit 2 |
+|---|---|---|---|
+| Ayanokoji, Hanataro, Lelouch, Pucci, Shanks, Shawn Frost, Jin-woo, Zero Two | 66 / 65% | 84.1% (+17.8) | 81.0% (+15.6) |
+| All Might, Denji, Killua, Lelouch, Levi, Naruto, Tatsumaki, Tsuna | 65% | 75.7% (+10.4) | 73.9% (+8.7) |
+| Ayanokoji, David Martinez, Guts, Lelouch, Pain, Shanks, Whitebeard, Zebra | 65% | 78.6% (+13.2) | 89.9% (+24.6) |
+
+**Passed: top teams rise with team-aware builds, and that repeats across both fits** (+9 to +25 points). Some picks repeat in both fits: Hanataro with Fourth Division + Last Thread, Jin-woo with Counterstrike Policy, All Might with Counterstrike Policy, Shanks with Spiked Armor + Quick Attack, Denji with Swords Dance + Gunk Shot. Most item and spread picks differ between fits, as with the per-character search.
+
+Caveats:
+- The field doesn't adapt. These are gains against a fixed meta field that plays per-character book builds, so they show how much team-specific builds are worth, not what the meta would settle on.
+- Team books aren't played by batches or meta chains yet. The result is a JSON per team (`--json`).
+- "Joint search over moves, ability and item" (the gap's second idea) isn't done; this is still one choice at a time.
+
+What it means for the data: per-character books under-rate teams whose members need each other's builds, by about 10-20 points for the top teams here.
+
+## AI gap #11: both skill levels in every report (2026-10-31)
+
+`--search=meta ... --check=N` (Rust) runs the chain, then plays its final round robin again with the search AI on both sides for N battles. It prints both win rates per team and saves them in the JSON (`recheck`). On the Simulator page, **Load results** of such a file adds "All, fast AI" and "All, search AI" columns to the Meta chain table. The Windows `run-sim.bat` default now adds `--check=2000` (a few more minutes on 4 cores).
+
+## AI gap #12: why runs agree less with books (2026-10-31)
+
+Rerun on the current AI (after #7-#9): 16 meta chains without books and 16 with the 4 averaged books (seeds 1-16, 200k, comp, bring 8, Vitality x3, every form, archetype rounds). `bench.mjs stability`, picked win rate rank correlation between groups:
+
+| runs per group | 1 | 2 | 4 | 8 |
+|---|---|---|---|---|
+| no books | 0.44 | 0.59 | 0.70 | 0.79 |
+| books | 0.33 | 0.42 | 0.52 | 0.58 |
+
+So the gap is still there with the new AI. **The cause** is in each character's picked win rate across the 16 runs (characters with 200+ picks in a run), split into the real differences between characters and the run-to-run noise:
+
+| | true spread between characters (sd) | run-to-run noise of one character (sd) | of which binomial | reliability, 1 run / 8 runs |
+|---|---|---|---|---|
+| no books | 8.3 pts | 8.3 pts | 0.9 | 0.50 / 0.89 |
+| books | 7.8 pts | 10.7 pts | 0.8 | 0.35 / 0.81 |
+
+- **Characters differ about as much with books as without.** The top isn't flatter. That rules out the earlier "builds flatten the top" guess, as fits 1-4 already suggested.
+- **The noise is not sample size.** The binomial part is under 1 point. It comes from which meta a run lands in, and that matters more with books (8.3 to 10.7 points).
+- **Why the meta matters more: matchups are sharper with books.** Within a run, a character's win rate against different opponents (pairs with 300+ games, minus binomial noise) spreads by 8.1 points without books and 10.0 with them. Optimized builds win more one-sidedly against some teams and lose more to others, so the meta a run happens to find moves everyone's numbers more.
+- **It isn't the counter spreads.** The extra noise is the same for characters whose books use "outspeeds X" or "survives X" spreads and for those that don't (8.2 to 10.6 vs 8.3 to 10.6).
+
+**What to do with it:** books aren't adding noise to the truth. They make the game more matchup-driven, and a single meta is a smaller sample of it. Pooling still converges, just more slowly: about 1.6x the runs for the same agreement (8 runs with books ≈ 5 without). For a 0.8 picked win rate correlation with books, pool about 16 runs per group, 32 in all.
