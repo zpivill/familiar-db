@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Reykjavík's Warden decided (the harbour-master). Open: r to approve or change the proposed City 1 package (story beat, mechanic, clue, first Unbound sighting, Fray look, arena challenge). Then City 2 (Hawaii). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "City 1 (Reykjavík) fully approved. Planning order (r, 2026-10-31): finish all six cities, then design the opening (game start to the first city), then review the six cities, then the Circle through to the ending. Now on City 2 (Hawaii, Fire + Earth): open question to r is which anime landmarks merge in (Claude's leans: Fire Mountain, Swordsmith Village, the Hidden Stone Village, Ishigami Village, Megumin's craters on the route). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -196,10 +196,10 @@
               "Water + Ice",
               "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
               "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
-              "Proposal: entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
-              "Proposal: devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
-              "The lagoon has run colder since the arena was built (decided). Proposal: your starter is uneasy on the arena's glass floor over the node",
-              "Proposal: frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
+              "entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
+              "devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
+              "The lagoon has run colder since the arena was built. your starter is uneasy on the arena's glass floor over the node",
+              "frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
             [
               "City 2",
@@ -261,6 +261,16 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "City 1 package approved: story beat, mechanics taught, starter clue, first Unbound glimpse at the Knot, Fray look and the ice-sliding arena challenge.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Planning order: the six cities, then the opening, then a review of the six cities, then the Circle through to the ending.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Reykjavík's Warden is the harbour-master, who knew the harbour before the merge; clue: the lagoon has run colder since the arena was built.",
