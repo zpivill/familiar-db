@@ -582,3 +582,30 @@ I tried fitting the fast AI's weights to the search AI's choices instead of to w
 | best found (setup 1.18, statusScale 1.10, Tailwind 42) | 16.3% | 5.5 | 21.8 |
 
 **Result: no real gain.** The best set is about 1 point better, which is within the run-to-run noise: Helping Hand at x0.75 "won" and then lost again in the same pass, and the second pass found nothing. The Helping Hand and setup overuse doesn't go away by turning global weights, so it's in the situations, not the overall weight. **No weights changed.** I didn't run the gap's own test (gains hold against an opponent not used in tuning), because there was no gain to test. Kept as tools: `FAMILIAR_W`, and `W.helpingHand` (1, so no change in play).
+
+## AI gap #10: team-aware builds (2026-10-31)
+
+`familiar-sim --optimize=meta.json --builds=... --teams=N` (Rust only, like the build search). It searches every member of the first N meta teams inside its own team, next to its teammates' current builds (the book's to start). Members go one after another, so the team never ends up with a doubled item: items a teammate holds aren't offered. Each run does 2 rounds, and a round's builds are kept only if the team does better with them on fresh battles. The team's win rate before (book builds) and after is measured on another 8,000 fresh battles, against the same field the search used: the meta chain's teams with book builds. One team per thread, about 20 minutes for 3 teams at `--per=2000`.
+
+A first version optimized all members at once against the previous round's teammates. It gave +6 / +8.5 / +6 on one seed but -0.4 / -5.2 / +9 on the other, because two members could pick the same item and one of them then lost it. Fixed as above.
+
+Meta chain: 200k, seed 1, the 4 averaged books (fits 1-4). Its top 3 meta teams, 2 fits (seeds 3 and 4):
+
+| team | book builds | team-aware, fit 1 | fit 2 |
+|---|---|---|---|
+| Ayanokoji, Hanataro, Lelouch, Pucci, Shanks, Shawn Frost, Jin-woo, Zero Two | 66 / 65% | 84.1% (+17.8) | 81.0% (+15.6) |
+| All Might, Denji, Killua, Lelouch, Levi, Naruto, Tatsumaki, Tsuna | 65% | 75.7% (+10.4) | 73.9% (+8.7) |
+| Ayanokoji, David Martinez, Guts, Lelouch, Pain, Shanks, Whitebeard, Zebra | 65% | 78.6% (+13.2) | 89.9% (+24.6) |
+
+**Passed: top teams rise with team-aware builds, and that repeats across both fits** (+9 to +25 points). Some picks repeat in both fits: Hanataro with Fourth Division + Last Thread, Jin-woo with Counterstrike Policy, All Might with Counterstrike Policy, Shanks with Spiked Armor + Quick Attack, Denji with Swords Dance + Gunk Shot. Most item and spread picks differ between fits, as with the per-character search.
+
+Caveats:
+- The field doesn't adapt. These are gains against a fixed meta field that plays per-character book builds, so they show how much team-specific builds are worth, not what the meta would settle on.
+- Team books aren't played by batches or meta chains yet. The result is a JSON per team (`--json`).
+- "Joint search over moves, ability and item" (the gap's second idea) isn't done; this is still one choice at a time.
+
+What it means for the data: per-character books under-rate teams whose members need each other's builds, by about 10-20 points for the top teams here.
+
+## AI gap #11: both skill levels in every report (2026-10-31)
+
+`--search=meta ... --check=N` (Rust) runs the chain, then plays its final round robin again with the search AI on both sides for N battles. It prints both win rates per team and saves them in the JSON (`recheck`). On the Simulator page, **Load results** of such a file adds "All, fast AI" and "All, search AI" columns to the Meta chain table. The Windows `run-sim.bat` default now adds `--check=2000` (a few more minutes on 4 cores).

@@ -250,6 +250,8 @@ cd engine && cargo build --release          # needs Rust (rustup.rs)
 ./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --json=run1.json
 ./target/release/familiar-sim 2000 comp 5 --draft --hp=3 --forms=all --recheck=run1.json   # run1's final round robin with the search AI on both sides (about 4 min on 4 cores)
 ./target/release/familiar-sim 40000 comp 5 --draft --hp=3 --forms=all --recheck=run1.json --ai=fast   # the same round robin replayed by the current fast AI (after an AI change, the saved column is the old AI's)
+./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --check=2000 --json=run1.json   # both skill levels in one report (gap #11): the chain, then its final round robin with the search AI (the Meta tab shows both)
+./target/release/familiar-sim 1 comp 3 --draft --hp=3 --forms=all --optimize=meta.json --builds=book1.json,... --teams=3 --per=2000   # team-aware builds (gap #10): each member of the first 3 meta teams searched inside its team
 ./target/release/familiar-sim 0 comp 1 --draft --hp=3 --forms=all --optimize=run1.json --per=2000 --json=book1.json   # build book for the whole roster against run1's teams (about 32 min on 4 cores)
 ./target/release/familiar-sim 200000 comp 1 --draft --hp=3 --forms=all --search=meta --arch --builds=book1.json --json=run2.json   # a meta chain with those builds
 node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the same single-thread batch: must say identical
