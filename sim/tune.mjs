@@ -14,7 +14,9 @@ import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
 import { W } from './ai.js';
 import { rng } from './battle.js';
 
-const OPPONENTS = ['v1', 'greedy'];
+// --vs=v2,greedy picks the opponents (default v1 and greedy); --only=pred moves just the prediction weights
+const arg = n => process.argv.find(a => a.startsWith(`--${n}=`))?.slice(n.length + 3);
+const OPPONENTS = (arg('vs') || 'v1,greedy').split(',');
 
 // --distill=file: fitness is instead how closely the fast AI agrees with the search AI's recorded choices
 // (from  node sim/bench.mjs search ... --record=file): 1 - its average regret, the share of a win it gives up
@@ -41,12 +43,12 @@ if (!isMainThread) {
   const [gens = 40, battles = 200, seed = 1] = process.argv.slice(2).filter(a => !a.startsWith('--')).map(Number);
   const r = rng(seed);
   const gauss = () => Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
-  const keys = Object.keys(W);
+  const keys = arg('only') === 'pred' ? ['predT', 'predMix', 'predScale', 'predProtect'] : Object.keys(W);
   // weights that can go negative or sit near 0 move additively, the rest by a factor
   const additive = new Set(['switchBad']);
   let mean = { ...W }, sigma = 0.35;
-  const nudge = () => Object.fromEntries(keys.map(k => [k, additive.has(k) ? mean[k] + gauss() * sigma * 0.3 : mean[k] * Math.exp(gauss() * sigma)]));
-  const clamp = w => { w.noise = Math.min(w.noise, 1); w.switchP = Math.min(w.switchP, 1); return w; };
+  const nudge = () => ({ ...mean, ...Object.fromEntries(keys.map(k => [k, additive.has(k) ? mean[k] + gauss() * sigma * 0.3 : mean[k] * Math.exp(gauss() * sigma)])) });
+  const clamp = w => { w.noise = Math.min(w.noise, 1); w.predMix = Math.min(w.predMix, 1); w.switchP = Math.min(w.switchP, 1); return w; };
 
   const n = os.availableParallelism?.() || os.cpus().length;
   const workers = Array.from({ length: n }, () => new Worker(new URL(import.meta.url), { workerData: { distill } }));
@@ -70,7 +72,7 @@ if (!isMainThread) {
     const order = fit.map((f, i) => [f, i]).sort((a, b) => b[0] - a[0]);
     const top = order.slice(0, elite).map(([, i]) => cands[i]);
     // geometric mean of the elite (arithmetic for additive weights), so one lucky candidate can't jump far
-    mean = clamp(Object.fromEntries(keys.map(k => [k, additive.has(k) ? top.reduce((s, w) => s + w[k], 0) / elite : Math.exp(top.reduce((s, w) => s + Math.log(Math.max(1e-6, w[k])), 0) / elite)])));
+    mean = clamp({ ...mean, ...Object.fromEntries(keys.map(k => [k, additive.has(k) ? top.reduce((s, w) => s + w[k], 0) / elite : Math.exp(top.reduce((s, w) => s + Math.log(Math.max(1e-6, w[k])), 0) / elite)])) });
     sigma *= 0.96;
     if (order[0][0] > best.f) best = { w: cands[order[0][1]], f: order[0][0] };
     console.log(`gen ${g + 1}: current weights ${(100 * fit[0]).toFixed(1)}%, best nudge ${(100 * order[0][0]).toFixed(1)}%, sigma ${sigma.toFixed(2)}`);

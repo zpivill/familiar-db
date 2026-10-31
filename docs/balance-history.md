@@ -361,6 +361,21 @@ Build search now also tries "survives X" bulk spreads (BALANCE.md section 8). Fo
 - **Top of the averaged table:** Demon Emperor Lelouch 85.7% (82.5-87.0), Pain 80.4%, Hogyoku Aizen 76.4%, Zero 69.4%, Ultra Instinct Goku 68.7%, Shinfuku Gojo 66.6%, Final Arc Gintoki 66.2%.
 - **Search-AI check:** 8,000 draft battles, both sides fast AI or both search AI, with all 4 books or plain builds, seeds 7 and 8 (about 30 minutes per seed for the two search runs). The win-rate ranking with books holds under the search AI: corr 0.91 fast vs search, while the two seeds agree 0.88-0.91 with each other, so the stronger AI changes nothing beyond noise. The biggest build gains hold or grow (Demon Emperor Lelouch +26 fast, +23 search; Zero +20, +23; Pain +7, +15; Hogyoku Aizen +6, +13). The top 20 fast-AI gains average +8.9 fast and +6.3 search; part of that drop is regression to the mean, since per-character gains at 8,000 battles only repeat across seeds at corr 0.43-0.46.
 
+## AI step 6: the AI answers the foe's likely plan (2026-10-31)
+
+In doubles the fast AI now guesses what the foe side will do this turn (the foe's 4 best joint plans, weighted by a softmax of their scores) and scores each of its own joint plans against that guess (`predictFoe` and `answer` in ai.js). It models three things: an attack into a foe that Protects is wasted; Protect saves the hit aimed at the user; and a move is lost if a foe that moves first knocks the user out, while a knockout that lands first takes that foe's move away. It does not model switching, Follow Me or Wide Guard yet. New weights `predT`, `predMix` (share of the worst case), `predScale`, `predProtect` were tuned by `tune.mjs --only=pred --vs=v2,greedy` (30 generations, seed 1). `tune.mjs` also gained `--vs` and `--only`.
+
+`bench.mjs strength 1000`, seeds 1 / 2 (unseen by the tuner), step-2 AI (frozen as v2) vs the new AI:
+
+| Opponent | Before | After |
+|---|---|---|
+| Frozen v2 (the old AI) | 47.5% / 47.3% | 51.7% / 50.8% (lost 42.3% / 42.4%) |
+| Frozen v1 | 55.7% / 54.8% | 58.6% / 58.3% |
+| Greedy hardest-hit bot | 64.7% / 67.0% | 66.2% / 67.0% |
+| Random | 94.0% / 94.4% | 93.1% (seed 1) |
+
+A small gain that repeats on both seeds (margin about +-3 each). Greedy never protects or counters, so prediction does nothing there. About 20% slower per battle (6.1 ms vs 5.1 ms). `mechanics.mjs` passes. The Rust port (`engine/src/ai.rs`) was written from the JS but could not be compiled in the session that wrote it (no access to crates.io); CI's parity check is its first test.
+
 ## Character options tested (2026-10-30), nothing changed in data
 
 Each option was applied to a copy of the data, the changed character re-fitted (2 fits against 3 meta chains each, `--per=2000`), everyone else on the 4 averaged books, then 300k random-team draft battles on 2 seeds. Base: Demon Emperor Lelouch 85.8%, Pain 80.2%, Hogyoku Aizen 76.9%. Re-fitting alone moves a character about 3 points, so smaller changes are noise. Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL

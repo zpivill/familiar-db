@@ -17,6 +17,8 @@ export const W = {
   statusScale: 1.47,   // every status move's total score
   switchBad: -0.369, switchGain: 1.43, switchP: 0.696,
   overkill: 0.389, combo: 15.2,                     // joint side actions
+  predict: 1,          // 1: answer the foe's likely plan (predictFoe / answer), 0: ignore it
+  predT: 85.1, predMix: 0.427, predScale: 0.472, predProtect: 1.48,   // prediction: pair softmax width, share of the worst case, wasted-move and saved-hit weights
 };
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -401,6 +403,68 @@ function pairValue(api, m1, a1, m2, a2) {
   return v;
 }
 
+// What the foe side will probably do this turn: its best pairs from its own top options, each with a weight
+// (softmax of the pair's score, W.predT wide). Used only to answer them, never to decide their move.
+function predictFoe(B, api, m) {
+  const foe = api.actives(B.sides[1 - m.side.i]);
+  if (!foe.length) return null;
+  const Ls = foe.map(x => options(B, x, api).slice(0, JOINT));
+  const pairs = [];
+  if (foe.length === 1) for (const a of Ls[0]) pairs.push({ acts: [a], v: a.score });
+  else for (const a1 of Ls[0]) for (const a2 of Ls[1]) pairs.push({ acts: [a1, a2], v: a1.score + a2.score + pairValue(api, foe[0], a1, foe[1], a2) });
+  pairs.sort((x, y) => y.v - x.v);
+  const top = pairs.slice(0, 4), hi = top[0].v;
+  let z = 0;
+  for (const p of top) { p.w = Math.exp((p.v - hi) / W.predT); z += p.w; }
+  for (const p of top) p.w /= z;
+  return { foe, pairs: top };
+}
+
+// Does acting character a (with action x) get hit this turn by foe action y before it can move or at all?
+const targetsMe = (y, m) => y.type === 'move' && y.target === m;
+const isProtect = (y, who) => y.type === 'move' && who.moves[y.slot]?.m.fx.protect && !(who.vol.protectChain || 0);
+const hitDamage = (api, who, y, m) => y.type === 'move' && who.moves[y.slot]?.m.cat !== 'Status' ? estDamage(api, who, who.moves[y.slot], m) : 0;
+
+// A side's joint action v (its own score, interaction-free) answered against each guessed foe plan: an attack
+// into a foe that Protects is wasted, Protect saves what the foe throws at it, an attack that lands first
+// and knocks a foe out takes that foe's move away, and our move is lost if a foe knocks us out first.
+function answer(api, team, acts, base, guess) {
+  let sum = 0, worst = Infinity;
+  for (const g of guess.pairs) {
+    let v = base;
+    acts.forEach((x, i) => {
+      const me = team[i];
+      if (x.type !== 'move') return;
+      const mv = me.moves[x.slot];
+      if (!mv) return;
+      const protecting = !!mv.m.fx.protect && !(me.vol.protectChain || 0);
+      g.acts.forEach((y, j) => {
+        const fo = guess.foe[j];
+        if (y.type !== 'move' || !fo.moves[y.slot]) return;
+        // our attack into a foe that Protects
+        if (mv.m.cat !== 'Status' && x.target === fo && isProtect(y, fo)) v -= x.score * W.predScale;
+        // the foe's hit on us
+        const dmg = targetsMe(y, me) ? hitDamage(api, fo, y, me) : 0;
+        if (dmg > 0) {
+          if (protecting) v += Math.min(y.score, 100) * W.predProtect;
+          else if (dmg >= me.hp / me.maxhp && !(isProtect(x, me))) {
+            const foeFirst = api.effPriority(fo, fo.moves[y.slot]) > api.effPriority(me, mv) || (api.effPriority(fo, fo.moves[y.slot]) === api.effPriority(me, mv) && api.speed(fo) > api.speed(me));
+            if (foeFirst) v -= Math.max(0, x.score) * W.predScale;
+          }
+        }
+        // our knockout lands first, so that foe never moves
+        if (mv.m.cat !== 'Status' && x.target === fo && y.type === 'move' && !isProtect(y, fo) && estDamage(api, me, mv, fo) >= fo.hp / fo.maxhp) {
+          const meFirst = api.effPriority(me, mv) > api.effPriority(fo, fo.moves[y.slot]) || (api.effPriority(me, mv) === api.effPriority(fo, fo.moves[y.slot]) && api.speed(me) > api.speed(fo));
+          if (meFirst) v += Math.min(y.score, 100) * W.predScale;
+        }
+      });
+    });
+    sum += g.w * v;
+    worst = Math.min(worst, v);
+  }
+  return (1 - W.predMix) * sum + W.predMix * worst;
+}
+
 // In doubles, while both sides choose (api.cache is set), the first character asked plans the whole side:
 // the best pair from each one's top options, scored together, kept for the partner's turn to ask.
 export function chooseAction(B, m, api) {
@@ -410,9 +474,11 @@ export function chooseAction(B, m, api) {
   const team = api.actives(m.side);
   if (team.length < 2) return options(B, m, api)[0];
   const [L1, L2] = team.map(x => options(B, x, api).slice(0, JOINT));
+  const guess = W.predict ? predictFoe(B, api, m) : null;
   let best = null, bv = -Infinity;
   for (const a1 of L1) for (const a2 of L2) {
-    const v = a1.score + a2.score + pairValue(api, team[0], a1, team[1], a2);
+    let v = a1.score + a2.score + pairValue(api, team[0], a1, team[1], a2);
+    if (guess) v = answer(api, team, [a1, a2], v, guess);
     if (v > bv) { bv = v; best = [a1, a2]; }
   }
   m.side.jointPlan = { turn: B.turn, acts: new Map([[team[0], best[0]], [team[1], best[1]]]) };

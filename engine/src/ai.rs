@@ -12,12 +12,14 @@ pub struct Weights {
     pub wide_guard: f64, pub follow_setup: f64, pub follow_save: f64, pub setup: f64, pub heal: f64, pub status_move: f64,
     pub tailwind: f64, pub trick_room: f64, pub screen: f64, pub protect: f64, pub status_scale: f64, pub switch_bad: f64,
     pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64,
+    pub predict: f64, pub pred_t: f64, pub pred_mix: f64, pub pred_scale: f64, pub pred_protect: f64,
 }
 pub const W: Weights = Weights {
     noise: 0.166, ko: 73.7, ko_priority: 32.7, status_chance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
     threat: 11.3, ally_finish: 16.0, hh_ko: 10.7, speed_flip: 27.1, protect_save: 310.0, protect_ally: 29.0, wide_guard: 0.321,
     follow_setup: 40.6, follow_save: 81.2, setup: 1.78, heal: 85.9, status_move: 0.934, tailwind: 56.6, trick_room: 57.5,
     screen: 29.9, protect: 6.0, status_scale: 1.47, switch_bad: -0.369, switch_gain: 1.43, switch_p: 0.696, overkill: 0.389, combo: 15.2,
+    predict: 1.0, pred_t: 85.1, pred_mix: 0.427, pred_scale: 0.472, pred_protect: 1.48,
 };
 
 fn max_of(xs: impl Iterator<Item = f64>) -> f64 { xs.fold(f64::NEG_INFINITY, |a, b| if b > a { b } else { a }) }
@@ -381,6 +383,7 @@ pub const W_V1: Weights = Weights {
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
     screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0,
+    predict: 0.0, pred_t: 85.1, pred_mix: 0.427, pred_scale: 0.472, pred_protect: 1.48,
 };
 pub fn v1_action(b: &mut Battle, m: MonId) -> Choice { let keep = b.w; b.w = &W_V1; let c = options(b, m)[0]; b.w = keep; c }
 // the greedy bot (sim/bots/baselines.js): the hardest-hitting attack into the best target, never a status move or a switch
@@ -490,6 +493,69 @@ fn pair_value(b: &mut Battle, m1: MonId, a1: &Choice, m2: MonId, a2: &Choice) ->
     v
 }
 
+// What the foe side will probably do this turn (see predictFoe in sim/ai.js): its best pairs from its own top
+// options with a softmax weight. Draws the same random numbers in the same order as the JS.
+struct Guess { foe: Vec<MonId>, pairs: Vec<(Vec<Choice>, f64, f64)> } // acts, value, weight
+fn predict_foe(b: &mut Battle, m: MonId) -> Option<Guess> {
+    let foe = b.actives(1 - b.mons[m].side);
+    if foe.is_empty() { return None; }
+    let mut ls: Vec<Vec<Choice>> = Vec::new();
+    for &x in &foe { let mut l = options(b, x); l.truncate(JOINT); ls.push(l); }
+    let mut pairs: Vec<(Vec<Choice>, f64, f64)> = Vec::new();
+    if foe.len() == 1 { for a in &ls[0] { pairs.push((vec![*a], a.score, 0.0)); } }
+    else { for a1 in &ls[0] { for a2 in &ls[1] { let v = a1.score + a2.score + pair_value(b, foe[0], a1, foe[1], a2); pairs.push((vec![*a1, *a2], v, 0.0)); } } }
+    pairs.sort_by(|x, y| y.1.partial_cmp(&x.1).unwrap_or(std::cmp::Ordering::Equal));
+    pairs.truncate(4);
+    let hi = pairs[0].1;
+    let mut z = 0.0;
+    for p in pairs.iter_mut() { p.2 = crate::jsmath::exp((p.1 - hi) / b.w.pred_t); z += p.2; }
+    for p in pairs.iter_mut() { p.2 /= z; }
+    Some(Guess { foe, pairs })
+}
+
+fn is_protect(b: &Battle, y: &Choice, who: MonId) -> bool {
+    match y.act { Act::Move { slot, .. } => b.mons[who].moves.get(slot).map_or(false, |ms| b.mv(ms).fx.protect.is_some()) && b.mons[who].vol.protect_chain == 0, _ => false }
+}
+fn goes_first(b: &mut Battle, a: MonId, sa: usize, c: MonId, sc: usize) -> bool {
+    let (ma, mc) = (b.mons[a].moves[sa], b.mons[c].moves[sc]);
+    let (pa, pc) = (b.eff_priority(a, Some(&ma)), b.eff_priority(c, Some(&mc)));
+    pa > pc || (pa == pc && b.speed(a, false) > b.speed(c, false))
+}
+// A side's joint action (its own score `base`) answered against each guessed foe plan (see answer in sim/ai.js).
+fn answer(b: &mut Battle, team: &[MonId], acts: [&Choice; 2], base: f64, g: &Guess) -> f64 {
+    let (mut sum, mut worst) = (0.0, f64::INFINITY);
+    for p in &g.pairs {
+        let mut v = base;
+        for i in 0..2 {
+            let me = team[i]; let x = acts[i];
+            let (xs, xt) = match x.act { Act::Move { slot, target } => (slot, target), _ => continue };
+            let ms = match b.mons[me].moves.get(xs).copied() { Some(s) => s, None => continue };
+            let mvd = b.mv(&ms);
+            let protecting = mvd.fx.protect.is_some() && b.mons[me].vol.protect_chain == 0;
+            let attack = mvd.cat != Cat::Status;
+            for (j, y) in p.0.iter().enumerate() {
+                let fo = g.foe[j];
+                let (ys, yt) = match y.act { Act::Move { slot, target } => (slot, target), _ => continue };
+                let yms = match b.mons[fo].moves.get(ys).copied() { Some(s) => s, None => continue };
+                if attack && xt == Some(fo) && is_protect(b, y, fo) { v -= x.score * b.w.pred_scale; }
+                let dmg = if yt == Some(me) && b.mv(&yms).cat != Cat::Status { est_damage(b, fo, ys, me) } else { 0.0 };
+                if dmg > 0.0 {
+                    if protecting { v += mn(y.score, 100.0) * b.w.pred_protect; }
+                    else if dmg >= b.mons[me].hp / b.mons[me].maxhp && !is_protect(b, x, me) {
+                        if goes_first(b, fo, ys, me, xs) { v -= mx(0.0, x.score) * b.w.pred_scale; }
+                    }
+                }
+                if attack && xt == Some(fo) && !is_protect(b, y, fo) && est_damage(b, me, xs, fo) >= b.mons[fo].hp / b.mons[fo].maxhp {
+                    if goes_first(b, me, xs, fo, ys) { v += mn(y.score, 100.0) * b.w.pred_scale; }
+                }
+            }
+        }
+        sum += p.2 * v;
+        worst = mn(worst, v);
+    }
+    (1.0 - b.w.pred_mix) * sum + b.w.pred_mix * worst
+}
+
 // In doubles, while both sides choose, the first character asked plans the whole side.
 pub fn choose_action(b: &mut Battle, m: MonId) -> Choice {
     if !b.duos || b.cache.is_none() { return options(b, m)[0]; }
@@ -499,9 +565,11 @@ pub fn choose_action(b: &mut Battle, m: MonId) -> Choice {
     if team.len() < 2 { return options(b, m)[0]; }
     let mut l1 = options(b, team[0]); l1.truncate(JOINT);
     let mut l2 = options(b, team[1]); l2.truncate(JOINT);
+    let guess = if b.w.predict != 0.0 { predict_foe(b, m) } else { None };
     let mut best = (l1[0], l2[0]); let mut bv = f64::NEG_INFINITY;
     for a1 in &l1 { for a2 in &l2 {
-        let v = a1.score + a2.score + pair_value(b, team[0], a1, team[1], a2);
+        let mut v = a1.score + a2.score + pair_value(b, team[0], a1, team[1], a2);
+        if let Some(g) = &guess { v = answer(b, &team, [a1, a2], v, g); }
         if v > bv { bv = v; best = (*a1, *a2); }
     } }
     b.sides[s].joint_plan = Some((b.turn, [(team[0], best.0), (team[1], best.1)]));
