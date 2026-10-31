@@ -12,14 +12,14 @@ pub struct Weights {
     pub wide_guard: f64, pub follow_setup: f64, pub follow_save: f64, pub setup: f64, pub heal: f64, pub status_move: f64,
     pub tailwind: f64, pub trick_room: f64, pub screen: f64, pub protect: f64, pub status_scale: f64, pub switch_bad: f64,
     pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64, pub predict_protect: f64,
-    pub switch_spread: f64, pub switch_next: f64, pub switch_cost: f64, pub switch_ko: f64,
+    pub switch_spread: f64, pub switch_next: f64, pub switch_cost: f64, pub switch_ko: f64, pub bind: f64,
 }
 pub const W: Weights = Weights {
     noise: 0.166, ko: 73.7, ko_priority: 32.7, status_chance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
     threat: 11.3, ally_finish: 16.0, hh_ko: 10.7, speed_flip: 27.1, protect_save: 310.0, protect_ally: 29.0, wide_guard: 0.321,
     follow_setup: 40.6, follow_save: 81.2, setup: 1.78, heal: 85.9, status_move: 0.934, tailwind: 56.6, trick_room: 57.5,
     screen: 29.9, protect: 6.0, status_scale: 1.47, switch_bad: -0.369, switch_gain: 1.43, switch_p: 0.696, overkill: 0.389, combo: 15.2,
-    predict_protect: 0.8, switch_spread: 0.6, switch_next: 1.0, switch_cost: 40.0, switch_ko: 73.7,
+    predict_protect: 0.8, switch_spread: 0.6, switch_next: 1.0, switch_cost: 40.0, switch_ko: 73.7, bind: 0.5,
 };
 
 fn max_of(xs: impl Iterator<Item = f64>) -> f64 { xs.fold(f64::NEG_INFINITY, |a, b| if b > a { b } else { a }) }
@@ -210,25 +210,32 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
     if fx.nothing { return -5.0; }
     let us = b.mons[u].side;
     if let Some(bs) = &fx.boosts {
-        let main = if b.mons[u].moves.iter().any(|x| d.moves[x.mv].cat == Cat::Physical) && b.mons[u].raw[POW] >= b.mons[u].raw[ENE] { POW } else { ENE };
+        let main_of = |b: &Battle, x: MonId| if b.mons[x].moves.iter().any(|y| d.moves[y.mv].cat == Cat::Physical) && b.mons[x].raw[POW] >= b.mons[x].raw[ENE] { POW } else { ENE };
         let mut other = 0.0;
-        let turns = setup_turns(b, u, foes);
+        // team and ally boosts count for whoever gets them (ai.js); the v1 bot scores them all on the user
+        let old = v1(b);
+        let ally = b.ally_of(u).filter(|&al| !b.mons[al].fainted && !b.ab_of(al).loner);
         for bb in bs {
-            if bb.who == "self" || bb.who == "team" || bb.who == "ally" {
+            let gets: Vec<MonId> = if old { if bb.who == "self" || bb.who == "team" || bb.who == "ally" { vec![u] } else { vec![] } }
+                else { match bb.who.as_str() { "self" => vec![u], "team" => std::iter::once(u).chain(ally).collect(), "ally" => vec![ally.unwrap_or(u)], _ => vec![] } };
+            for x in gets {
+                let main = main_of(b, x); let xa = b.ab_of(x);
                 for &(k, n) in &bb.stats {
                     let kk = if k == HIGHEST { main } else { k };
-                    let cur = b.mons[u].boosts[kk];
-                    if kk == main && bb.who == "self" && !a.contrary {
+                    let cur = b.mons[x].boosts[kk];
+                    if kk == main && (!old || bb.who == "self") && !xa.contrary {
                         let mut best = f64::NEG_INFINITY;
-                        for &f in foes { let h = mn(best_hit(b, u, f), 1.0); best = mx(best, h); }
+                        for &f in foes { let h = mn(best_hit(b, x, f), 1.0); best = mx(best, h); }
                         let gain = stage_mult((cur + n).min(6)) / stage_mult(cur) - 1.0;
+                        let turns = setup_turns(b, x, foes);
                         v += best * 100.0 * gain * turns * b.w.setup * bb.p;
                         continue;
                     }
                     let w = if kk == main { 16.0 } else if kk == SPE { 12.0 } else if kk == POW || kk == ENE { 3.0 } else { 8.0 };
-                    other += n as f64 * w * (if cur >= 4 { 0.0 } else if cur >= 2 { 0.5 } else { 1.0 }) * if a.contrary { -1.0 } else { 1.0 };
+                    other += n as f64 * w * (if cur >= 4 { 0.0 } else if cur >= 2 { 0.5 } else { 1.0 }) * if xa.contrary { -1.0 } else { 1.0 };
                 }
-            } else if bb.who == "foe" || bb.who == "foes" {
+            }
+            if bb.who == "foe" || bb.who == "foes" {
                 for &(k, n) in &bb.stats { let low = (k < 5 && b.mons[foe].boosts[k] <= -4) || (!v1(b) && n < 0 && has(b, foe, I_AMULET)); other += -(n as f64) * 7.0 * if low { 0.0 } else { 1.0 }; }
             }
         }
@@ -237,8 +244,13 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
         v += other;
     }
     if fx.heal != 0.0 {
-        let miss = 1.0 - hp;
-        v += if miss < 0.25 { 0.0 } else { miss * b.w.heal * if a.heal_mult != 0.0 { a.heal_mult } else { 1.0 } };
+        // healing an ally or the team counts their missing Vitality (not for the v1 bot)
+        let al = b.ally_of(u).filter(|&x| !b.mons[x].fainted).unwrap_or(u);
+        let who: Vec<MonId> = match (v1(b), fx.heal_who.as_deref()) { (false, Some("team")) => if al != u { vec![u, al] } else { vec![u] }, (false, Some("ally")) => vec![al], _ => vec![u] };
+        for x in who {
+            let miss = 1.0 - b.pct(x);
+            v += if miss < 0.25 { 0.0 } else { miss * b.w.heal * if a.heal_mult != 0.0 { a.heal_mult } else { 1.0 } };
+        }
         if fx.rest_sleep { v -= 15.0; }
     }
     if fx.cure.on() && b.mons[u].status.is_some() { v += 20.0; }
@@ -351,6 +363,10 @@ fn attack_value(b: &mut Battle, u: MonId, slot: usize, t: MonId, foes_n: usize) 
     let cloak = new && has(b, t, I_CLOAK);
     if let Some(st) = &fx.status { if b.mons[t].status.is_none() && !ko && !cloak && !(new && b.held(t, I_PANACEA)) { v += st.p * b.w.status_chance; } }
     if fx.flinch != 0.0 && !ko && !cloak && b.speed(u, false) > b.speed(t, false) { v += fx.flinch * b.w.flinch; }
+    // a bind takes its share every turn for 4-5 turns, of what the hit leaves (not for the v1 bot)
+    if let Some(bd) = &fx.bind { if !v1(b) && !ko && b.mons[t].vol.bind.is_none() && !b.blocks(t, "trap") {
+        v += mn(b.mons[t].hp / b.mons[t].maxhp - d, bd.frac * (bd.turns[0] + bd.turns[1]) as f64 / 2.0) * 100.0 * b.w.bind;
+    } }
     if fx.first_turn && fx.flinch != 0.0 && !cloak { v += 20.0; }
     for bb in fx.boosts.as_deref().unwrap_or(&[]) {
         let n = bb.stats.iter().fold(0.0, |s, &(_, x)| s + x as f64);
@@ -417,7 +433,7 @@ pub static W_V1: Weights = Weights {
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
     screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0, predict_protect: 0.0,
-    switch_spread: 0.0, switch_next: 0.0, switch_cost: 0.0, switch_ko: 0.0,
+    switch_spread: 0.0, switch_next: 0.0, switch_cost: 0.0, switch_ko: 0.0, bind: 0.0,
 };
 // The 2026-10-31 Protect and lost-matchup rules came after v1 (ai-v1.js doesn't have them).
 fn v1(b: &Battle) -> bool { std::ptr::eq(b.w, &W_V1) }

@@ -552,3 +552,22 @@ So the old rule was costing about 3 points, and the kept version is about as goo
 **Scenarios:** "Switch out of a lost matchup" now fails (0/20, it Protects). `--verify` rates switch vs Protect there as a near tie (107.8 vs 107.2 at 1,600 playouts), so the old forced switch wasn't clearly right either. Overall the fast AI gets 11/12.
 
 **Fast vs search** (same two meta round robins as #7): the archetype mean gap is 6.9 on seed 1 and 6.5 on seed 2 (#7: 5.9 and 7.6; before: 6.5 and 6.5). The largest gap is still Fire field (21) on seed 1 and Snow (15) on seed 2. **Not passed:** switching isn't what separates the two AIs. The persistent gap is on field teams (Fire field 18-21 points better under search on seed 1 in all three versions).
+
+## Where the fast and search AIs differ: move usage (2026-10-31)
+
+Since #7 and #8 didn't close the archetype gap, I compared how often each character uses each move under the two AIs in the same round robins (`stats.moveBy` from `--recheck ... --json`, fast vs search). The Fire field team had the biggest gap. Under the fast AI, Bankai Yamamoto used Ennetsu Jigoku 7% of the time (search: 39%), Protect 23% (11%) and Will-o-Wisp 22% (8%). Komatsu used Helping Hand 59% and Protect 26%, and Gourmet Cooking 12% (search: 30%).
+
+That pointed to three kinds of moves the fast AI scored wrongly (JS and Rust; the v1 bot keeps the old scoring):
+- **Bind attacks** (Ennetsu Jigoku, Whirlpool, Blackwhip): the 1/8-a-turn damage for 4-5 turns wasn't counted at all. It now adds that damage, of what the hit leaves, x `W.bind` 0.5.
+- **Ally and team heals** (Gourmet Cooking, Flower Field): these were scored by the user's own missing Vitality. They now use the ally's or the team's.
+- **Ally and team boosts** (Howl, Shikanoko Dance, Gourmet Cooking, Zero's Orders): these were scored on the user's stats only. They now count for each character that gets them, with the setup formula on that character's main attacking stat.
+
+| | archetype mean gap, seed 1 / seed 2 | largest | Fire field fast / search, seed 1 |
+|---|---|---|---|
+| before #7 | 6.5 / 6.5 | 18 / 20 | 27 / 45 |
+| after #8 | 6.9 / 6.5 | 21 / 15 | 25 / 46 |
+| after these fixes | **5.0 / 6.6** | 14 / 15 | 34 / 48 |
+
+The meta teams' mean gap on seed 1 went from 4.2 to 2.8. Strength against v3 is 55.1 / 39.5 and 55.6 / 38.9, about the same as after #8: these moves are rare. JS and Rust identical (1,500 comp draft battles plus the usual set).
+
+The pooled move-usage table also shows what's left. The fast AI uses **Helping Hand** (Hanataro 77% vs 39%, Escanor 48% vs 22%, Shirou, Komatsu, Kita, Baymax) and **setup moves** (Swords Dance, Nasty Plot, Dead Calm) about twice as often as the search AI. It also uses Trick Room and Tailwind more and attacks less. These are weights (`W.setup`, Helping Hand's value, `W.statusScale`) rather than missing effects, so they belong to gap #9 (tuning against the search AI).

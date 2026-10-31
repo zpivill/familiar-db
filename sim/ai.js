@@ -18,7 +18,7 @@ export const W = {
   statusScale: 1.47,   // every status move's total score
   switchSpread: 0.6, switchNext: 1, switchCost: 40, switchKo: 73.7,   // gap #8: switching scored like a move (switchValue)
   overkill: 0.389, combo: 15.2,                     // joint side actions
-  predictProtect: 0.8,                              // gap #7: share of an attack's score lost into a foe expected to Protect
+  predictProtect: 0.8, bind: 0.5,                              // gap #7: share of an attack's score lost into a foe expected to Protect
 };
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -189,26 +189,30 @@ function statusValue(B, api, u, mv, foes) {
   if (fx.duosOnly && !B.duos) return -5;
   if (fx.nothing) return -5;
   if (fx.boosts) {
-    const main = u.moves.some(x => x.m.cat === 'Physical') && u.raw.pow >= u.raw.ene ? 'pow' : 'ene';
+    const mainOf = x => x.moves.some(y => y.m.cat === 'Physical') && x.raw.pow >= x.raw.ene ? 'pow' : 'ene';
     // Raising the main attacking stat pays off on every later attack, not just this turn: score it as the
-    // extra damage it adds over the turns the user is likely to stay in (see setupTurns).
+    // extra damage it adds over the turns the receiver is likely to stay in (see setupTurns). Team and ally
+    // boosts count for whoever gets them.
     let other = 0;
-    const turns = setupTurns(B, api, u, foes);
+    const al = api.allyOf(u), ally = al && !al.fainted && !api.abOf(al).loner ? al : null;
     for (const b of fx.boosts) {
-      if (b.who === 'self' || b.who === 'team' || b.who === 'ally') {
+      const gets = b.who === 'self' ? [u] : b.who === 'team' ? [u, ...(ally ? [ally] : [])] : b.who === 'ally' ? [ally || u] : [];
+      for (const x of gets) {
+        const main = mainOf(x), xa = api.abOf(x);
         for (const [k, n] of Object.entries(b.stats)) {
           const kk = k === 'highest' ? main : k;
-          const cur = u.boosts[kk] || 0;
-          if (kk === main && b.who === 'self' && !a.contrary) {
-            const best = Math.max(...foes.map(f => Math.min(bestHit(api, u, f), 1)));
+          const cur = x.boosts[kk] || 0;
+          if (kk === main && !xa.contrary) {
+            const best = Math.max(...foes.map(f => Math.min(bestHit(api, x, f), 1)));
             const gain = stageMult(Math.min(6, cur + n)) / stageMult(cur) - 1;
-            v += best * 100 * gain * turns * W.setup * (b.p ?? 1);
+            v += best * 100 * gain * setupTurns(B, api, x, foes) * W.setup * (b.p ?? 1);
             continue;
           }
           const w = kk === main ? 16 : kk === 'spe' ? 12 : kk === 'pow' || kk === 'ene' ? 3 : 8;
-          other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (a.contrary ? -1 : 1);
+          other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (xa.contrary ? -1 : 1);
         }
-      } else if (b.who === 'foe' || b.who === 'foes') {
+      }
+      if (b.who === 'foe' || b.who === 'foes') {
         for (const [k, n] of Object.entries(b.stats)) other += -n * 7 * (foe.boosts[k] <= -4 || (n < 0 && foe.item?.id === 'clear-amulet') ? 0 : 1);
       }
     }
@@ -217,8 +221,12 @@ function statusValue(B, api, u, mv, foes) {
     v += other;
   }
   if (fx.heal) {
-    const miss = 1 - hp;
-    v += miss < 0.25 ? 0 : miss * W.heal * (a.healMult || 1);
+    // healing an ally or the team counts their missing Vitality
+    const al = api.allyOf(u), ally = al && !al.fainted ? al : u;
+    for (const x of fx.healWho === 'team' ? [u, ...(ally !== u ? [ally] : [])] : fx.healWho === 'ally' ? [ally] : [u]) {
+      const miss = 1 - api.pct(x);
+      v += miss < 0.25 ? 0 : miss * W.heal * (a.healMult || 1);
+    }
     if (fx.restSleep) v -= 15;
   }
   if (fx.cure && u.status) v += 20;
@@ -314,6 +322,8 @@ function attackValue(B, api, u, mv, t, foesN) {
   const cloak = t.item?.id === 'hooded-cloak';
   if (fx.status && !t.status && !ko && !cloak && !held(t, 'panacea-leaf')) v += (fx.status.p || 0) * W.statusChance;
   if (fx.flinch && !ko && !cloak && api.speed(u) > api.speed(t)) v += fx.flinch * W.flinch;
+  // a bind takes 1/8 or so every turn for 4-5 turns, of what the hit leaves
+  if (fx.bind && !ko && !t.vol.bind && !api.blocks(t, 'trap')) v += Math.min(t.hp / t.maxhp - d, fx.bind.frac * (fx.bind.turns[0] + fx.bind.turns[1]) / 2) * 100 * W.bind;
   if (fx.firstTurn && fx.flinch && !cloak) v += 20;
   for (const b of fx.boosts || []) {
     const n = Object.values(b.stats).reduce((s, x) => s + x, 0);
