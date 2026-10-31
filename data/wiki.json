@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "pages": [
     {
       "id": "design",
@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-10-30",
-              "n": "Planning process agreed. Claude drafted the spine (step 1) and a first two readings table from the game map; r to correct them. Next: the companions row (r wants dedicated time on it), then evolution."
+              "t": "2026-10-31",
+              "n": "Step 1 done: r confirmed the spine. Step 2 started: filling the two readings table one row at a time, in this order: companions, evolution, the Champion, the Unbound leader, why Frays form where they do. Then step 3, the region beat sheet. Open question to r: what the two friends do during the journey (Claude's lean: the copycat is your rival who copies your picks; the Maker's child investigates the Ward through their parent)."
             }
           ]
         },
@@ -22,7 +22,7 @@
             {
               "t": "Hook",
               "n": "A Pokémon-style journey where every catch, battle and badge quietly runs the machine the ending reveals.",
-              "s": "proposal"
+              "s": "decided"
             },
             {
               "t": "Pillars",
@@ -52,7 +52,7 @@
             {
               "t": "Central image: thread and fabric",
               "n": "Frays, Strays, Binding, Threads, loose threads, kintsugi stitching. New names, visuals and mechanics should fit this language.",
-              "s": "proposal"
+              "s": "decided"
             },
             {
               "t": "Tone",
@@ -62,7 +62,7 @@
             {
               "t": "What makes it unique",
               "n": "The Pokémon loop is the conspiracy: the player helps run the system by playing the game normally. Plus real anime characters made real, with reasons inside the world for everything.",
-              "s": "proposal"
+              "s": "decided"
             }
           ]
         },
@@ -233,6 +233,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Spine confirmed by r, including the hook, the thread and fabric rule, and what makes the game unique.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-30",
               "n": "Plan the creative half in four steps: spine, two readings table, region beat sheet, then one city at a time. This page tracks it.",
