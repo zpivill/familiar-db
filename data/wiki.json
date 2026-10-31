@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Companions: roles and the extra companion roles decided. Open question to r: what the mentor actually knows (Claude's lean: everything; they helped design the vents and coach you to climb because strong Keepers anchor the world). Then the copycat's and starter's second readings, then evolution."
+              "n": "Companions: the mentor's truth decided. Open question to r: why the copycat copies you, underneath (Claude's lean: the mentor quietly encourages it because the Ward wants a spare Champion). Then the starter's second reading, then evolution."
             }
           ]
         },
@@ -128,9 +128,9 @@
             [
               "The mentor (the Maker's child's parent)",
               "Ex-Kith engineer now at the Ward; the professor figure who helps you",
-              "Open. Proposal: quit Kith after seeing the flaw first",
+              "Knows everything: quit Kith after seeing the flaw, helped design the vents, joined the Ward. Coaches you to climb because strong Keepers anchor the world. Every piece of advice is true; they never say what reaching the top leads to",
               "Gets advice and help from them",
-              "Role decided; truth open"
+              "Decided"
             ],
             [
               "Guest allies",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The mentor knows everything: helped design the vents, joined the Ward, and coaches you to climb. On a replay their help reads as recruitment.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Companions beyond the two friends: the Maker's child's parent as mentor (professor slot), guest allies per arc who fight beside you in duo battles, and a starter familiar who reacts and talks a little. The two friends stay the only core companions.",
