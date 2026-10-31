@@ -9,7 +9,8 @@ use std::collections::HashMap;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Bot { Mirror, V1, Greedy }
-const STYLES: [Bot; 3] = [Bot::Mirror, Bot::V1, Bot::Greedy];
+// the current AI 2 times in 3, the frozen v1 otherwise (as sim/mcts.js; greedy was dropped 2026-10-31)
+const STYLES: [Bot; 3] = [Bot::Mirror, Bot::Mirror, Bot::V1];
 impl Bot {
     // an action for the decide hook, None leaves it to the current AI (bots/baselines.js)
     fn action(self, b: &mut Battle, m: MonId) -> Option<Act> {

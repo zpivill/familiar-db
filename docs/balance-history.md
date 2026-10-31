@@ -419,3 +419,17 @@ So the draft predicts better with books, not worse; #1's "done when" already hol
 - **Fast AI fails 2 of 10.** In both it Protects when the right move is to act: a priority KO, or a switch to a character that resists both foes. Both are the duos Protect bonus winning over a better option.
 - **The search AI at its real setting (128 playouts) is noisier than the fast AI on simple positions**: it undoes its own Trick Room 3 times in 8 and skips setting it 4 times in 8. With 1,024 playouts it gets 98%, so the misses are too few playouts, not a wrong idea. The Rust search AI plays the same way (parity), so this also holds for `--ai=search` and `--recheck` results.
 - Dropped from the gap list's examples: "don't attack into Wide Guard" and "Protect when both foes target you" have no known right answer without predicting the foe (forcing an answer turned out wrong in testing: a Protect at 12% and a Fake Out with Helping Hand available were both not clearly best).
+
+## Fixes from the scenario tests (2026-10-31)
+
+**Answers checked by play.** `scenarios.mjs --verify` forces each turn-1 choice of our lead and plays the battle out (fast AI both sides, 400 seeds, score = win rate + 0.1 x Vitality lead). Two scenarios above were wrong: re-using Trick Room here refreshes it rather than ending it (so "don't undo our own Trick Room" was no rule), and the "set Trick Room" position was lost whatever we chose (Close Combat can't touch the Spirit foe). Both replaced: "set Trick Room when slower" with a winnable team, and "don't Trick Room when faster". All 10 now pass `--verify`, several by small margins (priority KO -2.9 vs Protect -3.3; switch 106.6 vs 106.2).
+
+**Fast AI** (`ai.js`, `ai.rs`):
+- Protect's "it would be knocked out" bonus (310, the largest weight) no longer counts a foe the user can knock out before that foe moves (priority, or faster; Trick Room reverses Speed).
+- New switch rule, "lost matchup": the foes knock it out this turn, its matchup is below the switch threshold and a bench character's matchup is positive. Before, a switch needed a matchup gain of 1.43, which almost never happens.
+- Scenarios: 80% to 100%. Strength against the old AI (frozen v2 = the AI before this change), 4,000 mirror battles x 2 seeds: won 46.5% / 46.8%, lost 47.6% / 47.3%, the same as mirror against itself (46.9% / 46.9%). So it fixes the two mistakes without changing overall strength.
+- Rust's v1 opponent reuses `options()` with the v1 weights, so the new rules are switched off there (ai-v1.js doesn't have them). The search parity check caught this.
+
+**Search AI** (`mcts.js`, `mcts.rs`): its playouts no longer play 1 in 3 foes as greedy (now the current AI 2 in 3, frozen v1 1 in 3). In "set Trick Room", Protect + Swords Dance wins 100% against greedy and 3% against the current AI, so greedy playouts pulled the search to plays that only beat a foe who never protects or sets up.
+- Search vs the fast AI, 240 mirror battles (4 seeds x 60, same battles): 86.7% to 90.4% (±4).
+- Scenarios at 128 playouts (12 seeds each, corrected set): 88% to 91%; 1,024 playouts 95%. The rest of the misses are "set Trick Room" (5/12), where Trick Room beats Earth Power by 12.8 to 10.8 in play: too close for 128 playouts to separate. Tried and dropped: common random numbers across pairs (no change in scenarios) and mirror-only playouts (85%).

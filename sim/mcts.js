@@ -2,8 +2,9 @@
 // not to run the big batches. Each turn it takes the k best options of each of its characters (from the
 // fast AI's own scoring, plus a switch), and for each pair plays the rest of the battle out with new luck,
 // many times, picking which pair to try next by UCB1. It keeps the pair it tried most.
-// In those playouts the opponent plays one of several styles (the current AI, the frozen v1, greedy),
-// picked per playout, so the search doesn't bet on the foe playing exactly like itself.
+// In those playouts the opponent plays the current AI 2 times in 3 and the frozen v1 otherwise, so the search
+// doesn't bet on the foe playing exactly like itself. (Greedy was a third style until 2026-10-31: plays that
+// only beat a foe who never protects or sets up, like Protect + Swords Dance, won its playouts.)
 //
 // A battle can't be copied mid-way, so every playout replays the battle from its seed with all the choices
 // made so far, then branches at the start of this turn. To make that replay exact, the real battle never
@@ -14,7 +15,7 @@ import { runBattle, rng } from './battle.js';
 import { chooseAction, chooseReplacement, options } from './ai.js';
 import { BOTS } from './bots/baselines.js';
 
-const STYLES = ['mirror', 'v1', 'greedy'];
+const STYLES = ['mirror', 'mirror', 'v1'];
 
 // a seeded rng whose stream can be swapped mid-battle, so a playout gets new luck after the replayed part
 function srng(seed) {
