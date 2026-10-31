@@ -2,8 +2,9 @@
 // not to run the big batches. Each turn it takes the k best options of each of its characters (from the
 // fast AI's own scoring, plus a switch), and for each pair plays the rest of the battle out with new luck,
 // many times, picking which pair to try next by UCB1. It keeps the pair it tried most.
-// In those playouts the opponent plays one of several styles (the current AI, the frozen v1, greedy),
-// picked per playout, so the search doesn't bet on the foe playing exactly like itself.
+// In those playouts the opponent plays the current AI 2 times in 3 and the frozen v1 otherwise, so the search
+// doesn't bet on the foe playing exactly like itself. (Greedy was a third style until 2026-10-31: plays that
+// only beat a foe who never protects or sets up, like Protect + Swords Dance, won its playouts.)
 //
 // A battle can't be copied mid-way, so every playout replays the battle from its seed with all the choices
 // made so far, then branches at the start of this turn. To make that replay exact, the real battle never
@@ -14,7 +15,7 @@ import { runBattle, rng } from './battle.js';
 import { chooseAction, chooseReplacement, options } from './ai.js';
 import { BOTS } from './bots/baselines.js';
 
-const STYLES = ['mirror', 'v1', 'greedy'];
+const STYLES = ['mirror', 'mirror', 'v1'];
 
 // a seeded rng whose stream can be swapped mid-battle, so a playout gets new luck after the replayed part
 function srng(seed) {
@@ -36,8 +37,9 @@ const withRng = (B, r, f) => { const keep = B.r; B.r = r; try { return f(); } fi
 // Plays one battle with side `me` run by the search and the other side by `foe` (a bot from bots/baselines.js).
 // me can be [0, 1] for both sides searching (foe is then unused), as the meta re-check does.
 // bo: runBattle options with bo.rng a seeded rng. Returns the finished battle.
+// onPlan(B, side, plan) sees each turn's chosen pair (slot -> choice) as soon as it is made (the scenario tests).
 // With record set, B.replay.positions keeps every turn's options and how each scored, for teaching the fast AI.
-export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false } = {}) {
+export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false, onPlan } = {}) {
   const seed = Math.floor(bo.rng() * 1e9);              // every replay starts from this luck
   const mine = srng(seed + 1), theirs = srng(seed + 2), search = srng(seed + 3);
   const rec = [], turnStart = {}, positions = [], searching = [].concat(me), plan = [null, null];
@@ -99,7 +101,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
     if (!searching.includes(si)) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
     else if (extra) act = withRng(B, mine, () => chooseAction(B, x, B.api));
     else {
-      if (plan[si]?.turn !== B.turn) plan[si] = { turn: B.turn, acts: think(B, B.turn, si) };
+      if (plan[si]?.turn !== B.turn) { plan[si] = { turn: B.turn, acts: think(B, B.turn, si) }; onPlan?.(B, si, plan[si].acts); }
       const a = plan[si].acts.get(x.side.mons.indexOf(x));
       act = a ? dec(B, x, a) : withRng(B, mine, () => chooseAction(B, x, B.api));
     }

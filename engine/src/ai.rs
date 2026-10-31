@@ -72,6 +72,17 @@ fn best_hit(b: &mut Battle, u: MonId, t: MonId) -> f64 {
     for s in 0..b.mons[u].moves.len() { if b.mons[u].moves[s].pp > 0 { best = mx(best, est_damage(b, u, s, t)); } }
     best
 }
+// Whether u has a move that knocks f out before f moves (priority, or faster; Trick Room reverses Speed), as ai.js koFirst.
+// shortcut: ignores f's own priority moves, fine while few characters carry both.
+fn ko_first(b: &mut Battle, u: MonId, f: MonId) -> bool {
+    let (su, sf) = (b.speed(u, false), b.speed(f, false));
+    let first = su != sf && (su > sf) != b.field.as_ref().map_or(false, |x| x.fx.trick_room);
+    let left = mx(1.0, b.mons[f].hp) / b.mons[f].maxhp;
+    for s in 0..b.mons[u].moves.len() {
+        if b.mons[u].moves[s].pp > 0 && est_damage(b, u, s, f) >= left && (first || { let mv = b.mons[u].moves[s]; b.eff_priority(u, Some(&mv)) > 0.0 }) { return true; }
+    }
+    false
+}
 // How well a character does against a foe: what it deals minus what it takes, with Speed as a tiebreak.
 fn matchup(b: &mut Battle, m: MonId, f: MonId) -> f64 {
     let deal = mn(1.2, best_hit(b, m, f) * b.mons[f].maxhp / mx(1.0, b.mons[f].hp));
@@ -117,8 +128,10 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
     if fx.field.as_ref().map_or(false, |f| f.trick_room) && !b.field.as_ref().map_or(false, |f| f.fx.trick_room) { v += mx(0.0, flips(b, 1.0, true)) * b.w.speed_flip; }
     let chained = b.mons[u].vol.protect_chain != 0 && !fx.protect.as_ref().map_or(false, |p| p.repeat) && !a.protect_always;
     if fx.protect.is_some() && !chained {
-        let hits: Vec<f64> = foes.iter().map(|&f| best_hit(b, f, u)).collect();
-        let one = max_of(hits.iter().copied()); let both = hits.iter().fold(0.0, |n, x| n + x);
+        // a foe it can knock out before that foe moves is no threat: hitting it beats protecting from it
+        let mut hits: Vec<f64> = vec![];
+        for &f in foes { if v1(b) || !ko_first(b, u, f) { hits.push(best_hit(b, f, u)); } }
+        let one = hits.iter().fold(0.0, |n: f64, &x| mx(n, x)); let both = hits.iter().fold(0.0, |n, x| n + x);
         let lu = left(b, u);
         if one >= lu || (foes.len() > 1 && both >= lu) {
             v += b.w.protect_save;
@@ -376,12 +389,14 @@ fn plan_bonus(b: &Battle, m: MonId, slot: usize) -> f64 {
 
 // Every option for m this turn with its score (noise included), best first.
 // The frozen v1 AI (sim/bots/ai-v1.js): the same scoring with its hand-set numbers, and no joint side plan.
-pub const W_V1: Weights = Weights {
+pub static W_V1: Weights = Weights {
     noise: 0.3, ko: 55.0, ko_priority: 30.0, status_chance: 18.0, flinch: 14.0, recoil: 60.0, recharge: 25.0,
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
     screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0,
 };
+// The 2026-10-31 Protect and lost-matchup rules came after v1 (ai-v1.js doesn't have them).
+fn v1(b: &Battle) -> bool { std::ptr::eq(b.w, &W_V1) }
 pub fn v1_action(b: &mut Battle, m: MonId) -> Choice { let keep = b.w; b.w = &W_V1; let c = options(b, m)[0]; b.w = keep; c }
 // the greedy bot (sim/bots/baselines.js): the hardest-hitting attack into the best target, never a status move or a switch
 pub fn greedy_action(b: &mut Battle, m: MonId) -> Option<Act> {
@@ -458,8 +473,12 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
         let x = &b.mons[m];
         let doomed = x.vol.countdown != 0 && x.vol.countdown - b.turn <= 1;
         let stuck = x.vol.choice.is_some() && best.score < 25.0;
+        // a lost matchup: the foes knock it out this turn, it does little back, and someone on the bench does well here
+        let mut hits: Vec<f64> = vec![];
+        for &f in &foes { let h = best_hit(b, f, m) * b.mons[m].maxhp / mx(1.0, b.mons[m].hp); hits.push(h); }
+        let lost = !v1(b) && here < b.w.switch_bad && pick_v > 0.0 && (hits.iter().fold(f64::NEG_INFINITY, |n: f64, &x| mx(n, x)) >= 1.0 || (foes.len() > 1 && hits[0] + hits[1] >= 1.0));
         if let Some(p) = pick {
-            let go = doomed
+            let go = doomed || lost
                 || (here < b.w.switch_bad && pick_v > here + b.w.switch_gain && b.r.next() < b.w.switch_p)
                 || (stuck && pick_v > here + 0.2 && b.r.next() < 0.8);
             if go { return vec![Choice { act: Act::Switch { to: p }, score: best.score }]; }

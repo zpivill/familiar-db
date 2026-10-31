@@ -65,6 +65,13 @@ function bestHit(api, u, t) {
   return best;
 }
 
+// Whether u has a move that knocks f out before f moves (priority, or faster; Trick Room reverses Speed).
+// shortcut: ignores f's own priority moves, fine while few characters carry both.
+function koFirst(B, api, u, f) {
+  const first = api.speed(u) !== api.speed(f) && (api.speed(u) > api.speed(f)) !== !!B.field?.trickRoom;
+  return u.moves.some(mv => mv.pp > 0 && estDamage(api, u, mv, f) >= Math.max(1, f.hp) / f.maxhp && (first || api.effPriority(u, mv) > 0));
+}
+
 // How well a character does against a foe: what it deals minus what it takes, with Speed as a tiebreak.
 function matchup(api, m, f) {
   const deal = Math.min(1.2, bestHit(api, m, f) * f.maxhp / Math.max(1, f.hp));
@@ -111,8 +118,10 @@ function duosSupportValue(B, api, u, mv, foes) {
   if (fx.field?.trickRoom && !B.field?.trickRoom) v += Math.max(0, flips(1, true)) * W.speedFlip;
   const chained = (u.vol.protectChain || 0) && !fx.protect?.repeat && !a.protectAlways;
   if (fx.protect && !chained) {
-    // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally
-    const one = Math.max(...foes.map(f => bestHit(api, f, u))), both = foes.reduce((n, f) => n + bestHit(api, f, u), 0);
+    // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally.
+    // A foe it can knock out before that foe moves is no threat: hitting it beats protecting from it.
+    const threats = foes.filter(f => !koFirst(B, api, u, f));
+    const one = Math.max(0, ...threats.map(f => bestHit(api, f, u))), both = threats.reduce((n, f) => n + bestHit(api, f, u), 0);
     if (one >= left(u) || (foes.length > 1 && both >= left(u))) {
       v += W.protectSave;
       if (ally) v += W.protectAlly + (foes.some(f => bestHit(api, ally, f) >= left(f)) ? 15 : 0);
@@ -370,9 +379,12 @@ export function options(B, m, api) {
     let pick = null, pickV = -9;
     for (const b of bench) { const v = Math.min(...foes.map(f => matchup(api, b, f))) - 0.12; if (v > pickV) { pickV = v; pick = b; } }
     const doomed = m.vol.countdown && m.vol.countdown - B.turn <= 1;
+    // a lost matchup: the foes knock it out this turn, it does little back, and someone on the bench does well here
+    const hits = foes.map(f => bestHit(api, f, m) * m.maxhp / Math.max(1, m.hp));
+    const lost = here < W.switchBad && pickV > 0 && (Math.max(...hits) >= 1 || (foes.length > 1 && hits[0] + hits[1] >= 1));
     // a Choice item locked into a move that does little here is a good reason to switch
     const stuck = m.vol.choice && best.score < 25;
-    if (pick && (doomed || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
+    if (pick && (doomed || lost || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
   }
   return list;
 }
