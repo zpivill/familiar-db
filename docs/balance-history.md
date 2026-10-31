@@ -442,3 +442,17 @@ So the draft predicts better with books, not worse; #1's "done when" already hol
 - **Search AI, hidden vs full info** (both sides search, 128 playouts, 200 mirror battles, rule-based builds): won 32%, lost 66%. Knowing exact builds is worth about 34 points to the search: much of its strength came from playing the future out against the true builds. Check: given the true builds as its "guess", the hidden search plays even (44 won, 54 lost of 100), so the gap is the information, not a bug.
 - **Meta with the 4 averaged books, hidden vs full** (Rust, 200k draft battles x 2 seeds): picked win rate rank corr 0.993 (the same as two seeds of either), mean change 0.6 points, same top 10 (Demon Emperor Lelouch, Pain, Hogyoku Aizen, Lelouch, Ultra Instinct Goku first). Biggest moves: Doma +4.8, Makima +3.9, Kizaru +2.9; Gojo -2.1, Meliodas -2.0. Seed-to-seed median difference 0.5.
 - **Why the meta barely moves:** with books every character always plays its book build, so the guess is right (exactly with one book, nearly with 4 near-identical fits). Hidden builds will matter where builds vary: in the build search, a candidate build is still fully known to the foes (`--optimize` doesn't use `--hidden`), so surprise builds (Choice items, speed and counter spreads) are still under-rated there. Not checked: the search AI with books under `--hidden`.
+
+## Hidden builds, the two leftovers (2026-10-31)
+
+**Abilities show once they act.** Under `--hidden` a foe's guessed ability is replaced by its real one once it shows: an entry effect, an immunity or absorb, a reaction to a hit (on either side), an end-of-turn, knockout or low-Vitality effect. Silent damage multipliers still don't show. JS and Rust identical (300 draft + 300 no-draft hidden batches, 200 draft, search with hidden). New mechanics test: a Fire absorber is seen as "None" until it absorbs a Fire hit.
+
+**Build search with `--hidden`** (`--optimize ... --hidden`): the foes see each candidate build as the build they'd expect (the book's, or the plain one), so a surprise build can win battles by surprise. 12 top characters, 800 battles per option, 2 passes, 4 books, against the 100k meta field, seeds 5 and 6:
+
+| same pick in both runs (of 12) | ability | training | item |
+|---|---|---|---|
+| full info, seed 5 vs seed 6 | 8 | 5 | 4 |
+| hidden, seed 5 vs seed 6 | 8 | 3 | 3 |
+| full vs hidden, same seed | 6 / 9 | 6 / 5 | 3 / 3 |
+
+Full vs hidden differ no more than two seeds of the same mode, so at this size the build search's item and training picks are mostly noise and the hidden-build effect is too small to see. Average gain 6.3 / 5.0 full, 5.6 / 3.6 hidden. Picks that agreed in all 4 runs: Lelouch Zero Requiem + Focus Seal, Pain Preta Path + wallPhys + Clear Amulet. Fixed on the way: the build search crashed in its second pass when the first pass picked a tuned "speed" spread (that spread was then retrained under a preset name that doesn't exist); it now keeps the tuned spread when trying movesets.

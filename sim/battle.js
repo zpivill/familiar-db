@@ -109,8 +109,9 @@ export function runBattle(data, teams, opts = {}) {
   // ---- what each side knows of the other's builds (gap #2 of the AI gap list) ----
   // opts.beliefs[s][k]: the build side s believes the other side's k-th character has (its guess from the
   // draft). While side s chooses, every foe shows that build's stats, item, ability and moves in place of its
-  // own; the moves it has been seen using and an item it has used up are shown as they really are.
-  // shortcut: an ability stays hidden even after it shows (an immunity, an entry effect); tracking reveals is the upgrade.
+  // own; the moves it has been seen using, an item it has used up and an ability that has shown (m.abShown: an
+  // entry effect, an immunity, a reaction to a hit, an end-of-turn effect...) are shown as they really are. Silent
+  // damage multipliers don't show: a player has to infer those.
   // A side with no beliefs (null) sees the real builds.
   const views = opts.beliefs && opts.beliefs.map(bs => bs && bs.map(b => makeMon(data, b.e, b, level)));
   // opts.assume = { side, turn }: from that turn on the side's foes really have the builds it believes (the search
@@ -127,7 +128,7 @@ export function runBattle(data, teams, opts = {}) {
       m.moves = [...seen, ...v.moves.filter(x => !seen.some(y => y.id === x.id))].slice(0, Math.max(v.moves.length, seen.length));
       m.raw = v.raw; m.hp = m.hp / m.maxhp * v.maxhp; m.maxhp = v.maxhp;
       if (!m.itemUsed) m.item = v.item;
-      if (m.ability === m.baseAbility) { m.ability = m.baseAbility = v.ability; m.abilityName = v.abilityName; }
+      if (m.ability === m.baseAbility && !m.abShown) { m.ability = m.baseAbility = v.ability; m.abilityName = v.abilityName; }
     });
   }
 
@@ -213,7 +214,7 @@ export function runBattle(data, teams, opts = {}) {
     if (held(m, 'rice-ball') && pct(m) < ITEM_NUM.sitrusBelow) { useItem(m, 'eats its Rice Ball'); heal(m, m.maxhp * ITEM_NUM.sitrus); }
     a.threshold.forEach((th, i) => {
       if (m.once['th' + i] || pct(m) >= th.below) return;
-      m.once['th' + i] = true;
+      m.once['th' + i] = true; m.abShown = true;
       for (const op of th.ops) {
         if (op.op === 'boost') boost(m, op.stats, m);
         if (op.op === 'heal') heal(m, m.maxhp * op.frac);
@@ -241,6 +242,7 @@ export function runBattle(data, teams, opts = {}) {
       const ba = abOf(by);
       for (const op of ba.ko) {
         if (op.oneHit && !m.vol.oneHit) continue;
+        by.abShown = true;
         if (op.op === 'boost') boost(by, op.stats, by);
         if (op.op === 'heal') heal(by, by.maxhp * op.frac);
         if (op.op === 'foes') foesOf(by).forEach(f => boost(f, op.stats, by));
@@ -354,6 +356,7 @@ export function runBattle(data, teams, opts = {}) {
 
   function entryAbility(m) {
     const a = abOf(m);
+    if (a.entry.length) m.abShown = true;
     for (const op of a.entry) {
       if (op.once) { if ((m.onceDone || (m.onceDone = new Set())).has(op)) continue; m.onceDone.add(op); }
       const foes = foesOf(m).filter(f => !op.onlyType || f.types.includes(op.onlyType));
@@ -753,7 +756,7 @@ export function runBattle(data, teams, opts = {}) {
     const type = moveType(u, mv, t);
     for (const im of ta.immune) {
       if ((im.type && im.type === type) || (im.cat && im.cat === mv.m.cat) || (im.flag && mv.flags[im.flag])) {
-        say(nm(t), 'is immune');
+        say(nm(t), 'is immune'); t.abShown = true;
         if (im.heal) heal(t, t.maxhp * im.heal);
         if (im.boost) boost(t, im.boost, t);
         if (im.flashFire) t.vol.flashFire = true;
@@ -845,6 +848,7 @@ export function runBattle(data, teams, opts = {}) {
         if (dh.contact && !mv.flags.contact) continue;
         if (dh.cat && dh.cat !== mv.m.cat) continue;
         if (dh.p && r() >= dh.p) continue;
+        u.abShown = true;
         if (dh.status) inflict(t, dh.status, u, { mv });
         if (dh.suppress) t.vol.suppressed = dh.suppress;
         if (dh.decay) t.vol.decay = dh.decay;
@@ -935,6 +939,7 @@ export function runBattle(data, teams, opts = {}) {
         if (h.superEff && !(effectiveness(u, mv, t, type, false) > 1)) continue;
         if (h.attackerType && !u.types.includes(h.attackerType)) continue;
         if (h.p != null && h.p < 1 && r() >= h.p) continue;
+        t.abShown = true;
         if (h.self) { if (!t.fainted) boost(t, h.stats, t); continue; }
         if (h.status) inflict(u, h.status, t);
         if (h.chip) hurt(u, u.maxhp * h.chip, 'from the counterattack', t);
@@ -1020,8 +1025,8 @@ export function runBattle(data, teams, opts = {}) {
       if (!connects(u, mv, t)) continue;
       const ta = defAb(t, u, mv);
       if (fx.status && r() < (fx.status.p ?? 1)) {
-        if (mv.flags.sound && ta.immune.some(x => x.flag === 'sound')) { say(nm(t), 'is immune'); continue; }
-        if (fx.status.kind === 'stun' && ta.immune.some(x => x.type === 'Lightning')) { say(nm(t), 'is immune'); continue; }
+        if (mv.flags.sound && ta.immune.some(x => x.flag === 'sound')) { say(nm(t), 'is immune'); t.abShown = true; continue; }
+        if (fx.status.kind === 'stun' && ta.immune.some(x => x.type === 'Lightning')) { say(nm(t), 'is immune'); t.abShown = true; continue; }
         inflict(t, fx.status.kind, u, { mv, turns: fx.status.turns, wakeConfuse: fx.wakeConfuse });
       }
       if (fx.confuseFoes) confuse(t, u);
@@ -1097,6 +1102,7 @@ export function runBattle(data, teams, opts = {}) {
       if (m.fainted) continue;
       if (m.vol.aquaRing) heal(m, m.maxhp / 16);
       if (m.item?.id === 'bento-box') heal(m, m.maxhp * ITEM_NUM.leftovers);
+      if (a.endTurn.length) m.abShown = true;
       for (const op of a.endTurn) {
         if (op.op === 'heal' && (!op.lowHp || pct(m) < op.lowHp) && (!op.asleep || m.status === 'sleep')) heal(m, m.maxhp * op.frac);
         if (op.op === 'boost' && (!op.ifNoAttack || m.vol.lastAttackTurn !== B.turn)) boost(m, op.stats, m);
