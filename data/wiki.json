@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Unbound decided. Last row: why Frays form where they do and whether they can be closed (Claude's lean: Frays sit on seams between nodes, so the routes are the Ward's vent plumbing; binding strays calms a Fray but never closes it). Then step 3, the region beat sheet. After this thread: update the game map and its copies."
+              "n": "Step 2 done: every two readings row has an answer. Step 3 started (region beat sheet). Open question to r: how the six cities relate to the 15 types (Claude's lean: each city has a theme of 2-3 types that fit together, covering all 15). Then which anime per city, then city order and beats. After this thread: update the game map and its copies."
             }
           ]
         },
@@ -92,10 +92,10 @@
             ],
             [
               "Frays",
-              "Dangerous chaos zones the Ward contained",
-              "Vents opened on purpose, sacrificing some cities",
-              "Enter the fray to find hidden strays",
-              "Decided; why here and not there is open"
+              "Dangerous chaos zones the Ward contained; they sit along the routes between cities and can't be closed",
+              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (proposal name: a Knot) where legendary strays form",
+              "Enter the fray to find hidden strays; binding strays calms a Fray for a while but never closes it",
+              "Decided; Knot name is a proposal"
             ],
             [
               "Strays",
@@ -148,9 +148,9 @@
             ],
             [
               "The Unbound",
-              "Villains who hunt villain strays (rare, legendary) in Frays and attack the nodes with them; cities tear open wherever they go",
+              "Villains who hunt legendary villain strays in each city's hidden Knot and attack the nodes with them; cities tear open wherever they go",
               "Leader: a former Ward worker who saw half the truth and left, from a city the Ward later sacrificed to a vent. Right that the Frays were opened on purpose; wrong that breaking the nodes frees the world. Their villain attacks tear the render, the pressure spikes and the Ward vents it there, so the Ward truthfully says a Fray opened where they struck. They see you as the Ward's next poster Keeper; both sides are right about each other",
-              "Clash with them (proposal: races to the same legendary villain Fray), then team up; their leader passes you the shutdown key",
+              "Cat and mouse: you chase them to stop them, then team up; their leader passes you the shutdown key. You can try to bind a legendary in a Knot, but your Threads can't hold that much data yet",
               "Decided"
             ],
             [
@@ -254,6 +254,16 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Legendaries are obtainable only after the main story. Each city has a hidden, forbidden high-concentration Fray where the Unbound hunt legendary strays; you chase them to stop them (cat and mouse), and a bind attempt there fails during the story.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Frays lie on seams between nodes, so the routes are the Ward's vent plumbing; binding calms a Fray but never closes it.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The Unbound hunt villain strays (legendaries, rare) and never take bound villains from Keepers. You fight them because cities tear open wherever they go, not over the law. Their leader is a former Ward worker from a city later sacrificed to a vent.",
