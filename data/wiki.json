@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Companions: the mentor's truth decided. Open question to r: why the copycat copies you, underneath (Claude's lean: the mentor quietly encourages it because the Ward wants a spare Champion). Then the starter's second reading, then evolution."
+              "n": "Companions: the copycat's truth decided. Open question to r: the starter's second reading (Claude's lean: familiars feel loose threads, so the starter's unease near Frays, nodes and the core is a warning read as nerves), and whether the mentor hands you the starter (proposal). Then evolution."
             }
           ]
         },
@@ -121,9 +121,9 @@
             [
               "Companions (your two friends)",
               "The copycat is your rival who copies your picks (you fight a mirror of your own team). The Maker's child stays off the battle path and investigates the Ward through their parent",
-              "Open. Proposal: the Maker's child's parent quit Kith after seeing the flaw first",
+              "The copycat starts out of pure admiration; then the mentor quietly encourages it, because the core is keyed to the Champion and the Ward wants a spare with your team and habits. On a replay, the rivalry reads as training your replacement. The Maker's child's truth runs through their parent (the mentor row)",
               "Design both at the start; battle the copycat as your rival; follow the Maker's child's leads; play as the copycat in the post-game",
-              "Roles decided; truth open"
+              "Roles and copycat's truth decided"
             ],
             [
               "The mentor (the Maker's child's parent)",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The copycat copies you out of admiration at first; later the mentor encourages it, because the Ward wants a spare Champion.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The mentor knows everything: helped design the vents, joined the Ward, and coaches you to climb. On a replay their help reads as recruitment.",
