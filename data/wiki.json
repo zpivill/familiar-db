@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "City 1 landmarks decided. r raised the Warden's arena (gym), not designed yet. Open question to r: what an arena is across all cities (Claude's lean: a Ward-built facility capping the vent around a local landmark, with a short type-themed challenge and the node visible under glass). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies."
+              "n": "Arena design decided. Open question to r: Reykjavík's Warden (Claude's lean: the harbour-master who knew the harbour before Water 7 merged in; clue: the lagoon has run colder since the arena was built). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -106,9 +106,9 @@
             ],
             [
               "Wardens and the League",
-              "Strong Keepers holding each city stable",
-              "Each arena sits on a node over the city's biggest vent",
-              "Beat them to climb",
+              "Strong Keepers holding each city stable. Each city's League arena is a public landmark where anyone can challenge the Warden: League signage, crowds, broadcasts, recognisable Ward-branded architecture around a local landmark",
+              "Each arena caps the city's main vent, the high-concentration source sealed under the floor with the node (no encounters inside); the node hums under glass, a clue in plain sight. Separate from the Knot, where pressure pools on its own",
+              "A short type-themed challenge, then the Warden",
               "Decided"
             ],
             [
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Arenas: a public, recognisable League arena in each city where anyone can challenge the Warden, in Ward-branded architecture around a local landmark, with a short type-themed challenge. It caps the city's main vent (power source, no encounters); Frays stay route encounter patches.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Reykjavík merges Water 7, the Great Naruto Bridge, Emilia's frozen forest, the Krusty Krab, the Northern Plateau and Loch Ness; Loch Ness is sealed until the post-game, when Nessie can be caught.",
