@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Evolution decided. Next row: the Champion (who they are and what they know). Roster counts on this page come from data/characters.json (175 characters, 257 forms on 2026-10-31); the game map copies still say 126."
+              "n": "Champion decided. Next row: the Unbound leader (Claude's lean: a survivor of a city sacrificed to a vent, right about the Ward, wrong about breaking the nodes). After this thread: update the game map and its copies (r asked, 2026-10-31)."
             }
           ]
         },
@@ -155,10 +155,10 @@
             ],
             [
               "The Champion",
-              "The strongest Keeper",
-              "Learns the truth too late; tries to tell you after the ceremony",
+              "The strongest Keeper and the face of the Ward's \"own a familiar, save the world\" campaign",
+              "The mentor's earlier recruit, groomed years ago exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
               "Beat them, then shut down the core",
-              "Decided; who they are is open"
+              "Decided"
             ],
             [
               "Evolution",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The Champion is the mentor's earlier recruit and the celebrity face of the Ward's campaign.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Evolution: the bond rebuilds a copy from more of its own data into a later-arc form. Second reading: a more complete copy is a stronger anchor, so the Ward celebrates it.",
