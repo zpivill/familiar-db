@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Champion decided. Next row: the Unbound leader (Claude's lean: a survivor of a city sacrificed to a vent, right about the Ward, wrong about breaking the nodes). After this thread: update the game map and its copies (r asked, 2026-10-31)."
+              "n": "Unbound leader decided. Open question to r: the proposed clash reason (both sides right about each other; a Fray opens where they struck because their unbinding spikes pressure), or a more personal clash such as them trying to unbind your starter. Then why Frays form where they do. After this thread: update the game map and its copies."
             }
           ]
         },
@@ -149,9 +149,9 @@
             [
               "The Unbound",
               "Villains hunting anime villains to break the nodes by force",
-              "Open",
+              "Leader: a survivor of a city the Ward sacrificed to a vent. Right that the Frays were opened on purpose; wrong that breaking the nodes frees the world (your own ending mistake). Proposal for the clash: their unbinding spikes pressure, the Ward vents it where they struck, and truthfully says a Fray opened where the Unbound attacked; they see you as the Ward's next poster Keeper",
               "Clash, then team up; their leader passes you the shutdown key",
-              "Decided; leader open"
+              "Leader decided; clash reason proposed"
             ],
             [
               "The Champion",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The Unbound leader is a survivor of a city the Ward sacrificed to a vent: right about the Ward, wrong about the fix. r: the clash needs a misunderstanding that ties into the lore.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The Champion is the mentor's earlier recruit and the celebrity face of the Ward's campaign.",
