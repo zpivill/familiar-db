@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "The six cities are one region stitched together by the merge (decided). Open question to r: a real-world city per theme (Claude's leans: Reykjavík, Naples, Cape Town, Tokyo, Kyoto, Prague). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. Then the anime landmarks per city. After this thread: update the game map and its copies."
+              "n": "Real-world cities decided. Now City 1 (Reykjavík, Water + Ice, the vertical slice): open question to r is which anime landmarks merge into it (Claude's leans: Water 7 canals from One Piece, the Great Naruto Bridge, Emilia's frozen forest from Re:Zero, the Krusty Krab as a gag, Loch Ness on the route). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies."
             }
           ]
         },
@@ -192,7 +192,7 @@
           "rows": [
             [
               "City 1 (vertical slice)",
-              "Proposal: Reykjavík",
+              "Reykjavík",
               "Water + Ice",
               "Open",
               "Open",
@@ -203,7 +203,7 @@
             ],
             [
               "City 2",
-              "Proposal: Naples",
+              "Hawaii",
               "Fire + Earth",
               "Open",
               "Open",
@@ -214,7 +214,7 @@
             ],
             [
               "City 3",
-              "Proposal: Cape Town",
+              "Cape Town",
               "Wind + Beast",
               "Open",
               "Open",
@@ -225,7 +225,7 @@
             ],
             [
               "City 4",
-              "Proposal: Tokyo",
+              "Akihabara",
               "Lightning + Tech",
               "Open",
               "Open",
@@ -236,7 +236,7 @@
             ],
             [
               "City 5",
-              "Proposal: Kyoto",
+              "Kyoto",
               "Light + Spirit",
               "Open",
               "Open",
@@ -247,7 +247,7 @@
             ],
             [
               "City 6",
-              "Proposal: Prague",
+              "Prague",
               "Dark + Blood",
               "Open",
               "Open",
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Cities in order: Reykjavík (Water + Ice), Hawaii (Fire + Earth), Cape Town (Wind + Beast), Akihabara (Lightning + Tech), Kyoto (Light + Spirit), Prague (Dark + Blood).",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The six cities form one region stitched together by the merge: cities from different countries sit side by side, joined by walkable routes.",
