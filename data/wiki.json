@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Step 1 done: r confirmed the spine. Step 2 started: filling the two readings table one row at a time, in this order: companions, evolution, the Champion, the Unbound leader, why Frays form where they do. Then step 3, the region beat sheet. Open question to r: what the two friends do during the journey (Claude's lean: the copycat is your rival who copies your picks; the Maker's child investigates the Ward through their parent)."
+              "n": "Companions row: roles decided (C). Open question to r: add companions in other roles? Claude's lean: keep two core friends, plus the Maker's child's parent as mentor (professor slot), guest allies per arc for duo battles, and maybe a starter familiar that talks. Then the companions' truth (second reading), then evolution."
             }
           ]
         },
@@ -120,10 +120,10 @@
             ],
             [
               "Companions (your two friends)",
-              "The Maker's child and the copycat who idolises you; you stay out of the trend together, then investigate the Ward",
+              "The copycat is your rival who copies your picks (you fight a mirror of your own team). The Maker's child stays off the battle path and investigates the Ward through their parent",
               "Open. Proposal: the Maker's child's parent quit Kith after seeing the flaw first",
-              "Design both at the start; play as the copycat in the post-game",
-              "Open, needs its own session"
+              "Design both at the start; battle the copycat as your rival; follow the Maker's child's leads; play as the copycat in the post-game",
+              "Roles decided; truth open; more companions under discussion"
             ],
             [
               "The Unbound",
@@ -233,6 +233,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Companion roles: the copycat is your mirror rival who copies your picks; the Maker's child investigates the Ward through their parent and carries the clues.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Spine confirmed by r, including the hook, the thread and fabric rule, and what makes the game unique.",
