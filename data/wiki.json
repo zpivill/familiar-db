@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Hawaii's landmarks decided. Open question to r: where each big story moment lands across cities 2-6 (Claude's lean is in the beat sheet's story beat column). Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Big story moment per city decided. r wants small story developments for every party in every city: Claude's proposal is the 'Story threads by city' table, waiting on r to approve or change. Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -208,7 +208,7 @@
               "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
               "Open",
               "Open",
-              "Proposal: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
+              "Big moment: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
               "Open",
               "Open"
             ],
@@ -219,7 +219,7 @@
               "Open",
               "Open",
               "Open",
-              "Proposal: the copycat turns as the mentor starts nudging them",
+              "Big moment: the copycat turns as the mentor starts nudging them",
               "Open",
               "Open"
             ],
@@ -230,7 +230,7 @@
               "Open",
               "Open",
               "Open",
-              "Proposal: the Maker's child finds proof the Frays were opened on purpose",
+              "Big moment: the Maker's child finds proof the Frays were opened on purpose",
               "Open",
               "Open"
             ],
@@ -241,7 +241,7 @@
               "Open",
               "Open",
               "Open",
-              "Proposal: team-up, node attack, villains freeze, leader taken, key passed to you",
+              "Big moment: team-up, node attack, villains freeze, leader taken, key passed to you",
               "Open",
               "Open"
             ],
@@ -252,15 +252,102 @@
               "Open",
               "Open",
               "Open",
-              "Proposal: alone again and angrier; the darkest city before the Circle",
+              "Big moment: alone again and angrier; the darkest city before the Circle",
               "Open",
               "Open"
             ]
           ]
         },
         {
+          "title": "Story threads by city",
+          "cols": [
+            "City",
+            "Big moment (decided)",
+            "Copycat (proposal)",
+            "Maker's child (proposal)",
+            "Mentor (proposal)",
+            "Starter (proposal)",
+            "Unbound (proposal)",
+            "Champion (proposal)",
+            "Guest ally (proposal)"
+          ],
+          "rows": [
+            [
+              "1 Reykjavík",
+              "Setup: devices, starter, first rival battle, a glimpse of the Unbound",
+              "First rival battle on the Great Naruto Bridge, picking a team that counters your starter",
+              "Asks their parent why they quit Kith and gets a dodge",
+              "Hands you your starter: strong Keepers keep cities safe (true)",
+              "Uneasy on the arena's glass floor",
+              "Figures leaving the frozen forest (the Knot)",
+              "Only on the arena's screens: the campaign ad",
+              "None yet"
+            ],
+            [
+              "2 Hawaii",
+              "First real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
+              "Beat the Warden a day before you and brags about it",
+              "Notices the new Fray lies on a line between two arenas; keeps it as a hunch",
+              "Turns up after the tear to help the Ward, oddly calm, knows too much",
+              "Reacts a moment before the Fray tears",
+              "First clash at Fire Mountain, with a lieutenant; the leader is not seen",
+              "Photo op in the torn district: it's handled",
+              "A Swordsmith Village Keeper, duo against the Unbound"
+            ],
+            [
+              "3 Cape Town",
+              "The copycat turns as the mentor starts nudging them",
+              "Private training with the mentor; starts copying your exact team; the rivalry turns cold",
+              "Notices their parent spending time with the copycat; jealous, then suspicious",
+              "Offers the copycat what they want: to be as strong as you",
+              "Wary of the copycat's mirror familiars",
+              "A member warns you they are grooming you; you dismiss it (it's true)",
+              "First meeting in person: kind, tired, says they were like you once",
+              "A ranger Keeper, duo against a stray stampede"
+            ],
+            [
+              "4 Akihabara",
+              "The Maker's child finds proof that the Frays were opened on purpose",
+              "Refuses to believe the proof and sides with the mentor: the first rift",
+              "Gets into old Kith servers and finds vent schematics",
+              "Nearly catches their child, then quietly lets it go and keeps recruiting",
+              "Distressed in the server rooms near the node",
+              "After the same servers; a standoff ends in a truce offer",
+              "Broadcast interview about stability numbers (all true)",
+              "A local tech Keeper, duo against strays from a tear in the server district"
+            ],
+            [
+              "5 Kyoto",
+              "Team-up: node attack, villains freeze, leader taken, key passed to you",
+              "Arrives on the Ward's side to stop you: a battle at the shrine",
+              "Confronts their parent",
+              "Arrives after the freeze and lets you go: they want you to keep climbing",
+              "Calm at the shrines, panics at the node",
+              "Leader fights beside you, is taken, passes you the key",
+              "Present at the arrest; sees something that plants the first doubt",
+              "The Unbound leader, duo at the node"
+            ],
+            [
+              "6 Prague",
+              "Alone again and angrier; the darkest city before the Circle",
+              "Final rival battle before the Circle with a perfect mirror team",
+              "Goes quiet; the friend group splits",
+              "Congratulates you before the Circle: the most chilling scene on a replay",
+              "Constant unease",
+              "Scattered; a member blames you for the leader's capture",
+              "Sends a message: wants to talk after the ceremony",
+              "None: you are alone on purpose"
+            ]
+          ]
+        },
+        {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Big story moment per city: Hawaii first Unbound clash, Cape Town the copycat turns, Akihabara the proof, Kyoto the team-up and key, Prague alone and darkest. Every party also gets small developments in every city.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Hawaii merges Fire Mountain, Swordsmith Village, the Hidden Stone Village and Ishigami Village, with Megumin's craters on the route.",
