@@ -1,4 +1,4 @@
-// Runs the same single-thread batch in JS and Rust and compares the totals:  node engine/tests/parity.mjs [count] [format] [seed] [--draft] [--hp=3] [--ai=search --iters=16]
+// Runs the same single-thread batch in JS and Rust and compares the totals:  node engine/tests/parity.mjs [count] [format] [seed] [--draft] [--hp=3] [--ai=search --iters=16] [--hidden]
 import fs from 'fs';
 import { execFileSync } from 'child_process';
 import { prepare } from '../../sim/battle.js';
@@ -11,7 +11,7 @@ const flag = n => process.argv.find(a => a.startsWith('--' + n + '='))?.split('=
 const [count = '50', format = 'comp', seed = '1'] = args;
 const data = prepare(JSON.parse(fs.readFileSync(new URL('data/characters.json', here))), JSON.parse(fs.readFileSync(new URL('data/moves.json', here))).moves);
 if (flag('hp')) RULES.hpScale = +flag('hp');
-const opts = { format, count: +count, seed: +seed, ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}), ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('ai') ? { ai: flag('ai'), iters: +flag('iters') || 128 } : {}) };
+const opts = { format, count: +count, seed: +seed, ...(flag('draft') ? { draft: true, bring: +flag('bring') || 8 } : {}), ...(flag('forms') ? { forms: flag('forms') } : {}), ...(flag('trained') ? { training: 'ai', items: 'ai' } : {}), ...(flag('ai') ? { ai: flag('ai'), iters: +flag('iters') || 128 } : {}), ...(flag('hidden') ? { hidden: true } : {}) };
 let t = Date.now();
 const J = runBatch(data, opts);
 const jsMs = Date.now() - t;

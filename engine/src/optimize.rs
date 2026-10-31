@@ -52,7 +52,7 @@ pub struct Field { pub teams: Vec<(Vec<usize>, Option<usize>)> }   // opponent t
 // Win rate of `cand` (entrant cand.e) over n battles: it joins each meta team in turn, against a random field team.
 fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, seed: f64, cache: &mut HashMap<String, Vec<Build>>) -> f64 {
     let e = cand.e;
-    let bo0 = BattleOpts { duos: o.duos(), level: o.level, turn_cap: o.turn_cap, plans: [None, None] };
+    let bo0 = BattleOpts { duos: o.duos(), level: o.level, turn_cap: o.turn_cap, plans: [None, None], beliefs: None, assume: None };
     let mut tot = 0.0;
     for i in from..from + n {
         let mut r = rng(seed + (i * 7919) as f64);
@@ -88,7 +88,7 @@ fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, 
         }
         let dr = if o.draft { Some(run_draft(d, &sides, &builds, &mut r, o, &arch, cache)) } else { None };
         let fight: [&[Build]; 2] = match &dr { Some(x) => [&x.six[0], &x.six[1]], None => [&builds[0], &builds[1]] };
-        let b = run_battle(d, fight, r.clone(), &BattleOpts { plans: arch, ..bo0 });
+        let b = run_battle(d, fight, r.clone(), &BattleOpts { plans: arch, beliefs: None, ..bo0 });
         tot += if b.winner == me as i32 { 1.0 } else if b.winner < 0 { o.draw_score } else { 0.0 };
     }
     tot / n as f64
@@ -169,7 +169,7 @@ fn speed_spreads(d: &Data, cur: &Build, threats: &[Threat], level: f64) -> Vec<(
 
 // The threat's best hit on b, as a share of b's Vitality (expected damage, no crit), and the defence it hits.
 fn best_hit(d: &Data, o: &Opts, t: &Build, b: &Build) -> (f64, usize) {
-    let bo = BattleOpts { duos: false, level: o.level, turn_cap: 0, plans: [None, None] };   // cap 0: set up (entry abilities), no turns
+    let bo = BattleOpts { duos: false, level: o.level, turn_cap: 0, plans: [None, None], beliefs: None, assume: None };   // cap 0: set up (entry abilities), no turns
     let mut x = run_battle_with(d, [std::slice::from_ref(t), std::slice::from_ref(b)], rng(1.0), &bo, None);
     let (mut best, mut key) = (0.0, GRD);
     for k in 0..x.mons[0].moves.len() {

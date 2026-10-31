@@ -1,6 +1,7 @@
 // Fast battle sim, a port of sim/ with the same results for the same seed and worker count.
 //   familiar-sim [count] [duel|team|duos|comp] [seed]  with the flags of sim/cli.mjs:
 //   --trained --level=50 --size=4 --draft --bring=10 --hp=3 --forms=all --workers=4 --search=best|meta --arch --ban=2 --json=out.json
+//   --hidden (each battle AI sees the foes' builds only as it guessed them, as in the draft)
 //   --ai=search --iters=128 (both sides play with the search AI), --recheck=meta.json (its final round robin with the search AI)
 //   --optimize=meta.json[,more.json] [--per=200 --passes=2 --only=a,b] (build search against their teams, book to --json),
 //   --builds=book.json[,more.json] (play with a book; several books give each character all their builds, picked at random)
@@ -37,6 +38,7 @@ fn main() {
     let seed: f64 = args.get(2).unwrap_or(&"1").parse().unwrap();
     let num = |n: &str| flag(n).map(|v| v.parse::<f64>().unwrap());
     let mut o = batch::Opts::new(format, count, seed, flag("draft").is_some(), num("bring").map_or(8, |b| b as usize), flag("trained").is_some(), num("level"), num("size").map(|s| s as usize), flag("forms").as_deref() == Some("all"));
+    o.hidden = flag("hidden").is_some();
     if flag("ai").as_deref() == Some("search") || flag("recheck").is_some() { o.search_ai = Some(num("iters").map_or(128, |i| i as usize)); }
     if single {
         let mut s = batch::Stats::default();

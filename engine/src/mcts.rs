@@ -63,7 +63,8 @@ fn playout(f: &Fixed, rec: &[Enc], upto: usize, t: i32, me: usize, pair: &[(usiz
             }
         }
     });
-    let b = run_battle_with(f.d, f.teams, rng(f.seed), f.bo, Some(decide));
+    let bo = BattleOpts { beliefs: f.bo.beliefs.clone(), assume: Some((me, t)), ..*f.bo };   // with hidden builds, the foes have the builds we believe from turn t on
+    let b = run_battle_with(f.d, f.teams, rng(f.seed), &bo, Some(decide));
     let hp = |s: usize| b.sides[s].mons.iter().fold(0.0, |n, &m| n + if b.mons[m].fainted { 0.0 } else { b.mons[m].hp / b.mons[m].maxhp }) / b.sides[s].mons.len() as f64;
     (if b.winner == me as i32 { 1.0 } else { 0.0 }) + 0.1 * (hp(me) - hp(1 - me))
 }

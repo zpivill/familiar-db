@@ -151,7 +151,7 @@ batch.runBatch(opts) ─ for each battle:
 
 ## 6. How the battle AI chooses moves
 
-`sim/ai.js`. Both sides use the same AI with full knowledge of both teams, so differences in results should come from the characters, not from information.
+`sim/ai.js`. Both sides use the same AI. By default it sees both teams' exact builds; with `--hidden` (batch `opts.hidden`, battle `opts.beliefs`) each side sees the foes' builds only as its draft guessed them (the book build with `--builds`), except the moves a foe has been seen using and an item it has used up. Abilities stay hidden even after they show (a shortcut). The search AI then also plays its playouts out against those guessed builds (`opts.assume`).
 
 Each turn the AI scores every usable move against every target, adds a little noise (`W.noise`), then considers switching (always when the foes knock it out this turn, its matchup is bad and a bench character's is good; otherwise by the `W.switch*` rule). Protect's big "would be knocked out" bonus ignores foes it can knock out first. In doubles the first character asked plans the whole side: it takes each character's 4 best options and picks the best pair, scored together by `pairValue` (no doubled Tailwind, field or screen, no Helping Hand next to a partner that isn't attacking, a small cut for two hits on a foe one of them already knocks out, a bonus for two hits that only knock out together).
 
@@ -168,7 +168,7 @@ Each turn the AI scores every usable move against every target, adds a little no
 
 **The search AI** (`sim/mcts.js`) is a second, slow AI built on top of this one. Each turn it takes each of its characters' 4 best options from the scoring above (plus a switch) and, for each pair, plays the rest of the battle out with new luck, 128 times a turn in all, choosing which pair to try next by UCB1. It keeps the pair it tried most. In those playouts the opponent plays as the current AI (2 in 3) or the frozen v1, picked per playout, so the search doesn't count on the foe playing like itself (greedy was dropped 2026-10-31: it rewarded plays that only beat a foe who never protects). A battle can't be copied mid-way, so each playout replays the battle from its seed with every recorded choice (both sides' choices are made outside the engine, with their own random numbers, so the replay is exact). It takes a few seconds a battle, so it's for the bench and for checking top teams, not 200k meta chains. It can run both sides of a battle (`playSearch(..., [0, 1])`, or `opts.ai = 'search'` in a batch): `cli.mjs --recheck=meta.json` uses that to replay a saved meta chain's final round robin and print each team's win rate under the fast AI and under the search AI, so a meta can be checked under strong play.
 
-**What the fast AI doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and doesn't scout hidden builds in battle (it sees everything). See the checks in section 11.
+**What the fast AI doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and, without `--hidden`, sees every foe build exactly. See the checks in section 11.
 
 ## 7. How the draft AI picks its 6
 

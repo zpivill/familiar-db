@@ -34,6 +34,7 @@ pub struct Opts {
     pub legend_cap: Option<usize>, pub pick_legend_cap: usize, pub forms_all: bool, pub movesets: Movesets,
     pub ladder: Option<Ladder>, pub offset: usize,
     pub search_ai: Option<usize>,   // opts.ai 'search' with this many playouts a turn: both sides play with the search AI (mcts.rs)
+    pub hidden: bool,               // --hidden: each battle AI sees the foes' builds only as it guessed them (batch.js beliefs)
 }
 impl Opts {
     // opts as the CLI gives them, then withFormat() and teamSize()
@@ -45,7 +46,7 @@ impl Opts {
         Opts { format, count, seed, draft: comp && draft, bring, team_size, level: lv, learn_level: if comp { 100.0 } else { lv },
             training: comp || trained, items: comp || trained, turn_cap: if comp { COMP_TURN_CAP } else { TURN_CAP }, draw_score: if comp { COMP_DRAW } else { 0.5 },
             legend_cap: if comp { Some(if draft { bring_legend_cap(bring) } else { COMP_LEGEND_CAP }) } else { None },
-            pick_legend_cap: COMP_LEGEND_CAP, forms_all, movesets: Movesets::Smart, ladder: None, offset: 0, search_ai: None }
+            pick_legend_cap: COMP_LEGEND_CAP, forms_all, movesets: Movesets::Smart, ladder: None, offset: 0, search_ai: None, hidden: false }
     }
     pub fn duos(&self) -> bool { matches!(self.format, Format::Duos | Format::Comp) }
 }
@@ -222,7 +223,7 @@ fn record(s: &mut Stats, d: &Data, b: &Battle, builds: [&[Build]; 2], o: &Opts) 
     }
 }
 
-pub struct DraftOut { pub six: [Vec<Build>; 2], pub drafts: [Draft; 2] }
+pub struct DraftOut { pub six: [Vec<Build>; 2], pub drafts: [Draft; 2], pub guesses: [Vec<Build>; 2] }
 pub fn run_draft(d: &Data, sides: &[Vec<usize>; 2], builds: &[Vec<Build>; 2], r: &mut Rng, o: &Opts, arch: &[Option<usize>; 2], cache: &mut HashMap<String, Vec<Build>>) -> DraftOut {
     let mut guess = |t: &[usize]| -> Vec<Build> {
         let k = team_key(d, t);
@@ -240,7 +241,7 @@ pub fn run_draft(d: &Data, sides: &[Vec<usize>; 2], builds: &[Vec<Build>; 2], r:
     let g0 = guess(&sides[0]);
     let d1 = draft_side(d, &builds[1], &g0, o.level, o.pick_legend_cap, must(1).as_ref(), r);
     let six = [d0.order.iter().map(|&i| builds[0][i].clone()).collect(), d1.order.iter().map(|&i| builds[1][i].clone()).collect()];
-    DraftOut { six, drafts: [d0, d1] }
+    DraftOut { six, drafts: [d0, d1], guesses: [g1, g0] }
 }
 fn record_draft(s: &mut Stats, d: &Data, b: &Battle, builds: &[Vec<Build>; 2], dr: &DraftOut, o: &Opts) {
     for si in 0..2 {
@@ -381,7 +382,7 @@ pub fn run_batch(d: &Data, o: &Opts, s: &mut Stats, cache: &mut HashMap<String, 
     let lo = o.ladder.as_ref();
     let vs: Option<Vec<Vec<usize>>> = lo.and_then(|l| l.vs.as_ref()).map(|v| v.iter().map(|ks| ks.iter().filter_map(|k| d.ent_idx.get(k).copied()).collect::<Vec<usize>>()).filter(|t: &Vec<usize>| t.len() == size).collect());
     let vs_w: Option<Vec<f64>> = vs.as_ref().map(|v| lo.unwrap().vs_weights.clone().unwrap_or_else(|| vec![1.0; v.len()]));
-    let bo = BattleOpts { duos: o.duos(), level: o.level, turn_cap: o.turn_cap, plans: [None, None] };
+    let bo = BattleOpts { duos: o.duos(), level: o.level, turn_cap: o.turn_cap, plans: [None, None], beliefs: None, assume: None };
     for n in 0..o.count {
         let mut used: Vec<usize> = vec![];
         let team = |r: &mut Rng, used: &mut Vec<usize>| -> Vec<usize> {
@@ -431,8 +432,12 @@ pub fn run_batch(d: &Data, o: &Opts, s: &mut Stats, cache: &mut HashMap<String, 
             builds[i] = bs;
         }
         let dr = if o.draft { Some(run_draft(d, &sides, &builds, &mut r, o, &arch_ids, cache)) } else { None };
-        let bo = BattleOpts { plans: arch_ids, ..bo };
         let fight: [&[Build]; 2] = match &dr { Some(x) => [&x.six[0], &x.six[1]], None => [&builds[0], &builds[1]] };
+        let beliefs = if o.hidden { Some(std::sync::Arc::new([0usize, 1].map(|s| {
+            let g = match &dr { Some(x) => x.guesses[s].clone(), None => guess_builds(d, &sides[1 - s], o.learn_level, o.duos()) };
+            Some(fight[1 - s].iter().map(|b| g.iter().find(|x| x.e == b.e).unwrap().clone()).collect::<Vec<Build>>())
+        }))) } else { None };
+        let bo = BattleOpts { plans: arch_ids, beliefs, ..bo };
         let b = match o.search_ai {
             Some(iters) => crate::mcts::play_search(d, fight, &mut r, &bo, &[0, 1], crate::mcts::Bot::Mirror, iters, 4).b,
             None => { let b = run_battle(d, fight, r.clone(), &bo); r = b.r.clone(); b }

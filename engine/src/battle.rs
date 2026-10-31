@@ -143,7 +143,9 @@ pub struct Side {
 #[derive(Clone, Debug)]
 pub struct Field { pub fx: FieldFx, pub owner: usize, pub by: MonId }
 
-pub struct BattleOpts { pub duos: bool, pub level: f64, pub turn_cap: i32, pub plans: [Option<usize>; 2] }
+// beliefs[s]: the builds side s believes the other side's characters have, in team order (battle.js opts.beliefs).
+// assume (side, turn): from that turn on the side's foes really have the builds it believes (battle.js opts.assume).
+pub struct BattleOpts { pub duos: bool, pub level: f64, pub turn_cap: i32, pub plans: [Option<usize>; 2], pub beliefs: Option<std::sync::Arc<[Option<Vec<Build>>; 2]>>, pub assume: Option<(usize, i32)> }
 
 // What the engine asks opts.decide (battle.js): a replacement for side s from `options`, or mon m's action
 // (extra: a second action the same turn). None leaves it to the AI.
@@ -157,6 +159,7 @@ pub struct Battle<'a> {
     pub turn_cap: i32,
     pub w: &'static ai::Weights,   // the AI's weights (the v1 bot swaps in its own)
     pub decide: Option<Decide<'a>>,
+    pub views: [Option<Vec<Mon>>; 2],   // each side's view of the foes' builds (battle.js views)
 }
 
 const OWN_STATUS: [(St, Type); 4] = [(St::Burn, 0), (St::Freeze, 2), (St::Stun, 5), (St::Bleed, 13)];
@@ -464,10 +467,36 @@ impl<'a> Battle<'a> {
         let options = self.bench(s);
         if options.is_empty() { return false; }
         let next = if pick_random { options[self.r.pick_i(options.len())] } else {
-            match self.ask(Ask::Replace { s, options: &options }) { Some(Act::Switch { to }) => to, _ => ai::choose_replacement(self, s, &options) }
+            let keep = self.believe(s);
+            let x = match self.ask(Ask::Replace { s, options: &options }) { Some(Act::Switch { to }) => to, _ => ai::choose_replacement(self, s, &options) };
+            self.unbelieve(s, keep); x
         };
         self.switch_in(next, slot, how);
         true
+    }
+    // While side s chooses, every foe shows side s's believed build (stats, item, ability, moves) in place of its own;
+    // the moves it has been seen using and an item it has used up show as they really are (battle.js believe).
+    // shortcut: an ability stays hidden even after it shows (an immunity, an entry effect); tracking reveals is the upgrade.
+    fn believe(&mut self, s: usize) -> Vec<(MonId, Vec<MoveSlot>, [f64; 5], f64, f64, Option<Item>, usize, usize)> {
+        let views = match &self.views[s] { Some(v) => v, None => return vec![] };
+        let foes = self.sides[1 - s].mons.clone();
+        let mut keep = vec![];
+        for (k, &m) in foes.iter().enumerate() {
+            let v = &views[k]; let x = &mut self.mons[m];
+            keep.push((m, x.moves.clone(), x.raw, x.maxhp, x.hp, x.item, x.ability, x.base_ability));
+            let seen: Vec<MoveSlot> = x.moves.iter().filter(|y| x.t.moves.iter().any(|t| t.0 == y.mv)).copied().collect();
+            let n = v.moves.len().max(seen.len());
+            let mut mv = seen.clone();
+            mv.extend(v.moves.iter().filter(|y| !seen.iter().any(|z| z.mv == y.mv)).copied());
+            mv.truncate(n);
+            x.moves = mv; x.raw = v.raw; x.hp = x.hp / x.maxhp * v.maxhp; x.maxhp = v.maxhp;
+            if !x.item_used { x.item = v.item; }
+            if x.ability == x.base_ability { x.ability = v.ability; x.base_ability = v.ability; }
+        }
+        keep
+    }
+    fn unbelieve(&mut self, _s: usize, keep: Vec<(MonId, Vec<MoveSlot>, [f64; 5], f64, f64, Option<Item>, usize, usize)>) {
+        for (m, moves, raw, maxhp, hp, item, ab, bab) in keep { let x = &mut self.mons[m]; x.moves = moves; x.raw = raw; x.maxhp = maxhp; x.hp = hp; x.item = item; x.ability = ab; x.base_ability = bab; }
     }
     fn ask(&mut self, q: Ask) -> Option<Act> {
         let mut f = self.decide.take()?;
@@ -1276,7 +1305,8 @@ pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &Battle
             futures: vec![], faint_turn: -9, time_stop: -1, gift: None, plan: o.plans[i], baton: None, quick_guard: NONE, wide_guard: NONE, joint_plan: None });
     }
     let s1 = sides.pop().unwrap(); let s0 = sides.pop().unwrap();
-    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: &ai::W, decide };
+    let views = match &o.beliefs { Some(bl) => [0usize, 1].map(|s| bl[s].as_ref().map(|bs| bs.iter().map(|x| make_mon(d, x, o.level, 1 - s)).collect())), None => [None, None] };
+    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: &ai::W, decide, views };
     let slots = if o.duos { 2 } else { 1 };
     for s in 0..2 {
         b.sides[s].active = vec![None; slots];
@@ -1293,16 +1323,22 @@ pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &Battle
     while !b.over {
         b.turn += 1;
         if b.turn > b.turn_cap { b.over = true; b.winner = -1; break; }
+        if let Some((si, t)) = o.assume { if t == b.turn { b.believe(si); } }   // kept: not undone
         for s in 0..2 { for m in b.actives(s) { if b.held(m, I_INCENSE) && (b.mons[m].vol.taunt > 0 || b.mons[m].vol.encore.is_some()) {
             b.use_item(m); b.mons[m].vol.taunt = 0; b.mons[m].vol.encore = None;
         } } }
         b.cache = Some(vec![f64::NAN; n_cache]);
         let mut acts: Vec<(MonId, Act, f64, f64, f64)> = vec![]; // mon, act, pri, spd, tie
-        for s in 0..2 { for m in b.actives(s) {
-            let act = b.action(m, false);
-            if let Act::Move { slot, .. } = act { b.mons[m].vol.planned_attack = b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status); }
-            acts.push((m, act, 0.0, 0.0, 0.0));
-        } }
+        for s in 0..2 {
+            if b.views[0].is_some() || b.views[1].is_some() { b.cache = Some(vec![f64::NAN; n_cache]); }   // each side's estimates use its own view of the foes
+            let keep = b.believe(s);
+            for m in b.actives(s) {
+                let act = b.action(m, false);
+                if let Act::Move { slot, .. } = act { b.mons[m].vol.planned_attack = b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status); }
+                acts.push((m, act, 0.0, 0.0, 0.0));
+            }
+            b.unbelieve(s, keep);
+        }
         b.cache = None;
         for a in acts.iter_mut() {
             let m = a.0;
@@ -1329,7 +1365,9 @@ pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &Battle
                     if b.mons[m].moves.get(slot).map_or(true, |x| d.moves[x.mv].cat != Cat::Status) { b.mons[m].vol.last_attack_turn = b.turn; }
                     if b.mons[m].vol.extra_turn == b.turn && !b.mons[m].fainted && b.is_active(m) {
                         b.mons[m].vol.extra_turn = 0;
+                        let (si, keep) = (b.mons[m].side, b.believe(b.mons[m].side));
                         let again = b.action(m, true);
+                        b.unbelieve(si, keep);
                         if let Act::Move { slot, target } = again { b.use_move(m, slot, target); }
                     }
                 }

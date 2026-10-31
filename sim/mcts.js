@@ -45,12 +45,13 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
   const rec = [], turnStart = {}, positions = [], searching = [].concat(me), plan = [null, null];
 
   // One playout: replay the first `upto` recorded choices, then from turn T on our side plays `pair` this turn
-  // and the fast AI after it, and the foe plays `style` throughout. Returns win (1) or not (0), plus a little
-  // for the Vitality lead so close results still rank.
+  // and the fast AI after it, and the foe plays `style` throughout. With hidden builds (bo.beliefs), the foes have
+  // the builds we believe from turn T on. Returns win (1) or not (0), plus a little for the Vitality lead so close
+  // results still rank.
   function playout(upto, T, me, pair, style, luck) {
     const r = srng(seed), bot = BOTS[style];
     let i = 0, branched = false;
-    const B = runBattle(data, teams, { ...bo, rng: r, decide: (kind, B, x, opts, extra) => {
+    const B = runBattle(data, teams, { ...bo, rng: r, assume: { side: me, turn: T }, decide: (kind, B, x, opts, extra) => {
       if (i < upto) { const d = rec[i++]; return kind === 'replace' ? x.mons[d] : dec(B, x, d); }
       if (!branched) { branched = true; r.swap(luck); }
       if (kind === 'replace') return x.i !== me && bot.replace ? bot.replace(B, x, opts) : null;
