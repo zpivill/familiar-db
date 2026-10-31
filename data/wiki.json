@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Real-world cities decided. Now City 1 (Reykjavík, Water + Ice, the vertical slice): open question to r is which anime landmarks merge into it (Claude's leans: Water 7 canals from One Piece, the Great Naruto Bridge, Emilia's frozen forest from Re:Zero, the Krusty Krab as a gag, Loch Ness on the route). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies."
+              "n": "City 1 landmarks decided. r raised the Warden's arena (gym), not designed yet. Open question to r: what an arena is across all cities (Claude's lean: a Ward-built facility capping the vent around a local landmark, with a short type-themed challenge and the node visible under glass). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies."
             }
           ]
         },
@@ -194,7 +194,7 @@
               "City 1 (vertical slice)",
               "Reykjavík",
               "Water + Ice",
-              "Open",
+              "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
               "Open",
               "Open",
               "Open",
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Reykjavík merges Water 7, the Great Naruto Bridge, Emilia's frozen forest, the Krusty Krab, the Northern Plateau and Loch Ness; Loch Ness is sealed until the post-game, when Nessie can be caught.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Cities in order: Reykjavík (Water + Ice), Hawaii (Fire + Earth), Cape Town (Wind + Beast), Akihabara (Lightning + Tech), Kyoto (Light + Spirit), Prague (Dark + Blood).",
