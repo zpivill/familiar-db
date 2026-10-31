@@ -383,3 +383,17 @@ Each option was applied to a copy of the data, the changed character re-fitted (
 - Pain and Aizen are Calm Mind + Recover walls: their abilities are near-ties, and only removing Calm Mind (or Spacial Rend for Pain) moves them.
 - Weak legendaries (Pucci, Homura, Blackbeard, about 39%) gain only 1-2 points from one better move.
 - The Zero Requiem variants used a throwaway engine switch that is not in the repo.
+
+## AI gap check #1: does the draft guess foe builds from the book? (2026-10-31)
+
+Gap #1 of the [AI gap list](https://claude.ai/artifact/5uwDQKZMqXFJ3aX8xqh9ut) said the draft AI guesses foe builds from the rule-based builds even with `--builds`. It does not: `guess_builds` calls `make_build`, which returns the book build when one is loaded (checked directly: 7 of 8 guesses equal the book build; the 8th differs only in item, because the item handout dedupes a repeated item). With several books, the guess is one of the character's book builds, the same one every time, while the real team picks one at random. Only the Rust sim reads books, so the JS side has nothing to change.
+
+Prediction hit (`predictionHit`: share of the foe's picked 6 the draft predicted / exact 6), 20k draft battles, comp, bring 8, Vitality x3, every form:
+
+| Builds | overlap, seed 1 / 2 | exact 6, seed 1 / 2 |
+|---|---|---|
+| rule-based | 91.2% / 91.3% | 51.9% / 52.4% |
+| book P only | 96.1% / 96.0% | 77.1% / 76.6% |
+| 4 averaged books | 93.6% / 93.5% | 63.5% / 63.3% |
+
+So the draft predicts better with books, not worse; #1's "done when" already holds and no code changed. The 16-seed numbers above therefore stand as they are (rerunning without a change gives the same runs). It also rules #1 out as the cause of #12 (runs agree less with books): book P alone, where the guess is nearly exact, agrees least (0.49). With books the draft effectively sees the foe's exact builds, which belongs to the hidden-information gaps #2 and #3.
