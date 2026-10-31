@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "City order and how cities are built are decided. Tier check (175 characters): the order fits the hidden tiers, except that City 1 has only 2 first-route Water/Ice characters (Murata, Shawn Frost); Claude's lean is to let City 1's Frays include a few pre-mid Water/Ice characters as rare finds. Open question to r: are the six cities one region stitched together by the merge, or spread across the world? Then pick a real-world city per theme. After this thread: update the game map and its copies."
+              "n": "The six cities are one region stitched together by the merge (decided). Open question to r: a real-world city per theme (Claude's leans: Reykjavík, Naples, Cape Town, Tokyo, Kyoto, Prague). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. Then the anime landmarks per city. After this thread: update the game map and its copies."
             }
           ]
         },
@@ -192,7 +192,7 @@
           "rows": [
             [
               "City 1 (vertical slice)",
-              "Open",
+              "Proposal: Reykjavík",
               "Water + Ice",
               "Open",
               "Open",
@@ -203,7 +203,7 @@
             ],
             [
               "City 2",
-              "Open",
+              "Proposal: Naples",
               "Fire + Earth",
               "Open",
               "Open",
@@ -214,7 +214,7 @@
             ],
             [
               "City 3",
-              "Open",
+              "Proposal: Cape Town",
               "Wind + Beast",
               "Open",
               "Open",
@@ -225,7 +225,7 @@
             ],
             [
               "City 4",
-              "Open",
+              "Proposal: Tokyo",
               "Lightning + Tech",
               "Open",
               "Open",
@@ -236,7 +236,7 @@
             ],
             [
               "City 5",
-              "Open",
+              "Proposal: Kyoto",
               "Light + Spirit",
               "Open",
               "Open",
@@ -247,7 +247,7 @@
             ],
             [
               "City 6",
-              "Open",
+              "Proposal: Prague",
               "Dark + Blood",
               "Open",
               "Open",
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The six cities form one region stitched together by the merge: cities from different countries sit side by side, joined by walkable routes.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "City order: Water+Ice, Fire+Earth, Wind+Beast, Lightning+Tech, Light+Spirit, Dark+Blood. The two types are each city's core; other types appear too, and a character can be catchable in several areas. Each city is a real-world city that evokes its types, merged with famous type-related places and structures from several anime (not one anime per city).",
