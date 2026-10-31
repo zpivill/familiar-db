@@ -571,3 +571,14 @@ That pointed to three kinds of moves the fast AI scored wrongly (JS and Rust; th
 The meta teams' mean gap on seed 1 went from 4.2 to 2.8. Strength against v3 is 55.1 / 39.5 and 55.6 / 38.9, about the same as after #8: these moves are rare. JS and Rust identical (1,500 comp draft battles plus the usual set).
 
 The pooled move-usage table also shows what's left. The fast AI uses **Helping Hand** (Hanataro 77% vs 39%, Escanor 48% vs 22%, Shirou, Komatsu, Kita, Baymax) and **setup moves** (Swords Dance, Nasty Plot, Dead Calm) about twice as often as the search AI. It also uses Trick Room and Tailwind more and attacks less. These are weights (`W.setup`, Helping Hand's value, `W.statusScale`) rather than missing effects, so they belong to gap #9 (tuning against the search AI).
+
+## AI gap #9: tuning the weights against the search AI (2026-10-31)
+
+I tried fitting the fast AI's weights to the search AI's choices instead of to wins against fixed bots. The loss was the per-character move-usage difference (total variation, characters with 150+ search uses) plus the archetype gap, on the two round robins above. Each candidate played 20k fast battles a seed, with the weights set through the new `FAMILIAR_W` override. The search reference was the 4k search runs after the move fixes. I ran a coordinate search over 10 weights (setup, statusScale, a new `helpingHand` multiplier, Tailwind, Trick Room, protectSave, speedFlip, heal, protect, threat), each tried at x0.5, x0.75, x1.33 and x2, in 2 passes.
+
+| | usage difference | archetype gap | loss |
+|---|---|---|---|
+| current weights | 17.3% | 5.8 | 23.1 |
+| best found (setup 1.18, statusScale 1.10, Tailwind 42) | 16.3% | 5.5 | 21.8 |
+
+**Result: no real gain.** The best set is about 1 point better, which is within the run-to-run noise: Helping Hand at x0.75 "won" and then lost again in the same pass, and the second pass found nothing. The Helping Hand and setup overuse doesn't go away by turning global weights, so it's in the situations, not the overall weight. **No weights changed.** I didn't run the gap's own test (gains hold against an opponent not used in tuning), because there was no gain to test. Kept as tools: `FAMILIAR_W`, and `W.helpingHand` (1, so no change in play).

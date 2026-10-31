@@ -5,21 +5,21 @@ use crate::battle::*;
 use crate::data::*;
 use crate::rules::{stage_mult, HELMET, POLICY, LIFE_ORB_COST};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Weights {
     pub noise: f64, pub ko: f64, pub ko_priority: f64, pub status_chance: f64, pub flinch: f64, pub recoil: f64, pub recharge: f64,
     pub threat: f64, pub ally_finish: f64, pub hh_ko: f64, pub speed_flip: f64, pub protect_save: f64, pub protect_ally: f64,
     pub wide_guard: f64, pub follow_setup: f64, pub follow_save: f64, pub setup: f64, pub heal: f64, pub status_move: f64,
     pub tailwind: f64, pub trick_room: f64, pub screen: f64, pub protect: f64, pub status_scale: f64, pub switch_bad: f64,
     pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64, pub predict_protect: f64,
-    pub switch_spread: f64, pub switch_next: f64, pub switch_cost: f64, pub switch_ko: f64, pub bind: f64,
+    pub switch_spread: f64, pub switch_next: f64, pub switch_cost: f64, pub switch_ko: f64, pub bind: f64, pub helping_hand: f64,
 }
 pub const W: Weights = Weights {
     noise: 0.166, ko: 73.7, ko_priority: 32.7, status_chance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
     threat: 11.3, ally_finish: 16.0, hh_ko: 10.7, speed_flip: 27.1, protect_save: 310.0, protect_ally: 29.0, wide_guard: 0.321,
     follow_setup: 40.6, follow_save: 81.2, setup: 1.78, heal: 85.9, status_move: 0.934, tailwind: 56.6, trick_room: 57.5,
     screen: 29.9, protect: 6.0, status_scale: 1.47, switch_bad: -0.369, switch_gain: 1.43, switch_p: 0.696, overkill: 0.389, combo: 15.2,
-    predict_protect: 0.8, switch_spread: 0.6, switch_next: 1.0, switch_cost: 40.0, switch_ko: 73.7, bind: 0.5,
+    predict_protect: 0.8, switch_spread: 0.6, switch_next: 1.0, switch_cost: 40.0, switch_ko: 73.7, bind: 0.5, helping_hand: 1.0,
 };
 
 fn max_of(xs: impl Iterator<Item = f64>) -> f64 { xs.fold(f64::NEG_INFINITY, |a, b| if b > a { b } else { a }) }
@@ -123,7 +123,7 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId], pre
             let h = best_hit(b, al, f); let l = left(b, f);
             best = mx(best, mn(h * 0.5, l) * 100.0 + if h < l && h * 1.5 >= l { b.w.hh_ko } else { 0.0 });
         }
-        v += best;
+        v += best * b.w.helping_hand;
     } }
     let us = b.mons[u].side;
     let mut mine: Vec<(MonId, f64)> = b.actives(us).into_iter().map(|m| (m, 1.0)).collect();
@@ -433,8 +433,18 @@ pub static W_V1: Weights = Weights {
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
     screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0, predict_protect: 0.0,
-    switch_spread: 0.0, switch_next: 0.0, switch_cost: 0.0, switch_ko: 0.0, bind: 0.0,
+    switch_spread: 0.0, switch_next: 0.0, switch_cost: 0.0, switch_ko: 0.0, bind: 0.0, helping_hand: 1.0,
 };
+// W, with any weights in the FAMILIAR_W environment variable (JSON, snake_case names) swapped in: for tuning only.
+pub fn weights() -> &'static Weights {
+    static WT: std::sync::OnceLock<Weights> = std::sync::OnceLock::new();
+    WT.get_or_init(|| {
+        let Ok(o) = std::env::var("FAMILIAR_W") else { return W.clone() };
+        let mut v = serde_json::to_value(&W).unwrap();
+        for (k, x) in serde_json::from_str::<serde_json::Map<String, serde_json::Value>>(&o).expect("FAMILIAR_W") { assert!(v.get(&k).is_some(), "no weight {k}"); v[&k] = x; }
+        serde_json::from_value(v).unwrap()
+    })
+}
 // The 2026-10-31 Protect and lost-matchup rules came after v1 (ai-v1.js doesn't have them).
 fn v1(b: &Battle) -> bool { std::ptr::eq(b.w, &W_V1) }
 pub fn v1_action(b: &mut Battle, m: MonId) -> Choice { let keep = b.w; b.w = &W_V1; let c = options(b, m)[0]; b.w = keep; c }

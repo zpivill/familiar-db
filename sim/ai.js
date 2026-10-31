@@ -18,7 +18,8 @@ export const W = {
   statusScale: 1.47,   // every status move's total score
   switchSpread: 0.6, switchNext: 1, switchCost: 40, switchKo: 73.7,   // gap #8: switching scored like a move (switchValue)
   overkill: 0.389, combo: 15.2,                     // joint side actions
-  predictProtect: 0.8, bind: 0.5,                              // gap #7: share of an attack's score lost into a foe expected to Protect
+  predictProtect: 0.8,                              // gap #7: share of an attack's score lost into a foe expected to Protect
+  bind: 0.5, helpingHand: 1,                        // a bind's damage over its turns; Helping Hand's value
 };
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -115,7 +116,7 @@ function duosSupportValue(B, api, u, mv, foes, pred) {
       const h = bestHit(api, ally, f);
       best = Math.max(best, Math.min(h * 0.5, left(f)) * 100 + (h < left(f) && h * 1.5 >= left(f) ? W.hhKo : 0));
     }
-    v += best;
+    v += best * W.helpingHand;
   }
   const mine = [...api.actives(u.side).map(m => [m, 1]), ...api.bench(u.side).map(m => [m, 0.5])];
   const flips = (mult, reverse) => {

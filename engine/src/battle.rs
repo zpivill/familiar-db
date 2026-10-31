@@ -1312,7 +1312,7 @@ pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &Battle
     }
     let s1 = sides.pop().unwrap(); let s0 = sides.pop().unwrap();
     let views = match &o.beliefs { Some(bl) => [0usize, 1].map(|s| bl[s].as_ref().map(|bs| bs.iter().map(|x| make_mon(d, x, o.level, 1 - s)).collect())), None => [None, None] };
-    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: &ai::W, decide, views };
+    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: ai::weights(), decide, views };
     let slots = if o.duos { 2 } else { 1 };
     for s in 0..2 {
         b.sides[s].active = vec![None; slots];

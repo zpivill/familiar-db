@@ -257,6 +257,8 @@ node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the sa
 
 **Windows, no install:** every push to main that touches `sim/`, `engine/` or `data/` publishes `familiar-sim-windows.zip` on the repo's [sim release](https://github.com/zpivill/familiar-db/releases/tag/sim) (familiar-sim.exe, data.json from that commit, run-sim.bat). Unzip and double-click `run-sim.bat`: it asks for a seed and runs the 200k balance setting into `results-seedN.json`. Or pass arguments: `run-sim.bat 1000000 comp 2 --draft --hp=3 --forms=all --search=meta --arch --json=big.json`. Download a fresh zip after data changes, since data.json is baked in at build time.
 
+**Rust weight overrides (tuning only):** `FAMILIAR_W='{"setup":1.2}' familiar-sim ...` swaps the named weights (snake_case, as in `W` in ai.rs) in for that run. JS parity doesn't hold while it's set.
+
 **Tuning:** `tune.mjs` writes `sim/tuned-weights.json` (don't commit it). It only plays seeds 1000 and up, so check the result with `bench.mjs strength` on seeds 1 and 2 before copying the weights into `W`. If the tuned weights beat the current ones there, freeze the old ai.js as the next `bots/ai-vN.js` first.
 
 **Before and after any AI change,** run `bench.mjs strength` on 2 seeds and 3 meta chains with `bench.mjs stability`, and add both to balance-history.md. The strength ladder plays mirror matches (the same 6 on both sides) in pairs with the same luck and sides swapped, so only the AI differs. For scripts, `runBatch` in batch.js does a plain batch in-process:
