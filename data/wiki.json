@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Companions done (starter's truth decided; the mentor handing you the starter is still a proposal). Now on evolution: open question to r is why familiars evolve in the world (Claude's lean: the bond rebuilds the copy from more of its data; second reading: a more complete copy is a stronger anchor, so the Ward celebrates evolving)."
+              "n": "Evolution decided. Next row: the Champion (who they are and what they know). Roster counts on this page come from data/characters.json (175 characters, 257 forms on 2026-10-31); the game map copies still say 126."
             }
           ]
         },
@@ -162,10 +162,10 @@
             ],
             [
               "Evolution",
-              "Open",
-              "Open. Seed: a copy rebuilds from more data as the bond deepens",
-              "Characters grow into later-arc forms (43 of 126 evolve)",
-              "Open"
+              "Your bond deepens as you battle together, so the copy rebuilds from more of its own data and becomes a later-arc version of itself",
+              "A more complete copy is a stronger anchor. The Ward celebrates evolving because it ties the world down tighter, which is why every Warden's team is fully evolved",
+              "Level up and build the bond; characters grow into later-arc forms (57 of 175 evolve)",
+              "Decided"
             ],
             [
               "The ending",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Evolution: the bond rebuilds a copy from more of its own data into a later-arc form. Second reading: a more complete copy is a stronger anchor, so the Ward celebrates it.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The starter senses loose threads: its unease near Frays, nodes and the core is a warning that reads as nerves.",
