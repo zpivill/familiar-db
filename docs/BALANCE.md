@@ -310,6 +310,36 @@ Balance (bring these to r, don't fix alone):
 
 r paused balancing on 2026-10-29 after the sim checks. Suggested way back in: (1) run each setting 2-3 times and compare, (2) look at Protect-ignoring signatures that one-shot setters, (3) hand-play combo teams on `#play`.
 
+### Status and handoff (2026-10-31)
+
+**r's stance:** no character changes until the simulated data is trustworthy. Character changes come last. A separate thread is working on trustworthy data. The options tested on 2026-10-30 (balance-history, "Character options tested") are on hold.
+
+r is skeptical of them. In r's testing, Pain and Kaido are almost always on top teams, but the options named Lelouch, Aizen and weak legendaries instead. Those options were ranked by win rate on random teams, not by how often top teams pick a character, which is why Kaido didn't show up. Use meta-team share from the trustworthy-data work for those calls.
+
+**What the AI handles today:**
+- **Battle AI (fast and search):** its damage estimates use real stats (EVs, natures, IVs), abilities and damage-changing items (Overdrive Core, emblems, Ward Charm). It sees the foe's exact build (perfect information, unlike a human). It hasn't been checked to plan around every item's other effects (for example, Focus Seal surviving a hit).
+- **Build search (`--optimize`, section 8):** the battle AI doesn't choose builds; the build search does. Its limits:
+  - One build per character on every team, not tailored to teammates.
+  - Only the 6 movesets makeBuild draws most.
+  - One choice at a time, so combinations that only work together can be missed.
+  - Counter spreads only target the 15 most common field characters (bulk) or meta Speeds.
+  - Items are near-ties: all 4 fits agree on the item for only 5 of 257 characters.
+- **Trust levels:**
+  - Book win rates repeat across battle seeds (corr 1.00).
+  - Four independent fits differ by about 1.8 points on average, and a typical character moves about 3 points between fits.
+  - Under the search AI the ranking holds (corr 0.91).
+  - Meta chains agree less with books than without (8.3 vs 8.2 of top 12 in groups of 8, but picked-wr corr 0.56 vs 0.75), and nobody knows why yet.
+
+**Where things are:**
+- Books: `familiar/builds/book-fit1..4.json` in the project files, plus the averaged table `best-builds-avg.md`.
+- Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
+- Play the books with `familiar-sim ... --builds=book-fit1.json,book-fit2.json,book-fit3.json,book-fit4.json`.
+
+**Possible next tooling:**
+- Team-aware builds: search a build per core or team, not per character.
+- Joint search over moves, ability and item.
+- Check how the AI uses non-damage items.
+
 ## 13. Making a change, step by step
 
 1. **Find the lever.** Stats / moves / abilities are in `data/`. Rule numbers are in `sim/rules.js`. AI behaviour is `sim/ai.js` (battle) or `sim/draft.js` (draft). Builds are `sim/builds.js`.
