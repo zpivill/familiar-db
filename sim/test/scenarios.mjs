@@ -19,7 +19,7 @@ const BO = { format: 'duos', level: 50, turnCap: 50 };
 
 const ent = key => data.entrants.find(e => e.key === key) || (() => { throw new Error('no ' + key); })();
 const NONE = { name: 'None', ab: { atk: [], def: [], immune: [], entry: [], hitBy: [], dealHit: [], endTurn: [], threshold: [], ko: [], allyFaint: [], faint: [], block: new Set(), unsupported: [] } };
-const build = (key, ids) => ({ e: ent(key), ability: NONE,
+const build = (key, ids, item) => ({ e: ent(key), ability: NONE, item,
   moves: ids.map(id => ({ id, as: data.moves.get(id).name, flags: { contact: data.moves.get(id).category === 'Physical' } })) });
 const mon = (B, s, k) => B.sides[s].mons[k];
 const hp = (m, f) => { m.hp = Math.max(1, Math.round(m.maxhp * f)); };
@@ -66,6 +66,12 @@ const SCENARIOS = [
     setup: B => { hp(mon(B, 1, 0), 0.05); },
     premise: B => [ko(B, 0, 0, 0) >= 1 && ko(B, 0, 0, 1) < 1, 'we KO the weak foe and not the healthy one'],
     right: (B, a) => a[0].type === 'move' && a[0].target === mon(B, 1, 0) },
+  { name: 'KO the foe without a Last Thread', why: 'both foes are at full Vitality and one Fire Punch KOs either, but the first holds a Last Thread and would hang on at 1; ours are low',
+    teams: [[build('rengoku', ['fire-punch', 'tackle', 'splash']), build('toriko', ['splash'])],
+            [build('nanami', ['mega-punch', 'tackle', 'splash', 'swords-dance'], 'last-thread'), build('nanami', ['mega-punch', 'tackle', 'splash', 'swords-dance'])]],
+    setup: B => { for (const m of B.sides[1].mons) { m.maxhp = m.hp = Math.round(m.maxhp / 8); } hp(mon(B, 0, 0), 0.3); hp(mon(B, 0, 1), 0.3); },
+    premise: B => [ko(B, 0, 0, 0) >= 1 && ko(B, 0, 0, 1) >= 1, 'Fire Punch KOs either foe (but for the Last Thread)'],
+    right: (B, a) => moveId(B, 0, 0, a[0]) === 'fire-punch' && a[0].target === mon(B, 1, 1) },
   { name: "Don't hit an immune foe", why: 'Thunderbolt does nothing to the Earth type; Tackle the other or Thunderbolt the other',
     premise: B => [typeEff('Lightning', mon(B, 1, 0).e.types) === 0, 'the first foe is immune to Lightning'],
     teams: [[build('misaka', ['thunderbolt', 'tackle', 'protect', 'splash']), build('toriko', ['splash'])],

@@ -473,3 +473,33 @@ Measure: 100k comp draft battles with the 4 books (so each character has a fixed
 - Ainz 60% to 82% picked, Sailor Moon 74% to 82%, Gilgamesh 62% to 67%, on both seeds; their picked win rates held (56-57%, 65-67%, 51-53%), so the extra picks were deserved. All Might and Gear 5 Luffy were already picked about 100%. Overall rank corr of pick rate vs picked win rate unchanged (0.645 / 0.641).
 - The Intimidate residual stays positive, but with only 5 characters (2 at a 100% pick rate) the fit can't say how much of it is still the draft.
 - Damage multipliers (Kaido's kind) show no gap, so they're left out. Not checked: rule-based builds (without books), where abilities are random per build.
+
+## AI gap #5: item audit (2026-10-31)
+
+What each of the 18 items does in battle, and whether the fast AI (`ai.js` / `ai.rs`) accounted for it before and after. The search AI plays its playouts in the real engine, so it always felt every item (it already got the Last Thread scenario 12/12).
+
+| Item | In battle | Fast AI before | Fast AI now |
+|---|---|---|---|
+| Last Thread | survives one hit at full Vitality | **counted a KO through it** | KO checks see it hang on (single hits; multi-hit gets through). Sturdy too, same rule |
+| Iron Gauntlet, Focus Seal, Swift Sandals | stat x1.5, locked into one move | in damage and Speed; lock respected; switches out of a weak lock | same |
+| Overdrive Core | attacks x1.3, 1/10 Vitality per hit | damage only, **cost ignored** | cost counted like recoil |
+| Bento Box | heals 1/16 a turn | not scored | not scored (small, steady) |
+| Rice Ball | heals 1/4 once below half | not scored | not scored |
+| Battle Coat | Will x1.5, no status moves | in damage; status moves blocked | same |
+| Ward Charm | halves one super effective hit | in damage | same |
+| Type Emblem | its type x1.2 | in damage | same |
+| Hooded Cloak | blocks chance effects of foes' moves | **still valued status, flinch, drops into it** | worth nothing into it |
+| Clear Amulet | foes can't lower its stats | **still valued drops into it** | worth nothing (attacks and status moves) |
+| Calm Incense | cures Taunt or Encore once | **still valued Taunt/Encore into it** | worth the small floor |
+| Panacea Leaf | cures a status once | **still valued status into it** | worth nothing until used |
+| Counterstrike Policy | +2 Power and Energy when hit super effectively | **ignored** | a super effective hit that doesn't KO costs 16 (the AI's value of giving a foe +4 stages) |
+| Spiked Armor | contact attackers lose 1/6 | **ignored** | contact into it costs like recoil |
+| Escape Scroll | switches out after a hit | not scored | not scored (rare, needs a guess of who comes in) |
+| Field Anchor | own fields and screens last 8 | not scored | not scored (small) |
+
+Hidden builds: with `--hidden` all of this uses the item the side believes the foe holds (the guess, until used up).
+
+Tests:
+- New scenario "KO the foe without a Last Thread" (two equal foes, either KO'd by Fire Punch, one holds a Last Thread; `--verify`: Fire Punch the other 28.7 vs 9.2). Fast AI 11/20 before, 20/20 after; search 12/12. All 11 scenarios: fast 100%, search 92% at 128 playouts (misses are the known Trick Room and Protect ones).
+- Strength, 4,000 mirror battles x 2 seeds against frozen v2 (the AI before the scenario fixes; run before the small Calm Incense / Encore line was added): won 47.0% / 47.3%, lost 47.2% / 47.1% (before the item changes 46.5 / 46.8 won, 47.6 / 47.3 lost). Mirror 47.1 / 46.9 each way. So no measurable change in overall strength: these are rare situations, fixed one by one.
+- JS and Rust identical (200 comp draft; 300 comp with AI-trained items and draft; 300 comp hidden; 6 search battles). The Rust v1 bot keeps the old rules, as ai-v1.js does.

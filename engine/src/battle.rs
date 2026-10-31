@@ -180,7 +180,7 @@ impl<'a> Battle<'a> {
     }
     #[inline] pub fn pct(&self, m: MonId) -> f64 { self.mons[m].hp / self.mons[m].maxhp }
     #[inline] pub fn blocks(&self, m: MonId, k: &str) -> bool { self.ab_of(m).blocks(k) }
-    #[inline] fn held(&self, m: MonId, id: u8) -> bool { let x = &self.mons[m]; matches!(x.item, Some(i) if i.id == id) && !x.item_used }
+    #[inline] pub fn held(&self, m: MonId, id: u8) -> bool { let x = &self.mons[m]; matches!(x.item, Some(i) if i.id == id) && !x.item_used }
     fn use_item(&mut self, m: MonId) { self.mons[m].item_used = true; }
     #[inline] pub fn foe_side(&self, s: usize) -> usize { 1 - s }
     pub fn alive(&self, s: usize) -> Vec<MonId> { self.sides[s].mons.iter().copied().filter(|&m| !self.mons[m].fainted).collect() }
