@@ -144,6 +144,7 @@ batch.runBatch(opts) ─ for each battle:
 | `bots/baselines.js` | The fixed opponents (random, greedy, frozen v1, mirror = current AI) shared by the bench, the tuner and the search AI. |
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
+| `test/scenarios.mjs` | 10 hand-made doubles positions with a known right answer; prints how often the fast and search AI pick it. A measuring stick for AI changes, not a pass/fail check. |
 
 **engine/** is a Rust port of the sim (battle.js, ai.js, builds.js, draft.js, batch.js, search.js and the cli) for big runs, about 15x faster. It gives the same results as the JS sim for the same seed (checked battle by battle by `engine/tests/parity.mjs`, which CI runs on every change to `sim/`, `engine/` or `data/`). The JS sim stays the source of truth and the only one on the page: **a change to how the JS sim plays must be made in engine/ too**, or CI fails. Data changes need nothing: `node sim/export.mjs` writes `engine/data.json` (moves compiled, entrants, archetype rosters) from `data/`. The search AI (mcts.js) and `--recheck` are ported too (`--ai=search --iters=128` plays both sides with it). Not ported: `--search=pop`, `watch`, the bench and the tuner.
 
@@ -217,6 +218,7 @@ Node 18+, no install needed.
 
 ```sh
 node sim/test/mechanics.mjs                    # rule checks, exits non-zero on failure
+node sim/test/scenarios.mjs 20 8 128          # AI scenario positions: fast AI seeds, search AI seeds, search playouts
 node sim/cli.mjs 5000 duel                     # 5,000 one on one battles: top and bottom 12 by win rate
 node sim/cli.mjs 5000 team --trained --level=50 --size=6
 node sim/cli.mjs 20000 comp 1 --draft          # competitive doubles, bring 8, seed 1

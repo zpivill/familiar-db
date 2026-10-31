@@ -36,8 +36,9 @@ const withRng = (B, r, f) => { const keep = B.r; B.r = r; try { return f(); } fi
 // Plays one battle with side `me` run by the search and the other side by `foe` (a bot from bots/baselines.js).
 // me can be [0, 1] for both sides searching (foe is then unused), as the meta re-check does.
 // bo: runBattle options with bo.rng a seeded rng. Returns the finished battle.
+// onPlan(B, side, plan) sees each turn's chosen pair (slot -> choice) as soon as it is made (the scenario tests).
 // With record set, B.replay.positions keeps every turn's options and how each scored, for teaching the fast AI.
-export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false } = {}) {
+export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, record = false, onPlan } = {}) {
   const seed = Math.floor(bo.rng() * 1e9);              // every replay starts from this luck
   const mine = srng(seed + 1), theirs = srng(seed + 2), search = srng(seed + 3);
   const rec = [], turnStart = {}, positions = [], searching = [].concat(me), plan = [null, null];
@@ -99,7 +100,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
     if (!searching.includes(si)) act = withRng(B, theirs, () => foe.action(B, x) || chooseAction(B, x, B.api));
     else if (extra) act = withRng(B, mine, () => chooseAction(B, x, B.api));
     else {
-      if (plan[si]?.turn !== B.turn) plan[si] = { turn: B.turn, acts: think(B, B.turn, si) };
+      if (plan[si]?.turn !== B.turn) { plan[si] = { turn: B.turn, acts: think(B, B.turn, si) }; onPlan?.(B, si, plan[si].acts); }
       const a = plan[si].acts.get(x.side.mons.indexOf(x));
       act = a ? dec(B, x, a) : withRng(B, mine, () => chooseAction(B, x, B.api));
     }

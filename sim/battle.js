@@ -74,6 +74,7 @@ function makeMon(data, e, build, level) {
 // kind 'action' returns { type: 'move', slot, target } or { type: 'switch', to }, kind 'replace' returns the
 // character to bring in. Returning nothing leaves the choice to the AI. The Battle vs AI page uses it.
 // opts.turnCap overrides RULES.turnCap (the competitive format draws at 50 turns).
+// opts.setup(B) runs once the leads are in, before turn 1 (for hand-made test positions).
 export function runBattle(data, teams, opts = {}) {
   const r = opts.rng || rng(opts.seed || 1);
   const level = opts.level || RULES.level;
@@ -1123,6 +1124,7 @@ export function runBattle(data, teams, opts = {}) {
   }
   // Entry abilities of the leads, faster first.
   [...actives(B.sides[0]), ...actives(B.sides[1])].sort((x, y) => speed(y) - speed(x)).forEach(m => { say(nm(m), 'leads'); entryAbility(m); });
+  opts.setup?.(B);    // scenario tests (sim/test/scenarios.mjs) set up a position here
 
   while (!B.over) {
     B.turn++;

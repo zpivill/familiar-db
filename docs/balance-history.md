@@ -397,3 +397,25 @@ Prediction hit (`predictionHit`: share of the foe's picked 6 the draft predicted
 | 4 averaged books | 93.6% / 93.5% | 63.5% / 63.3% |
 
 So the draft predicts better with books, not worse; #1's "done when" already holds and no code changed. The 16-seed numbers above therefore stand as they are (rerunning without a change gives the same runs). It also rules #1 out as the cause of #12 (runs agree less with books): book P alone, where the guess is nearly exact, agrees least (0.49). With books the draft effectively sees the foe's exact builds, which belongs to the hidden-information gaps #2 and #3.
+
+## AI gap check #6: scenario tests (2026-10-31)
+
+`node sim/test/scenarios.mjs` sets up 10 doubles positions where one answer is known to be right (comp level 50, Vitality x3, 'None' abilities so only the named moves matter) and asks the AI under test for its choice. Each position's premise (who outspeeds, what KOs, which foe is immune) is checked in code before the AI chooses. The fast AI gives the same answer on every seed; the search AI varies.
+
+| Position (right answer) | Fast AI | Search, 128 playouts (8 seeds) | Search, 1,024 playouts (4 seeds) |
+|---|---|---|---|
+| Fake Out on turn 1 | right | 8/8 | 4/4 |
+| KO with priority when slower (Bullet Punch the 5% foe that would KO either of ours) | **Protect** | 1/8 (Protect) | 4/4 |
+| Set Trick Room when much slower | right | 4/8 | 3/4 |
+| Don't undo our own Trick Room | right | 5/8 | 4/4 |
+| Don't double Tailwind | right | 8/8 | 4/4 |
+| Don't Protect twice in a row when an attack KOs | right | 8/8 | 4/4 |
+| Take the KO on the 5% threat | right | 7/8 | 4/4 |
+| Don't hit an immune foe | right | 8/8 | 4/4 |
+| Don't Thunder Wave stunned foes | right | 8/8 | 4/4 |
+| Switch out of a lost matchup | **Protect** | 6/8 | 4/4 |
+| **Total** | **80%** (bar 90%) | **79%** (bar 95%) | **98%** |
+
+- **Fast AI fails 2 of 10.** In both it Protects when the right move is to act: a priority KO, or a switch to a character that resists both foes. Both are the duos Protect bonus winning over a better option.
+- **The search AI at its real setting (128 playouts) is noisier than the fast AI on simple positions**: it undoes its own Trick Room 3 times in 8 and skips setting it 4 times in 8. With 1,024 playouts it gets 98%, so the misses are too few playouts, not a wrong idea. The Rust search AI plays the same way (parity), so this also holds for `--ai=search` and `--recheck` results.
+- Dropped from the gap list's examples: "don't attack into Wide Guard" and "Protect when both foes target you" have no known right answer without predicting the foe (forcing an answer turned out wrong in testing: a Protect at 12% and a Fake Out with Helping Hand available were both not clearly best).
