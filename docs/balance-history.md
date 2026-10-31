@@ -609,3 +609,26 @@ What it means for the data: per-character books under-rate teams whose members n
 ## AI gap #11: both skill levels in every report (2026-10-31)
 
 `--search=meta ... --check=N` (Rust) runs the chain, then plays its final round robin again with the search AI on both sides for N battles. It prints both win rates per team and saves them in the JSON (`recheck`). On the Simulator page, **Load results** of such a file adds "All, fast AI" and "All, search AI" columns to the Meta chain table. The Windows `run-sim.bat` default now adds `--check=2000` (a few more minutes on 4 cores).
+
+## AI gap #12: why runs agree less with books (2026-10-31)
+
+Rerun on the current AI (after #7-#9): 16 meta chains without books and 16 with the 4 averaged books (seeds 1-16, 200k, comp, bring 8, Vitality x3, every form, archetype rounds). `bench.mjs stability`, picked win rate rank correlation between groups:
+
+| runs per group | 1 | 2 | 4 | 8 |
+|---|---|---|---|---|
+| no books | 0.44 | 0.59 | 0.70 | 0.79 |
+| books | 0.33 | 0.42 | 0.52 | 0.58 |
+
+So the gap is still there with the new AI. **The cause** is in each character's picked win rate across the 16 runs (characters with 200+ picks in a run), split into the real differences between characters and the run-to-run noise:
+
+| | true spread between characters (sd) | run-to-run noise of one character (sd) | of which binomial | reliability, 1 run / 8 runs |
+|---|---|---|---|---|
+| no books | 8.3 pts | 8.3 pts | 0.9 | 0.50 / 0.89 |
+| books | 7.8 pts | 10.7 pts | 0.8 | 0.35 / 0.81 |
+
+- **Characters differ about as much with books as without.** The top isn't flatter. That rules out the earlier "builds flatten the top" guess, as fits 1-4 already suggested.
+- **The noise is not sample size.** The binomial part is under 1 point. It comes from which meta a run lands in, and that matters more with books (8.3 to 10.7 points).
+- **Why the meta matters more: matchups are sharper with books.** Within a run, a character's win rate against different opponents (pairs with 300+ games, minus binomial noise) spreads by 8.1 points without books and 10.0 with them. Optimized builds win more one-sidedly against some teams and lose more to others, so the meta a run happens to find moves everyone's numbers more.
+- **It isn't the counter spreads.** The extra noise is the same for characters whose books use "outspeeds X" or "survives X" spreads and for those that don't (8.2 to 10.6 vs 8.3 to 10.6).
+
+**What to do with it:** books aren't adding noise to the truth. They make the game more matchup-driven, and a single meta is a smaller sample of it. Pooling still converges, just more slowly: about 1.6x the runs for the same agreement (8 runs with books ≈ 5 without). For a 0.8 picked win rate correlation with books, pool about 16 runs per group, 32 in all.
