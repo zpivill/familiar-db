@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Companions: the copycat's truth decided. Open question to r: the starter's second reading (Claude's lean: familiars feel loose threads, so the starter's unease near Frays, nodes and the core is a warning read as nerves), and whether the mentor hands you the starter (proposal). Then evolution."
+              "n": "Companions done (starter's truth decided; the mentor handing you the starter is still a proposal). Now on evolution: open question to r is why familiars evolve in the world (Claude's lean: the bond rebuilds the copy from more of its data; second reading: a more complete copy is a stronger anchor, so the Ward celebrates evolving)."
             }
           ]
         },
@@ -141,8 +141,8 @@
             ],
             [
               "Your starter",
-              "Your first familiar, who reacts and talks a little",
-              "Open",
+              "Your first familiar, who reacts and talks a little; gets uneasy near Frays, nodes and the core, which reads as nerves",
+              "Familiars can feel loose threads: its unease was a warning all along. Proposal: the mentor hands you your starter, so it is part of the recruitment from day one",
               "Travels with you from the start",
               "Decided"
             ],
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "The starter senses loose threads: its unease near Frays, nodes and the core is a warning that reads as nerves.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "The copycat copies you out of admiration at first; later the mentor encourages it, because the Ward wants a spare Champion.",
