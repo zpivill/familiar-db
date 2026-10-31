@@ -18,6 +18,7 @@ export const W = {
   statusScale: 1.47,   // every status move's total score
   switchBad: -0.369, switchGain: 1.43, switchP: 0.696,
   overkill: 0.389, combo: 15.2,                     // joint side actions
+  predictProtect: 0.8,                              // gap #7: share of an attack's score lost into a foe expected to Protect
 };
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -102,7 +103,7 @@ function sideSpeed(B, api, side) {
 // so the AI weighs what the move does for the side this turn and the next few against just attacking.
 // Added on top of statusValue's base score. Without this, an attack outscores Protect, Tailwind or
 // Helping Hand almost every turn and battles become pure damage races.
-function duosSupportValue(B, api, u, mv, foes) {
+function duosSupportValue(B, api, u, mv, foes, pred) {
   const fx = mv.m.fx, a = api.abOf(u), al = api.allyOf(u);
   const ally = al && !al.fainted ? al : null;
   const left = f => Math.max(1, f.hp) / f.maxhp;
@@ -131,7 +132,8 @@ function duosSupportValue(B, api, u, mv, foes) {
   if (fx.protect && !chained) {
     // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally.
     // A foe it can knock out before that foe moves is no threat: hitting it beats protecting from it.
-    const threats = foes.filter(f => !koFirst(B, api, u, f));
+    // A foe expected to Protect or use a status move this turn (pred) won't hit it either.
+    const threats = foes.filter(f => !koFirst(B, api, u, f) && pred?.get(f)?.attack !== false);
     const one = Math.max(0, ...threats.map(f => bestHit(api, f, u))), both = threats.reduce((n, f) => n + bestHit(api, f, u), 0);
     if (one >= left(u) || (foes.length > 1 && both >= left(u))) {
       v += W.protectSave;
@@ -354,7 +356,8 @@ function planBonus(B, m, mv) {
 
 // Every option for m this turn with its score (noise included), best first. A forced move, a switch or
 // "nothing usable" comes back as the only option.
-export function options(B, m, api) {
+// quiet: the plain scores, no noise, no switching and no prediction (used to predict a foe).
+export function options(B, m, api, quiet = false) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
   if (forced) {
@@ -365,21 +368,24 @@ export function options(B, m, api) {
   const foes = api.foesOf(m);
   const list = [];
   let tInfo = null;
-  const consider = (act, score) => { list.push({ ...act, score: score * (1 - W.noise / 2 + r() * W.noise) + r() }); };
+  const consider = (act, score) => { list.push(quiet ? { ...act, score } : { ...act, score: score * (1 - W.noise / 2 + r() * W.noise) + r() }); };
+  const pred = !quiet && B.duos && api.cache ? predict(B, m.side, api) : null;
+  // an attack into a foe expected to Protect is mostly wasted
+  const guard = (mv, f, v) => v > 0 && pred?.get(f)?.protect && !throughProtect(api, m, mv) ? v * (1 - W.predictProtect) : v;
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
-    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, (statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0)) * W.statusScale + planBonus(B, m, mv));
+    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, (statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes, pred) : 0)) * W.statusScale + planBonus(B, m, mv));
     const fx = mv.m.fx;
     if (B.duos && (fx.spread || api.abOf(m).spreadType === mv.m.type)) {
       let v = 0;
-      for (const f of foes) v += attackValue(B, api, m, mv, f, foes.length) * 0.75;
+      for (const f of foes) v += guard(mv, f, attackValue(B, api, m, mv, f, foes.length) * 0.75);
       if (fx.spread === 'all') { const al = api.allyOf(m); if (al && !al.fainted) v -= estDamage(api, m, mv, al) * 120; }
       return consider({ type: 'move', slot: i, target: foes[0] }, v);
     }
     for (const f of foes) {
       let v = attackValue(B, api, m, mv, f, foes.length);
       if (B.duos && v > 0) v += duosTargetBonus(api, m, mv, f, (tInfo || (tInfo = duosTargets(api, m, foes))).get(f));
-      consider({ type: 'move', slot: i, target: f }, v);
+      consider({ type: 'move', slot: i, target: f }, guard(mv, f, v));
     }
   });
   if (!list.length) {
@@ -391,7 +397,7 @@ export function options(B, m, api) {
   const best = list[0];
   // switching
   const bench = api.bench(m.side);
-  if (bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
+  if (!quiet && bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
     const here = Math.min(...foes.map(f => matchup(api, m, f)));
     let pick = null, pickV = -9;
     for (const b of bench) { const v = Math.min(...foes.map(f => matchup(api, b, f))) - 0.12; if (v > pickV) { pickV = v; pick = b; } }
@@ -404,6 +410,24 @@ export function options(B, m, api) {
     if (pick && (doomed || lost || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
   }
   return list;
+}
+
+// What each foe will most likely do this turn (gap #7, "they'll Protect, so hit the other one"): its best
+// option by the same scoring, without noise, worked out once per side per turn. Only whether it protects and
+// whether it attacks at all is used.
+function predict(B, side, api) {
+  if (side.pred?.turn === B.turn) return side.pred.map;
+  const map = new Map();
+  for (const f of api.actives(B.sides[1 - side.i])) {
+    const o = options(B, f, api, true)[0], mv = o.type === 'move' ? f.moves[o.slot] : null;
+    map.set(f, { protect: !!mv?.m.fx.protect, attack: !!mv && mv.m.cat !== 'Status' });
+  }
+  side.pred = { turn: B.turn, map };
+  return map;
+}
+function throughProtect(api, u, mv) {
+  const a = api.abOf(u);
+  return !!(mv.m.fx.breaksProtect || (a.heavyBypass && (mv.m.size === 'heavy' || mv.sig)) || (a.sigBypass && mv.sig));
 }
 
 // How many of each character's best options the side looks at together in doubles.

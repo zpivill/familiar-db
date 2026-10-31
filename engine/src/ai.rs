@@ -11,13 +11,14 @@ pub struct Weights {
     pub threat: f64, pub ally_finish: f64, pub hh_ko: f64, pub speed_flip: f64, pub protect_save: f64, pub protect_ally: f64,
     pub wide_guard: f64, pub follow_setup: f64, pub follow_save: f64, pub setup: f64, pub heal: f64, pub status_move: f64,
     pub tailwind: f64, pub trick_room: f64, pub screen: f64, pub protect: f64, pub status_scale: f64, pub switch_bad: f64,
-    pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64,
+    pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64, pub predict_protect: f64,
 }
 pub const W: Weights = Weights {
     noise: 0.166, ko: 73.7, ko_priority: 32.7, status_chance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
     threat: 11.3, ally_finish: 16.0, hh_ko: 10.7, speed_flip: 27.1, protect_save: 310.0, protect_ally: 29.0, wide_guard: 0.321,
     follow_setup: 40.6, follow_save: 81.2, setup: 1.78, heal: 85.9, status_move: 0.934, tailwind: 56.6, trick_room: 57.5,
     screen: 29.9, protect: 6.0, status_scale: 1.47, switch_bad: -0.369, switch_gain: 1.43, switch_p: 0.696, overkill: 0.389, combo: 15.2,
+    predict_protect: 0.8,
 };
 
 fn max_of(xs: impl Iterator<Item = f64>) -> f64 { xs.fold(f64::NEG_INFINITY, |a, b| if b > a { b } else { a }) }
@@ -110,7 +111,7 @@ fn side_speed(b: &Battle, s: usize) -> f64 {
     avg(&ons) * 0.7 + (if !back.is_empty() { avg(&backs) } else { avg(&ons) }) * 0.3
 }
 
-fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
+fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId], pred: Option<&Pred>) -> f64 {
     let mv = b.mons[u].moves[slot]; let fx = &b.mv(&mv).fx; let a = b.ab_of(u);
     let ally = b.ally_of(u).filter(|&al| !b.mons[al].fainted);
     let left = |b: &Battle, f: MonId| mx(1.0, b.mons[f].hp) / b.mons[f].maxhp;
@@ -141,7 +142,8 @@ fn duos_support_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> 
     if fx.protect.is_some() && !chained {
         // a foe it can knock out before that foe moves is no threat: hitting it beats protecting from it
         let mut hits: Vec<f64> = vec![];
-        for &f in foes { if v1(b) || !ko_first(b, u, f) { hits.push(best_hit(b, f, u)); } }
+        // a foe expected to Protect or use a status move this turn (pred) won't hit it either
+        for &f in foes { if v1(b) || (!ko_first(b, u, f) && pred_of(pred, f).map_or(true, |x| x.2)) { hits.push(best_hit(b, f, u)); } }
         let one = hits.iter().fold(0.0, |n: f64, &x| mx(n, x)); let both = hits.iter().fold(0.0, |n, x| n + x);
         let lu = left(b, u);
         if one >= lu || (foes.len() > 1 && both >= lu) {
@@ -413,7 +415,7 @@ pub static W_V1: Weights = Weights {
     noise: 0.3, ko: 55.0, ko_priority: 30.0, status_chance: 18.0, flinch: 14.0, recoil: 60.0, recharge: 25.0,
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
-    screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0,
+    screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0, predict_protect: 0.0,
 };
 // The 2026-10-31 Protect and lost-matchup rules came after v1 (ai-v1.js doesn't have them).
 fn v1(b: &Battle) -> bool { std::ptr::eq(b.w, &W_V1) }
@@ -429,7 +431,29 @@ pub fn greedy_action(b: &mut Battle, m: MonId) -> Option<Act> {
     best
 }
 
-pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
+pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> { options_q(b, m, false) }
+
+// Each foe's expected action this turn (ai.js predict): (foe, protects, attacks).
+pub type Pred = Vec<(MonId, bool, bool)>;
+fn pred_of(p: Option<&Pred>, f: MonId) -> Option<(MonId, bool, bool)> { p.and_then(|p| p.iter().find(|x| x.0 == f).copied()) }
+fn predict(b: &mut Battle, s: usize) -> Pred {
+    if let Some((t, p)) = &b.sides[s].pred { if *t == b.turn { return p.clone(); } }
+    let mut map = vec![];
+    for f in b.actives(1 - s) {
+        let o = options_q(b, f, true)[0];
+        let (pr, at) = match o.act { Act::Move { slot, .. } => match b.mons[f].moves.get(slot) { Some(ms) => { let mm = b.mv(ms); (mm.fx.protect.is_some(), mm.cat != Cat::Status) } None => (false, false) }, _ => (false, false) };
+        map.push((f, pr, at));
+    }
+    b.sides[s].pred = Some((b.turn, map.clone()));
+    map
+}
+fn through_protect(b: &Battle, u: MonId, slot: usize) -> bool {
+    let ms = b.mons[u].moves[slot]; let m = b.mv(&ms); let a = b.ab_of(u);
+    m.fx.breaks_protect || (a.heavy_bypass && (m.size.as_deref() == Some("heavy") || ms.sig)) || (a.sig_bypass && ms.sig)
+}
+
+// quiet: the plain scores, no noise, no switching and no prediction (used to predict a foe).
+pub fn options_q(b: &mut Battle, m: MonId, quiet: bool) -> Vec<Choice> {
     let x = &b.mons[m];
     if x.vol.recharge > 0 || x.vol.charging.is_some() || x.vol.rampage.is_some() {
         let id = x.vol.charging.or(x.vol.rampage.map(|r| r.0));
@@ -440,15 +464,19 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
     let mut list: Vec<Choice> = vec![];
     let mut t_info: Option<Vec<(MonId, f64, f64)>> = None;
     let consider = |b: &mut Battle, list: &mut Vec<Choice>, act: Act, score: f64| {
+        if quiet { list.push(Choice { act, score }); return; }
         let r1 = b.r.next(); let r2 = b.r.next();
         list.push(Choice { act, score: score * (1.0 - b.w.noise / 2.0 + r1 * b.w.noise) + r2 });
     };
+    let pred = if !quiet && b.duos && b.cache.is_some() && !v1(b) { Some(predict(b, b.mons[m].side)) } else { None };
+    // an attack into a foe expected to Protect is mostly wasted
+    let guard = |b: &Battle, i: usize, f: MonId, v: f64| if v > 0.0 && pred_of(pred.as_ref(), f).map_or(false, |x| x.1) && !through_protect(b, m, i) { v * (1.0 - b.w.predict_protect) } else { v };
     for i in 0..b.mons[m].moves.len() {
         if !usable(b, m, i) { continue; }
         let mv = b.mons[m].moves[i]; let mm = b.mv(&mv);
         if mm.cat == Cat::Status {
             let sv = status_value(b, m, i, &foes);
-            let ds = if b.duos && !foes.is_empty() { duos_support_value(b, m, i, &foes) } else { 0.0 };
+            let ds = if b.duos && !foes.is_empty() { duos_support_value(b, m, i, &foes, pred.as_ref()) } else { 0.0 };
             let v = (sv + ds) * b.w.status_scale + plan_bonus(b, m, i);
             consider(b, &mut list, Act::Move { slot: i, target: foes.first().copied() }, v);
             continue;
@@ -456,7 +484,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
         let fx = &mm.fx;
         if b.duos && (fx.spread.is_some() || b.ab_of(m).spread_type == Some(mm.ty)) {
             let mut v = 0.0;
-            for &f in &foes { v += attack_value(b, m, i, f, foes.len()) * 0.75; }
+            for &f in &foes { let x = attack_value(b, m, i, f, foes.len()) * 0.75; v += guard(b, i, f, x); }
             if fx.spread.as_deref() == Some("all") { if let Some(al) = b.ally_of(m) { if !b.mons[al].fainted { v -= est_damage(b, m, i, al) * 120.0; } } }
             consider(b, &mut list, Act::Move { slot: i, target: foes.first().copied() }, v);
             continue;
@@ -468,6 +496,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
                 let info = t_info.as_ref().unwrap().iter().find(|x| x.0 == f).map(|x| (x.1, x.2)).unwrap();
                 v += duos_target_bonus(b, m, i, f, info);
             }
+            let v = guard(b, i, f, v);
             consider(b, &mut list, Act::Move { slot: i, target: Some(f) }, v);
         }
     }
@@ -480,7 +509,7 @@ pub fn options(b: &mut Battle, m: MonId) -> Vec<Choice> {
     // switching
     let s = b.mons[m].side;
     let bench = b.bench(s);
-    if !bench.is_empty() && !foes.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
+    if !quiet && !bench.is_empty() && !foes.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
         let mut here = f64::INFINITY;
         for &f in &foes { let v = matchup(b, m, f); here = mn(here, v); }
         let (mut pick, mut pick_v) = (None, -9.0);

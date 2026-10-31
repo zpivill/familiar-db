@@ -2,7 +2,7 @@
 //   familiar-sim [count] [duel|team|duos|comp] [seed]  with the flags of sim/cli.mjs:
 //   --trained --level=50 --size=4 --draft --bring=10 --hp=3 --forms=all --workers=4 --search=best|meta --arch --ban=2 --json=out.json
 //   --hidden (each battle AI sees the foes' builds only as it guessed them, as in the draft)
-//   --ai=search --iters=128 (both sides play with the search AI), --recheck=meta.json (its final round robin with the search AI)
+//   --ai=search --iters=128 (both sides play with the search AI), --recheck=meta.json (its final round robin with the search AI; with --ai=fast, with the current fast AI)
 //   --optimize=meta.json[,more.json] [--per=200 --passes=2 --only=a,b] (build search against their teams, book to --json),
 //   --builds=book.json[,more.json] (play with a book; several books give each character all their builds, picked at random)
 //   familiar-sim batch [count] [format] [seed] ...  one single-thread batch, totals as JSON (for tests/parity.mjs)
@@ -39,7 +39,7 @@ fn main() {
     let num = |n: &str| flag(n).map(|v| v.parse::<f64>().unwrap());
     let mut o = batch::Opts::new(format, count, seed, flag("draft").is_some(), num("bring").map_or(8, |b| b as usize), flag("trained").is_some(), num("level"), num("size").map(|s| s as usize), flag("forms").as_deref() == Some("all"));
     o.hidden = flag("hidden").is_some();
-    if flag("ai").as_deref() == Some("search") || flag("recheck").is_some() { o.search_ai = Some(num("iters").map_or(128, |i| i as usize)); }
+    if flag("ai").as_deref() == Some("search") || (flag("recheck").is_some() && flag("ai").as_deref() != Some("fast")) { o.search_ai = Some(num("iters").map_or(128, |i| i as usize)); }
     if single {
         let mut s = batch::Stats::default();
         batch::run_batch(&d, &o, &mut s, &mut HashMap::new());
@@ -102,7 +102,7 @@ fn main() {
     // a team's win rate over a round robin's head-to-head table (keys 'team|opponent')
     let rr = |h: &dyn Fn(&str) -> Option<(f64, f64)>, keys: Vec<String>, k: &str| { let (mut g, mut w) = (0.0, 0.0); for hk in keys { if hk.split('|').next() == Some(k) { if let Some((gg, ww)) = h(&hk) { g += gg; w += ww; } } } (if g > 0.0 { w / g } else { f64::NAN }, g) };
     if let (Some(c), Some(out)) = (&recheck, &rechecked) {
-        println!("team                 fast AI   search AI (games)");
+        println!("team                 fast AI   {} (games)", if flag("ai").as_deref() == Some("fast") { "fast AI now" } else { "search AI" });
         let old = c["h2h"].as_object().unwrap();
         for t in c["teams"].as_array().unwrap() {
             let mut ks: Vec<String> = serde_json::from_value(t["keys"].clone()).unwrap(); let names_ = names(&ks); ks.sort(); let k = ks.join("+");

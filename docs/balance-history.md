@@ -503,3 +503,32 @@ Tests:
 - New scenario "KO the foe without a Last Thread" (two equal foes, either KO'd by Fire Punch, one holds a Last Thread; `--verify`: Fire Punch the other 28.7 vs 9.2). Fast AI 11/20 before, 20/20 after; search 12/12. All 11 scenarios: fast 100%, search 92% at 128 playouts (misses are the known Trick Room and Protect ones).
 - Strength, 4,000 mirror battles x 2 seeds against frozen v2 (the AI before the scenario fixes; run before the small Calm Incense / Encore line was added): won 47.0% / 47.3%, lost 47.2% / 47.1% (before the item changes 46.5 / 46.8 won, 47.6 / 47.3 lost). Mirror 47.1 / 46.9 each way. So no measurable change in overall strength: these are rare situations, fixed one by one.
 - JS and Rust identical (200 comp draft; 300 comp with AI-trained items and draft; 300 comp hidden; 6 search battles). The Rust v1 bot keeps the old rules, as ai-v1.js does.
+
+## AI gap #7: the fast AI predicts the foe (2026-10-31)
+
+Each side now works out what each foe will most likely do before scoring its own options (`predict` in ai.js / ai.rs: the foe's best option by the same scoring, without noise or switching, once per side per turn; doubles only). Two uses: an attack into a foe expected to Protect keeps 20% of its score (`W.predictProtect` 0.8, unless the move gets through Protect), and Protect's "would be knocked out" bonus only counts foes expected to attack. The AI before this is frozen as `bots/ai-v3.js`.
+
+**Strength** (`bench.mjs strength`-style mirror matches, 4,000 battles a seed for the weight, 2,000 for the rest):
+
+| new AI vs | seed 1 won / lost | seed 2 won / lost | before (current AI then) |
+|---|---|---|---|
+| v3 (the AI before), `predictProtect` 0 | 46.8 / 47.5 | 46.8 / 47.2 | (even) |
+| v3, 0.5 | 51.2 / 43.2 | 50.5 / 43.5 | |
+| v3, **0.8 (kept)** | 53.4 / 41.4 | 52.7 / 41.3 | |
+| v3, 1.0 | 53.3 / 41.3 | 53.0 / 41.0 | |
+| v3, 0.8 without the Protect-bonus part | 52.9 / 41.8 | 52.2 / 42.1 | |
+| v2 | 52.5 / 42.1 | 52.4 / 41.6 | 47.0 / 47.2 |
+| greedy | 61.3 / 35.5 | 62.3 / 34.5 | 63.4 / 33.5, 65.3 / 31.6 |
+
+So it beats the AI-like opponents (v2, v3) by about 11 points net on both seeds, and loses about 2.5 points against greedy, which never protects (predicting a Protect that never comes costs a little). Scenarios: new "Hit the foe that won't Protect" (the weak foe at 15% has Protect and is threatened, the healthy one has none; `--verify` ok at 1,600 playouts: Fire Punch the healthy foe 107.1 vs the weak one 102.6): fast 0/20 before, 17/20 after; the other 11 stay 20/20. Search AI (4 seeds, 128 playouts) 4/4 on it, 92% overall (the known Trick Room miss).
+
+**Fast vs search agreement** (the gap's test: archetype results under both AIs within about 8 points). Two 200k meta chains (seeds 1, 2, comp, bring 8, Vitality x3, every form, archetype rounds), each final round robin replayed by the fast AI (40k battles, new `--recheck ... --ai=fast`) and by the search AI (4k battles, 128 playouts, about 450 games a team, so ±5 points per team):
+
+| | archetype mean gap | largest | within 8 of 11 | meta teams mean gap |
+|---|---|---|---|---|
+| seed 1, before | 6.5 | 18 (Fire field) | 9 | 4.2 |
+| seed 1, after | 5.9 | 21 (Fire field) | 10 | 3.8 |
+| seed 2, before | 6.5 | 20 (Water field) | 8 | 5.2 |
+| seed 2, after | 7.6 | 16 (Snow) | 7 | 6.3 |
+
+**Not passed:** prediction makes the fast AI stronger but doesn't bring it closer to the search AI on archetypes. The big gaps are field teams (Fire field 18-21 points better under search on seed 1, Water field 8-20 worse on both), so the remaining gap looks like how the fast AI plays fields, not Protect.
