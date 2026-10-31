@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Arena design decided. Open question to r: Reykjavík's Warden (Claude's lean: the harbour-master who knew the harbour before Water 7 merged in; clue: the lagoon has run colder since the arena was built). Still a proposal: City 1's Frays include a few pre-mid Water/Ice characters as rare finds. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Reykjavík's Warden decided (the harbour-master). Open: r to approve or change the proposed City 1 package (story beat, mechanic, clue, first Unbound sighting, Fray look, arena challenge). Then City 2 (Hawaii). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -195,11 +195,11 @@
               "Reykjavík",
               "Water + Ice",
               "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
-              "Open",
-              "Open",
-              "Open",
-              "Open",
-              "Open"
+              "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
+              "Proposal: entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
+              "Proposal: devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
+              "The lagoon has run colder since the arena was built (decided). Proposal: your starter is uneasy on the arena's glass floor over the node",
+              "Proposal: frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
             [
               "City 2",
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Reykjavík's Warden is the harbour-master, who knew the harbour before the merge; clue: the lagoon has run colder since the arena was built.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Arenas: a public, recognisable League arena in each city where anyone can challenge the Warden, in Ward-branded architecture around a local landmark, with a short type-themed challenge. It caps the city's main vent (power source, no encounters); Frays stay route encounter patches.",
