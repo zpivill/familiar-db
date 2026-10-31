@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Big story moment per city decided. r wants small story developments for every party in every city: Claude's proposal is the 'Story threads by city' table, waiting on r to approve or change. Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Story threads grid approved for now. Open: Hawaii's Warden (Claude's lean: the Swordsmith Village forge master) and the rest of the Hawaii package in the beat sheet. Then Cape Town, Akihabara, Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -206,11 +206,11 @@
               "Hawaii",
               "Fire + Earth",
               "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
-              "Open",
-              "Open",
+              "Proposal: the forge master of Swordsmith Village; blunt, tests your team like steel",
+              "Proposal: duo battles (first one beside the Swordsmith Keeper against the Unbound) and your first evolution; arena challenge: platforms rise and sink with the volcano's breathing",
               "Big moment: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
-              "Open",
-              "Open"
+              "Proposal: the volcano 'breathes on a schedule' since the arena was built; the Maker's child's hunch that the new Fray lies between two arenas",
+              "Proposal: cooling lava crust with glowing cracks; ash glitches into the space texture"
             ],
             [
               "City 3",
@@ -262,14 +262,14 @@
           "title": "Story threads by city",
           "cols": [
             "City",
-            "Big moment (decided)",
-            "Copycat (proposal)",
-            "Maker's child (proposal)",
-            "Mentor (proposal)",
-            "Starter (proposal)",
-            "Unbound (proposal)",
-            "Champion (proposal)",
-            "Guest ally (proposal)"
+            "Big moment",
+            "Copycat",
+            "Maker's child",
+            "Mentor",
+            "Starter",
+            "Unbound",
+            "Champion",
+            "Guest ally"
           ],
           "rows": [
             [
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Story threads by city (small developments for every party in every city) approved for now.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Big story moment per city: Hawaii first Unbound clash, Cape Town the copycat turns, Akihabara the proof, Kyoto the team-up and key, Prague alone and darkest. Every party also gets small developments in every city.",
