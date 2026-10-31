@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-30",
+  "updated": "2026-10-31",
   "pages": [
     {
       "id": "design",
@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-10-30",
-              "n": "Planning process agreed. Claude drafted the spine (step 1) and a first two readings table from the game map; r to correct them. Next: the companions row (r wants dedicated time on it), then evolution."
+              "t": "2026-10-31",
+              "n": "Big story moment per city decided. r wants small story developments for every party in every city: Claude's proposal is the 'Story threads by city' table, waiting on r to approve or change. Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -22,7 +22,7 @@
             {
               "t": "Hook",
               "n": "A Pokémon-style journey where every catch, battle and badge quietly runs the machine the ending reveals.",
-              "s": "proposal"
+              "s": "decided"
             },
             {
               "t": "Pillars",
@@ -52,7 +52,7 @@
             {
               "t": "Central image: thread and fabric",
               "n": "Frays, Strays, Binding, Threads, loose threads, kintsugi stitching. New names, visuals and mechanics should fit this language.",
-              "s": "proposal"
+              "s": "decided"
             },
             {
               "t": "Tone",
@@ -62,7 +62,7 @@
             {
               "t": "What makes it unique",
               "n": "The Pokémon loop is the conspiracy: the player helps run the system by playing the game normally. Plus real anime characters made real, with reasons inside the world for everything.",
-              "s": "proposal"
+              "s": "decided"
             }
           ]
         },
@@ -92,10 +92,10 @@
             ],
             [
               "Frays",
-              "Dangerous chaos zones the Ward contained",
-              "Vents opened on purpose, sacrificing some cities",
-              "Enter the fray to find hidden strays",
-              "Decided; why here and not there is open"
+              "Dangerous chaos zones the Ward contained; they sit along the routes between cities and can't be closed",
+              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (proposal name: a Knot) where legendary strays form",
+              "Enter the fray to find hidden strays; binding strays calms a Fray for a while but never closes it",
+              "Decided; Knot name is a proposal"
             ],
             [
               "Strays",
@@ -106,9 +106,9 @@
             ],
             [
               "Wardens and the League",
-              "Strong Keepers holding each city stable",
-              "Each arena sits on a node over the city's biggest vent",
-              "Beat them to climb",
+              "Strong Keepers holding each city stable. Each city's League arena is a public landmark where anyone can challenge the Warden: League signage, crowds, broadcasts, recognisable Ward-branded architecture around a local landmark",
+              "Each arena caps the city's main vent, the high-concentration source sealed under the floor with the node (no encounters inside); the node hums under glass, a clue in plain sight. Separate from the Knot, where pressure pools on its own",
+              "A short type-themed challenge, then the Warden",
               "Decided"
             ],
             [
@@ -120,31 +120,52 @@
             ],
             [
               "Companions (your two friends)",
-              "The Maker's child and the copycat who idolises you; you stay out of the trend together, then investigate the Ward",
-              "Open. Proposal: the Maker's child's parent quit Kith after seeing the flaw first",
-              "Design both at the start; play as the copycat in the post-game",
-              "Open, needs its own session"
+              "The copycat is your rival who copies your picks (you fight a mirror of your own team). The Maker's child stays off the battle path and investigates the Ward through their parent",
+              "The copycat starts out of pure admiration; then the mentor quietly encourages it, because the core is keyed to the Champion and the Ward wants a spare with your team and habits. On a replay, the rivalry reads as training your replacement. The Maker's child's truth runs through their parent (the mentor row)",
+              "Design both at the start; battle the copycat as your rival; follow the Maker's child's leads; play as the copycat in the post-game",
+              "Roles and copycat's truth decided"
+            ],
+            [
+              "The mentor (the Maker's child's parent)",
+              "Ex-Kith engineer now at the Ward; the professor figure who helps you",
+              "Knows everything: quit Kith after seeing the flaw, helped design the vents, joined the Ward. Coaches you to climb because strong Keepers anchor the world. Every piece of advice is true; they never say what reaching the top leads to",
+              "Gets advice and help from them",
+              "Decided"
+            ],
+            [
+              "Guest allies",
+              "A local Keeper in some cities; the Unbound leader during the team-up",
+              "Open",
+              "Fight beside you in duo (2v2) battles",
+              "Decided"
+            ],
+            [
+              "Your starter",
+              "Your first familiar, who reacts and talks a little; gets uneasy near Frays, nodes and the core, which reads as nerves",
+              "Familiars can feel loose threads: its unease was a warning all along. Proposal: the mentor hands you your starter, so it is part of the recruitment from day one",
+              "Travels with you from the start",
+              "Decided"
             ],
             [
               "The Unbound",
-              "Villains hunting anime villains to break the nodes by force",
-              "Open",
-              "Clash, then team up; their leader passes you the shutdown key",
-              "Decided; leader open"
+              "Villains who hunt legendary villain strays in each city's hidden Knot and attack the nodes with them; cities tear open wherever they go",
+              "Leader: a former Ward worker who saw half the truth and left, from a city the Ward later sacrificed to a vent. Right that the Frays were opened on purpose; wrong that breaking the nodes frees the world. Their villain attacks tear the render, the pressure spikes and the Ward vents it there, so the Ward truthfully says a Fray opened where they struck. They see you as the Ward's next poster Keeper; both sides are right about each other",
+              "Cat and mouse: you chase them to stop them, then team up; their leader passes you the shutdown key. You can try to bind a legendary in a Knot, but your Threads can't hold that much data yet",
+              "Decided"
             ],
             [
               "The Champion",
-              "The strongest Keeper",
-              "Learns the truth too late; tries to tell you after the ceremony",
+              "The strongest Keeper and the face of the Ward's \"own a familiar, save the world\" campaign",
+              "The mentor's earlier recruit, groomed years ago exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
               "Beat them, then shut down the core",
-              "Decided; who they are is open"
+              "Decided"
             ],
             [
               "Evolution",
-              "Open",
-              "Open. Seed: a copy rebuilds from more data as the bond deepens",
-              "Characters grow into later-arc forms (43 of 126 evolve)",
-              "Open"
+              "Your bond deepens as you battle together, so the copy rebuilds from more of its own data and becomes a later-arc version of itself",
+              "A more complete copy is a stronger anchor. The Ward celebrates evolving because it ties the world down tighter, which is why every Warden's team is fully evolved",
+              "Level up and build the bond; characters grow into later-arc forms (57 of 175 evolve)",
+              "Decided"
             ],
             [
               "The ending",
@@ -159,8 +180,9 @@
           "title": "Region beat sheet",
           "cols": [
             "City",
-            "Anime",
-            "Types",
+            "Real-world city",
+            "Types (core)",
+            "Anime landmarks merged in",
             "Warden",
             "Mechanic taught",
             "Story beat",
@@ -170,69 +192,272 @@
           "rows": [
             [
               "City 1 (vertical slice)",
-              "Open",
-              "Open",
-              "Open",
-              "Open",
-              "Open",
-              "Open",
-              "Open"
+              "Reykjavík",
+              "Water + Ice",
+              "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
+              "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
+              "entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
+              "devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
+              "The lagoon has run colder since the arena was built. your starter is uneasy on the arena's glass floor over the node",
+              "frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
             [
               "City 2",
+              "Hawaii",
+              "Fire + Earth",
+              "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
               "Open",
               "Open",
-              "Open",
-              "Open",
-              "Open",
+              "Big moment: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
               "Open",
               "Open"
             ],
             [
               "City 3",
+              "Cape Town",
+              "Wind + Beast",
               "Open",
               "Open",
               "Open",
-              "Open",
-              "Open",
+              "Big moment: the copycat turns as the mentor starts nudging them",
               "Open",
               "Open"
             ],
             [
               "City 4",
+              "Akihabara",
+              "Lightning + Tech",
               "Open",
               "Open",
               "Open",
-              "Open",
-              "Open",
+              "Big moment: the Maker's child finds proof the Frays were opened on purpose",
               "Open",
               "Open"
             ],
             [
               "City 5",
+              "Kyoto",
+              "Light + Spirit",
               "Open",
               "Open",
               "Open",
-              "Open",
-              "Open",
+              "Big moment: team-up, node attack, villains freeze, leader taken, key passed to you",
               "Open",
               "Open"
             ],
             [
               "City 6",
+              "Prague",
+              "Dark + Blood",
               "Open",
               "Open",
               "Open",
-              "Open",
-              "Open",
+              "Big moment: alone again and angrier; the darkest city before the Circle",
               "Open",
               "Open"
             ]
           ]
         },
         {
+          "title": "Story threads by city",
+          "cols": [
+            "City",
+            "Big moment (decided)",
+            "Copycat (proposal)",
+            "Maker's child (proposal)",
+            "Mentor (proposal)",
+            "Starter (proposal)",
+            "Unbound (proposal)",
+            "Champion (proposal)",
+            "Guest ally (proposal)"
+          ],
+          "rows": [
+            [
+              "1 Reykjavík",
+              "Setup: devices, starter, first rival battle, a glimpse of the Unbound",
+              "First rival battle on the Great Naruto Bridge, picking a team that counters your starter",
+              "Asks their parent why they quit Kith and gets a dodge",
+              "Hands you your starter: strong Keepers keep cities safe (true)",
+              "Uneasy on the arena's glass floor",
+              "Figures leaving the frozen forest (the Knot)",
+              "Only on the arena's screens: the campaign ad",
+              "None yet"
+            ],
+            [
+              "2 Hawaii",
+              "First real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
+              "Beat the Warden a day before you and brags about it",
+              "Notices the new Fray lies on a line between two arenas; keeps it as a hunch",
+              "Turns up after the tear to help the Ward, oddly calm, knows too much",
+              "Reacts a moment before the Fray tears",
+              "First clash at Fire Mountain, with a lieutenant; the leader is not seen",
+              "Photo op in the torn district: it's handled",
+              "A Swordsmith Village Keeper, duo against the Unbound"
+            ],
+            [
+              "3 Cape Town",
+              "The copycat turns as the mentor starts nudging them",
+              "Private training with the mentor; starts copying your exact team; the rivalry turns cold",
+              "Notices their parent spending time with the copycat; jealous, then suspicious",
+              "Offers the copycat what they want: to be as strong as you",
+              "Wary of the copycat's mirror familiars",
+              "A member warns you they are grooming you; you dismiss it (it's true)",
+              "First meeting in person: kind, tired, says they were like you once",
+              "A ranger Keeper, duo against a stray stampede"
+            ],
+            [
+              "4 Akihabara",
+              "The Maker's child finds proof that the Frays were opened on purpose",
+              "Refuses to believe the proof and sides with the mentor: the first rift",
+              "Gets into old Kith servers and finds vent schematics",
+              "Nearly catches their child, then quietly lets it go and keeps recruiting",
+              "Distressed in the server rooms near the node",
+              "After the same servers; a standoff ends in a truce offer",
+              "Broadcast interview about stability numbers (all true)",
+              "A local tech Keeper, duo against strays from a tear in the server district"
+            ],
+            [
+              "5 Kyoto",
+              "Team-up: node attack, villains freeze, leader taken, key passed to you",
+              "Arrives on the Ward's side to stop you: a battle at the shrine",
+              "Confronts their parent",
+              "Arrives after the freeze and lets you go: they want you to keep climbing",
+              "Calm at the shrines, panics at the node",
+              "Leader fights beside you, is taken, passes you the key",
+              "Present at the arrest; sees something that plants the first doubt",
+              "The Unbound leader, duo at the node"
+            ],
+            [
+              "6 Prague",
+              "Alone again and angrier; the darkest city before the Circle",
+              "Final rival battle before the Circle with a perfect mirror team",
+              "Goes quiet; the friend group splits",
+              "Congratulates you before the Circle: the most chilling scene on a replay",
+              "Constant unease",
+              "Scattered; a member blames you for the leader's capture",
+              "Sends a message: wants to talk after the ceremony",
+              "None: you are alone on purpose"
+            ]
+          ]
+        },
+        {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Big story moment per city: Hawaii first Unbound clash, Cape Town the copycat turns, Akihabara the proof, Kyoto the team-up and key, Prague alone and darkest. Every party also gets small developments in every city.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Hawaii merges Fire Mountain, Swordsmith Village, the Hidden Stone Village and Ishigami Village, with Megumin's craters on the route.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "City 1 package approved: story beat, mechanics taught, starter clue, first Unbound glimpse at the Knot, Fray look and the ice-sliding arena challenge.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Planning order: the six cities, then the opening, then a review of the six cities, then the Circle through to the ending.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Reykjavík's Warden is the harbour-master, who knew the harbour before the merge; clue: the lagoon has run colder since the arena was built.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Arenas: a public, recognisable League arena in each city where anyone can challenge the Warden, in Ward-branded architecture around a local landmark, with a short type-themed challenge. It caps the city's main vent (power source, no encounters); Frays stay route encounter patches.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Reykjavík merges Water 7, the Great Naruto Bridge, Emilia's frozen forest, the Krusty Krab, the Northern Plateau and Loch Ness; Loch Ness is sealed until the post-game, when Nessie can be caught.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Cities in order: Reykjavík (Water + Ice), Hawaii (Fire + Earth), Cape Town (Wind + Beast), Akihabara (Lightning + Tech), Kyoto (Light + Spirit), Prague (Dark + Blood).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The six cities form one region stitched together by the merge: cities from different countries sit side by side, joined by walkable routes.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "City order: Water+Ice, Fire+Earth, Wind+Beast, Lightning+Tech, Light+Spirit, Dark+Blood. The two types are each city's core; other types appear too, and a character can be catchable in several areas. Each city is a real-world city that evokes its types, merged with famous type-related places and structures from several anime (not one anime per city).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Each city has a theme of 2-3 types that fit together; the Warden uses it and the city's Frays lean toward it.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Legendaries are obtainable only after the main story. Each city has a hidden, forbidden high-concentration Fray where the Unbound hunt legendary strays; you chase them to stop them (cat and mouse), and a bind attempt there fails during the story.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Frays lie on seams between nodes, so the routes are the Ward's vent plumbing; binding calms a Fray but never closes it.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The Unbound hunt villain strays (legendaries, rare) and never take bound villains from Keepers. You fight them because cities tear open wherever they go, not over the law. Their leader is a former Ward worker from a city later sacrificed to a vent.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The Unbound leader is a survivor of a city the Ward sacrificed to a vent: right about the Ward, wrong about the fix. r: the clash needs a misunderstanding that ties into the lore.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The Champion is the mentor's earlier recruit and the celebrity face of the Ward's campaign.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Evolution: the bond rebuilds a copy from more of its own data into a later-arc form. Second reading: a more complete copy is a stronger anchor, so the Ward celebrates it.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The starter senses loose threads: its unease near Frays, nodes and the core is a warning that reads as nerves.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The copycat copies you out of admiration at first; later the mentor encourages it, because the Ward wants a spare Champion.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "The mentor knows everything: helped design the vents, joined the Ward, and coaches you to climb. On a replay their help reads as recruitment.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Companions beyond the two friends: the Maker's child's parent as mentor (professor slot), guest allies per arc who fight beside you in duo battles, and a starter familiar who reacts and talks a little. The two friends stay the only core companions.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Companion roles: the copycat is your mirror rival who copies your picks; the Maker's child investigates the Ward through their parent and carries the clues.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Spine confirmed by r, including the hook, the thread and fabric rule, and what makes the game unique.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-30",
               "n": "Plan the creative half in four steps: spine, two readings table, region beat sheet, then one city at a time. This page tracks it.",
