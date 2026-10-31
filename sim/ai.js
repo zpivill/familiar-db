@@ -16,7 +16,7 @@ export const W = {
   hhKo: 10.7, speedFlip: 27.1, protectSave: 310, protectAlly: 29, wideGuard: 0.321, followSetup: 40.6, followSave: 81.2,
   setup: 1.78, heal: 85.9, statusMove: 0.934, tailwind: 56.6, trickRoom: 57.5, screen: 29.9, protect: 6,
   statusScale: 1.47,   // every status move's total score
-  switchBad: -0.369, switchGain: 1.43, switchP: 0.696,
+  switchSpread: 0.6, switchNext: 1, switchCost: 40, switchKo: 73.7,   // gap #8: switching scored like a move (switchValue)
   overkill: 0.389, combo: 15.2,                     // joint side actions
   predictProtect: 0.8,                              // gap #7: share of an attack's score lost into a foe expected to Protect
 };
@@ -393,23 +393,35 @@ export function options(B, m, api, quiet = false) {
     const i = Math.max(0, m.moves.findIndex(x => x.pp > 0));
     return [{ type: 'move', slot: i, target: foes[0], score: 0 }];
   }
-  list.sort((x, y) => y.score - x.score);
-  const best = list[0];
-  // switching
+  // switching, scored on the moves' scale (gap #8): the bench character that does best here, and what it's worth
   const bench = api.bench(m.side);
   if (!quiet && bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
-    const here = Math.min(...foes.map(f => matchup(api, m, f)));
-    let pick = null, pickV = -9;
-    for (const b of bench) { const v = Math.min(...foes.map(f => matchup(api, b, f))) - 0.12; if (v > pickV) { pickV = v; pick = b; } }
+    const stay = slotParts(api, m, foes, pred);
+    let pick = null, pv = -Infinity;
+    for (const b of bench) { const v = switchValue(stay, slotParts(api, b, foes, pred)); if (v > pv) { pv = v; pick = b; } }
     const doomed = m.vol.countdown && m.vol.countdown - B.turn <= 1;
-    // a lost matchup: the foes knock it out this turn, it does little back, and someone on the bench does well here
-    const hits = foes.map(f => bestHit(api, f, m) * m.maxhp / Math.max(1, m.hp));
-    const lost = here < W.switchBad && pickV > 0 && (Math.max(...hits) >= 1 || (foes.length > 1 && hits[0] + hits[1] >= 1));
-    // a Choice item locked into a move that does little here is a good reason to switch
-    const stuck = m.vol.choice && best.score < 25;
-    if (pick && (doomed || lost || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
+    consider({ type: 'switch', to: pick }, pv - W.switchCost + (doomed ? 200 : 0));
   }
+  list.sort((x, y) => y.score - x.score);
   return list;
+}
+
+// What a character in this slot takes this turn and deals next turn: the hits aimed here (the foes' best hits, each
+// foe counted at W.switchSpread in doubles since it may aim at the partner; none from a foe expected not to attack),
+// as a share of its max Vitality capped at what it has, and its best usable hit as a share of a foe's Vitality left.
+function slotParts(api, x, foes, pred) {
+  const w = foes.length > 1 ? W.switchSpread : 1, left = x.hp / x.maxhp;
+  const hit = foes.reduce((n, f) => n + (pred?.get(f)?.attack === false ? 0 : bestHit(api, f, x) * w), 0);
+  let deal = 0;
+  for (const f of foes) for (const mv of x.moves) if (usable(x, mv)) deal = Math.max(deal, Math.min(1, hitDamage(api, x, mv, f) * f.maxhp / Math.max(1, f.hp)));
+  return { take: Math.min(hit, left), ko: hit >= left, deal };
+}
+// Switching x out for b, on the moves' scale: the damage b takes instead (a knockout avoided or walked into counts
+// as much as Protect's save), plus what b deals next turn instead of x (W.switchNext). The move given up is the
+// other options' score.
+function switchValue(x, b) {
+  const save = W.switchKo;
+  return 100 * (x.take - b.take) + (x.ko && !b.ko ? save : !x.ko && b.ko ? -save : 0) + W.switchNext * 100 * (b.deal - x.deal);
 }
 
 // What each foe will most likely do this turn (gap #7, "they'll Protect, so hit the other one"): its best

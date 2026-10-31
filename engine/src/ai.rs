@@ -12,13 +12,14 @@ pub struct Weights {
     pub wide_guard: f64, pub follow_setup: f64, pub follow_save: f64, pub setup: f64, pub heal: f64, pub status_move: f64,
     pub tailwind: f64, pub trick_room: f64, pub screen: f64, pub protect: f64, pub status_scale: f64, pub switch_bad: f64,
     pub switch_gain: f64, pub switch_p: f64, pub overkill: f64, pub combo: f64, pub predict_protect: f64,
+    pub switch_spread: f64, pub switch_next: f64, pub switch_cost: f64, pub switch_ko: f64,
 }
 pub const W: Weights = Weights {
     noise: 0.166, ko: 73.7, ko_priority: 32.7, status_chance: 8.03, flinch: 8.38, recoil: 39.2, recharge: 26.7,
     threat: 11.3, ally_finish: 16.0, hh_ko: 10.7, speed_flip: 27.1, protect_save: 310.0, protect_ally: 29.0, wide_guard: 0.321,
     follow_setup: 40.6, follow_save: 81.2, setup: 1.78, heal: 85.9, status_move: 0.934, tailwind: 56.6, trick_room: 57.5,
     screen: 29.9, protect: 6.0, status_scale: 1.47, switch_bad: -0.369, switch_gain: 1.43, switch_p: 0.696, overkill: 0.389, combo: 15.2,
-    predict_protect: 0.8,
+    predict_protect: 0.8, switch_spread: 0.6, switch_next: 1.0, switch_cost: 40.0, switch_ko: 73.7,
 };
 
 fn max_of(xs: impl Iterator<Item = f64>) -> f64 { xs.fold(f64::NEG_INFINITY, |a, b| if b > a { b } else { a }) }
@@ -416,6 +417,7 @@ pub static W_V1: Weights = Weights {
     threat: 12.0, ally_finish: 15.0, hh_ko: 45.0, speed_flip: 18.0, protect_save: 40.0, protect_ally: 10.0, wide_guard: 0.5,
     follow_setup: 35.0, follow_save: 45.0, setup: 0.8, heal: 90.0, status_move: 1.0, tailwind: 34.0, trick_room: 38.0,
     screen: 20.0, protect: 6.0, status_scale: 1.0, switch_bad: -0.45, switch_gain: 0.5, switch_p: 0.7, overkill: 0.0, combo: 0.0, predict_protect: 0.0,
+    switch_spread: 0.0, switch_next: 0.0, switch_cost: 0.0, switch_ko: 0.0,
 };
 // The 2026-10-31 Protect and lost-matchup rules came after v1 (ai-v1.js doesn't have them).
 fn v1(b: &Battle) -> bool { std::ptr::eq(b.w, &W_V1) }
@@ -446,6 +448,21 @@ fn predict(b: &mut Battle, s: usize) -> Pred {
     }
     b.sides[s].pred = Some((b.turn, map.clone()));
     map
+}
+// ai.js slotParts: (take, ko, deal) for x in this slot
+fn slot_parts(b: &mut Battle, x: MonId, foes: &[MonId], pred: Option<&Pred>) -> (f64, bool, f64) {
+    let w = if foes.len() > 1 { b.w.switch_spread } else { 1.0 }; let left = b.mons[x].hp / b.mons[x].maxhp;
+    let mut hit = 0.0;
+    for &f in foes { hit += if pred_of(pred, f).map_or(false, |p| !p.2) { 0.0 } else { best_hit(b, f, x) * w }; }
+    let mut deal: f64 = 0.0;
+    for &f in foes { for i in 0..b.mons[x].moves.len() { if usable(b, x, i) {
+        let d = mn(1.0, hit_damage(b, x, i, f) * b.mons[f].maxhp / mx(1.0, b.mons[f].hp)); deal = mx(deal, d);
+    } } }
+    (mn(hit, left), hit >= left, deal)
+}
+fn switch_value(b: &Battle, x: (f64, bool, f64), y: (f64, bool, f64)) -> f64 {
+    let save = b.w.switch_ko;
+    100.0 * (x.0 - y.0) + (if x.1 && !y.1 { save } else if !x.1 && y.1 { -save } else { 0.0 }) + b.w.switch_next * 100.0 * (y.2 - x.2)
 }
 fn through_protect(b: &Battle, u: MonId, slot: usize) -> bool {
     let ms = b.mons[u].moves[slot]; let m = b.mv(&ms); let a = b.ab_of(u);
@@ -504,11 +521,24 @@ pub fn options_q(b: &mut Battle, m: MonId, quiet: bool) -> Vec<Choice> {
         let i = b.mons[m].moves.iter().position(|x| x.pp > 0).unwrap_or(0);
         return vec![Choice { act: Act::Move { slot: i, target: foes.first().copied() }, score: 0.0 }];
     }
-    list.sort_by(|x, y| js_cmp(y.score - x.score));
-    let best = list[0];
-    // switching
     let s = b.mons[m].side;
     let bench = b.bench(s);
+    // switching scored on the moves' scale (ai.js, gap #8); v1 keeps its rule below
+    if !v1(b) {
+        if !quiet && !bench.is_empty() && !foes.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
+            let stay = slot_parts(b, m, &foes, pred.as_ref());
+            let (mut pick, mut pv) = (bench[0], f64::NEG_INFINITY);
+            for &bb in &bench { let p = slot_parts(b, bb, &foes, pred.as_ref()); let v = switch_value(b, stay, p); if v > pv { pv = v; pick = bb; } }
+            let x = &b.mons[m];
+            let doomed = x.vol.countdown != 0 && x.vol.countdown - b.turn <= 1;
+            let v = pv - b.w.switch_cost + if doomed { 200.0 } else { 0.0 };
+            consider(b, &mut list, Act::Switch { to: pick }, v);
+        }
+        list.sort_by(|x, y| js_cmp(y.score - x.score));
+        return list;
+    }
+    list.sort_by(|x, y| js_cmp(y.score - x.score));
+    let best = list[0];
     if !quiet && !bench.is_empty() && !foes.is_empty() && b.can_switch(m) && b.mons[m].t.turns_in >= 1 {
         let mut here = f64::INFINITY;
         for &f in &foes { let v = matchup(b, m, f); here = mn(here, v); }

@@ -68,7 +68,7 @@ export function playSearch(data, teams, bo, me, foe, { iters = 128, k = 4, recor
     const lists = team.map(m => {
       const opts = withRng(B, search, () => options(B, m, api)).slice(0, k);
       const bench = api.bench(m.side);
-      if (opts[0]?.type !== 'switch' && bench.length && api.canSwitch(m) && m.t.turnsIn >= 1) opts.push({ type: 'switch', to: withRng(B, search, () => chooseReplacement(B, m.side, bench, api)) });
+      if (!opts.some(o => o.type === 'switch') && bench.length && api.canSwitch(m) && m.t.turnsIn >= 1) opts.push({ type: 'switch', to: withRng(B, search, () => chooseReplacement(B, m.side, bench, api)) });
       return opts.map(enc);
     });
     let pairs = lists[0].map(a => [a]);

@@ -532,3 +532,23 @@ So it beats the AI-like opponents (v2, v3) by about 11 points net on both seeds,
 | seed 2, after | 7.6 | 16 (Snow) | 7 | 6.3 |
 
 **Not passed:** prediction makes the fast AI stronger but doesn't bring it closer to the search AI on archetypes. The big gaps are field teams (Fire field 18-21 points better under search on seed 1, Water field 8-20 worse on both), so the remaining gap looks like how the fast AI plays fields, not Protect.
+
+## AI gap #8: switching scored like a move (2026-10-31)
+
+The fast AI's switch is now one more option on the moves' scale instead of a rule of thumb (BALANCE.md section 6: the damage the incoming character takes instead, a knockout avoided or walked into at 73.7, 100 x its better next-turn hit, minus a cost of 40). It goes through noise and the joint side plan like a move, and the search AI no longer adds a second copy of it. The replacement after a faint is unchanged. JS and Rust identical.
+
+**What tuning showed** (mirror matches against v3, the AI before #7; #7 alone was 53.4 / 41.4 won / lost):
+
+| switching | won / lost, seed 1 | seed 2 |
+|---|---|---|
+| old rule (#7 alone) | 53.4 / 41.4 | 52.7 / 41.3 |
+| scored, Protect-sized knockout save (455), cost 15 | 46.7 / 48.0 | 47.5 / 48.0 |
+| scored, knockout save 73.7, cost 40 (**kept**) | 55.0 / 39.1 | 54.7 / 39.7 |
+| scored, cost 70 | 55.3 / 38.3 | 54.0 / 40.6 |
+| **never switch** | 55.9 / 38.1 | |
+
+So the old rule was costing about 3 points, and the kept version is about as good as never switching. It switches about as often as v3 (6.3 character entries a battle, counting replacements). Against v2 it gets 53.9 / 40.1 and 54.0 / 40.5 (with #7 alone, 52.5 / 42.1). Against greedy it gets 62.6 / 34.5 and 62.0 / 34.5 (with #7 alone, 61.3 / 35.5).
+
+**Scenarios:** "Switch out of a lost matchup" now fails (0/20, it Protects). `--verify` rates switch vs Protect there as a near tie (107.8 vs 107.2 at 1,600 playouts), so the old forced switch wasn't clearly right either. Overall the fast AI gets 11/12.
+
+**Fast vs search** (same two meta round robins as #7): the archetype mean gap is 6.9 on seed 1 and 6.5 on seed 2 (#7: 5.9 and 7.6; before: 6.5 and 6.5). The largest gap is still Fire field (21) on seed 1 and Snow (15) on seed 2. **Not passed:** switching isn't what separates the two AIs. The persistent gap is on field teams (Fire field 18-21 points better under search on seed 1 in all three versions).
