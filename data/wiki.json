@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "City 1 (Reykjavík) fully approved. Planning order (r, 2026-10-31): finish all six cities, then design the opening (game start to the first city), then review the six cities, then the Circle through to the ending. Now on City 2 (Hawaii, Fire + Earth): open question to r is which anime landmarks merge in (Claude's leans: Fire Mountain, Swordsmith Village, the Hidden Stone Village, Ishigami Village, Megumin's craters on the route). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Hawaii's landmarks decided. Open question to r: where each big story moment lands across cities 2-6 (Claude's lean is in the beat sheet's story beat column). Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -205,10 +205,10 @@
               "City 2",
               "Hawaii",
               "Fire + Earth",
+              "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
               "Open",
               "Open",
-              "Open",
-              "Open",
+              "Proposal: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
               "Open",
               "Open"
             ],
@@ -219,7 +219,7 @@
               "Open",
               "Open",
               "Open",
-              "Open",
+              "Proposal: the copycat turns as the mentor starts nudging them",
               "Open",
               "Open"
             ],
@@ -230,7 +230,7 @@
               "Open",
               "Open",
               "Open",
-              "Open",
+              "Proposal: the Maker's child finds proof the Frays were opened on purpose",
               "Open",
               "Open"
             ],
@@ -241,7 +241,7 @@
               "Open",
               "Open",
               "Open",
-              "Open",
+              "Proposal: team-up, node attack, villains freeze, leader taken, key passed to you",
               "Open",
               "Open"
             ],
@@ -252,7 +252,7 @@
               "Open",
               "Open",
               "Open",
-              "Open",
+              "Proposal: alone again and angrier; the darkest city before the Circle",
               "Open",
               "Open"
             ]
@@ -261,6 +261,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Hawaii merges Fire Mountain, Swordsmith Village, the Hidden Stone Village and Ishigami Village, with Megumin's craters on the route.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "City 1 package approved: story beat, mechanics taught, starter clue, first Unbound glimpse at the Knot, Fray look and the ice-sliding arena challenge.",
