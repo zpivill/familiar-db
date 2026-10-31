@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-10-31",
-              "n": "Step 2 done: every two readings row has an answer. Step 3 started (region beat sheet). Open question to r: how the six cities relate to the 15 types (Claude's lean: each city has a theme of 2-3 types that fit together, covering all 15). Then which anime per city, then city order and beats. After this thread: update the game map and its copies."
+              "n": "Step 3: cities get 2-3 type themes (decided). Open question to r: the proposed six pairs (Water+Ice, Wind+Beast, Light+Spirit, Dark+Blood, Lightning+Tech, Fire+Earth), with Neutral everywhere and Cosmic/Time saved for the Circle, Champion and Knots (only 3 Cosmic and 6 Time characters are catchable before the post-game). Order of cities not set; the type column shows the pairs only. Next: which anime per city (only One Piece, Naruto, Demon Slayer, Bleach, My Hero Academia and Jujutsu Kaisen have 7+ characters). After this thread: update the game map and its copies."
             }
           ]
         },
@@ -192,7 +192,7 @@
             [
               "City 1 (vertical slice)",
               "Open",
-              "Open",
+              "Water + Ice (proposal)",
               "Open",
               "Open",
               "Open",
@@ -202,7 +202,7 @@
             [
               "City 2",
               "Open",
-              "Open",
+              "Wind + Beast (proposal)",
               "Open",
               "Open",
               "Open",
@@ -212,7 +212,7 @@
             [
               "City 3",
               "Open",
-              "Open",
+              "Light + Spirit (proposal)",
               "Open",
               "Open",
               "Open",
@@ -222,7 +222,7 @@
             [
               "City 4",
               "Open",
-              "Open",
+              "Dark + Blood (proposal)",
               "Open",
               "Open",
               "Open",
@@ -232,7 +232,7 @@
             [
               "City 5",
               "Open",
-              "Open",
+              "Lightning + Tech (proposal)",
               "Open",
               "Open",
               "Open",
@@ -242,7 +242,7 @@
             [
               "City 6",
               "Open",
-              "Open",
+              "Fire + Earth (proposal)",
               "Open",
               "Open",
               "Open",
@@ -254,6 +254,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-10-31",
+              "n": "Each city has a theme of 2-3 types that fit together; the Warden uses it and the city's Frays lean toward it.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Legendaries are obtainable only after the main story. Each city has a hidden, forbidden high-concentration Fray where the Unbound hunt legendary strays; you chase them to stop them (cat and mouse), and a bind attempt there fails during the story.",
