@@ -456,3 +456,20 @@ So the draft predicts better with books, not worse; #1's "done when" already hol
 | full vs hidden, same seed | 6 / 9 | 6 / 5 | 3 / 3 |
 
 Full vs hidden differ no more than two seeds of the same mode, so at this size the build search's item and training picks are mostly noise and the hidden-build effect is too small to see. Average gain 6.3 / 5.0 full, 5.6 / 3.6 hidden. Picks that agreed in all 4 runs: Lelouch Zero Requiem + Focus Seal, Pain Preta Path + wallPhys + Clear Amulet. Fixed on the way: the build search crashed in its second pass when the first pass picked a tuned "speed" spread (that spread was then retrained under a preset name that doesn't exist); it now keeps the tuned spread when trying movesets.
+
+## AI gap #4: the draft counts abilities (2026-10-31)
+
+The draft's quick matchups (`draft.js matchups`, `draft.rs`) now count entry stat changes (Intimidate and the like: the user's own entry boosts and the foe's entry drops, as stages) and flat stat multipliers, on top of type immunities. Damage multipliers are still ignored, because they showed no gap (below).
+
+Measure: 100k comp draft battles with the 4 books (so each character has a fixed ability), 2 seeds. For each character, pick rate (made the 6 when brought) against picked win rate; the residual is how much more a character wins when picked than a straight-line fit on its pick rate predicts. A positive residual = under-picked for how well it does.
+
+| group (book-fit1 ability) | before, seeds 1 / 2 | after, seeds 1 / 2 |
+|---|---|---|
+| Intimidate users (5) | +9.6 / +10.0, picked 79% | +8.5 / +7.9, picked 86% |
+| other entry stat changes or stat multipliers (15) | -0.2 / -0.3 | -0.6 / -0.1 |
+| context-free damage multipliers (23) | +0.4 / +0.4 | +0.6 / +0.5 |
+| no such ability (214) | -0.3 / -0.3 | -0.2 / -0.2 |
+
+- Ainz 60% to 82% picked, Sailor Moon 74% to 82%, Gilgamesh 62% to 67%, on both seeds; their picked win rates held (56-57%, 65-67%, 51-53%), so the extra picks were deserved. All Might and Gear 5 Luffy were already picked about 100%. Overall rank corr of pick rate vs picked win rate unchanged (0.645 / 0.641).
+- The Intimidate residual stays positive, but with only 5 characters (2 at a 100% pick rate) the fit can't say how much of it is still the draft.
+- Damage multipliers (Kaido's kind) show no gap, so they're left out. Not checked: rule-based builds (without books), where abilities are random per build.
