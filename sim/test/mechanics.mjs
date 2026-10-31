@@ -331,5 +331,18 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(seen[0][0] === 'tackle' && seen[0][1] > f.raw.pow && seen[1][0] === 'splash' && f.moves[0].id === 'splash', 'Hidden builds: the AI sees the believed build, then the moves it saw', JSON.stringify(seen));
 }
 
+// Hidden builds: an ability stays hidden until it shows (here an immunity).
+{
+  const natsu = data.entrants.find(e => e.cid === 'natsu' && e.final);
+  const fireUser = data.entrants.find(e => e.final && e.types.includes('Fire') && e.cid !== 'natsu');
+  const fireMove = fireUser.learn.find(l => data.moves.get(l.id).type === 'Fire' && data.moves.get(l.id).category !== 'Status');
+  const real = build(natsu.key, ['splash'], 'Fire Dragon Slayer'), seen = [];
+  runBattle(data, [[build(fireUser.key, [fireMove.id])], [real]], { rng: rng(3), turnCap: 2, beliefs: [[build(natsu.key, ['splash'])], null], decide: (kind, B, m) => {
+    if (kind === 'action' && m.side.i === 0) seen.push(B.sides[1].mons[0].abilityName);
+    return null;
+  } });
+  ok(seen[0] === 'None' && seen[1] === 'Fire Dragon Slayer', 'Hidden builds: an ability shows once it absorbs a hit', seen.join(' > '));
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');

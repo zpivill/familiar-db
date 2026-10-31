@@ -18,7 +18,19 @@ fn stats_of(d: &Data, b: &Build, level: f64) -> [f64; 6] {
     o[0] = battle_stat(st.vit, level, true, ev[0], iv[0], 1.0);
     for k in 0..5 { o[k + 1] = battle_stat(st.get(k), level, false, ev[k + 1], iv[k + 1], nat.mult(k)); }
     if let Some(i) = b.item { if let Some(c) = i.choice() { o[c + 1] *= 1.5; } if i.id == I_COAT { o[4] *= 1.5; } }
+    if let Some(m) = &d.abilities[b.ability].stat_mult { for k in 0..5 { o[k + 1] *= m.get(k).unwrap_or(1.0); } }
     o
+}
+// a's stats once both have entered: its own entry boosts and the foe t's entry drops (Intimidate and the like)
+fn on_entry(d: &Data, s: &[f64; 6], a: &Build, t: &Build) -> [f64; 6] {
+    let (ta, tt) = (&d.entrants[a.e].types, &d.entrants[t.e].types);
+    let mut st = [0i32; 5];
+    let mut add = |o: &Op| for &(k, v) in o.stats.iter().flatten() { if k < 5 { st[k] += v; } };
+    for o in &d.abilities[a.ability].entry { if o.op == "self" && o.if_foe_type.map_or(true, |x| tt.contains(&x)) { add(o); } }
+    for o in &d.abilities[t.ability].entry { if o.op == "foes" && o.only_type.map_or(true, |x| ta.contains(&x)) { add(o); } }
+    let mut out = *s;
+    for k in 0..5 { if st[k] != 0 { out[k + 1] *= stage_mult(st[k].clamp(-6, 6)); } }
+    out
 }
 fn avg_hits(fx: &Fx) -> f64 { match fx.hits { None => 1.0, Some(h) => if h[0] == 2 && h[1] == 5 { 3.1 } else { (h[0] + h[1]) as f64 / 2.0 } } }
 
@@ -47,10 +59,11 @@ fn matchups(d: &Data, mine: &[Build], theirs: &[Build], level: f64) -> Vec<Vec<f
     let sm: Vec<[f64; 6]> = mine.iter().map(|b| stats_of(d, b, level)).collect();
     let st: Vec<[f64; 6]> = theirs.iter().map(|b| stats_of(d, b, level)).collect();
     mine.iter().enumerate().map(|(i, a)| theirs.iter().enumerate().map(|(j, t)| {
-        let deal = best_hit(d, a, &sm[i], t, &st[j], level); let take = best_hit(d, t, &st[j], a, &sm[i], level);
+        let (sa, sd) = (on_entry(d, &sm[i], a, t), on_entry(d, &st[j], t, a));
+        let deal = best_hit(d, a, &sa, t, &sd, level); let take = best_hit(d, t, &sd, a, &sa, level);
         let ta = if deal > 0.0 { (9.0f64).min((1.0 / deal).ceil()) } else { 12.0 };
         let tb = if take > 0.0 { (9.0f64).min((1.0 / take).ceil()) } else { 12.0 };
-        let spd = if sm[i][5] > st[j][5] { 0.5 } else if sm[i][5] < st[j][5] { -0.5 } else { 0.0 };
+        let spd = if sa[5] > sd[5] { 0.5 } else if sa[5] < sd[5] { -0.5 } else { 0.0 };
         tanh(0.7 * (tb - ta + spd))
     }).collect()).collect()
 }

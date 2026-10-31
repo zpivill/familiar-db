@@ -223,6 +223,14 @@ fn record(s: &mut Stats, d: &Data, b: &Battle, builds: [&[Build]; 2], o: &Opts) 
     }
 }
 
+// --hidden: each side's view of the other's builds, as its draft guessed them (batch.js beliefs)
+pub fn beliefs(d: &Data, o: &Opts, sides: &[Vec<usize>; 2], fight: [&[Build]; 2], dr: &Option<DraftOut>) -> Option<std::sync::Arc<[Option<Vec<Build>>; 2]>> {
+    if !o.hidden { return None; }
+    Some(std::sync::Arc::new([0usize, 1].map(|s| {
+        let g = match dr { Some(x) => x.guesses[s].clone(), None => guess_builds(d, &sides[1 - s], o.learn_level, o.duos()) };
+        Some(fight[1 - s].iter().map(|b| g.iter().find(|x| x.e == b.e).unwrap().clone()).collect::<Vec<Build>>())
+    })))
+}
 pub struct DraftOut { pub six: [Vec<Build>; 2], pub drafts: [Draft; 2], pub guesses: [Vec<Build>; 2] }
 pub fn run_draft(d: &Data, sides: &[Vec<usize>; 2], builds: &[Vec<Build>; 2], r: &mut Rng, o: &Opts, arch: &[Option<usize>; 2], cache: &mut HashMap<String, Vec<Build>>) -> DraftOut {
     let mut guess = |t: &[usize]| -> Vec<Build> {
@@ -433,10 +441,7 @@ pub fn run_batch(d: &Data, o: &Opts, s: &mut Stats, cache: &mut HashMap<String, 
         }
         let dr = if o.draft { Some(run_draft(d, &sides, &builds, &mut r, o, &arch_ids, cache)) } else { None };
         let fight: [&[Build]; 2] = match &dr { Some(x) => [&x.six[0], &x.six[1]], None => [&builds[0], &builds[1]] };
-        let beliefs = if o.hidden { Some(std::sync::Arc::new([0usize, 1].map(|s| {
-            let g = match &dr { Some(x) => x.guesses[s].clone(), None => guess_builds(d, &sides[1 - s], o.learn_level, o.duos()) };
-            Some(fight[1 - s].iter().map(|b| g.iter().find(|x| x.e == b.e).unwrap().clone()).collect::<Vec<Build>>())
-        }))) } else { None };
+        let beliefs = beliefs(d, o, &sides, fight, &dr);
         let bo = BattleOpts { plans: arch_ids, beliefs, ..bo };
         let b = match o.search_ai {
             Some(iters) => crate::mcts::play_search(d, fight, &mut r, &bo, &[0, 1], crate::mcts::Bot::Mirror, iters, 4).b,

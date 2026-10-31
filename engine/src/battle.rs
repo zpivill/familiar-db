@@ -113,6 +113,7 @@ pub struct Mon {
     pub item: Option<Item>, pub item_used: bool, pub ability: usize, pub base_ability: usize, pub moves: Vec<MoveSlot>,
     pub status: Option<St>, pub status_turns: i32, pub bleed_n: i32, pub boosts: [i32; 5], pub vol: Vol, pub once: Once,
     pub pending: Option<Boosts>, pub fainted: bool, pub t: Track, pub once_done: Vec<(usize, usize)>,
+    pub ab_shown: bool,   // its ability has shown in battle (battle.js m.abShown)
 }
 
 #[derive(Clone, Copy, Default, Debug)]
@@ -179,7 +180,7 @@ impl<'a> Battle<'a> {
     }
     #[inline] pub fn pct(&self, m: MonId) -> f64 { self.mons[m].hp / self.mons[m].maxhp }
     #[inline] pub fn blocks(&self, m: MonId, k: &str) -> bool { self.ab_of(m).blocks(k) }
-    #[inline] fn held(&self, m: MonId, id: u8) -> bool { let x = &self.mons[m]; matches!(x.item, Some(i) if i.id == id) && !x.item_used }
+    #[inline] pub fn held(&self, m: MonId, id: u8) -> bool { let x = &self.mons[m]; matches!(x.item, Some(i) if i.id == id) && !x.item_used }
     fn use_item(&mut self, m: MonId) { self.mons[m].item_used = true; }
     #[inline] pub fn foe_side(&self, s: usize) -> usize { 1 - s }
     pub fn alive(&self, s: usize) -> Vec<MonId> { self.sides[s].mons.iter().copied().filter(|&m| !self.mons[m].fainted).collect() }
@@ -265,7 +266,7 @@ impl<'a> Battle<'a> {
         if self.held(m, I_RICE) && self.pct(m) < SITRUS_BELOW { self.use_item(m); let mh = self.mons[m].maxhp; self.heal(m, mh * SITRUS, false); }
         for (i, th) in a.threshold.iter().enumerate() {
             if self.mons[m].once.th & (1 << i) != 0 || self.pct(m) >= th.below { continue; }
-            self.mons[m].once.th |= 1 << i;
+            self.mons[m].once.th |= 1 << i; self.mons[m].ab_shown = true;
             for op in &th.ops {
                 let mh = self.mons[m].maxhp;
                 match op.op.as_str() {
@@ -297,6 +298,7 @@ impl<'a> Battle<'a> {
             let ba = self.ab_of(by);
             for op in &ba.ko {
                 if op.one_hit && !self.mons[m].vol.one_hit { continue; }
+                self.mons[by].ab_shown = true;
                 match op.op.as_str() {
                     "boost" => { self.boost(by, op.stats.as_deref().unwrap_or(&[]), Some(by), false); }
                     "heal" => { let mh = self.mons[by].maxhp; self.heal(by, mh * op.frac, false); }
@@ -413,6 +415,7 @@ impl<'a> Battle<'a> {
     fn entry_ability(&mut self, m: MonId) {
         let aid = self.ab_id(m);
         let a = &self.d.abilities[aid];
+        if !a.entry.is_empty() { self.mons[m].ab_shown = true; }
         for (oi, op) in a.entry.iter().enumerate() {
             if op.once { if self.mons[m].once_done.contains(&(aid, oi)) { continue; } self.mons[m].once_done.push((aid, oi)); }
             let foes: Vec<MonId> = self.foes_of(m).into_iter().filter(|&f| op.only_type.map_or(true, |t| self.mons[f].types.contains(&t))).collect();
@@ -475,8 +478,7 @@ impl<'a> Battle<'a> {
         true
     }
     // While side s chooses, every foe shows side s's believed build (stats, item, ability, moves) in place of its own;
-    // the moves it has been seen using and an item it has used up show as they really are (battle.js believe).
-    // shortcut: an ability stays hidden even after it shows (an immunity, an entry effect); tracking reveals is the upgrade.
+    // the moves it has been seen using, an item it has used up and an ability that has shown show as they really are (battle.js believe).
     fn believe(&mut self, s: usize) -> Vec<(MonId, Vec<MoveSlot>, [f64; 5], f64, f64, Option<Item>, usize, usize)> {
         let views = match &self.views[s] { Some(v) => v, None => return vec![] };
         let foes = self.sides[1 - s].mons.clone();
@@ -491,7 +493,7 @@ impl<'a> Battle<'a> {
             mv.truncate(n);
             x.moves = mv; x.raw = v.raw; x.hp = x.hp / x.maxhp * v.maxhp; x.maxhp = v.maxhp;
             if !x.item_used { x.item = v.item; }
-            if x.ability == x.base_ability { x.ability = v.ability; x.base_ability = v.ability; }
+            if x.ability == x.base_ability && !x.ab_shown { x.ability = v.ability; x.base_ability = v.ability; }
         }
         keep
     }
@@ -865,6 +867,7 @@ impl<'a> Battle<'a> {
         let ty = self.move_type(u, mv, Some(t)); let m = self.mv(mv);
         for im in &ta.immune {
             if im.r#type == Some(ty) || im.cat == Some(m.cat) || im.flag.as_ref().map_or(false, |f| mv.flags.get(f)) {
+                self.mons[t].ab_shown = true;
                 if im.heal != 0.0 { let mh = self.mons[t].maxhp; self.heal(t, mh * im.heal, false); }
                 if let Some(b) = &im.boost { self.boost(t, b, Some(t), false); }
                 if im.flash_fire { self.mons[t].vol.flash_fire = true; }
@@ -960,6 +963,7 @@ impl<'a> Battle<'a> {
                 if dh.contact && !mv.flags.contact { continue; }
                 if let Some(c) = dh.cat { if c != m.cat { continue; } }
                 if dh.p != 0.0 && self.r.next() >= dh.p { continue; }
+                self.mons[u].ab_shown = true;
                 if let Some(s) = &dh.status { self.inflict(t, s, Some(u), Some(mv), None, false); }
                 if dh.suppress != 0 { self.mons[t].vol.suppressed = dh.suppress; }
                 if dh.decay != 0.0 { self.mons[t].vol.decay = dh.decay; }
@@ -1053,6 +1057,7 @@ impl<'a> Battle<'a> {
                 if h.super_eff && !(self.effectiveness(u, mv, t, ty, false) > 1.0) { continue; }
                 if let Some(at) = h.attacker_type { if !self.mons[u].types.contains(&at) { continue; } }
                 if let Some(p) = h.p { if p < 1.0 && self.r.next() >= p { continue; } }
+                self.mons[t].ab_shown = true;
                 if h.self_ { if !self.mons[t].fainted { self.boost(t, h.stats.as_deref().unwrap_or(&[]), Some(t), false); } continue; }
                 if let Some(s) = &h.status { self.inflict(u, s, Some(t), None, None, false); }
                 if h.chip != 0.0 { let mh = self.mons[u].maxhp; self.hurt(u, mh * h.chip, Some(t)); }
@@ -1142,8 +1147,8 @@ impl<'a> Battle<'a> {
             if !self.connects(u, mv, t, 1) { continue; }
             let ta = self.def_ab(t, Some(u), Some(mv));
             if let Some(st) = &fx.status { if self.r.next() < st.p {
-                if mv.flags.sound && ta.immune.iter().any(|x| x.flag.as_deref() == Some("sound")) { continue; }
-                if st.kind == "stun" && ta.immune.iter().any(|x| x.r#type == Some(5)) { continue; }
+                if mv.flags.sound && ta.immune.iter().any(|x| x.flag.as_deref() == Some("sound")) { self.mons[t].ab_shown = true; continue; }
+                if st.kind == "stun" && ta.immune.iter().any(|x| x.r#type == Some(5)) { self.mons[t].ab_shown = true; continue; }
                 self.inflict(t, &st.kind, Some(u), Some(mv), st.turns, fx.wake_confuse);
             } }
             if fx.confuse_foes { self.confuse(t, Some(u)); }
@@ -1234,6 +1239,7 @@ impl<'a> Battle<'a> {
             if self.mons[m].fainted { continue; }
             if self.mons[m].vol.aqua_ring { self.heal(m, mh / 16.0, false); }
             if matches!(self.mons[m].item, Some(i) if i.id == I_BENTO) { self.heal(m, mh * LEFTOVERS, false); }
+            if !a.end_turn.is_empty() { self.mons[m].ab_shown = true; }
             for op in &a.end_turn {
                 match op.op.as_str() {
                     "heal" => if op.low_hp.map_or(true, |l| l == 0.0 || self.pct(m) < l) && (!op.asleep || self.mons[m].status == Some(St::Sleep)) { self.heal(m, mh * op.frac, false); },
@@ -1291,7 +1297,7 @@ fn make_mon(d: &Data, b: &Build, level: f64, side: usize) -> Mon {
         ability: b.ability, base_ability: b.ability,
         moves: b.moves.iter().map(|&(id, flags)| { let m = &d.moves[id]; MoveSlot { mv: id, flags, pp: m.pp, sig: m.signature, from_metronome: false } }).collect(),
         status: None, status_turns: 0, bleed_n: 0, boosts: [0; 5], vol: Vol::default(), once: Once::default(), pending: None, fainted: false,
-        t: Track { turns_in: NONE, ..Track::default() }, once_done: vec![],
+        t: Track { turns_in: NONE, ..Track::default() }, once_done: vec![], ab_shown: false,
     }
 }
 

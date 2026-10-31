@@ -442,3 +442,64 @@ So the draft predicts better with books, not worse; #1's "done when" already hol
 - **Search AI, hidden vs full info** (both sides search, 128 playouts, 200 mirror battles, rule-based builds): won 32%, lost 66%. Knowing exact builds is worth about 34 points to the search: much of its strength came from playing the future out against the true builds. Check: given the true builds as its "guess", the hidden search plays even (44 won, 54 lost of 100), so the gap is the information, not a bug.
 - **Meta with the 4 averaged books, hidden vs full** (Rust, 200k draft battles x 2 seeds): picked win rate rank corr 0.993 (the same as two seeds of either), mean change 0.6 points, same top 10 (Demon Emperor Lelouch, Pain, Hogyoku Aizen, Lelouch, Ultra Instinct Goku first). Biggest moves: Doma +4.8, Makima +3.9, Kizaru +2.9; Gojo -2.1, Meliodas -2.0. Seed-to-seed median difference 0.5.
 - **Why the meta barely moves:** with books every character always plays its book build, so the guess is right (exactly with one book, nearly with 4 near-identical fits). Hidden builds will matter where builds vary: in the build search, a candidate build is still fully known to the foes (`--optimize` doesn't use `--hidden`), so surprise builds (Choice items, speed and counter spreads) are still under-rated there. Not checked: the search AI with books under `--hidden`.
+
+## Hidden builds, the two leftovers (2026-10-31)
+
+**Abilities show once they act.** Under `--hidden` a foe's guessed ability is replaced by its real one once it shows: an entry effect, an immunity or absorb, a reaction to a hit (on either side), an end-of-turn, knockout or low-Vitality effect. Silent damage multipliers still don't show. JS and Rust identical (300 draft + 300 no-draft hidden batches, 200 draft, search with hidden). New mechanics test: a Fire absorber is seen as "None" until it absorbs a Fire hit.
+
+**Build search with `--hidden`** (`--optimize ... --hidden`): the foes see each candidate build as the build they'd expect (the book's, or the plain one), so a surprise build can win battles by surprise. 12 top characters, 800 battles per option, 2 passes, 4 books, against the 100k meta field, seeds 5 and 6:
+
+| same pick in both runs (of 12) | ability | training | item |
+|---|---|---|---|
+| full info, seed 5 vs seed 6 | 8 | 5 | 4 |
+| hidden, seed 5 vs seed 6 | 8 | 3 | 3 |
+| full vs hidden, same seed | 6 / 9 | 6 / 5 | 3 / 3 |
+
+Full vs hidden differ no more than two seeds of the same mode, so at this size the build search's item and training picks are mostly noise and the hidden-build effect is too small to see. Average gain 6.3 / 5.0 full, 5.6 / 3.6 hidden. Picks that agreed in all 4 runs: Lelouch Zero Requiem + Focus Seal, Pain Preta Path + wallPhys + Clear Amulet. Fixed on the way: the build search crashed in its second pass when the first pass picked a tuned "speed" spread (that spread was then retrained under a preset name that doesn't exist); it now keeps the tuned spread when trying movesets.
+
+## AI gap #4: the draft counts abilities (2026-10-31)
+
+The draft's quick matchups (`draft.js matchups`, `draft.rs`) now count entry stat changes (Intimidate and the like: the user's own entry boosts and the foe's entry drops, as stages) and flat stat multipliers, on top of type immunities. Damage multipliers are still ignored, because they showed no gap (below).
+
+Measure: 100k comp draft battles with the 4 books (so each character has a fixed ability), 2 seeds. For each character, pick rate (made the 6 when brought) against picked win rate; the residual is how much more a character wins when picked than a straight-line fit on its pick rate predicts. A positive residual = under-picked for how well it does.
+
+| group (book-fit1 ability) | before, seeds 1 / 2 | after, seeds 1 / 2 |
+|---|---|---|
+| Intimidate users (5) | +9.6 / +10.0, picked 79% | +8.5 / +7.9, picked 86% |
+| other entry stat changes or stat multipliers (15) | -0.2 / -0.3 | -0.6 / -0.1 |
+| context-free damage multipliers (23) | +0.4 / +0.4 | +0.6 / +0.5 |
+| no such ability (214) | -0.3 / -0.3 | -0.2 / -0.2 |
+
+- Ainz 60% to 82% picked, Sailor Moon 74% to 82%, Gilgamesh 62% to 67%, on both seeds; their picked win rates held (56-57%, 65-67%, 51-53%), so the extra picks were deserved. All Might and Gear 5 Luffy were already picked about 100%. Overall rank corr of pick rate vs picked win rate unchanged (0.645 / 0.641).
+- The Intimidate residual stays positive, but with only 5 characters (2 at a 100% pick rate) the fit can't say how much of it is still the draft.
+- Damage multipliers (Kaido's kind) show no gap, so they're left out. Not checked: rule-based builds (without books), where abilities are random per build.
+
+## AI gap #5: item audit (2026-10-31)
+
+What each of the 18 items does in battle, and whether the fast AI (`ai.js` / `ai.rs`) accounted for it before and after. The search AI plays its playouts in the real engine, so it always felt every item (it already got the Last Thread scenario 12/12).
+
+| Item | In battle | Fast AI before | Fast AI now |
+|---|---|---|---|
+| Last Thread | survives one hit at full Vitality | **counted a KO through it** | KO checks see it hang on (single hits; multi-hit gets through). Sturdy too, same rule |
+| Iron Gauntlet, Focus Seal, Swift Sandals | stat x1.5, locked into one move | in damage and Speed; lock respected; switches out of a weak lock | same |
+| Overdrive Core | attacks x1.3, 1/10 Vitality per hit | damage only, **cost ignored** | cost counted like recoil |
+| Bento Box | heals 1/16 a turn | not scored | not scored (small, steady) |
+| Rice Ball | heals 1/4 once below half | not scored | not scored |
+| Battle Coat | Will x1.5, no status moves | in damage; status moves blocked | same |
+| Ward Charm | halves one super effective hit | in damage | same |
+| Type Emblem | its type x1.2 | in damage | same |
+| Hooded Cloak | blocks chance effects of foes' moves | **still valued status, flinch, drops into it** | worth nothing into it |
+| Clear Amulet | foes can't lower its stats | **still valued drops into it** | worth nothing (attacks and status moves) |
+| Calm Incense | cures Taunt or Encore once | **still valued Taunt/Encore into it** | worth the small floor |
+| Panacea Leaf | cures a status once | **still valued status into it** | worth nothing until used |
+| Counterstrike Policy | +2 Power and Energy when hit super effectively | **ignored** | a super effective hit that doesn't KO costs 16 (the AI's value of giving a foe +4 stages) |
+| Spiked Armor | contact attackers lose 1/6 | **ignored** | contact into it costs like recoil |
+| Escape Scroll | switches out after a hit | not scored | not scored (rare, needs a guess of who comes in) |
+| Field Anchor | own fields and screens last 8 | not scored | not scored (small) |
+
+Hidden builds: with `--hidden` all of this uses the item the side believes the foe holds (the guess, until used up).
+
+Tests:
+- New scenario "KO the foe without a Last Thread" (two equal foes, either KO'd by Fire Punch, one holds a Last Thread; `--verify`: Fire Punch the other 28.7 vs 9.2). Fast AI 11/20 before, 20/20 after; search 12/12. All 11 scenarios: fast 100%, search 92% at 128 playouts (misses are the known Trick Room and Protect ones).
+- Strength, 4,000 mirror battles x 2 seeds against frozen v2 (the AI before the scenario fixes; run before the small Calm Incense / Encore line was added): won 47.0% / 47.3%, lost 47.2% / 47.1% (before the item changes 46.5 / 46.8 won, 47.6 / 47.3 lost). Mirror 47.1 / 46.9 each way. So no measurable change in overall strength: these are rare situations, fixed one by one.
+- JS and Rust identical (200 comp draft; 300 comp with AI-trained items and draft; 300 comp hidden; 6 search battles). The Rust v1 bot keeps the old rules, as ai-v1.js does.

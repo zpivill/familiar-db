@@ -3,6 +3,7 @@
 // Both sides use the same AI with full knowledge, so differences in results come from the characters.
 
 import { archetypeById } from './archetypes.js';
+import { ITEM_NUM } from './rules.js';
 
 const STATS = ['pow', 'grd', 'ene', 'wil', 'spe'];
 // Weights of the scoring below, in one place so sim/tune.mjs can search for better ones. These are the
@@ -49,6 +50,16 @@ function estDamageNow(api, u, mv, t) {
   return d * acc / t.maxhp;
 }
 
+// estDamage for knockout checks: a target at full Vitality with an unused Last Thread (or Sturdy) hangs on at 1
+// against a single hit, so a KO takes a second hit (a multi-hit move gets through).
+function hitDamage(api, u, mv, t) {
+  const d = estDamage(api, u, mv, t);
+  if (d < t.hp / t.maxhp || t.hp < t.maxhp || mv.m.fx.hits) return d;
+  return (t.item?.id === 'last-thread' && !t.itemUsed) || api.defAb(t, u, mv).sturdy ? (t.hp - 1) / t.maxhp : d;
+}
+
+const held = (m, id) => m.item?.id === id && !m.itemUsed;
+
 export const usable = (m, mv) => {
   if (mv.pp <= 0) return false;
   if (m.vol.taunt > 0 && mv.m.cat === 'Status') return false;
@@ -61,7 +72,7 @@ export const usable = (m, mv) => {
 
 function bestHit(api, u, t) {
   let best = 0;
-  for (const mv of u.moves) if (mv.pp > 0) best = Math.max(best, estDamage(api, u, mv, t));
+  for (const mv of u.moves) if (mv.pp > 0) best = Math.max(best, hitDamage(api, u, mv, t));
   return best;
 }
 
@@ -69,7 +80,7 @@ function bestHit(api, u, t) {
 // shortcut: ignores f's own priority moves, fine while few characters carry both.
 function koFirst(B, api, u, f) {
   const first = api.speed(u) !== api.speed(f) && (api.speed(u) > api.speed(f)) !== !!B.field?.trickRoom;
-  return u.moves.some(mv => mv.pp > 0 && estDamage(api, u, mv, f) >= Math.max(1, f.hp) / f.maxhp && (first || api.effPriority(u, mv) > 0));
+  return u.moves.some(mv => mv.pp > 0 && hitDamage(api, u, mv, f) >= Math.max(1, f.hp) / f.maxhp && (first || api.effPriority(u, mv) > 0));
 }
 
 // How well a character does against a foe: what it deals minus what it takes, with Speed as a tiebreak.
@@ -196,7 +207,7 @@ function statusValue(B, api, u, mv, foes) {
           other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (a.contrary ? -1 : 1);
         }
       } else if (b.who === 'foe' || b.who === 'foes') {
-        for (const [k, n] of Object.entries(b.stats)) other += -n * 7 * (foe.boosts[k] <= -4 ? 0 : 1);
+        for (const [k, n] of Object.entries(b.stats)) other += -n * 7 * (foe.boosts[k] <= -4 || (n < 0 && foe.item?.id === 'clear-amulet') ? 0 : 1);
       }
     }
     other *= threat > 0.6 ? 0.25 : threat > 0.35 ? 0.6 : 1;
@@ -211,7 +222,7 @@ function statusValue(B, api, u, mv, foes) {
   if (fx.cure && u.status) v += 20;
   if (fx.status) {
     const k = fx.status.kind;
-    const open = foes.filter(f => !f.status && !api.blocks(f, k) && !(f.vol.sub));
+    const open = foes.filter(f => !f.status && !api.blocks(f, k) && !(f.vol.sub) && !held(f, 'panacea-leaf'));
     const base = { sleep: 45, freeze: 45, stun: api.speed(foe) > api.speed(u) ? 38 : 26, burn: foe.raw.pow > foe.raw.ene ? 38 : 18, curse: foe.raw.ene > foe.raw.pow ? 38 : 18, bleed: 32 }[k] || 20;
     v += open.length * base * W.statusMove * ((mv.m.accuracy || 100) / 100);
   }
@@ -250,8 +261,8 @@ function statusValue(B, api, u, mv, foes) {
   }
   if (fx.endure) v += hp > 0.9 ? 2 : 4;
   if (fx.substitute) v += !u.vol.sub && hp > 0.55 ? (threat > 0.5 ? 4 : 18) : -10;
-  if (fx.taunt) v += foe.moves.some(x => x.m.cat === 'Status') && !(foe.vol.taunt > 0) ? 12 : 1;
-  if (fx.encore) v += foe.vol.lastMove && foe.moves.find(x => x.id === foe.vol.lastMove)?.m.cat === 'Status' ? 22 : 2;
+  if (fx.taunt) v += foe.moves.some(x => x.m.cat === 'Status') && !(foe.vol.taunt > 0) && !held(foe, 'calm-incense') ? 12 : 1;
+  if (fx.encore) v += foe.vol.lastMove && foe.moves.find(x => x.id === foe.vol.lastMove)?.m.cat === 'Status' && !held(foe, 'calm-incense') ? 22 : 2;
   if (fx.forceSwitch) v += STATS.reduce((n, k) => n + Math.max(0, foe.boosts[k]), 0) * 8 + (B.sides[foe.side.i].hazards.spikes || B.sides[foe.side.i].hazards.rocks ? 8 : 2);
   if (fx.haze) v += foes.reduce((n, f) => n + STATS.reduce((s, k) => s + Math.max(0, f.boosts[k]), 0), 0) * 8 - STATS.reduce((s, k) => s + Math.max(0, u.boosts[k]), 0) * 8;
   if (fx.painSplit) v += Math.max(0, (foe.hp - u.hp) / 2 / u.maxhp * 100);
@@ -284,7 +295,7 @@ function attackValue(B, api, u, mv, t, foesN) {
   if (fx.counter) {
     const fb = Math.max(...t.moves.filter(x => x.pp > 0 && x.m.cat === (fx.counter.cat || x.m.cat)).map(x => estDamage(api, t, x, u)), 0);
     d = fb * u.maxhp < u.hp ? fb * u.maxhp * fx.counter.mult / t.maxhp * 0.6 : 0;
-  } else d = estDamage(api, u, mv, t);
+  } else d = hitDamage(api, u, mv, t);
   if (fx.delayed) d *= 0.6;
   if (fx.charge) d *= fx.charge.invuln ? 0.7 : 0.55;
   if (fx.sucker) d *= 0.65;
@@ -296,15 +307,21 @@ function attackValue(B, api, u, mv, t, foesN) {
     if (api.effPriority(u, mv) > 0 && api.speed(u) < api.speed(t)) v += W.koPriority;
   }
   if (d === 0) return -30;
-  // side effects worth something
-  if (fx.status && !t.status && !ko) v += (fx.status.p || 0) * W.statusChance;
-  if (fx.flinch && !ko && api.speed(u) > api.speed(t)) v += fx.flinch * W.flinch;
-  if (fx.firstTurn && fx.flinch) v += 20;
+  // side effects worth something (a Hooded Cloak blocks them on its holder, a Panacea Leaf cures the status,
+  // a Clear Amulet stops stat drops)
+  const cloak = t.item?.id === 'hooded-cloak';
+  if (fx.status && !t.status && !ko && !cloak && !held(t, 'panacea-leaf')) v += (fx.status.p || 0) * W.statusChance;
+  if (fx.flinch && !ko && !cloak && api.speed(u) > api.speed(t)) v += fx.flinch * W.flinch;
+  if (fx.firstTurn && fx.flinch && !cloak) v += 20;
   for (const b of fx.boosts || []) {
     const n = Object.values(b.stats).reduce((s, x) => s + x, 0);
     if (b.who === 'self') v += n * (n > 0 ? 5 : ko ? 1 : 3) * b.p;
-    if (b.who === 'foe' || b.who === 'foes') v += -n * 4 * b.p;
+    if ((b.who === 'foe' || b.who === 'foes') && !cloak && !(n < 0 && t.item?.id === 'clear-amulet')) v += -n * 4 * b.p;
   }
+  // items that hit back: Spiked Armor on contact, a Counterstrike Policy (+2 Power and Energy) on a super effective hit
+  if (mv.flags.contact && t.item?.id === 'spiked-armor') v -= ITEM_NUM.helmet * W.recoil;
+  if (!ko && held(t, 'counterstrike-policy') && api.effectiveness(u, mv, t, api.moveType(u, mv, t), false) > 1) v -= 2 * ITEM_NUM.policy * 4;
+  if (u.item?.id === 'overdrive-core') v -= ITEM_NUM.lifeOrbCost * W.recoil;
   if (fx.recoil) v -= fx.recoil * Math.min(d * t.maxhp, t.hp) / u.maxhp * W.recoil;
   if (fx.selfDmg) v -= fx.selfDmg * 70;
   if (fx.recharge && !ko) v -= W.recharge * fx.recharge;
@@ -325,7 +342,7 @@ function duosTargets(api, u, foes) {
   }]));
 }
 function duosTargetBonus(api, u, mv, t, info) {
-  const left = t.hp / t.maxhp, d = estDamage(api, u, mv, t);
+  const left = t.hp / t.maxhp, d = hitDamage(api, u, mv, t);
   return info.threat + (info.ally && d < left && d + info.ally >= left ? W.allyFinish : 0);
 }
 
@@ -406,7 +423,7 @@ function pairValue(api, m1, a1, m2, a2) {
   if ((f1.tailwind && f2.tailwind) || (f1.field && f2.field) || (f1.screen && f1.screen === f2.screen) || (f1.followMe && f2.followMe)) v -= Math.min(a1.score, a2.score);
   const t = a1.target;
   if (hit1 && hit2 && t && t === a2.target && !f1.spread && !f2.spread && !api.abOf(m1).spreadType && !api.abOf(m2).spreadType) {
-    const left = t.hp / t.maxhp, d1 = estDamage(api, m1, mv1, t), d2 = estDamage(api, m2, mv2, t);
+    const left = t.hp / t.maxhp, d1 = hitDamage(api, m1, mv1, t), d2 = hitDamage(api, m2, mv2, t);
     if (d1 >= left || d2 >= left) v -= Math.min(a1.score, a2.score) * W.overkill;
     else if (d1 + d2 >= left) v += W.combo;
   }

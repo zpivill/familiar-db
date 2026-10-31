@@ -88,7 +88,8 @@ fn eval(d: &Data, o: &Opts, cand: &Build, field: &Field, from: usize, n: usize, 
         }
         let dr = if o.draft { Some(run_draft(d, &sides, &builds, &mut r, o, &arch, cache)) } else { None };
         let fight: [&[Build]; 2] = match &dr { Some(x) => [&x.six[0], &x.six[1]], None => [&builds[0], &builds[1]] };
-        let b = run_battle(d, fight, r.clone(), &BattleOpts { plans: arch, beliefs: None, ..bo0 });
+        // with --hidden the foes see the candidate as the build they'd expect (the book's, or the plain one), so a surprise build can pay off
+        let b = run_battle(d, fight, r.clone(), &BattleOpts { plans: arch, beliefs: beliefs(d, o, &sides, fight, &dr), ..bo0 });
         tot += if b.winner == me as i32 { 1.0 } else if b.winner < 0 { o.draw_score } else { 0.0 };
     }
     tot / n as f64
@@ -226,7 +227,9 @@ pub fn optimize_one(d: &Data, o: &Opts, e: usize, field: &Field, threats: &[Thre
         pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "ability", &mut tried);
         // moveset (training follows the moves' attack stat)
         let preset = cur.preset.unwrap_or("fast");
-        let mut opts: Vec<(String, Build)> = sets.iter().map(|m| { let mut b = cur.clone(); b.moves = m.clone(); let b = trained(d, b, preset);
+        let mut opts: Vec<(String, Build)> = sets.iter().map(|m| { let mut b = cur.clone(); b.moves = m.clone();
+            // a tuned "speed" spread is not a preset: keep it as it is
+            let b = if PRESET_NAMES.contains(&preset) { trained(d, b, preset) } else { b };
             (b.moves.iter().map(|x| d.moves[x.0].name.clone()).collect::<Vec<_>>().join(", "), b) }).collect();
         pick(d, o, field, p, seed, cache, &mut cur, &mut cur_v, &mut opts, "moves", &mut tried);
         let mut opts: Vec<(String, Build)> = PRESET_NAMES.iter().map(|&pr| (pr.to_string(), trained(d, cur.clone(), pr))).collect();

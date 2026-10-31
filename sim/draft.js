@@ -9,7 +9,7 @@
 //   7. writes down why, from the same numbers it used.
 // No DOM and no battle state, so it runs in a worker and in Node.
 
-import { RULES, COMPETITIVE, TYPES, typeEff, battleStat, natureMult, itemDef } from './rules.js';
+import { RULES, COMPETITIVE, TYPES, typeEff, battleStat, natureMult, itemDef, stageMult } from './rules.js';
 import { kit, trainTeam } from './builds.js';
 import { rng } from './battle.js';
 
@@ -38,12 +38,24 @@ function statsOf(b, level) {
   for (const k of STATS) out[k] = battleStat(st[k], level, false, ev[k] || 0, iv[k] ?? RULES.iv, natureMult(b.nature, k));
   if (item?.choice) out[item.choice] *= 1.5;
   if (item?.id === 'battle-coat') out.wil *= 1.5;
+  for (const k of STATS) out[k] *= b.ability?.ab?.statMult?.[k] || 1;
+  return out;
+}
+// a's stats once both have entered: its own entry boosts and the foe d's entry drops (Intimidate and the like).
+function onEntry(s, a, d) {
+  const st = {};
+  const add = o => { for (const k in o.stats) if (k in s && k !== 'vit') st[k] = (st[k] || 0) + o.stats[k]; };
+  for (const o of a.ability?.ab?.entry || []) if (o.op === 'self' && (!o.ifFoeType || d.e.types.includes(o.ifFoeType))) add(o);
+  for (const o of d.ability?.ab?.entry || []) if (o.op === 'foes' && (!o.onlyType || a.e.types.includes(o.onlyType))) add(o);
+  const out = { ...s };
+  for (const k in st) out[k] *= stageMult(Math.max(-6, Math.min(6, st[k])));
   return out;
 }
 
 const avgHits = fx => !fx.hits ? 1 : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
 
-// Best expected hit of a on d, as a share of d's Vitality (abilities other than type immunities are ignored).
+// Best expected hit of a on d, as a share of d's Vitality (of abilities, only type immunities, entry stat changes
+// and flat stat multipliers count; damage multipliers are ignored).
 function bestHit(data, a, sa, d, sd, level) {
   const immune = d.ability?.ab?.immune || [];
   const item = itemDef(a.item);
@@ -70,9 +82,10 @@ function bestHit(data, a, sa, d, sd, level) {
 function matchups(data, mine, theirs, level) {
   const sm = mine.map(b => statsOf(b, level)), st = theirs.map(b => statsOf(b, level));
   return mine.map((a, i) => theirs.map((d, j) => {
-    const deal = bestHit(data, a, sm[i], d, st[j], level), take = bestHit(data, d, st[j], a, sm[i], level);
+    const sa = onEntry(sm[i], a, d), sd = onEntry(st[j], d, a);
+    const deal = bestHit(data, a, sa, d, sd, level), take = bestHit(data, d, sd, a, sa, level);
     const tA = deal > 0 ? Math.min(9, Math.ceil(1 / deal)) : 12, tB = take > 0 ? Math.min(9, Math.ceil(1 / take)) : 12;
-    const spd = sm[i].spe > st[j].spe ? 0.5 : sm[i].spe < st[j].spe ? -0.5 : 0;
+    const spd = sa.spe > sd.spe ? 0.5 : sa.spe < sd.spe ? -0.5 : 0;
     return Math.tanh(0.7 * (tB - tA + spd));
   }));
 }

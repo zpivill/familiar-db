@@ -3,7 +3,7 @@
 
 use crate::battle::*;
 use crate::data::*;
-use crate::rules::stage_mult;
+use crate::rules::{stage_mult, HELMET, POLICY, LIFE_ORB_COST};
 
 #[derive(Debug)]
 pub struct Weights {
@@ -67,9 +67,20 @@ pub fn usable(b: &Battle, m: MonId, slot: usize) -> bool {
     true
 }
 
+// est_damage for knockout checks (ai.js hitDamage): a target at full Vitality with an unused Last Thread (or Sturdy)
+// hangs on at 1 against a single hit. Not for the v1 bot, which predates it.
+fn hit_damage(b: &mut Battle, u: MonId, slot: usize, t: MonId) -> f64 {
+    let d = est_damage(b, u, slot, t);
+    let (th, tm) = (b.mons[t].hp, b.mons[t].maxhp);
+    let mv = b.mons[u].moves[slot];
+    if v1(b) || d < th / tm || th < tm || b.mv(&mv).fx.hits.is_some() { return d; }
+    if b.held(t, I_LAST_THREAD) || b.def_ab(t, Some(u), Some(&mv)).sturdy { (th - 1.0) / tm } else { d }
+}
+fn has(b: &Battle, m: MonId, id: u8) -> bool { matches!(b.mons[m].item, Some(i) if i.id == id) }
+
 fn best_hit(b: &mut Battle, u: MonId, t: MonId) -> f64 {
     let mut best = 0.0;
-    for s in 0..b.mons[u].moves.len() { if b.mons[u].moves[s].pp > 0 { best = mx(best, est_damage(b, u, s, t)); } }
+    for s in 0..b.mons[u].moves.len() { if b.mons[u].moves[s].pp > 0 { best = mx(best, hit_damage(b, u, s, t)); } }
     best
 }
 // Whether u has a move that knocks f out before f moves (priority, or faster; Trick Room reverses Speed), as ai.js koFirst.
@@ -79,7 +90,7 @@ fn ko_first(b: &mut Battle, u: MonId, f: MonId) -> bool {
     let first = su != sf && (su > sf) != b.field.as_ref().map_or(false, |x| x.fx.trick_room);
     let left = mx(1.0, b.mons[f].hp) / b.mons[f].maxhp;
     for s in 0..b.mons[u].moves.len() {
-        if b.mons[u].moves[s].pp > 0 && est_damage(b, u, s, f) >= left && (first || { let mv = b.mons[u].moves[s]; b.eff_priority(u, Some(&mv)) > 0.0 }) { return true; }
+        if b.mons[u].moves[s].pp > 0 && hit_damage(b, u, s, f) >= left && (first || { let mv = b.mons[u].moves[s]; b.eff_priority(u, Some(&mv)) > 0.0 }) { return true; }
     }
     false
 }
@@ -215,7 +226,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
                     other += n as f64 * w * (if cur >= 4 { 0.0 } else if cur >= 2 { 0.5 } else { 1.0 }) * if a.contrary { -1.0 } else { 1.0 };
                 }
             } else if bb.who == "foe" || bb.who == "foes" {
-                for &(k, n) in &bb.stats { let low = k < 5 && b.mons[foe].boosts[k] <= -4; other += -(n as f64) * 7.0 * if low { 0.0 } else { 1.0 }; }
+                for &(k, n) in &bb.stats { let low = (k < 5 && b.mons[foe].boosts[k] <= -4) || (!v1(b) && n < 0 && has(b, foe, I_AMULET)); other += -(n as f64) * 7.0 * if low { 0.0 } else { 1.0 }; }
             }
         }
         other *= if threat > 0.6 { 0.25 } else if threat > 0.35 { 0.6 } else { 1.0 };
@@ -230,7 +241,7 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
     if fx.cure.on() && b.mons[u].status.is_some() { v += 20.0; }
     if let Some(st) = &fx.status {
         let k = st.kind.as_str();
-        let open = foes.iter().filter(|&&f| b.mons[f].status.is_none() && !b.blocks(f, k) && b.mons[f].vol.sub == 0.0).count();
+        let open = foes.iter().filter(|&&f| b.mons[f].status.is_none() && !b.blocks(f, k) && b.mons[f].vol.sub == 0.0 && !(!v1(b) && b.held(f, I_PANACEA))).count();
         let fo = &b.mons[foe];
         let base = match k { "sleep" => 45.0, "freeze" => 45.0, "stun" => if b.speed(foe, false) > b.speed(u, false) { 38.0 } else { 26.0 },
             "burn" => if fo.raw[POW] > fo.raw[ENE] { 38.0 } else { 18.0 }, "curse" => if fo.raw[ENE] > fo.raw[POW] { 38.0 } else { 18.0 }, "bleed" => 32.0, _ => 20.0 };
@@ -275,9 +286,10 @@ fn status_value(b: &mut Battle, u: MonId, slot: usize, foes: &[MonId]) -> f64 {
     }
     if fx.endure { v += if hp > 0.9 { 2.0 } else { 4.0 }; }
     if fx.substitute != 0.0 { v += if b.mons[u].vol.sub == 0.0 && hp > 0.55 { if threat > 0.5 { 4.0 } else { 18.0 } } else { -10.0 }; }
+    let incense = !v1(b) && b.held(foe, I_INCENSE);
     let fo = &b.mons[foe];
-    if fx.taunt != 0 { v += if fo.moves.iter().any(|x| d.moves[x.mv].cat == Cat::Status) && !(fo.vol.taunt > 0) { 12.0 } else { 1.0 }; }
-    if fx.encore != 0 { v += if fo.vol.last_move.map_or(false, |lm| fo.moves.iter().find(|x| x.mv == lm).map_or(false, |x| d.moves[x.mv].cat == Cat::Status)) { 22.0 } else { 2.0 }; }
+    if fx.taunt != 0 { v += if fo.moves.iter().any(|x| d.moves[x.mv].cat == Cat::Status) && !(fo.vol.taunt > 0) && !incense { 12.0 } else { 1.0 }; }
+    if fx.encore != 0 { v += if fo.vol.last_move.map_or(false, |lm| fo.moves.iter().find(|x| x.mv == lm).map_or(false, |x| d.moves[x.mv].cat == Cat::Status)) && !incense { 22.0 } else { 2.0 }; }
     let pos = |bo: &[i32; 5]| bo.iter().map(|&x| x.max(0)).sum::<i32>() as f64;
     if fx.force_switch { let hz = b.sides[fo.side].hazards; v += pos(&fo.boosts) * 8.0 + if hz.spikes != 0 || hz.rocks != 0 { 8.0 } else { 2.0 }; }
     if fx.haze { v += foes.iter().fold(0.0, |n, &f| n + pos(&b.mons[f].boosts)) * 8.0 - pos(&b.mons[u].boosts) * 8.0; }
@@ -318,7 +330,7 @@ fn attack_value(b: &mut Battle, u: MonId, slot: usize, t: MonId, foes_n: usize) 
         for v in vals { fb = mx(fb, v); }
         let (um, uh, tm) = (b.mons[u].maxhp, b.mons[u].hp, b.mons[t].maxhp);
         d = if fb * um < uh { fb * um * ct.mult / tm * 0.6 } else { 0.0 };
-    } else { d = est_damage(b, u, slot, t); }
+    } else { d = hit_damage(b, u, slot, t); }
     if fx.delayed.is_some() { d *= 0.6; }
     if let Some(ch) = &fx.charge { d *= if ch.invuln { 0.7 } else { 0.55 }; }
     if fx.sucker { d *= 0.65; }
@@ -331,13 +343,21 @@ fn attack_value(b: &mut Battle, u: MonId, slot: usize, t: MonId, foes_n: usize) 
         if b.eff_priority(u, Some(&mv)) > 0.0 && b.speed(u, false) < b.speed(t, false) { v += b.w.ko_priority; }
     }
     if d == 0.0 { return -30.0; }
-    if let Some(st) = &fx.status { if b.mons[t].status.is_none() && !ko { v += st.p * b.w.status_chance; } }
-    if fx.flinch != 0.0 && !ko && b.speed(u, false) > b.speed(t, false) { v += fx.flinch * b.w.flinch; }
-    if fx.first_turn && fx.flinch != 0.0 { v += 20.0; }
+    // side effects (ai.js): blocked by a Hooded Cloak, a status cured by a Panacea Leaf, drops stopped by a Clear Amulet
+    let new = !v1(b);
+    let cloak = new && has(b, t, I_CLOAK);
+    if let Some(st) = &fx.status { if b.mons[t].status.is_none() && !ko && !cloak && !(new && b.held(t, I_PANACEA)) { v += st.p * b.w.status_chance; } }
+    if fx.flinch != 0.0 && !ko && !cloak && b.speed(u, false) > b.speed(t, false) { v += fx.flinch * b.w.flinch; }
+    if fx.first_turn && fx.flinch != 0.0 && !cloak { v += 20.0; }
     for bb in fx.boosts.as_deref().unwrap_or(&[]) {
         let n = bb.stats.iter().fold(0.0, |s, &(_, x)| s + x as f64);
         if bb.who == "self" { v += n * (if n > 0.0 { 5.0 } else if ko { 1.0 } else { 3.0 }) * bb.p; }
-        if bb.who == "foe" || bb.who == "foes" { v += -n * 4.0 * bb.p; }
+        if (bb.who == "foe" || bb.who == "foes") && !cloak && !(new && n < 0.0 && has(b, t, I_AMULET)) { v += -n * 4.0 * bb.p; }
+    }
+    if new {
+        if mv.flags.contact && has(b, t, I_ARMOR) { v -= HELMET * b.w.recoil; }
+        if !ko && b.held(t, I_POLICY) { let ty = b.move_type(u, &mv, Some(t)); if b.effectiveness(u, &mv, t, ty, false) > 1.0 { v -= 2.0 * POLICY as f64 * 4.0; } }
+        if has(b, u, I_OVERDRIVE) { v -= LIFE_ORB_COST * b.w.recoil; }
     }
     if fx.recoil != 0.0 { v -= fx.recoil * mn(d * tm, th) / b.mons[u].maxhp * b.w.recoil; }
     if fx.self_dmg != 0.0 { v -= fx.self_dmg * 70.0; }
@@ -362,7 +382,7 @@ fn duos_targets(b: &mut Battle, u: MonId, foes: &[MonId]) -> Vec<(MonId, f64, f6
     out
 }
 fn duos_target_bonus(b: &mut Battle, u: MonId, slot: usize, t: MonId, info: (f64, f64)) -> f64 {
-    let left = b.mons[t].hp / b.mons[t].maxhp; let d = est_damage(b, u, slot, t);
+    let left = b.mons[t].hp / b.mons[t].maxhp; let d = hit_damage(b, u, slot, t);
     info.0 + if info.1 != 0.0 && d < left && d + info.1 >= left { b.w.ally_finish } else { 0.0 }
 }
 
@@ -503,7 +523,7 @@ fn pair_value(b: &mut Battle, m1: MonId, a1: &Choice, m2: MonId, a2: &Choice) ->
     if f2.helping_hand && !hit1 { v -= a2.score; }
     if (f1.tailwind != 0 && f2.tailwind != 0) || (f1.field.is_some() && f2.field.is_some()) || (f1.screen.is_some() && f1.screen == f2.screen) || (f1.follow_me && f2.follow_me) { v -= mn(a1.score, a2.score); }
     if let Some(t) = t1 { if hit1 && hit2 && Some(t) == t2 && f1.spread.is_none() && f2.spread.is_none() && b.ab_of(m1).spread_type.is_none() && b.ab_of(m2).spread_type.is_none() {
-        let left = b.mons[t].hp / b.mons[t].maxhp; let d1 = est_damage(b, m1, s1, t); let d2 = est_damage(b, m2, s2, t);
+        let left = b.mons[t].hp / b.mons[t].maxhp; let d1 = hit_damage(b, m1, s1, t); let d2 = hit_damage(b, m2, s2, t);
         if d1 >= left || d2 >= left { v -= mn(a1.score, a2.score) * b.w.overkill; } else if d1 + d2 >= left { v += b.w.combo; }
     } }
     v
