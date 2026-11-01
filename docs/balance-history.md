@@ -632,3 +632,22 @@ So the gap is still there with the new AI. **The cause** is in each character's 
 - **It isn't the counter spreads.** The extra noise is the same for characters whose books use "outspeeds X" or "survives X" spreads and for those that don't (8.2 to 10.6 vs 8.3 to 10.6).
 
 **What to do with it:** books aren't adding noise to the truth. They make the game more matchup-driven, and a single meta is a smaller sample of it. Pooling still converges, just more slowly: about 1.6x the runs for the same agreement (8 runs with books ≈ 5 without). For a 0.8 picked win rate correlation with books, pool about 16 runs per group, 32 in all.
+
+## AI check after the gap fixes, fresh seeds (2026-11-01)
+
+An independent check of the AI after gaps #2-#12, on seeds not used in any tuning or gap work. No code changed.
+
+**Scenarios** (`scenarios.mjs 20 8 128`): fast AI 90% (bar 90%, passes); its misses are "switch out of a lost matchup" (0/20, Protects; `--verify` rates it a near tie) and "hit the foe that won't Protect" (17/20). Search AI at 128 playouts 92% (bar 95%, fails narrowly): "set Trick Room when slower" 1/8 (a close call, 12.8 vs 10.8 in `--verify`) and one double Protect.
+
+**Strength** (`bench.mjs strength 2000 9`, mirror matches): won / lost vs random 94.5 / 4.8, greedy 61.7 / 36.4, v1 59.1 / 35.8, v2 52.3 / 42.0, v3 53.3 / 40.9, mirror 47.1 / 47.1. Each frozen version beats the one before; greedy is still the hardest fixed bot (prediction costs a little against a foe that never protects).
+
+**Hidden builds** (`bench.mjs hidden 2000 9`): the hidden-info AI won 43.4%, lost 51.3% against the full-info one, about 8 points net (5 before #7: prediction makes exact builds worth more). With books the meta barely moves under `--hidden` (gap #2/#3 check, corr 0.993).
+
+**Fast vs search AI on fresh meta chains** (Rust, 200k, comp, bring 8, Vitality x3, every form, archetype rounds, 4 averaged books, `--check=2000`, seeds 21 and 22; about 235 search games a team, so ±6.5 points per team):
+
+| | rank corr, 17 teams | meta teams mean gap | archetype mean gap | largest | archetypes over 8 points |
+|---|---|---|---|---|---|
+| seed 21 | 0.96 | 7.2 | 4.4 | 14 (Gravity, search higher) | 2 of 11 |
+| seed 22 | 0.91 | 3.7 | 5.5 | 14 (Intimidate + Fake Out, search higher) | 3 of 11 (also Trick Room -13, Snow +9) |
+
+So the fast AI ranks teams almost as the search AI does, and most per-team gaps are within the sampling margin. The exceptions are combo archetypes (Gravity, Intimidate balance, Trick Room, Snow), where a single team can move 9-14 points. For archetype verdicts, read the search AI column from `--check`.
