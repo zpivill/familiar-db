@@ -3,6 +3,7 @@
 import { usable, estDamage } from '../ai.js';
 import * as v1 from './ai-v1.js';
 import * as v2 from './ai-v2.js';
+import * as v3 from './ai-v3.js';
 
 const pickOne = (r, xs) => xs[Math.floor(r() * xs.length)];
 export const BOTS = {
@@ -26,6 +27,8 @@ export const BOTS = {
   v1: { action: (B, m) => v1.chooseAction(B, m, B.api), replace: (B, s, options) => v1.chooseReplacement(B, s, options, B.api) },
   // the step-2 AI from 2026-10-29 (tuned weights, joint side actions)
   v2: { action: (B, m) => v2.chooseAction(B, m, B.api), replace: (B, s, options) => v2.chooseReplacement(B, s, options, B.api) },
+  // the AI after gaps #4-#6 (2026-10-31), before foe prediction
+  v3: { action: (B, m) => v3.chooseAction(B, m, B.api), replace: (B, s, options) => v3.chooseReplacement(B, s, options, B.api) },
   // the current AI against itself: should come out even
   mirror: { action: () => null },
 };

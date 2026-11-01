@@ -16,8 +16,10 @@ export const W = {
   hhKo: 10.7, speedFlip: 27.1, protectSave: 310, protectAlly: 29, wideGuard: 0.321, followSetup: 40.6, followSave: 81.2,
   setup: 1.78, heal: 85.9, statusMove: 0.934, tailwind: 56.6, trickRoom: 57.5, screen: 29.9, protect: 6,
   statusScale: 1.47,   // every status move's total score
-  switchBad: -0.369, switchGain: 1.43, switchP: 0.696,
+  switchSpread: 0.6, switchNext: 1, switchCost: 40, switchKo: 73.7,   // gap #8: switching scored like a move (switchValue)
   overkill: 0.389, combo: 15.2,                     // joint side actions
+  predictProtect: 0.8,                              // gap #7: share of an attack's score lost into a foe expected to Protect
+  bind: 0.5, helpingHand: 1,                        // a bind's damage over its turns; Helping Hand's value
 };
 
 const avgHits = (fx, ab) => !fx.hits ? 1 : ab.skillLink ? fx.hits[1] : fx.hits[0] === 2 && fx.hits[1] === 5 ? 3.1 : (fx.hits[0] + fx.hits[1]) / 2;
@@ -102,7 +104,7 @@ function sideSpeed(B, api, side) {
 // so the AI weighs what the move does for the side this turn and the next few against just attacking.
 // Added on top of statusValue's base score. Without this, an attack outscores Protect, Tailwind or
 // Helping Hand almost every turn and battles become pure damage races.
-function duosSupportValue(B, api, u, mv, foes) {
+function duosSupportValue(B, api, u, mv, foes, pred) {
   const fx = mv.m.fx, a = api.abOf(u), al = api.allyOf(u);
   const ally = al && !al.fainted ? al : null;
   const left = f => Math.max(1, f.hp) / f.maxhp;
@@ -114,7 +116,7 @@ function duosSupportValue(B, api, u, mv, foes) {
       const h = bestHit(api, ally, f);
       best = Math.max(best, Math.min(h * 0.5, left(f)) * 100 + (h < left(f) && h * 1.5 >= left(f) ? W.hhKo : 0));
     }
-    v += best;
+    v += best * W.helpingHand;
   }
   const mine = [...api.actives(u.side).map(m => [m, 1]), ...api.bench(u.side).map(m => [m, 0.5])];
   const flips = (mult, reverse) => {
@@ -131,7 +133,8 @@ function duosSupportValue(B, api, u, mv, foes) {
   if (fx.protect && !chained) {
     // both foes can knock it out between them (or one alone can): protecting buys a turn for the ally.
     // A foe it can knock out before that foe moves is no threat: hitting it beats protecting from it.
-    const threats = foes.filter(f => !koFirst(B, api, u, f));
+    // A foe expected to Protect or use a status move this turn (pred) won't hit it either.
+    const threats = foes.filter(f => !koFirst(B, api, u, f) && pred?.get(f)?.attack !== false);
     const one = Math.max(0, ...threats.map(f => bestHit(api, f, u))), both = threats.reduce((n, f) => n + bestHit(api, f, u), 0);
     if (one >= left(u) || (foes.length > 1 && both >= left(u))) {
       v += W.protectSave;
@@ -187,26 +190,30 @@ function statusValue(B, api, u, mv, foes) {
   if (fx.duosOnly && !B.duos) return -5;
   if (fx.nothing) return -5;
   if (fx.boosts) {
-    const main = u.moves.some(x => x.m.cat === 'Physical') && u.raw.pow >= u.raw.ene ? 'pow' : 'ene';
+    const mainOf = x => x.moves.some(y => y.m.cat === 'Physical') && x.raw.pow >= x.raw.ene ? 'pow' : 'ene';
     // Raising the main attacking stat pays off on every later attack, not just this turn: score it as the
-    // extra damage it adds over the turns the user is likely to stay in (see setupTurns).
+    // extra damage it adds over the turns the receiver is likely to stay in (see setupTurns). Team and ally
+    // boosts count for whoever gets them.
     let other = 0;
-    const turns = setupTurns(B, api, u, foes);
+    const al = api.allyOf(u), ally = al && !al.fainted && !api.abOf(al).loner ? al : null;
     for (const b of fx.boosts) {
-      if (b.who === 'self' || b.who === 'team' || b.who === 'ally') {
+      const gets = b.who === 'self' ? [u] : b.who === 'team' ? [u, ...(ally ? [ally] : [])] : b.who === 'ally' ? [ally || u] : [];
+      for (const x of gets) {
+        const main = mainOf(x), xa = api.abOf(x);
         for (const [k, n] of Object.entries(b.stats)) {
           const kk = k === 'highest' ? main : k;
-          const cur = u.boosts[kk] || 0;
-          if (kk === main && b.who === 'self' && !a.contrary) {
-            const best = Math.max(...foes.map(f => Math.min(bestHit(api, u, f), 1)));
+          const cur = x.boosts[kk] || 0;
+          if (kk === main && !xa.contrary) {
+            const best = Math.max(...foes.map(f => Math.min(bestHit(api, x, f), 1)));
             const gain = stageMult(Math.min(6, cur + n)) / stageMult(cur) - 1;
-            v += best * 100 * gain * turns * W.setup * (b.p ?? 1);
+            v += best * 100 * gain * setupTurns(B, api, x, foes) * W.setup * (b.p ?? 1);
             continue;
           }
           const w = kk === main ? 16 : kk === 'spe' ? 12 : kk === 'pow' || kk === 'ene' ? 3 : 8;
-          other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (a.contrary ? -1 : 1);
+          other += n * w * (cur >= 4 ? 0 : cur >= 2 ? 0.5 : 1) * (xa.contrary ? -1 : 1);
         }
-      } else if (b.who === 'foe' || b.who === 'foes') {
+      }
+      if (b.who === 'foe' || b.who === 'foes') {
         for (const [k, n] of Object.entries(b.stats)) other += -n * 7 * (foe.boosts[k] <= -4 || (n < 0 && foe.item?.id === 'clear-amulet') ? 0 : 1);
       }
     }
@@ -215,8 +222,12 @@ function statusValue(B, api, u, mv, foes) {
     v += other;
   }
   if (fx.heal) {
-    const miss = 1 - hp;
-    v += miss < 0.25 ? 0 : miss * W.heal * (a.healMult || 1);
+    // healing an ally or the team counts their missing Vitality
+    const al = api.allyOf(u), ally = al && !al.fainted ? al : u;
+    for (const x of fx.healWho === 'team' ? [u, ...(ally !== u ? [ally] : [])] : fx.healWho === 'ally' ? [ally] : [u]) {
+      const miss = 1 - api.pct(x);
+      v += miss < 0.25 ? 0 : miss * W.heal * (a.healMult || 1);
+    }
     if (fx.restSleep) v -= 15;
   }
   if (fx.cure && u.status) v += 20;
@@ -312,6 +323,8 @@ function attackValue(B, api, u, mv, t, foesN) {
   const cloak = t.item?.id === 'hooded-cloak';
   if (fx.status && !t.status && !ko && !cloak && !held(t, 'panacea-leaf')) v += (fx.status.p || 0) * W.statusChance;
   if (fx.flinch && !ko && !cloak && api.speed(u) > api.speed(t)) v += fx.flinch * W.flinch;
+  // a bind takes 1/8 or so every turn for 4-5 turns, of what the hit leaves
+  if (fx.bind && !ko && !t.vol.bind && !api.blocks(t, 'trap')) v += Math.min(t.hp / t.maxhp - d, fx.bind.frac * (fx.bind.turns[0] + fx.bind.turns[1]) / 2) * 100 * W.bind;
   if (fx.firstTurn && fx.flinch && !cloak) v += 20;
   for (const b of fx.boosts || []) {
     const n = Object.values(b.stats).reduce((s, x) => s + x, 0);
@@ -354,7 +367,8 @@ function planBonus(B, m, mv) {
 
 // Every option for m this turn with its score (noise included), best first. A forced move, a switch or
 // "nothing usable" comes back as the only option.
-export function options(B, m, api) {
+// quiet: the plain scores, no noise, no switching and no prediction (used to predict a foe).
+export function options(B, m, api, quiet = false) {
   const r = B.r;
   const forced = m.vol.recharge > 0 || m.vol.charging || m.vol.rampage;
   if (forced) {
@@ -365,21 +379,24 @@ export function options(B, m, api) {
   const foes = api.foesOf(m);
   const list = [];
   let tInfo = null;
-  const consider = (act, score) => { list.push({ ...act, score: score * (1 - W.noise / 2 + r() * W.noise) + r() }); };
+  const consider = (act, score) => { list.push(quiet ? { ...act, score } : { ...act, score: score * (1 - W.noise / 2 + r() * W.noise) + r() }); };
+  const pred = !quiet && B.duos && api.cache ? predict(B, m.side, api) : null;
+  // an attack into a foe expected to Protect is mostly wasted
+  const guard = (mv, f, v) => v > 0 && pred?.get(f)?.protect && !throughProtect(api, m, mv) ? v * (1 - W.predictProtect) : v;
   m.moves.forEach((mv, i) => {
     if (!usable(m, mv, i)) return;
-    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, (statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes) : 0)) * W.statusScale + planBonus(B, m, mv));
+    if (mv.m.cat === 'Status') return consider({ type: 'move', slot: i, target: foes[0] }, (statusValue(B, api, m, mv, foes) + (B.duos && foes.length ? duosSupportValue(B, api, m, mv, foes, pred) : 0)) * W.statusScale + planBonus(B, m, mv));
     const fx = mv.m.fx;
     if (B.duos && (fx.spread || api.abOf(m).spreadType === mv.m.type)) {
       let v = 0;
-      for (const f of foes) v += attackValue(B, api, m, mv, f, foes.length) * 0.75;
+      for (const f of foes) v += guard(mv, f, attackValue(B, api, m, mv, f, foes.length) * 0.75);
       if (fx.spread === 'all') { const al = api.allyOf(m); if (al && !al.fainted) v -= estDamage(api, m, mv, al) * 120; }
       return consider({ type: 'move', slot: i, target: foes[0] }, v);
     }
     for (const f of foes) {
       let v = attackValue(B, api, m, mv, f, foes.length);
       if (B.duos && v > 0) v += duosTargetBonus(api, m, mv, f, (tInfo || (tInfo = duosTargets(api, m, foes))).get(f));
-      consider({ type: 'move', slot: i, target: f }, v);
+      consider({ type: 'move', slot: i, target: f }, guard(mv, f, v));
     }
   });
   if (!list.length) {
@@ -387,23 +404,53 @@ export function options(B, m, api) {
     const i = Math.max(0, m.moves.findIndex(x => x.pp > 0));
     return [{ type: 'move', slot: i, target: foes[0], score: 0 }];
   }
-  list.sort((x, y) => y.score - x.score);
-  const best = list[0];
-  // switching
+  // switching, scored on the moves' scale (gap #8): the bench character that does best here, and what it's worth
   const bench = api.bench(m.side);
-  if (bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
-    const here = Math.min(...foes.map(f => matchup(api, m, f)));
-    let pick = null, pickV = -9;
-    for (const b of bench) { const v = Math.min(...foes.map(f => matchup(api, b, f))) - 0.12; if (v > pickV) { pickV = v; pick = b; } }
+  if (!quiet && bench.length && foes.length && api.canSwitch(m) && m.t.turnsIn >= 1) {
+    const stay = slotParts(api, m, foes, pred);
+    let pick = null, pv = -Infinity;
+    for (const b of bench) { const v = switchValue(stay, slotParts(api, b, foes, pred)); if (v > pv) { pv = v; pick = b; } }
     const doomed = m.vol.countdown && m.vol.countdown - B.turn <= 1;
-    // a lost matchup: the foes knock it out this turn, it does little back, and someone on the bench does well here
-    const hits = foes.map(f => bestHit(api, f, m) * m.maxhp / Math.max(1, m.hp));
-    const lost = here < W.switchBad && pickV > 0 && (Math.max(...hits) >= 1 || (foes.length > 1 && hits[0] + hits[1] >= 1));
-    // a Choice item locked into a move that does little here is a good reason to switch
-    const stuck = m.vol.choice && best.score < 25;
-    if (pick && (doomed || lost || (here < W.switchBad && pickV > here + W.switchGain && r() < W.switchP) || (stuck && pickV > here + 0.2 && r() < 0.8))) return [{ type: 'switch', to: pick, score: best.score }];
+    consider({ type: 'switch', to: pick }, pv - W.switchCost + (doomed ? 200 : 0));
   }
+  list.sort((x, y) => y.score - x.score);
   return list;
+}
+
+// What a character in this slot takes this turn and deals next turn: the hits aimed here (the foes' best hits, each
+// foe counted at W.switchSpread in doubles since it may aim at the partner; none from a foe expected not to attack),
+// as a share of its max Vitality capped at what it has, and its best usable hit as a share of a foe's Vitality left.
+function slotParts(api, x, foes, pred) {
+  const w = foes.length > 1 ? W.switchSpread : 1, left = x.hp / x.maxhp;
+  const hit = foes.reduce((n, f) => n + (pred?.get(f)?.attack === false ? 0 : bestHit(api, f, x) * w), 0);
+  let deal = 0;
+  for (const f of foes) for (const mv of x.moves) if (usable(x, mv)) deal = Math.max(deal, Math.min(1, hitDamage(api, x, mv, f) * f.maxhp / Math.max(1, f.hp)));
+  return { take: Math.min(hit, left), ko: hit >= left, deal };
+}
+// Switching x out for b, on the moves' scale: the damage b takes instead (a knockout avoided or walked into counts
+// as much as Protect's save), plus what b deals next turn instead of x (W.switchNext). The move given up is the
+// other options' score.
+function switchValue(x, b) {
+  const save = W.switchKo;
+  return 100 * (x.take - b.take) + (x.ko && !b.ko ? save : !x.ko && b.ko ? -save : 0) + W.switchNext * 100 * (b.deal - x.deal);
+}
+
+// What each foe will most likely do this turn (gap #7, "they'll Protect, so hit the other one"): its best
+// option by the same scoring, without noise, worked out once per side per turn. Only whether it protects and
+// whether it attacks at all is used.
+function predict(B, side, api) {
+  if (side.pred?.turn === B.turn) return side.pred.map;
+  const map = new Map();
+  for (const f of api.actives(B.sides[1 - side.i])) {
+    const o = options(B, f, api, true)[0], mv = o.type === 'move' ? f.moves[o.slot] : null;
+    map.set(f, { protect: !!mv?.m.fx.protect, attack: !!mv && mv.m.cat !== 'Status' });
+  }
+  side.pred = { turn: B.turn, map };
+  return map;
+}
+function throughProtect(api, u, mv) {
+  const a = api.abOf(u);
+  return !!(mv.m.fx.breaksProtect || (a.heavyBypass && (mv.m.size === 'heavy' || mv.sig)) || (a.sigBypass && mv.sig));
 }
 
 // How many of each character's best options the side looks at together in doubles.

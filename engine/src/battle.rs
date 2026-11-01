@@ -138,7 +138,7 @@ pub struct Side {
     pub i: usize, pub mons: Vec<MonId>, pub active: Vec<Option<MonId>>, pub hazards: Hazards, pub screens: Screens, pub tailwind: i32,
     pub wish: Option<(i32, f64)>, pub chip: Option<Chip>, pub drain: Option<Chip>, pub futures: Vec<Future>, pub faint_turn: i32,
     pub time_stop: i32, pub gift: Option<Gift>, pub plan: Option<usize>, pub baton: Option<([i32; 5], f64)>, pub quick_guard: i32,
-    pub wide_guard: i32, pub joint_plan: Option<(i32, [(MonId, Choice); 2])>,
+    pub wide_guard: i32, pub joint_plan: Option<(i32, [(MonId, Choice); 2])>, pub pred: Option<(i32, crate::ai::Pred)>,
 }
 
 #[derive(Clone, Debug)]
@@ -1308,11 +1308,11 @@ pub fn run_battle_with<'a>(d: &'a Data, teams: [&[Build]; 2], r: Rng, o: &Battle
     for (i, team) in teams.iter().enumerate() {
         let ids: Vec<MonId> = team.iter().map(|b| { mons.push(make_mon(d, b, o.level, i)); mons.len() - 1 }).collect();
         sides.push(Side { i, mons: ids, active: vec![], hazards: Hazards::default(), screens: Screens::default(), tailwind: 0, wish: None, chip: None, drain: None,
-            futures: vec![], faint_turn: -9, time_stop: -1, gift: None, plan: o.plans[i], baton: None, quick_guard: NONE, wide_guard: NONE, joint_plan: None });
+            futures: vec![], faint_turn: -9, time_stop: -1, gift: None, plan: o.plans[i], baton: None, quick_guard: NONE, wide_guard: NONE, joint_plan: None, pred: None });
     }
     let s1 = sides.pop().unwrap(); let s0 = sides.pop().unwrap();
     let views = match &o.beliefs { Some(bl) => [0usize, 1].map(|s| bl[s].as_ref().map(|bs| bs.iter().map(|x| make_mon(d, x, o.level, 1 - s)).collect())), None => [None, None] };
-    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: &ai::W, decide, views };
+    let mut b = Battle { d, r, duos: o.duos, turn: 0, field: None, over: false, winner: -1, sides: [s0, s1], mons, cache: None, turn_cap: o.turn_cap, w: ai::weights(), decide, views };
     let slots = if o.duos { 2 } else { 1 };
     for s in 0..2 {
         b.sides[s].active = vec![None; slots];
