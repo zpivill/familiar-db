@@ -651,3 +651,13 @@ An independent check of the AI after gaps #2-#12, on seeds not used in any tunin
 | seed 22 | 0.91 | 3.7 | 5.5 | 14 (Intimidate + Fake Out, search higher) | 3 of 11 (also Trick Room -13, Snow +9) |
 
 So the fast AI ranks teams almost as the search AI does, and most per-team gaps are within the sampling margin. The exceptions are combo archetypes (Gravity, Intimidate balance, Trick Room, Snow), where a single team can move 9-14 points. For archetype verdicts, read the search AI column from `--check`.
+
+## Core census: which pairs work together (2026-11-01)
+
+Step 3 of the [simulated-meta plan](https://claude.ai/artifact/3B6snowJaAmGMfy82N5SdR). Two plain batches of random teams, 5M battles each (seeds 1 and 2; comp, bring 8, Vitality x3, every form, draft, the 4 averaged books; about 20 minutes each in Rust). The sim already counts every pair on a battling side (`stats.pairs`). New `node sim/bench.mjs cores c1.json c2.json [--json=cores.json]` fits logit(pair win rate) = mu + u_i + u_j + lift by weighted least squares over all pairs. A pair's lift is how much better it does together than its two members do with anyone else. The pair list is saved in the project files under `familiar/cores/`.
+
+- **29,509 pairs** played together 1,500+ times in both batches. Lifts agree between batches at 0.50, because the real differences between pairs are small: their true spread is about 1.0 point, the same size as one batch's noise (1.0). The plan's gate (rank corr 0.8 on the top 100 pairs) fails for that reason. Ranking pairs that closely would need about 4x the battles.
+- **What does repeat:** 1,490 pairs are better together past 2 standard errors in both batches, and 1,413 are worse together (about 15 of each would happen by chance). These are the usable cores.
+- Best together, lift in seed 1 / seed 2: Lelouch (form 2) + Nezuko 8.2 / 7.7, Lelouch (form 2) + Shawn Frost 6.4 / 7.8, All Might + Dio 6.9 / 6.9, Lelouch (form 2) + Yuno 6.2 / 7.0, Homura + Misaka 6.2 / 4.9, Eren (form 3) + Frieza 5.3 / 5.0, All Might + Madara 5.1 / 5.1, and Homura with Jin-woo (form 3), Tatsumaki and All Might. Lelouch (form 2) appears in many of the top pairs.
+- Worst together: Dio with Komatsu (-13 / -9), with Lelouch (base form), Escanor, Tsuna and Jin-woo; Whitebeard with Escanor, Lelouch and Tsuna; Sukuna with Mumen Rider and Mr. Satan. Whitebeard's book moves are Earthquake and Bulldoze, which in doubles also hit the partner; that is the likely reason for his, not checked.
+- Caveats: pairs are counted only when the draft picked both, so the lift is "when this draft picks them together". The lift comes from per-character books; team-aware builds (gap #10) would raise some pairs further.

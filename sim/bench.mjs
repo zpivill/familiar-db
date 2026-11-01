@@ -14,6 +14,10 @@
 //     Compares meta chains saved with  node sim/cli.mjs 200000 comp <seed> --draft --hp=3 --forms=all
 //     --search=meta --arch --json=runN.json  (use a different seed per run): how far the runs agree.
 //     Population metas (--search=pop) compare the same way, with each character weighted by its Nash share.
+//   node sim/bench.mjs cores census1.json census2.json [--json=cores.json]
+//     Core census: which pairs do better (or worse) together than their members' own results predict. Takes two
+//     plain batches of random teams with different seeds (e.g. familiar-sim 5000000 comp <seed> --draft --hp=3
+//     --forms=all --builds=... --json=censusN.json) and keeps the pairs whose lift is past 2 standard errors in both.
 import fs from 'fs';
 import os from 'os';
 import { pathToFileURL } from 'url';
@@ -149,6 +153,38 @@ function stability(files) {
   }
 }
 
+// ---- core census: pair lift from two plain batches ----
+// logit(pair win rate) = mu + u_i + u_j + lift; mu and each character's u are fitted by weighted least squares over
+// all pairs, so a pair's lift is what's left after both members' average results with any partner
+function pairLifts(file) {
+  const S = JSON.parse(fs.readFileSync(file)).stats, L = x => { x = Math.min(Math.max(x, 1e-4), 1 - 1e-4); return Math.log(x / (1 - x)); };
+  const P = Object.entries(S.pairs).map(([k, v]) => { const [a, b] = k.split('+'); return { k, a, b, g: v.g, w: v.w / v.g }; });
+  const u = {}; let mu = 0;
+  for (const p of P) u[p.a] = u[p.b] = 0;
+  for (let it = 0; it < 100; it++) {
+    let sw = 0, sx = 0; for (const p of P) { sw += p.g; sx += p.g * (L(p.w) - u[p.a] - u[p.b]); } mu = sx / sw;
+    const num = {}, den = {};
+    for (const p of P) { const x = L(p.w) - mu; for (const [i, j] of [[p.a, p.b], [p.b, p.a]]) { num[i] = (num[i] || 0) + p.g * (x - u[j]); den[i] = (den[i] || 0) + p.g; } }
+    for (const k in num) u[k] = num[k] / den[k];
+  }
+  return Object.fromEntries(P.filter(p => p.g >= 1500).map(p => [p.k, { g: p.g, w: p.w, lift: p.w - 1 / (1 + Math.exp(-(mu + u[p.a] + u[p.b]))), se: Math.sqrt(p.w * (1 - p.w) / p.g) }]));
+}
+function cores([f1, f2]) {
+  const A = pairLifts(f1), B = pairLifts(f2), ks = Object.keys(A).filter(k => k in B);
+  const rows = ks.map(k => ({ pair: k, lift1: A[k].lift, lift2: B[k].lift, g: A[k].g + B[k].g, w: (A[k].w * A[k].g + B[k].w * B[k].g) / (A[k].g + B[k].g), up: A[k].lift > 2 * A[k].se && B[k].lift > 2 * B[k].se, down: A[k].lift < -2 * A[k].se && B[k].lift < -2 * B[k].se }));
+  const d = rows.map(r => r.lift1 - r.lift2), noise = d.reduce((s, x) => s + x * x, 0) / d.length / 2, tot = rows.reduce((s, r) => s + ((r.lift1 + r.lift2) / 2) ** 2, 0) / rows.length;
+  const m1 = rows.reduce((s, r) => s + r.lift1, 0) / rows.length, m2 = rows.reduce((s, r) => s + r.lift2, 0) / rows.length;
+  let c = 0, v1 = 0, v2 = 0; for (const r of rows) { c += (r.lift1 - m1) * (r.lift2 - m2); v1 += (r.lift1 - m1) ** 2; v2 += (r.lift2 - m2) ** 2; }
+  const up = rows.filter(r => r.up).sort((a, b) => b.lift1 + b.lift2 - a.lift1 - a.lift2), down = rows.filter(r => r.down).sort((a, b) => a.lift1 + a.lift2 - b.lift1 - b.lift2);
+  console.log(`${rows.length} pairs with 1,500+ games together in both files. Lift corr between files ${(c / Math.sqrt(v1 * v2)).toFixed(2)}; true spread ${(100 * Math.sqrt(Math.max(0, tot - noise / 2))).toFixed(1)} pts, noise per file ${(100 * Math.sqrt(noise)).toFixed(1)} pts`);
+  console.log(`Past 2 standard errors in both: ${up.length} better together, ${down.length} worse together (about ${Math.round(rows.length * 0.0228 ** 2)} each expected by chance)`);
+  const show = r => `  ${r.pair.padEnd(36)} ${(100 * r.w).toFixed(1)}% together, lift ${(100 * r.lift1).toFixed(1)} / ${(100 * r.lift2).toFixed(1)} (${r.g})`;
+  console.log('Best together:'); up.slice(0, 25).forEach(r => console.log(show(r)));
+  console.log('Worst together:'); down.slice(0, 15).forEach(r => console.log(show(r)));
+  const out = process.argv.find(a => a.startsWith('--json='))?.slice(7);
+  if (out) fs.writeFileSync(out, JSON.stringify({ better: up, worse: down }, null, 1));
+}
+
 // ---- the search AI (sim/mcts.js) against the fixed opponents, split over every core ----
 const SEARCH_FOES = ['mirror', 'v1', 'greedy'];
 async function searchStrength(battles = 100, seed = 1, iters = 128, record = null) {
@@ -180,4 +216,5 @@ else if (cmd === 'strength') strength(+rest[0] || 1000, +rest[1] || 1, rest[2]);
 else if (cmd === 'search') searchStrength(+rest[0] || 100, +rest[1] || 1, +rest[2] || 128, process.argv.find(a => a.startsWith('--record='))?.slice(9));
 else if (cmd === 'hidden') hidden(+rest[0] || 2000, +rest[1] || 1);
 else if (cmd === 'stability') stability(rest);
-else console.log('usage: node sim/bench.mjs strength [battles] [seed] | search [battles] [seed] [playouts] | stability run1.json run2.json ...');
+else if (cmd === 'cores') cores(rest);
+else console.log('usage: node sim/bench.mjs strength [battles] [seed] | search [battles] [seed] [playouts] | stability run1.json run2.json ... | cores census1.json census2.json');
