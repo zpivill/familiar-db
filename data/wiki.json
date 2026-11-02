@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-02",
-              "n": "Prague's landmarks decided. Open: Prague's Warden (Claude's lean: an old-money aristocrat, the longest-serving Warden) and the rest of the proposed package. Then the opening (game start to City 1), a review of the six cities (including Akihabara's on-hold mechanic), then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities designed (Akihabara's mechanic is on hold for the review). Now the opening, from game start to City 1: open question to r is where in the timeline the game starts (Claude's lean: a short trend-era prologue where you can't see the characters and design your two friends, then the patch day, then a time skip to the re-release, where the mentor hands you your starter). Then review the six cities, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -250,11 +250,11 @@
               "Prague",
               "Dark + Blood",
               "Hellsing Manor (Hellsing), the Infinity Castle (Demon Slayer), Kinderheim 511 (Monster), the Great Tomb of Nazarick (Overlord), Anteiku (Tokyo Ghoul)",
-              "Proposal: an old-money aristocrat who has owned the arena grounds for generations; the longest-serving Warden",
-              "Proposal: Revenants, tougher aggressive strays in Prague's Frays; binding one calms it. Arena challenge: a dark maze where your starter's unease guides you to the node",
+              "an old-money aristocrat who has owned the arena grounds for generations; the longest-serving Warden",
+              "Revenants, tougher aggressive strays in Prague's Frays; binding one calms it. Arena challenge: a dark maze where your starter's unease guides you to the node",
               "Big moment: alone again and angrier; the darkest city before the Circle",
-              "Proposal: the Warden half-knows the truth: 'Every Warden before you was a guard, not a champion'",
-              "Proposal: red mist and gothic shadows; cracks bleed darkness into the space texture"
+              "the Warden half-knows the truth: 'Every Warden before you was a guard, not a champion'",
+              "red mist and gothic shadows; cracks bleed darkness into the space texture"
             ]
           ]
         },
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Prague package approved: the old-money aristocrat as Warden ('every Warden before you was a guard, not a champion'); Revenants as the new mechanic; red-mist Fray look; dark maze where your starter's unease guides you. All six cities are now designed.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-02",
               "n": "Prague merges Hellsing Manor, the Infinity Castle, Kinderheim 511, the Great Tomb of Nazarick and Anteiku.",
