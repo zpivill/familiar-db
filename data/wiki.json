@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-02",
-              "n": "Cape Town approved (its mechanic is 'for now' and may change). Now City 4 (Akihabara, Lightning + Tech): open question to r is which anime landmarks merge in (Claude's leans: Academy City, San Fransokyo, Night City megabuildings, NERV's GeoFront, plus Kith's original headquarters as an in-world landmark). Then Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Akihabara's landmarks decided. Open: Akihabara's Warden (Claude's lean: a pro-gamer streamer) and the rest of the proposed package. Then Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -227,12 +227,12 @@
               "City 4",
               "Akihabara",
               "Lightning + Tech",
-              "Open",
-              "Open",
-              "Open",
+              "Academy City (A Certain Scientific Railgun), San Fransokyo (Big Hero 6), Night City megabuildings (Cyberpunk: Edgerunners), NERV's GeoFront (Evangelion), plus Kith's original headquarters (in-world)",
+              "Proposal: a pro-gamer streamer who broadcasts every challenge",
+              "Proposal: better Threads and held items from the tech shops; arena challenge: a circuit puzzle routing power through switches",
               "Big moment: the Maker's child finds proof the Frays were opened on purpose",
-              "Open",
-              "Open"
+              "Proposal: the district has run on free power from the arena since it opened (the vent powers the city)",
+              "Proposal: neon static and scanlines; electric arcs crawl into the space texture"
             ],
             [
               "City 5",
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Akihabara merges Academy City, San Fransokyo, the Night City megabuildings and NERV's GeoFront, plus Kith's original headquarters.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-02",
               "n": "Cape Town package approved: the Biotope 1 head keeper as Warden; migration-line clue; wind-streak Fray look; updraft arena on Table Mountain. The mechanic (Attunement training spots) is for now and may change.",
