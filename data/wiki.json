@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-02",
-              "n": "Kyoto's landmarks decided. Open: Kyoto's Warden (Claude's lean: the arena's shrine priestess) and the rest of the proposed package. Then Prague. After all six: the opening, a review of the six (including Akihabara's on-hold mechanic), then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Kyoto approved. Now City 6 (Prague, Dark + Blood): open question to r is which anime landmarks merge in (Claude's leans: Hellsing Manor, the Infinity Castle, Kinderheim 511, the Great Tomb of Nazarick, Anteiku). After all six: the opening, a review of the six (including Akihabara's on-hold mechanic), then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -239,11 +239,11 @@
               "Kyoto",
               "Light + Spirit",
               "Kyoto Jujutsu High (Jujutsu Kaisen), the Seireitei (Bleach), Hikawa Shrine (Sailor Moon), the Higurashi shrine and Bone-Eater's Well (Inuyasha), Spirits and Such on the route (Mob Psycho 100)",
-              "Proposal: the arena's shrine priestess; senses the spirits under the arena hum like a held breath",
-              "Proposal: nothing new; the node fight is a special duo battle beside the Unbound leader; arena challenge: light lanterns in order to reveal the path",
+              "the arena's shrine priestess; senses the spirits under the arena hum like a held breath",
+              "nothing new; the node fight is a special duo battle beside the Unbound leader; arena challenge: light lanterns in order to reveal the path",
               "Big moment: team-up, node attack, villains freeze, leader taken, key passed to you",
-              "Proposal: the node freezes only the villains; the Ward says they are held securely (true: anchored to the node)",
-              "Proposal: drifting paper lanterns and spirit wisps that flicker into the space texture"
+              "the node freezes only the villains; the Ward says they are held securely (true: anchored to the node)",
+              "drifting paper lanterns and spirit wisps that flicker into the space texture"
             ],
             [
               "City 6",
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Kyoto package approved: the shrine priestess as Warden; no new mechanic (the node fight is a duo beside the Unbound leader); the frozen villains 'held securely' clue; lantern Fray look; lantern-path arena.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-02",
               "n": "Kyoto merges Kyoto Jujutsu High, the Seireitei, Hikawa Shrine and the Higurashi shrine with the Bone-Eater's Well, with Spirits and Such on the route.",
