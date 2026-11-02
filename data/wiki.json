@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-10-31",
-              "n": "Story threads grid approved for now. Open: Hawaii's Warden (Claude's lean: the Swordsmith Village forge master) and the rest of the Hawaii package in the beat sheet. Then Cape Town, Akihabara, Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "t": "2026-11-02",
+              "n": "Hawaii fully approved. Now City 3 (Cape Town, Wind + Beast): open question to r is which anime landmarks merge in (Claude's leans: Skypiea above Table Mountain, Biotope 1, the Forest of Giant Trees, the Tracen racecourse on the route). Then Akihabara, Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -206,11 +206,11 @@
               "Hawaii",
               "Fire + Earth",
               "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
-              "Proposal: the forge master of Swordsmith Village; blunt, tests your team like steel",
-              "Proposal: duo battles (first one beside the Swordsmith Keeper against the Unbound) and your first evolution; arena challenge: platforms rise and sink with the volcano's breathing",
+              "the forge master of Swordsmith Village; blunt, tests your team like steel",
+              "duo battles (first one beside the Swordsmith Keeper against the Unbound) and your first evolution; arena challenge: platforms rise and sink with the volcano's breathing",
               "Big moment: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
-              "Proposal: the volcano 'breathes on a schedule' since the arena was built; the Maker's child's hunch that the new Fray lies between two arenas",
-              "Proposal: cooling lava crust with glowing cracks; ash glitches into the space texture"
+              "the volcano 'breathes on a schedule' since the arena was built; the Maker's child's hunch that the new Fray lies between two arenas",
+              "cooling lava crust with glowing cracks; ash glitches into the space texture"
             ],
             [
               "City 3",
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Hawaii package approved: the Swordsmith Village forge master as Warden; duo battles and first evolution; the volcano 'breathes on a schedule' clue; lava-crust Fray look; rising and sinking arena platforms.",
+              "s": "decided"
+            },
             {
               "t": "2026-10-31",
               "n": "Story threads by city (small developments for every party in every city) approved for now.",
