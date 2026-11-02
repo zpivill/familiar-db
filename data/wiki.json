@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-02",
-              "n": "Cape Town's landmarks decided. Open: Cape Town's Warden (Claude's lean: the head keeper of Biotope 1) and the rest of the proposed package. Then Akihabara, Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Cape Town approved (its mechanic is 'for now' and may change). Now City 4 (Akihabara, Lightning + Tech): open question to r is which anime landmarks merge in (Claude's leans: Academy City, San Fransokyo, Night City megabuildings, NERV's GeoFront, plus Kith's original headquarters as an in-world landmark). Then Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -217,11 +217,11 @@
               "Cape Town",
               "Wind + Beast",
               "Skypiea above Table Mountain (One Piece), Biotope 1 (Toriko), the Forest of Giant Trees (Attack on Titan), the Tracen racecourse on the route (Umamusume, gag)",
-              "Proposal: the head keeper of Biotope 1; raises beast familiars, gruff but fair",
-              "Proposal: Attunement training at anime-themed training spots, starting at Biotope 1; arena challenge: ride updrafts between floating platforms on Table Mountain",
+              "the head keeper of Biotope 1; raises beast familiars, gruff but fair",
+              "For now: Attunement training at anime-themed training spots, starting at Biotope 1; arena challenge: ride updrafts between floating platforms on Table Mountain",
               "Big moment: the copycat turns as the mentor starts nudging them",
-              "Proposal: Biotope's beasts migrate along a straight line between the arenas (backs up the seam hunch)",
-              "Proposal: grass flattened in wind-torn streaks that whip into the space texture; dust devils glitch at the edges"
+              "Biotope's beasts migrate along a straight line between the arenas (backs up the seam hunch)",
+              "grass flattened in wind-torn streaks that whip into the space texture; dust devils glitch at the edges"
             ],
             [
               "City 4",
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Cape Town package approved: the Biotope 1 head keeper as Warden; migration-line clue; wind-streak Fray look; updraft arena on Table Mountain. The mechanic (Attunement training spots) is for now and may change.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-02",
               "n": "Cape Town merges Skypiea above Table Mountain, Biotope 1 and the Forest of Giant Trees, with the Tracen racecourse on the route.",
