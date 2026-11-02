@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-02",
-              "n": "Akihabara's landmarks decided. Open: Akihabara's Warden (Claude's lean: a pro-gamer streamer) and the rest of the proposed package. Then Kyoto, Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "Akihabara approved except its mechanic, which is on hold for a new idea (better Threads should arrive by City 3). Now City 5 (Kyoto, Light + Spirit): open question to r is which anime landmarks merge in (Claude's leans: Kyoto Jujutsu High, the Seireitei, Hikawa Shrine, the Higurashi shrine and Bone-Eater's Well, Spirits and Such on the route). Then Prague. After all six: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -228,11 +228,11 @@
               "Akihabara",
               "Lightning + Tech",
               "Academy City (A Certain Scientific Railgun), San Fransokyo (Big Hero 6), Night City megabuildings (Cyberpunk: Edgerunners), NERV's GeoFront (Evangelion), plus Kith's original headquarters (in-world)",
-              "Proposal: a pro-gamer streamer who broadcasts every challenge",
-              "Proposal: better Threads and held items from the tech shops; arena challenge: a circuit puzzle routing power through switches",
+              "A pro-gamer streamer who broadcasts every challenge",
+              "On hold: needs a new mechanic (better Threads must already be available by City 3). Arena challenge: a circuit puzzle routing power through switches",
               "Big moment: the Maker's child finds proof the Frays were opened on purpose",
-              "Proposal: the district has run on free power from the arena since it opened (the vent powers the city)",
-              "Proposal: neon static and scanlines; electric arcs crawl into the space texture"
+              "the district has run on free power from the arena since it opened (the vent powers the city)",
+              "neon static and scanlines; electric arcs crawl into the space texture"
             ],
             [
               "City 5",
@@ -343,6 +343,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-02",
+              "n": "Akihabara package approved: the pro-gamer streamer as Warden; free-power clue; neon-static Fray look; circuit-puzzle arena. Its mechanic is on hold, and better Threads should be available by City 3.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-02",
               "n": "Akihabara merges Academy City, San Fransokyo, the Night City megabuildings and NERV's GeoFront, plus Kith's original headquarters.",
