@@ -170,7 +170,7 @@ Each turn the AI scores every usable move against every target and a switch to i
 
 **The search AI** (`sim/mcts.js`) is a second, slow AI built on top of this one. Each turn it takes each of its characters' 4 best options from the scoring above (plus a switch) and, for each pair, plays the rest of the battle out with new luck, 128 times a turn in all, choosing which pair to try next by UCB1. It keeps the pair it tried most. In those playouts the opponent plays as the current AI (2 in 3) or the frozen v1, picked per playout, so the search doesn't count on the foe playing like itself (greedy was dropped 2026-10-31: it rewarded plays that only beat a foe who never protects). A battle can't be copied mid-way, so each playout replays the battle from its seed with every recorded choice (both sides' choices are made outside the engine, with their own random numbers, so the replay is exact). It takes a few seconds a battle, so it's for the bench and for checking top teams, not 200k meta chains. It can run both sides of a battle (`playSearch(..., [0, 1])`, or `opts.ai = 'search'` in a batch): `cli.mjs --recheck=meta.json` uses that to replay a saved meta chain's final round robin and print each team's win rate under the fast AI and under the search AI, so a meta can be checked under strong play.
 
-**What the fast AI doesn't do:** it looks one turn ahead (with both characters planned together in doubles). It doesn't predict the opponent's move (no "they'll Protect, so I'll target the other"), doesn't plan multi-turn lines beyond the setup estimate, and, without `--hidden`, sees every foe build exactly. See the checks in section 11.
+**What the fast AI doesn't do:** it looks one turn ahead (with both characters planned together in doubles, and a one-step guess at each foe's action since gap #7). It doesn't plan multi-turn lines beyond the setup estimate, and, without `--hidden`, sees every foe build exactly. See the checks in section 11.
 
 ## 7. How the draft AI picks its 6
 
@@ -258,7 +258,7 @@ cd engine && cargo build --release          # needs Rust (rustup.rs)
 node engine/tests/parity.mjs 200 comp 3 --draft --hp=3   # JS and Rust on the same single-thread batch: must say identical
 ```
 
-**Windows, no install:** every push to main that touches `sim/`, `engine/` or `data/` publishes `familiar-sim-windows.zip` on the repo's [sim release](https://github.com/zpivill/familiar-db/releases/tag/sim) (familiar-sim.exe, data.json from that commit, run-sim.bat). Unzip and double-click `run-sim.bat`: it asks for a seed and runs the 200k balance setting into `results-seedN.json`. Or pass arguments: `run-sim.bat 1000000 comp 2 --draft --hp=3 --forms=all --search=meta --arch --json=big.json`. Download a fresh zip after data changes, since data.json is baked in at build time.
+**Windows, no install:** every push to main that touches `sim/`, `engine/` or `data/` publishes `familiar-sim-windows.zip` on the repo's [sim release](https://github.com/zpivill/familiar-db/releases/tag/sim) (familiar-sim.exe, data.json from that commit, run-sim.bat), plus the build books in `books/`. Unzip and double-click `run-sim.bat`: it asks for a seed and runs the 200k balance setting into `results-seedN.json`. Or pass arguments: `run-sim.bat 1000000 comp 2 --draft --hp=3 --forms=all --search=meta --arch --json=big.json`. Download a fresh zip after data changes, since data.json is baked in at build time.
 
 **Rust weight overrides (tuning only):** `FAMILIAR_W='{"setup":1.2}' familiar-sim ...` swaps the named weights (snake_case, as in `W` in ai.rs) in for that run. JS parity doesn't hold while it's set.
 
@@ -341,9 +341,9 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
   - Meta chains agree less with books than without (8.3 vs 8.2 of top 12 in groups of 8, but picked-wr corr 0.56 vs 0.75), and nobody knows why yet.
 
 **Where things are:**
-- Books: `familiar/builds/book-fit1..4.json` in the project files, plus the averaged table `best-builds-avg.md`.
+- Books: `engine/books/book-fit1..4.json` (also in the Windows zip and in `familiar/builds/` in the project files), plus the averaged table `engine/books/best-builds-avg.md`.
 - Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
-- Play the books with `familiar-sim ... --builds=book-fit1.json,book-fit2.json,book-fit3.json,book-fit4.json`.
+- Play the books with `familiar-sim ... --builds=books/book-fit1.json,books/book-fit2.json,books/book-fit3.json,books/book-fit4.json` (from engine/ or the unzipped folder). Re-fit with `--optimize` after character, move, ability or item changes.
 
 **Possible next tooling:**
 - Team-aware builds: search a build per core or team, not per character.
