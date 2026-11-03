@@ -36,6 +36,7 @@ jobs:
         run: |
           mkdir familiar-sim
           cp engine/target/release/familiar-sim.exe engine/data.json engine/run-sim.bat familiar-sim/
+          cp -r engine/books familiar-sim/
           familiar-sim/familiar-sim.exe 2000 comp 1 --draft --hp=3 --search=best
       # pull requests only check that the Windows build runs; main publishes it
       - if: github.event_name != 'pull_request'
