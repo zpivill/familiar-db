@@ -232,6 +232,7 @@ node sim/bench.mjs strength 1000               # the AI against random, greedy, 
 node sim/bench.mjs search 100 1 128             # the search AI vs the current AI, v1 and greedy, on every core (about 20 min)
 node sim/cli.mjs 800 comp 5 --draft --hp=3 --forms=all --recheck=run1.json --iters=64   # replay run1's final round robin with the search AI on both sides (about 40 min)
 node sim/bench.mjs stability run1.json run2.json run3.json   # how far meta chains (or population metas) with different seeds agree
+node sim/bench.mjs cores census1.json census2.json --json=cores.json   # core census: which pairs do better or worse together than their members predict (two plain 5M-battle batches, different seeds; results in balance-history, "Core census")
 # population meta: a pool of teams, its Nash mix and the best counter each round (about 8 min); --pool merges saved runs' teams
 node sim/cli.mjs 200000 comp 1 --draft --hp=3 --forms=all --search=pop --arch --json=pop1.json
 node sim/cli.mjs 100000 comp 11 --draft --hp=3 --forms=all --search=pop --arch --pool=pop1.json,pop2.json,pop3.json
@@ -319,7 +320,7 @@ Balance (bring these to r, don't fix alone):
 
 r paused balancing on 2026-10-29 after the sim checks. Suggested way back in: (1) run each setting 2-3 times and compare, (2) look at Protect-ignoring signatures that one-shot setters, (3) hand-play combo teams on `#play`.
 
-### Status and handoff (2026-10-31)
+### Status and handoff (2026-11-03)
 
 **r's stance:** no character changes until the simulated data is trustworthy. Character changes come last. A separate thread is working on trustworthy data. The options tested on 2026-10-30 (balance-history, "Character options tested") are on hold.
 
