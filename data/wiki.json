@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed, and the city review's open items are settled: Ward device updates, better Threads in Cape Town, Re-threading in Akihabara (its limit is a proposal: it moves the trained part, never Fidelity or source arc), the Knot name, and City 1's Frays (early Water/Ice plus Neutral, with rare mid-tier Water/Ice). Next: the Circle (the region's Elite Four stage) through to the ending, unless r wants to revisit a city first. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet. Open question to r: who the Circle's four members are (Claude's lean: the mentor's earlier recruits who lost to the Champion and were kept as spares, so on a replay they are what the copycat would become). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -376,8 +376,23 @@
           ]
         },
         {
+          "title": "The Circle to the ending",
+          "items": [
+            {
+              "t": "The League summit",
+              "n": "Sits at the dead centre of the region, where the six cities' Fray seam lines converge. It holds the Circle and the core. The Maker's child's hunch that Frays lie on lines between the arenas pays off on the map: every line points here. The road up is the endgame Fray route, home to the Cosmic and Time characters.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-04",
+              "n": "The League summit (the Circle and the core) sits at the centre of the region, where all six Fray seam lines converge. The road up is the Cosmic and Time Fray route.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-04",
               "n": "City 1's Frays: the 2 early Water/Ice characters, mostly early Neutral ones, and a few mid-tier Water/Ice characters as rare, low-odds finds (r: A+B).",
