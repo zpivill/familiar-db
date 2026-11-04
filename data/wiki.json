@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed (the opening was approved for now and will get more detail later). Now: reviewing the six cities. Items to settle: Akihabara's mechanic (on hold; better Threads must be available by City 3), Cape Town's 'for now' Attunement mechanic, City 1's rare pre-mid Water/Ice finds (proposal) and the 'Knot' name (proposal). After that, the Circle through to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed. Reviewing the six cities: the mechanics lineup is decided (Ward device updates; better Threads in Cape Town; Re-threading in Akihabara, with its limit as a proposal: it moves the trained part and never the caught part). Still to settle: City 1's rare pre-mid Water/Ice finds (proposal) and the 'Knot' name (proposal). After that, the Circle through to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -218,7 +218,7 @@
               "Wind + Beast",
               "Skypiea above Table Mountain (One Piece), Biotope 1 (Toriko), the Forest of Giant Trees (Attack on Titan), the Tracen racecourse on the route (Umamusume, gag)",
               "the head keeper of Biotope 1; raises beast familiars, gruff but fair",
-              "For now: Attunement training at anime-themed training spots, starting at Biotope 1; arena challenge: ride updrafts between floating platforms on Table Mountain",
+              "The Ward's first big device update: better Threads. Attunement training at anime-themed training spots, starting at Biotope 1, is how you train a familiar's stat spread. Arena challenge: ride updrafts between floating platforms on Table Mountain",
               "Big moment: the copycat turns as the mentor starts nudging them",
               "Biotope's beasts migrate along a straight line between the arenas (backs up the seam hunch)",
               "grass flattened in wind-torn streaks that whip into the space texture; dust devils glitch at the edges"
@@ -229,7 +229,7 @@
               "Lightning + Tech",
               "Academy City (A Certain Scientific Railgun), San Fransokyo (Big Hero 6), Night City megabuildings (Cyberpunk: Edgerunners), NERV's GeoFront (Evangelion), plus Kith's original headquarters (in-world)",
               "A pro-gamer streamer who broadcasts every challenge",
-              "On hold: needs a new mechanic (better Threads must already be available by City 3). Arena challenge: a circuit puzzle routing power through switches",
+              "Re-threading at Kith's old terminals: rebuild part of a familiar's copy from its data, which means moving its trained stat spread or switching its ability among its own. Limit (proposal): it never changes what a familiar was caught with (its source arc or rarity), so repeat catching in Frays for the best copy still matters. Arena challenge: a circuit puzzle routing power through switches",
               "Big moment: the Maker's child finds proof the Frays were opened on purpose",
               "the district has run on free power from the arena since it opened (the vent powers the city)",
               "neon static and scanlines; electric arcs crawl into the space texture"
@@ -378,6 +378,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-04",
+              "n": "Mechanics review: the Ward launched unfinished, so it keeps pushing device updates as you travel. Cape Town's update brings better Threads. Akihabara teaches Re-threading at Kith's old terminals. r's rule: Re-threading must not be too strong and must not replace repeat catching in Frays for min-maxing.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-04",
               "n": "Opening approved for now (version 2): one prologue day ending with patch day, a 3-month skip, the promise broken on purpose, the parent cornered at the Reykjavík launch, and your starter as your first bind on the coast road. The hometown is a small harbour town with a small school, houses and a lighthouse. No ages. Knock-ons: the Champion was recruited in the trend era, and City 1's mentor beat now has the parent cornered instead of handing over the starter.",
