@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed. Reviewing the six cities: the mechanics lineup is decided (Ward device updates; better Threads in Cape Town; Re-threading in Akihabara, with its limit as a proposal: it moves the trained part and never the caught part). Still to settle: City 1's rare pre-mid Water/Ice finds (proposal) and the 'Knot' name (proposal). After that, the Circle through to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed. Reviewing the six cities: the mechanics lineup is decided (Ward device updates; better Threads in Cape Town; Re-threading in Akihabara, with its limit as a proposal: it moves the trained part and never the caught part). Knot name decided. Still to settle: City 1's rare pre-mid Water/Ice finds (proposal). After that, the Circle through to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -93,9 +93,9 @@
             [
               "Frays",
               "Dangerous chaos zones the Ward contained; they sit along the routes between cities and can't be closed",
-              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (proposal name: a Knot) where legendary strays form",
+              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (a Knot) where legendary strays form",
               "Enter the fray to find hidden strays; binding strays calms a Fray for a while but never closes it",
-              "Decided; Knot name is a proposal"
+              "Decided"
             ],
             [
               "Strays",
@@ -378,6 +378,11 @@
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-04",
+              "n": "Each city's hidden, forbidden high-concentration Fray is called a Knot.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-04",
               "n": "Mechanics review: the Ward launched unfinished, so it keeps pushing device updates as you travel. Cape Town's update brings better Threads. Akihabara teaches Re-threading at Kith's old terminals. r's rule: Re-threading must not be too strong and must not replace repeat catching in Frays for min-maxing.",
