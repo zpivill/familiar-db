@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities designed (Akihabara's mechanic is on hold for the review). Now the opening, from game start to City 1 (draft: Claude Doc 'Familiar: the opening, scene by scene', https://claude.ai/artifact/Gq6SaWUJJcF1ycg7jtnprr, to be revised). Decided: the skip is 3 months. Proposals after r's review: the parent is an unnamed Ward co-founder; they never lie, but every answer is a true half (they can't tell even their child, because the truth would make people rip their devices off); in a prologue scene the parent tears a classmate's device out of their own kid's hands; after patch day they leave and barely call (guilt). Open question to r: do the kids go to the parent (Claude's lean: the re-release broadcast shows the parent on stage in Reykjavík, the kids take free devices from the town booth and break the promise on purpose, walk the coast road and corner the parent, who registers them as Keepers and mentors from a distance), or does the parent come home? Knock-on: the starter would be the first stray you bind on the coast road. Then review the six cities, then the Circle to the ending. After this thread: update the game map and its copies."
+              "n": "All six cities and the opening are designed (the opening was approved for now and will get more detail later). Now: reviewing the six cities. Items to settle: Akihabara's mechanic (on hold; better Threads must be available by City 3), Cape Town's 'for now' Attunement mechanic, City 1's rare pre-mid Water/Ice finds (proposal) and the 'Knot' name (proposal). After that, the Circle through to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -142,7 +142,7 @@
             [
               "Your starter",
               "Your first familiar, who reacts and talks a little; gets uneasy near Frays, nodes and the core, which reads as nerves",
-              "Familiars can feel loose threads: its unease was a warning all along. Proposal: the mentor hands you your starter, so it is part of the recruitment from day one",
+              "Familiars can feel loose threads: its unease was a warning all along. Your starter is your first bind: one of three strays on the coast road out of your hometown (the copycat binds the one that counters yours)",
               "Travels with you from the start",
               "Decided"
             ],
@@ -156,7 +156,7 @@
             [
               "The Champion",
               "The strongest Keeper and the face of the Ward's \"own a familiar, save the world\" campaign",
-              "The mentor's earlier recruit, groomed years ago exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
+              "The mentor's earlier recruit, the trend era's best battler, groomed before patch day exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
               "Beat them, then shut down the core",
               "Decided"
             ],
@@ -197,7 +197,7 @@
               "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
               "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
               "entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
-              "devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
+              "devices from the Ward's re-release; you corner the mentor at the launch and they register you as Keepers; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
               "The lagoon has run colder since the arena was built. your starter is uneasy on the arena's glass floor over the node",
               "frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
@@ -277,7 +277,7 @@
               "Setup: devices, starter, first rival battle, a glimpse of the Unbound",
               "First rival battle on the Great Naruto Bridge, picking a team that counters your starter",
               "Asks their parent why they quit Kith and gets a dodge",
-              "Hands you your starter: strong Keepers keep cities safe (true)",
+              "Cornered at the launch, registers you as Keepers: strong Keepers keep cities safe (true); mentors from a distance from here on",
               "Uneasy on the arena's glass floor",
               "Figures leaving the frozen forest (the Knot)",
               "Only on the arena's screens: the campaign ad",
@@ -341,8 +341,48 @@
           ]
         },
         {
+          "title": "Opening (game start to City 1)",
+          "items": [
+            {
+              "t": "Shape",
+              "n": "One prologue day in the trend era that ends with patch day, then a 3-month skip of havoc before the Ward appears. No ages are given.",
+              "s": "decided"
+            },
+            {
+              "t": "Hometown",
+              "n": "A small harbour town outside Reykjavík with a small school, a few houses and a lighthouse. You see the city, its arena and the League in person only once you set out.",
+              "s": "decided"
+            },
+            {
+              "t": "Prologue",
+              "n": "Character creation as the class photo; you design your two friends. The trend you can't see: classmates battle empty air. The promise is shown: the parent, an ex-Kith engineer, tears a device out of their kid's hands in fear. 'It isn't finished.' Patch day on the lighthouse hill: the reveal (everyone can suddenly see the characters) and Reykjavík tears. A tutorial battle played as the parent with the prototype. Truth: patch day is the night the founders opened the vents, and the parent knew where to run.",
+              "s": "decided"
+            },
+            {
+              "t": "Three months later",
+              "n": "Havoc montage; the parent barely calls (guilt). The Ward's debut broadcast is the re-release, live from the new Reykjavík arena, built in weeks over the worst tear. The parent is on stage among the unnamed founders. The kids take free devices from the town booth and break the promise on purpose. On the coast road, three strays come out of a fenced Fray. The Maker's child teaches binding from the prototype's manual. You bind your starter and the copycat takes the counter.",
+              "s": "decided"
+            },
+            {
+              "t": "The mentor sets you on the journey",
+              "n": "You corner the parent backstage. Every answer is true but only half the story; they can't tell even their child. Guilt and the Ward's need for Keepers win: they register you and point you at the six Wardens, then mentor from a distance. Both goals point the same way: you think you're investigating them, they are recruiting you.",
+              "s": "decided"
+            },
+            {
+              "t": "Full text",
+              "n": "Claude Doc 'Familiar: the opening, scene by scene' (version 2): https://claude.ai/artifact/Gq6SaWUJJcF1ycg7jtnprr. Approved for now; it will get more detail when the whole story is finished.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-04",
+              "n": "Opening approved for now (version 2): one prologue day ending with patch day, a 3-month skip, the promise broken on purpose, the parent cornered at the Reykjavík launch, and your starter as your first bind on the coast road. The hometown is a small harbour town with a small school, houses and a lighthouse. No ages. Knock-ons: the Champion was recruited in the trend era, and City 1's mentor beat now has the parent cornered instead of handing over the starter.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-04",
               "n": "Opening: the time skip after patch day is 3 months, not years. The world is falling apart fast, so the Ward arrives as a rescue, in a usable but unfinished version that its founders (the parent among them) keep working on.",
