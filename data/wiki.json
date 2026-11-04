@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet. Open question to r: who the Circle's four members are (Claude's lean: the mentor's earlier recruits who lost to the Champion and were kept as spares, so on a replay they are what the copycat would become). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet, and the four are the spares. Open question to r: what the four do in the story (Claude's lean: each one tells you one true thing about the core, which you read as a threat). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -382,12 +382,22 @@
               "t": "The League summit",
               "n": "Sits at the dead centre of the region, where the six cities' Fray seam lines converge. It holds the Circle and the core. The Maker's child's hunch that Frays lie on lines between the arenas pays off on the map: every line points here. The road up is the endgame Fray route, home to the Cosmic and Time characters.",
               "s": "decided"
+            },
+            {
+              "t": "The Circle's four",
+              "n": "All four are the mentor's earlier recruits. Each was groomed for Champion, lost to the current one, and was kept near the core as a backup. First time through, they are the region's elite; on a replay, they are what the copycat is being turned into.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-04",
+              "n": "The Circle's four members are the spares: the mentor's earlier recruits who lost to the current Champion and were kept near the core as backups.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-04",
               "n": "The League summit (the Circle and the core) sits at the centre of the region, where all six Fray seam lines converge. The road up is the Cosmic and Time Fray route.",
