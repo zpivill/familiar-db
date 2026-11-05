@@ -1181,6 +1181,18 @@
       "note": "Draft built from what is decided on the Design page and the opening doc. Tags work like the Design page: Decided = r decided, Proposal = Claude's fill-in, Open = needs an answer. Character names in tables link to their pages.",
       "sections": [
         {
+          "title": "Map sketch",
+          "image": "images/maps/reykjavik.svg",
+          "alt": "Top-down sketch of City 1: hometown on the south-west shore, coast road and its Fray, the Great Naruto Bridge over the bay, the harbour, Krusty Krab, Ward shelter and arena on the lagoon, the frozen forest Knot to the north-east, and the Northern Plateau route north.",
+          "items": [
+            {
+              "t": "Layout",
+              "n": "Proposal. You start on the south-west shore and walk the coast road north-east, cross the bay on the Great Naruto Bridge into the harbour, and go south through the waterfront to the arena on the lagoon. The frozen forest sits off the north-east edge, so you pass it on the way north to the Northern Plateau and the route to Hawaii. Loch Ness isn't placed yet.",
+              "s": "proposal"
+            }
+          ]
+        },
+        {
           "title": "Places, in the order you reach them",
           "items": [
             {
