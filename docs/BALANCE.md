@@ -66,7 +66,7 @@ An array of 175 characters. Each has `id`, `name`, `anime`, `villain`, `gag`, `r
 
 - **Stats** (per form): `vit` Vitality (HP), `pow` Power (physical attack), `grd` Guard (physical defence), `ene` Energy (energy attack), `wil` Will (energy defence), `spe` Speed. These replace the Pokémon names hp/atk/def/spa/spd/spe.
 - **Forms:** each form in `stages` is its own entrant in the sim, keyed `id` for the first form and `id/2`, `id/3` for later ones (so `asta/3` is Devil Union Asta). `level` on a form is the level it evolves at; `"lv": "evo"` in a learnset means learned on evolving. Later forms keep earlier moves.
-- **Abilities:** up to two plus one `hidden`. A form can override with its own `abilities`. Each battle rolls one. `like` names the Pokémon effect it works like, for balancers.
+- **Abilities:** up to two plus one `hidden`. A form can override with its own `abilities`. Without a book, each battle rolls one; with `--builds` the book's ability is used. In the game (r, 2026-11-05) a catch rolls one of the two normal ones, the hidden one is rare, and an item can change it, so competitive players can use any of the three: **judge balance on the books (best ability), not on random rolls.** `like` names the Pokémon effect it works like, for balancers.
 - **Learnsets:** `learn` is the per-form level-up list. `as` is the character's name for a generic move. An off-type move needs a `why` from the anime.
 
 ### data/moves.json

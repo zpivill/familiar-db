@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31",
+  "updated": "2026-11-05",
   "pages": [
     {
       "id": "design",
@@ -344,6 +344,11 @@
           "title": "Decision log",
           "items": [
             {
+              "t": "2026-11-05",
+              "n": "Abilities work like Pokémon: a caught familiar rolls one of its two normal abilities, the hidden ability is rare, and an item can change the ability later. So competitive players end up with the best one, and balance is judged on the build books (best ability), not on random rolls.",
+              "s": "decided"
+            },
+            {
               "t": "2026-10-31",
               "n": "Big story moment per city: Hawaii first Unbound clash, Cape Town the copycat turns, Akihabara the proof, Kyoto the team-up and key, Prague alone and darkest. Every party also gets small developments in every city.",
               "s": "decided"
@@ -676,6 +681,11 @@
             {
               "t": "Villains tagged",
               "n": "Roster characters tagged as villains are the ones the Unbound hunt. See Roster, Villains & gags."
+            },
+            {
+              "t": "Abilities",
+              "n": "Each character has up to two normal abilities and one hidden one. A catch rolls one of the two normal ones; the hidden one is rare. An item can change it later, so competitive teams can use any of the three.",
+              "s": "decided"
             },
             {
               "t": "Rarity tiers",
