@@ -677,6 +677,11 @@
               "t": "2026-11-05",
               "n": "The three strays on the coast road are Tanjiro, Deku and Ayanokoji, the roster's three starters.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's starter follows a fixed cycle (you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro), since the three starters' types don't counter each other. The 'counter' in the first rival battle is the copycat's second familiar, which hits your starter super-effectively.",
+              "s": "decided"
             }
           ]
         }
@@ -1257,7 +1262,7 @@
             },
             {
               "t": "10. The coast road and your starter",
-              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the one that counters yours; the third escapes. Your starter goes quiet at the Fray's edge.",
+              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the next one on the cycle (Tanjiro → Deku → Ayanokoji → Tanjiro); the third escapes. Your starter goes quiet at the Fray's edge.",
               "s": "decided",
               "where": "Coast road Fray",
               "who": "You, both friends, three starter strays"
@@ -1293,7 +1298,7 @@
             },
             {
               "t": "12. First rival battle",
-              "n": "On the Great Naruto Bridge the copycat challenges you with the starter that counters yours.",
+              "n": "On the Great Naruto Bridge the copycat challenges you with their starter and a second familiar picked to hit yours super-effectively.",
               "s": "decided",
               "where": "Great Naruto Bridge",
               "who": "Copycat"
@@ -1482,8 +1487,8 @@
           "items": [
             {
               "t": "Copycat (rival 1)",
-              "n": "Great Naruto Bridge. Team: the starter that counters yours. Level and second member open.",
-              "s": "proposal"
+              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. The counter is their second familiar, a first-route catch that hits your starter super-effectively. Proposal: Gold Ship (Blood) against Tanjiro, Shawn Frost (Ice) against Deku, Kon (Spirit) against Ayanokoji. Levels open.",
+              "s": "decided"
             },
             {
               "t": "Harbour-master (Warden 1)",
