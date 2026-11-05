@@ -24,7 +24,7 @@ Read first: `CLAUDE.md`, `docs/BALANCE.md` (sections 1, 2, 8, 10-13) and the lat
 ```sh
 node sim/export.mjs
 cd engine && cargo build --release
-B=books/book-fit1.json,books/book-fit2.json   # current books; see "Books" below
+B=books/book-v2-fit1.json,books/book-v2-fit2.json   # current books (2026-11-05); see "Books" below
 for s in 1 2 3 4 5; do
   ./target/release/familiar-sim 200000 comp $s --draft --hp=3 --forms=all --search=meta --arch --check=2000 --builds=$B --json=$SCRATCH/meta$s.json
 done
