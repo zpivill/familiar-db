@@ -682,6 +682,11 @@
               "t": "2026-11-05",
               "n": "The copycat's starter follows a fixed cycle (you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro), since the three starters' types don't counter each other. The 'counter' in the first rival battle is the copycat's second familiar, which hits your starter super-effectively.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's second familiar in the first rival battle is always Shawn Frost (Ice), caught on the coast road.",
+              "s": "decided"
             }
           ]
         }
@@ -1298,7 +1303,7 @@
             },
             {
               "t": "12. First rival battle",
-              "n": "On the Great Naruto Bridge the copycat challenges you with their starter and a second familiar picked to hit yours super-effectively.",
+              "n": "On the Great Naruto Bridge the copycat challenges you with their starter and Shawn Frost, an Ice familiar they caught on the coast road.",
               "s": "decided",
               "where": "Great Naruto Bridge",
               "who": "Copycat"
@@ -1487,7 +1492,7 @@
           "items": [
             {
               "t": "Copycat (rival 1)",
-              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. The counter is their second familiar, a first-route catch that hits your starter super-effectively. Proposal: Gold Ship (Blood) against Tanjiro, Shawn Frost (Ice) against Deku, Kon (Spirit) against Ayanokoji. Levels open.",
+              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. Their second familiar is always Shawn Frost (Ice, a coast road catch), which hits Deku super-effectively. Levels open.",
               "s": "decided"
             },
             {
