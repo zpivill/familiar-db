@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities, the opening and the Circle through to the ending are designed (see 'The Circle to the ending'). Open question to r: what happens to the frozen Unbound when the core shuts down (Claude's lean: the nodes release them; the leader sees the tearing, realises they were wrong too, and helps the copycat in the Knots as a guest ally). After that, the big-picture pass is complete: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'. The opening and the story will get deeper detail later."
+              "n": "Big-picture pass complete: the six cities, the opening and the Circle through to the ending are designed (see 'The Circle to the ending'). Next: update the game map and its copies (the interactive map, the text copy, the Figma copy sheet, the figma txt/csv and the Figma production board) with this thread's decisions and the 175/257 roster counts, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'. Later: deeper detail for the opening and the full story; the device visuals are still in progress."
             }
           ]
         },
@@ -412,12 +412,22 @@
               "t": "What the post-game is for",
               "n": "Hold the world, not fix it. With the core gone, the merge speeds up. Binding is the one thing that still anchors copies, and the Knots hold the most data, so the copycat binds the legendaries (locked until after the main story) and the Knots stop pooling pressure one by one. Collecting everything becomes the world's last stand. The copycat refuses the mentor's offer to become the next Champion and rebuild the core.",
               "s": "decided"
+            },
+            {
+              "t": "The nodes and the Unbound after the shutdown",
+              "n": "Shutting the core kills the nodes. That fits the lore: there are two layers of stability. Bindings anchor copies, and the nodes control the vents. With the nodes dead, the vents run uncontrolled (the merge speeds up, and cities like Akihabara lose their free power), but bindings still hold, which is why binding in the post-game still matters. The frozen Unbound were anchored to the Kyoto node, so they are released, adding unanchored villains to the pressure. The leader wanted exactly this, sees the tearing, realises they were half wrong too, and helps the copycat in the Knots as a guest ally.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-05",
+              "n": "Shutting the core kills the nodes: the vents run uncontrolled, but bindings still anchor copies. The frozen Unbound are released; the leader realises they were half wrong and helps the copycat in the Knots.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-05",
               "n": "Post-game purpose: hold the world, not fix it. The copycat binds the legendaries in the Knots to stop them pooling pressure, and refuses to become the next Champion.",
