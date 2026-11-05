@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" font-family="system-ui, sans-serif" font-size="13">
+  <rect width="900" height="640" fill="#9cc3d9"/>
+  <!-- west shore: hometown, coast road, Loch Ness -->
+  <path d="M0 250 C 90 240, 170 270, 230 330 C 280 380, 300 470, 280 640 L 0 640 Z" fill="#e8e2cf"/>
+  <!-- east mainland: the city -->
+  <path d="M900 0 L 900 640 L 420 640 C 380 560, 360 470, 390 400 C 420 330, 380 270, 330 230 C 280 190, 300 90, 330 0 Z" fill="#e8e2cf"/>
+  <!-- one section outline -->
+  <rect x="8" y="78" width="884" height="554" rx="14" fill="none" stroke="#4a5bd4" stroke-width="2" stroke-dasharray="4 6"/>
+  <text x="20" y="98" fill="#4a5bd4" font-size="12">One section, no loaders: hometown to Reykjavík</text>
+  <!-- Loch Ness, sealed -->
+  <ellipse cx="110" cy="345" rx="62" ry="36" fill="#5f8fa8" stroke="#2e5d78"/>
+  <path d="M60 318 L 160 318 L 160 372 L 60 372 Z" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="3 4"/>
+  <text x="34" y="300">Loch Ness (sealed)</text>
+  <text x="34" y="400" fill="#555" font-size="11">Ward seal; Nessie in the post-game</text>
+  <!-- lagoon -->
+  <ellipse cx="700" cy="500" rx="105" ry="68" fill="#b9d8e8" stroke="#7aa6bf"/>
+  <!-- frozen forest -->
+  <path d="M690 100 C 780 90, 880 120, 885 190 C 880 260, 790 270, 720 240 C 670 210, 650 130, 690 100 Z" fill="#cfe3ee" stroke="#7aa6bf"/>
+  <!-- Northern Plateau -->
+  <path d="M440 92 C 510 84, 580 100, 590 150 C 580 195, 500 200, 455 180 C 420 160, 415 110, 440 92 Z" fill="#d9d4bd" stroke="#a89f7c"/>
+  <!-- canals in the harbour district -->
+  <g stroke="#7fb0cc" stroke-width="5" fill="none"><path d="M430 330 L 560 330"/><path d="M470 300 L 470 400"/><path d="M520 300 L 520 380"/></g>
+  <!-- reserved plots -->
+  <g fill="none" stroke="#888" stroke-dasharray="5 5">
+    <rect x="590" y="300" width="90" height="60" rx="6"/><rect x="760" y="320" width="100" height="70" rx="6"/><rect x="430" y="440" width="90" height="70" rx="6"/><rect x="600" y="210" width="80" height="50" rx="6"/>
+  </g>
+  <g fill="#888" font-size="11"><text x="606" y="334">open plot</text><text x="782" y="358">open plot</text><text x="446" y="478">open plot</text><text x="612" y="238">open plot</text></g>
+  <!-- route -->
+  <path d="M110 560 C 150 500, 200 460, 240 420 C 270 390, 300 360, 330 330" fill="none" stroke="#8a6d3b" stroke-width="5" stroke-dasharray="10 6"/>
+  <path d="M330 330 L 430 300" stroke="#c0392b" stroke-width="8"/>
+  <path d="M430 300 C 480 320, 540 350, 560 400 C 575 430, 600 450, 640 470" fill="none" stroke="#8a6d3b" stroke-width="4" stroke-dasharray="6 6"/>
+  <path d="M430 300 C 470 260, 500 230, 510 190" fill="none" stroke="#8a6d3b" stroke-width="5" stroke-dasharray="10 6"/>
+  <path d="M510 130 L 510 60" stroke="#8a6d3b" stroke-width="4" stroke-dasharray="6 4"/>
+  <!-- markers -->
+  <g fill="#1d1d22">
+    <rect x="70" y="520" width="9" height="34" fill="#fff" stroke="#555"/><text x="20" y="512" font-size="11">lighthouse hill</text>
+    <circle cx="110" cy="565" r="10" fill="#555"/><text x="30" y="598">1 Hometown</text>
+    <text x="30" y="614" fill="#555" font-size="11">school, houses, square</text>
+    <circle cx="230" cy="430" r="15" fill="#7a5ea8" opacity=".85"/><text x="250" y="452">2 Coast road Fray</text>
+    <text x="250" y="468" fill="#555" font-size="11">fenced; starters</text>
+    <text x="300" y="370" transform="rotate(-17 300 370)">3 Great Naruto Bridge</text>
+    <text x="345" y="292" fill="#555" font-size="11">rival battle</text>
+    <circle cx="440" cy="310" r="10" fill="#2e6f9e"/><text x="452" y="314" font-weight="600">4 Harbour</text><text x="452" y="296" fill="#555" font-size="11">Water 7 canals</text>
+    <circle cx="560" cy="400" r="10" fill="#e0b000"/><text x="574" y="404">5 Krusty Krab</text>
+    <rect x="610" y="456" width="16" height="14" fill="#2f8a4a"/><text x="520" y="470" font-size="12">6 Ward shelter</text>
+    <rect x="680" y="480" width="44" height="40" rx="6" fill="#4a5bd4"/><text x="650" y="590">7 League arena on the lagoon</text>
+    <text x="650" y="606" fill="#555" font-size="11">ice floor, node under glass</text>
+    <circle cx="790" cy="170" r="12" fill="#1d1d22"/><text x="730" y="292">8 Frozen forest: the Knot</text>
+    <text x="730" y="308" fill="#555" font-size="11">forbidden; the glimpse</text>
+    <circle cx="510" cy="150" r="15" fill="#7a5ea8" opacity=".85"/><text x="330" y="160">9 Northern Plateau Fray</text>
+    <text x="330" y="176" fill="#555" font-size="11">after the badge</text>
+    <rect x="496" y="40" width="28" height="18" fill="#fff" stroke="#4a5bd4" stroke-width="2"/><text x="532" y="54">Gatehouse to the Hawaii route</text>
+    <text x="200" y="210" fill="#2e5d78" font-size="15" font-style="italic">the bay</text>
+  </g>
+</svg>

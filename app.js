@@ -539,7 +539,7 @@ function renderPage(p) {
   const lines = i => i.lines ? `<ul class="lines">${i.lines.map(([who, l]) => `<li><b>${esc(who)}:</b> ${esc(l)}</li>`).join('')}</ul>` : '';
   const status = i => i.s ? ` <span class="badge ${i.s}">${i.s[0].toUpperCase() + i.s.slice(1)}</span>` : '';
   const body = p.soon ? `<p class="soon">${esc(p.soon)}</p>` : p.sections.map(s => `
-    <section id="${slug(s)}"><h2>${esc(s.title)}</h2>${s.rows ? table(s) : `<dl>${s.items.map(i => `
+    <section id="${slug(s)}"><h2>${esc(s.title)}</h2>${s.image ? `<img class="map" src="${esc(s.image)}" alt="${esc(s.alt || s.title)}">` : ''}${s.rows ? table(s) : `<dl>${s.items.map(i => `
       <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}${status(i)}</dt>${meta(i) ? `<dd class="hint">${meta(i)}</dd>` : ''}${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}${lines(i)}</div>`).join('')}
     </dl>`}</section>`).join('');
   const toc = p.sections.length > 1 ? `<nav class="toc" aria-label="On this page">${p.sections.map(s =>

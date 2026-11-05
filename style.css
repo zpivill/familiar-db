@@ -110,6 +110,7 @@ input:disabled, select:disabled { border-color: transparent; background: transpa
 .badge.decided { color: #2f8a4a; }
 .badge.proposal { color: #c08a00; }
 .badge.open { color: #c43a3a; }
+.article img.map { width: 100%; max-width: 800px; border-radius: 8px; margin-bottom: 12px; }
 .article .lines { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
 .design { border-collapse: collapse; min-width: 720px; font-size: 14px; }
 .design th { text-align: left; color: var(--muted); font-weight: 500; font-size: 13px; padding: 6px 10px; border-bottom: 2px solid var(--line); }
