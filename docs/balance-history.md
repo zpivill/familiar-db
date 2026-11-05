@@ -712,7 +712,7 @@ Abilities decided by r (2026-11-05): rolled on catch, hidden rare, changeable by
 | | +1 Speed only | 61 / 59 |
 | Mikasa (mid 58) | now: ally faints, +2 Power | 67 / 70 |
 | | +1 Power | **64 / 62** |
-| | +1 Speed instead | 60 / (not finished) |
+| | +1 Speed instead | 60 / 56 (fit 2: The Scarf is no longer her best ability) |
 
 - Each option keeps the ability as the character's best one, so identity holds.
 - **Pain:** none of the Preta Path options brings him within range (best 74-78). The heal adds nothing (immune without heal = same number), so his strength is elsewhere (660 stats, Recover, Spacial Rend). Needs a second look before options go to r.
