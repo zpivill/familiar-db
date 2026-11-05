@@ -737,6 +737,11 @@
               "t": "2026-11-05",
               "n": "City 1 scene 13 (exploring the city) decided; the Ward shelter sits next to the arena entrance.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 is one streamed section from the hometown to Reykjavík with no loaders; the first gatehouse is at the Northern Plateau exit. The map sketch is a baseline with open plots for later additions.",
+              "s": "decided"
             }
           ]
         }
@@ -1187,7 +1192,17 @@
           "items": [
             {
               "t": "Layout",
-              "n": "Proposal. You start on the south-west shore and walk the coast road north-east, cross the bay on the Great Naruto Bridge into the harbour, and go south through the waterfront to the arena on the lagoon. The frozen forest sits off the north-east edge, so you pass it on the way north to the Northern Plateau and the route to Hawaii. Loch Ness isn't placed yet.",
+              "n": "Proposal, a baseline: what the city needs, with open plots kept for later additions. Not to scale. You start on the south-west shore and walk the coast road north-east, cross the bay on the Great Naruto Bridge into the harbour, then go south past the Krusty Krab to the Ward shelter and the arena on the lagoon. The frozen forest sits off the north-east edge, so you pass it on the way north to the Northern Plateau and the gatehouse to the Hawaii route.",
+              "s": "proposal"
+            },
+            {
+              "t": "One section, no loaders",
+              "n": "The hometown, coast road, bridge and Reykjavík are one section with no gatehouse between them, so on patch day you can watch the city tear from the lighthouse hill across the bay. The first gatehouse is at the Northern Plateau exit. Keep the city fairly low-detail so it streams.",
+              "s": "decided"
+            },
+            {
+              "t": "Loch Ness",
+              "n": "Proposal: a loch inland off the coast road, near the hometown, behind a Ward seal. You see it from the start of the game, and it opens in the post-game, when Nessie can be caught.",
               "s": "proposal"
             }
           ]
@@ -1242,8 +1257,8 @@
             },
             {
               "t": "Loch Ness",
-              "n": "On the route; sealed until the post-game, when Nessie can be caught. Which route it sits on is open.",
-              "s": "open"
+              "n": "Inland off the coast road near the hometown, behind a Ward seal; you see it from the start and it opens in the post-game, when Nessie can be caught.",
+              "s": "proposal"
             }
           ]
         },
