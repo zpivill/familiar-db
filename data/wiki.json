@@ -687,6 +687,11 @@
               "t": "2026-11-05",
               "n": "The copycat's second familiar in the first rival battle is always Shawn Frost (Ice), caught on the coast road.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 encounters: coast road Fray = Murata, Shawn Frost, Mr. Satan, Mumen Rider, Koby (common), Yamcha (uncommon), Aqua (rare). Northern Plateau Fray = Murata, Shawn Frost, Koby, Chiikawa Usagi, Gobta (common), Fern as its only rare.",
+              "s": "decided"
             }
           ]
         }
@@ -1165,8 +1170,8 @@
             },
             {
               "t": "Northern Plateau",
-              "n": "Proposal: the route out of the city on the far side, with its own Fray (the second encounter patch of City 1).",
-              "s": "proposal"
+              "n": "The route out of the city on the far side, with its own Fray (the second encounter patch of City 1).",
+              "s": "decided"
             },
             {
               "t": "Emilia's frozen forest (the Knot)",
@@ -1380,49 +1385,49 @@
               "Water",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Shawn Frost",
               "Ice",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Mr. Satan",
               "Neutral",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Mumen Rider",
               "Neutral",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Koby",
               "Neutral",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Yamcha",
               "Neutral, Beast",
               "First route",
               "Uncommon",
-              "Proposal"
+              "Decided"
             ],
             [
               "Aqua",
               "Water",
               "Pre-mid",
               "Rare find",
-              "Proposal"
+              "Decided"
             ]
           ]
         },
@@ -1441,49 +1446,42 @@
               "Water",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Shawn Frost",
               "Ice",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
               "Koby",
               "Neutral",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
             ],
             [
-              "Mumen Rider",
-              "Neutral",
+              "Chiikawa Usagi",
+              "Beast, Neutral",
               "First route",
               "Common",
-              "Proposal"
+              "Decided"
+            ],
+            [
+              "Gobta",
+              "Beast, Neutral",
+              "First route",
+              "Common",
+              "Decided"
             ],
             [
               "Fern",
               "Water",
               "Pre-mid",
-              "Rare find",
-              "Proposal"
-            ],
-            [
-              "Brook",
-              "Ice, Spirit",
-              "Pre-mid",
-              "Rare find",
-              "Proposal"
-            ],
-            [
-              "Ryo Yamada",
-              "Ice, Beast",
-              "Pre-mid",
-              "Rare find",
-              "Proposal"
+              "Rare find (the only one)",
+              "Decided"
             ]
           ]
         },
