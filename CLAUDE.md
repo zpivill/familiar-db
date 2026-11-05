@@ -9,6 +9,7 @@ Team wiki and battle simulator for Familiar, an anime creature-collector game de
 - Plan in four steps: spine, two readings table, region beat sheet, then build one city fully and feed back before the next.
 - Work with r in small pieces: options with a lean, one question at a time. r's ideas come first. Tag Claude's fill-ins as `proposal` until r accepts.
 - When something is decided, in the same PR: update its item's tag (`s`: decided / proposal / open) or table cell, add a decision log line with the date, and rewrite "Where we paused".
+- Each city's places, event script (scenes + dialogue), Fray encounter tables, trainers and people live on its own page in data/wiki.json (id `city-<name>`, e.g. `#city-reykjavik`). Events may carry `when`, `where`, `who` and `lines` ([speaker, line]).
 - New ideas must fit the spine and touch a row of the two readings table; say which.
 
 ## Balance and AI work
