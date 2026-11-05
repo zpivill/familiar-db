@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement. Open question to r: when the Champion's truth reaches you (Claude's lean: never in time. You turn the key during the ceremony, before their planned talk, and find their message in the post-game). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right and only the player, as the copycat, learns the truth. Open question to r: how the copycat (and the player) learns the truth in the post-game (Claude's lean: the Champion's unsent message first, then the Maker's child fills in the rest, and the mentor confirms it by trying to recruit the copycat as the next spare). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -392,12 +392,22 @@
               "t": "What the four say",
               "n": "After each battle, the spare encourages you to prove yourself and become the real Champion. Every line is true, and each gets closer to the core: 'Whoever wins up here holds the whole region together. Show me you can carry that.' 'Champions don't step down. Make sure you're ready to stay.' 'We were kept close in case the top ever fell. Prove they won't need us.' 'It all makes sense at the ceremony. Go earn it.' First time through it's a send-off; on a replay they are sending you to be consumed, a little relieved it isn't them.",
               "s": "decided"
+            },
+            {
+              "t": "Your character never learns the truth",
+              "n": "The Champion's talk never happens; you turn the key during the ceremony. Your character dies believing they were right: the last thing they see is the core going dark, which looks like victory, and they are consumed in the flash. The tearing comes after, seen from outside. Only the player, playing as the copycat in the post-game, learns you were wrong.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-05",
+              "n": "Your character never learns the truth: no talk with the Champion, the key is turned at the ceremony, and they die believing they were right. Only the player, as the copycat in the post-game, learns otherwise (r's idea).",
+              "s": "decided"
+            },
             {
               "t": "2026-11-05",
               "n": "The Circle's four each say one true thing about the core after their battle, phrased as encouragement to prove yourself and become the real Champion (r: A, as encouragement).",
