@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right and only the player, as the copycat, learns the truth. Open question to r: how the copycat (and the player) learns the truth in the post-game (Claude's lean: the Champion's unsent message first, then the Maker's child fills in the rest, and the mentor confirms it by trying to recruit the copycat as the next spare). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right; the truth comes out in layers in the post-game. Open question to r: what the familiar version of you (bound in the post-game) believes (Claude's lean: it is rebuilt from data, including your certainty, so it still believes it was right). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -397,12 +397,22 @@
               "t": "Your character never learns the truth",
               "n": "The Champion's talk never happens; you turn the key during the ceremony. Your character dies believing they were right: the last thing they see is the core going dark, which looks like victory, and they are consumed in the flash. The tearing comes after, seen from outside. Only the player, playing as the copycat in the post-game, learns you were wrong.",
               "s": "decided"
+            },
+            {
+              "t": "How the truth comes out (post-game)",
+              "n": "In layers, as the copycat: 1) the Champion's unsent message ('I wanted to tell you after the ceremony'); 2) the Maker's child, who was right about half of it, pieces the rest together; 3) the mentor confirms it without meaning to, by trying to recruit the copycat as the next spare.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-05",
+              "n": "Post-game: the truth comes out in layers: the Champion's unsent message, then the Maker's child, then the mentor trying to recruit the copycat as the next spare.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-05",
               "n": "Your character never learns the truth: no talk with the Champion, the key is turned at the ceremony, and they die believing they were right. Only the player, as the copycat in the post-game, learns otherwise (r's idea).",
