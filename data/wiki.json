@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-05",
-              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Levels set (rival 5-7, arena trainers 9-10, Warden 11-14). Minor trainers set. Next: scene 13's detail (exploring the city), and where the Ward shelter sits."
+              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Levels set (rival 5-7, arena trainers 9-10, Warden 11-14). Minor trainers set. Scene 13 and the Ward shelter set; the starter's unease became the device's static. Next: a full read-through of the City 1 page with r, then sync the game map copies if r wants."
             }
           ]
         },
@@ -85,8 +85,8 @@
             ],
             [
               "The device (Familiar)",
-              "A friendly tech product",
-              "The anchor that makes every Keeper part of the machine",
+              "A friendly tech product. Near Frays, nodes and the core it buzzes and its screen fills with static, which reads as bugs in the unfinished launch version",
+              "The anchor that makes every Keeper part of the machine. The device reads the pressure of loose threads: the static was a warning all along",
               "Flick it open like a lighter, draw the thread like a sword",
               "Proposal"
             ],
@@ -141,8 +141,8 @@
             ],
             [
               "Your starter",
-              "Your first familiar, who reacts and talks a little; gets uneasy near Frays, nodes and the core, which reads as nerves",
-              "Familiars can feel loose threads: its unease was a warning all along. Your starter is your first bind: one of three strays on the coast road out of your hometown (the copycat binds the one that counters yours)",
+              "Your first familiar, who reacts and talks a little",
+              "Your starter is your first bind: one of three strays (Tanjiro, Deku, Ayanokoji) on the coast road out of your hometown; the copycat takes the next one on a fixed cycle",
               "Travels with you from the start",
               "Decided"
             ],
@@ -198,7 +198,7 @@
               "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
               "entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
               "devices from the Ward's re-release; you corner the mentor at the launch and they register you as Keepers; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
-              "The lagoon has run colder since the arena was built. your starter is uneasy on the arena's glass floor over the node",
+              "The lagoon has run colder since the arena was built. your device fills with static on the arena's glass floor over the node",
               "frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
             [
@@ -251,7 +251,7 @@
               "Dark + Blood",
               "Hellsing Manor (Hellsing), the Infinity Castle (Demon Slayer), Kinderheim 511 (Monster), the Great Tomb of Nazarick (Overlord), Anteiku (Tokyo Ghoul)",
               "an old-money aristocrat who has owned the arena grounds for generations; the longest-serving Warden",
-              "Revenants, tougher aggressive strays in Prague's Frays; binding one calms it. Arena challenge: a dark maze where your starter's unease guides you to the node",
+              "Revenants, tougher aggressive strays in Prague's Frays; binding one calms it. Arena challenge: a dark maze where your device's static guides you to the node",
               "Big moment: alone again and angrier; the darkest city before the Circle",
               "the Warden half-knows the truth: 'Every Warden before you was a guard, not a champion'",
               "red mist and gothic shadows; cracks bleed darkness into the space texture"
@@ -266,7 +266,7 @@
             "Copycat",
             "Maker's child",
             "Mentor",
-            "Starter",
+            "Device",
             "Unbound",
             "Champion",
             "Guest ally"
@@ -278,7 +278,7 @@
               "First rival battle on the Great Naruto Bridge, picking a team that counters your starter",
               "Asks their parent why they quit Kith and gets a dodge",
               "Cornered at the launch, registers you as Keepers: strong Keepers keep cities safe (true); mentors from a distance from here on",
-              "Uneasy on the arena's glass floor",
+              "Static on its screen on the arena's glass floor",
               "Figures leaving the frozen forest (the Knot)",
               "Only on the arena's screens: the campaign ad",
               "None yet"
@@ -289,7 +289,7 @@
               "Beat the Warden a day before you and brags about it",
               "Notices the new Fray lies on a line between two arenas; keeps it as a hunch",
               "Turns up after the tear to help the Ward, oddly calm, knows too much",
-              "Reacts a moment before the Fray tears",
+              "Buzzes a moment before the Fray tears",
               "First clash at Fire Mountain, with a lieutenant; the leader is not seen",
               "Photo op in the torn district: it's handled",
               "A Swordsmith Village Keeper, duo against the Unbound"
@@ -300,7 +300,7 @@
               "Private training with the mentor; starts copying your exact team; the rivalry turns cold",
               "Notices their parent spending time with the copycat; jealous, then suspicious",
               "Offers the copycat what they want: to be as strong as you",
-              "Wary of the copycat's mirror familiars",
+              "Stutters near the copycat's mirror familiars, as if it sees double",
               "A member warns you they are grooming you; you dismiss it (it's true)",
               "First meeting in person: kind, tired, says they were like you once",
               "A ranger Keeper, duo against a stray stampede"
@@ -311,7 +311,7 @@
               "Refuses to believe the proof and sides with the mentor: the first rift",
               "Gets into old Kith servers and finds vent schematics",
               "Nearly catches their child, then quietly lets it go and keeps recruiting",
-              "Distressed in the server rooms near the node",
+              "Overloads in the server rooms near the node",
               "After the same servers; a standoff ends in a truce offer",
               "Broadcast interview about stability numbers (all true)",
               "A local tech Keeper, duo against strays from a tear in the server district"
@@ -322,7 +322,7 @@
               "Arrives on the Ward's side to stop you: a battle at the shrine",
               "Confronts their parent",
               "Arrives after the freeze and lets you go: they want you to keep climbing",
-              "Calm at the shrines, panics at the node",
+              "Quiet at the shrines, a wall of static at the node",
               "Leader fights beside you, is taken, passes you the key",
               "Present at the arrest; sees something that plants the first doubt",
               "The Unbound leader, duo at the node"
@@ -333,7 +333,7 @@
               "Final rival battle before the Circle with a perfect mirror team",
               "Goes quiet; the friend group splits",
               "Congratulates you before the Circle: the most chilling scene on a replay",
-              "Constant unease",
+              "Never stops buzzing",
               "Scattered; a member blames you for the leader's capture",
               "Sends a message: wants to talk after the ceremony",
               "None: you are alone on purpose"
@@ -726,6 +726,16 @@
             {
               "t": "2026-11-05",
               "n": "City 1 minor trainers: coast road fisherman (Murata) and Mr. Satan fan kid (Mr. Satan), levels 4-6; arena Krusty Krab cook (SpongeBob, 9) and ice skater (Shawn Frost, Murata, 10); no Northern Plateau trainers in City 1.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The warning near Frays, nodes and the core now comes from the device, not the starter: it buzzes and fills with static, which reads as bugs in the unfinished launch version; truth: it reads the pressure of loose threads. Familiars are never shown scared. Replaces the starter's unease (2026-10-31).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 scene 13 (exploring the city) decided; the Ward shelter sits next to the arena entrance.",
               "s": "decided"
             }
           ]
@@ -1204,6 +1214,11 @@
               "s": "decided"
             },
             {
+              "t": "Ward shelter",
+              "n": "Next to the arena entrance. You re-home familiars you no longer want here for a small reward; there is no true release.",
+              "s": "decided"
+            },
+            {
               "t": "Northern Plateau",
               "n": "The route out of the city on the far side, with its own Fray (the second encounter patch of City 1).",
               "s": "decided"
@@ -1307,7 +1322,7 @@
             },
             {
               "t": "10. The coast road and your starter",
-              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the next one on the cycle (Tanjiro → Deku → Ayanokoji → Tanjiro); the third escapes. Your starter goes quiet at the Fray's edge.",
+              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the next one on the cycle (Tanjiro → Deku → Ayanokoji → Tanjiro); the third escapes. Your device flickers with static at the Fray's edge, the first sign something is off.",
               "s": "decided",
               "where": "Coast road Fray",
               "who": "You, both friends, three starter strays"
@@ -1350,14 +1365,20 @@
             },
             {
               "t": "13. Exploring the city",
-              "n": "Free roam: Water 7 canals, the Krusty Krab, route trainers. The harbour-master greets you at the harbour; the Maker's child starts asking questions about the Ward.",
-              "s": "proposal",
-              "where": "Harbour, Water 7, waterfront",
-              "who": "Harbour-master, Maker's child"
+              "n": "Off the bridge into the Water 7 canals; the harbour-master greets you on the dock, proud of how the old harbour held when the city tore. The Krusty Krab: heal, buy Plain Threads, a small gag scene with SpongeBob behind the counter. The Ward shelter next to the arena entrance, where re-homing is taught; Sól notices familiars go in but nobody has seen one come out (true, but it reads as a joke about pets sent to a farm upstate). Sól starts asking questions, and your device crackles with static at the arena door.",
+              "s": "decided",
+              "where": "Water 7 canals, Krusty Krab, Ward shelter, arena door",
+              "who": "Harbour-master, SpongeBob, Sól",
+              "lines": [
+                [
+                  "Sól",
+                  "How did they build an arena in weeks?"
+                ]
+              ]
             },
             {
               "t": "14. The arena challenge",
-              "n": "The ice-sliding floor over the lagoon, with two arena trainers to beat on the way. Your starter is uneasy on the glass over the node.",
+              "n": "The ice-sliding floor over the lagoon, with two arena trainers to beat on the way. Your device fills with static on the glass over the node.",
               "s": "decided",
               "where": "League arena",
               "who": "Arena trainers"
