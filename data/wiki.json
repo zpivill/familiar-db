@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-31",
+  "updated": "2026-11-05",
   "pages": [
     {
       "id": "design",
@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-11-04",
-              "n": "Big-picture pass complete: the six cities, the opening and the Circle through to the ending are designed (see 'The Circle to the ending'). Next: update the game map and its copies (the interactive map, the text copy, the Figma copy sheet, the figma txt/csv and the Figma production board) with this thread's decisions and the 175/257 roster counts, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'. Later: deeper detail for the opening and the full story; the device visuals are still in progress."
+              "t": "2026-11-05",
+              "n": "Big-picture pass complete and the game map synced. Now on step 4: building City 1 (Reykjavík) and the opening as the vertical slice, tracked on the 'City 1: Reykjavík' page (places, event script with dialogue, Fray encounter tables, trainers, people). Most of it is Claude's draft tagged Proposal; next is going through it with r one piece at a time, starting with the encounter tables and the three starter strays. Open: the friends' names, releasing under the no-abandoning law, Thread tiers."
             }
           ]
         },
@@ -667,6 +667,26 @@
               "t": "2026-10-20",
               "n": "Title, names (Keepers, Strays, Frays, Kith, the Ward, Wardens, the Circle, the Unbound) and the four pillars.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Each city's scenes, dialogue, encounters and trainers are tracked on its own page on the site (a city page), built from data like the Design page. City 1: Reykjavík is the first.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The three strays on the coast road are Tanjiro, Deku and Ayanokoji, the roster's three starters.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's starter follows a fixed cycle (you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro), since the three starters' types don't counter each other. The 'counter' in the first rival battle is the copycat's second familiar, which hits your starter super-effectively.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's second familiar in the first rival battle is always Shawn Frost (Ice), caught on the coast road.",
+              "s": "decided"
             }
           ]
         }
@@ -1099,6 +1119,446 @@
             {
               "t": "Gatehouse connectors",
               "n": "Brick Bronze-style gatehouses you walk through between sections. The whole world lives in one Roblox place."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "city-reykjavik",
+      "title": "City 1: Reykjavík",
+      "blurb": "Everything that happens from the class photo to the first badge: places, the event script (scenes and dialogue), Fray encounter tables, trainers and people. Water + Ice.",
+      "note": "Draft built from what is decided on the Design page and the opening doc. Tags work like the Design page: Decided = r decided, Proposal = Claude's fill-in, Open = needs an answer. Character names in tables link to their pages.",
+      "sections": [
+        {
+          "title": "Places, in the order you reach them",
+          "items": [
+            {
+              "t": "Hometown",
+              "n": "A small harbour town on the coast outside Reykjavík: a small school, a few houses and a lighthouse on a hill. The first Fray opens in the square on patch day.",
+              "s": "decided"
+            },
+            {
+              "t": "Coast road",
+              "n": "The road from the hometown to Reykjavík. Runs past a fenced Fray where you bind your starter. Early Water/Ice and mostly Neutral strays.",
+              "s": "decided"
+            },
+            {
+              "t": "Reykjavík: the harbour and Water 7 canals",
+              "n": "Where you arrive. The harbour-master knew this harbour before Water 7 merged into it.",
+              "s": "proposal"
+            },
+            {
+              "t": "Great Naruto Bridge",
+              "n": "Crosses the bay into the city; site of the first copycat rival battle.",
+              "s": "decided"
+            },
+            {
+              "t": "The Krusty Krab",
+              "n": "Gag landmark on the waterfront. Proposal: a rest stop (heal, shop) instead of the usual centre.",
+              "s": "proposal"
+            },
+            {
+              "t": "League arena over the lagoon",
+              "n": "Ward-branded arena built in weeks over the worst tear; caps the city's main vent. No encounters inside. The node hums under the glass floor. Challenge: an ice-sliding floor over the lagoon.",
+              "s": "decided"
+            },
+            {
+              "t": "Northern Plateau",
+              "n": "Proposal: the route out of the city on the far side, with its own Fray (the second encounter patch of City 1).",
+              "s": "proposal"
+            },
+            {
+              "t": "Emilia's frozen forest (the Knot)",
+              "n": "The city's hidden, forbidden high-concentration Fray where legendary strays form. You only glimpse the Unbound leaving it in City 1.",
+              "s": "decided"
+            },
+            {
+              "t": "Loch Ness",
+              "n": "On the route; sealed until the post-game, when Nessie can be caught. Which route it sits on is open.",
+              "s": "open"
+            }
+          ]
+        },
+        {
+          "title": "Event script",
+          "items": [
+            {
+              "t": "1. Last day of school",
+              "n": "Character creation as the class photo. You design yourself, then your two friends: the Maker's child (your best friend) and the copycat (a younger neighbour whose default look copies yours).",
+              "s": "decided",
+              "when": "Game start",
+              "where": "Hometown school",
+              "who": "You, the Maker's child, the copycat, classmates"
+            },
+            {
+              "t": "2. The trend you can't see",
+              "n": "Classmates battle in the yard, cheering at empty air. You only see move names in speech bubbles and scorch marks. A classmate taunts you for not having a device; the copycat begs for one.",
+              "s": "decided",
+              "where": "School yard",
+              "who": "You, both friends, a classmate",
+              "lines": [
+                [
+                  "Maker's child",
+                  "We promised."
+                ]
+              ]
+            },
+            {
+              "t": "3. Why the promise is so strong",
+              "n": "A classmate lets the Maker's child hold their device. The parent pulls up, sees it and tears it out of their hands, shaking. Rule: none of you touch a Kith device. They won't say why.",
+              "s": "decided",
+              "where": "School gate",
+              "who": "Parent, Maker's child, a classmate"
+            },
+            {
+              "t": "4. The parent's house",
+              "n": "You ask again. The parent sits with an unsold Kith prototype, glancing at their phone. Tonight is the night they planned for.",
+              "s": "decided",
+              "when": "That evening",
+              "where": "Parent's house",
+              "who": "Parent, you, Maker's child",
+              "lines": [
+                [
+                  "Parent",
+                  "It isn't finished."
+                ]
+              ]
+            },
+            {
+              "t": "5. Patch day",
+              "n": "At sunset the first Fray opens in the square below. Everyone can suddenly see the characters (the reveal). Across the bay the sky over Reykjavík tears and Water 7 falls into it.",
+              "s": "decided",
+              "where": "Lighthouse hill",
+              "who": "You, both friends"
+            },
+            {
+              "t": "6. The first battle (tutorial)",
+              "n": "A stray crawls out toward you. The parent runs up with the prototype as if they knew where to go and binds a familiar on the spot. You play this battle as the parent. They get you home and leave town that night.",
+              "s": "decided",
+              "where": "Lighthouse hill",
+              "who": "Parent, a stray"
+            },
+            {
+              "t": "7. The havoc",
+              "n": "Montage: Frays spread, cities tear and merge, code red on the news. The parent calls twice in three months and never says where they are.",
+              "s": "decided",
+              "when": "3 months later"
+            },
+            {
+              "t": "8. The broadcast",
+              "n": "The Ward goes public live from the new Reykjavík arena. The Champion fronts it; the parent stands among the unnamed founders.",
+              "s": "decided",
+              "where": "TV, hometown",
+              "who": "Champion, parent (on screen)",
+              "lines": [
+                [
+                  "Ward broadcast",
+                  "We can stop the tears. We can't undo them. Own a familiar and help hold the world together."
+                ]
+              ]
+            },
+            {
+              "t": "9. Breaking the promise",
+              "n": "A Ward booth gives free devices to everyone. The three of you take them on purpose. The Maker's child takes one only to get into the Ward's network; the copycat takes one because you did.",
+              "s": "decided",
+              "where": "Hometown booth",
+              "who": "You, both friends, booth staff"
+            },
+            {
+              "t": "10. The coast road and your starter",
+              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the next one on the cycle (Tanjiro → Deku → Ayanokoji → Tanjiro); the third escapes. Your starter goes quiet at the Fray's edge.",
+              "s": "decided",
+              "where": "Coast road Fray",
+              "who": "You, both friends, three starter strays"
+            },
+            {
+              "t": "11. Cornering the parent",
+              "n": "Backstage after the launch. Every answer is a true half. Guilt and the Ward's need for Keepers win: they register the three of you and point you at the six Wardens, then leave again.",
+              "s": "decided",
+              "where": "Reykjavík arena, backstage",
+              "who": "Parent, you, both friends",
+              "lines": [
+                [
+                  "Maker's child",
+                  "You made us promise."
+                ],
+                [
+                  "Parent",
+                  "I asked you to wait until it was safe."
+                ],
+                [
+                  "Maker's child",
+                  "Is it safe now?"
+                ],
+                [
+                  "Parent",
+                  "It's as safe as it will ever be."
+                ],
+                [
+                  "Parent",
+                  "Strong Keepers are what keep cities from tearing."
+                ]
+              ]
+            },
+            {
+              "t": "12. First rival battle",
+              "n": "On the Great Naruto Bridge the copycat challenges you with their starter and Shawn Frost, an Ice familiar they caught on the coast road.",
+              "s": "decided",
+              "where": "Great Naruto Bridge",
+              "who": "Copycat"
+            },
+            {
+              "t": "13. Exploring the city",
+              "n": "Free roam: Water 7 canals, the Krusty Krab, route trainers. The harbour-master greets you at the harbour; the Maker's child starts asking questions about the Ward.",
+              "s": "proposal",
+              "where": "Harbour, Water 7, waterfront",
+              "who": "Harbour-master, Maker's child"
+            },
+            {
+              "t": "14. The glimpse",
+              "n": "From the edge of the frozen forest you see figures leaving the Knot. Nobody tells you who they are.",
+              "s": "proposal",
+              "where": "Emilia's frozen forest edge",
+              "who": "Unbound (unnamed)"
+            },
+            {
+              "t": "15. The arena challenge",
+              "n": "The ice-sliding floor over the lagoon. Your starter is uneasy on the glass over the node.",
+              "s": "decided",
+              "where": "League arena",
+              "who": "Arena trainers"
+            },
+            {
+              "t": "16. The harbour-master battle and first badge",
+              "n": "Warm and proud. After the badge, a clue in passing.",
+              "s": "proposal",
+              "where": "League arena",
+              "who": "Harbour-master",
+              "lines": [
+                [
+                  "Harbour-master",
+                  "The lagoon has run colder since they built this place."
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Coast road Fray",
+          "cols": [
+            "Character",
+            "Types",
+            "Tier",
+            "How often",
+            "Tag"
+          ],
+          "rows": [
+            [
+              "Tanjiro",
+              "Water",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Deku",
+              "Wind",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Ayanokoji",
+              "Neutral",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Murata",
+              "Water",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Shawn Frost",
+              "Ice",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Mr. Satan",
+              "Neutral",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Mumen Rider",
+              "Neutral",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Koby",
+              "Neutral",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Yamcha",
+              "Neutral, Beast",
+              "First route",
+              "Uncommon",
+              "Proposal"
+            ],
+            [
+              "Aqua",
+              "Water",
+              "Pre-mid",
+              "Rare find",
+              "Proposal"
+            ]
+          ]
+        },
+        {
+          "title": "Northern Plateau Fray",
+          "cols": [
+            "Character",
+            "Types",
+            "Tier",
+            "How often",
+            "Tag"
+          ],
+          "rows": [
+            [
+              "Murata",
+              "Water",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Shawn Frost",
+              "Ice",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Koby",
+              "Neutral",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Mumen Rider",
+              "Neutral",
+              "First route",
+              "Common",
+              "Proposal"
+            ],
+            [
+              "Fern",
+              "Water",
+              "Pre-mid",
+              "Rare find",
+              "Proposal"
+            ],
+            [
+              "Brook",
+              "Ice, Spirit",
+              "Pre-mid",
+              "Rare find",
+              "Proposal"
+            ],
+            [
+              "Ryo Yamada",
+              "Ice, Beast",
+              "Pre-mid",
+              "Rare find",
+              "Proposal"
+            ]
+          ]
+        },
+        {
+          "title": "Trainers and battles",
+          "items": [
+            {
+              "t": "Copycat (rival 1)",
+              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. Their second familiar is always Shawn Frost (Ice, a coast road catch), which hits Deku super-effectively. Levels open.",
+              "s": "decided"
+            },
+            {
+              "t": "Harbour-master (Warden 1)",
+              "n": "Water + Ice team, three familiars. Lean: Fern, Brook, Juvia (Fairy Tale). Levels open.",
+              "s": "proposal"
+            },
+            {
+              "t": "Route trainers",
+              "n": "Coast road and Northern Plateau: who they are and their teams.",
+              "s": "open"
+            },
+            {
+              "t": "Arena trainers",
+              "n": "Trainers on the ice-sliding floor before the harbour-master.",
+              "s": "open"
+            }
+          ]
+        },
+        {
+          "title": "People",
+          "items": [
+            {
+              "t": "The Maker's child",
+              "n": "Your best friend. Investigates the Ward through the parent; stays off the battle path. Name open.",
+              "s": "decided"
+            },
+            {
+              "t": "The copycat",
+              "n": "Younger neighbour, mirror rival; looks like you by default. Name open.",
+              "s": "decided"
+            },
+            {
+              "t": "The parent (mentor)",
+              "n": "Ex-Kith engineer and unnamed Ward founder. Never lies, only tells true halves.",
+              "s": "decided"
+            },
+            {
+              "t": "The harbour-master",
+              "n": "Reykjavík's Warden; knew the old harbour before Water 7 merged in. Warm and proud.",
+              "s": "decided"
+            },
+            {
+              "t": "The Champion",
+              "n": "Seen on the broadcast as the face of the Ward's campaign.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "Open for City 1",
+          "items": [
+            {
+              "t": "The friends' names",
+              "n": "Default names for the Maker's child and the copycat (the player can rename them).",
+              "s": "open"
+            },
+            {
+              "t": "Releasing a familiar",
+              "n": "How releasing works under the no-abandoning law.",
+              "s": "open"
+            },
+            {
+              "t": "Thread tiers",
+              "n": "Which Threads you have in City 1 and how better ones arrive (Cape Town update).",
+              "s": "open"
             }
           ]
         }

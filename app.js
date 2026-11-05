@@ -530,11 +530,17 @@ function renderPage(p) {
   const slug = s => p.id + '-' + s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   // A section is a list of items, or a table (cols + rows) on the Design page.
   const table = s => `<div class="scroll"><table class="design"><thead><tr>${s.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>
-    <tbody>${s.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    <tbody>${s.rows.map(r => `<tr>${r.map(c => `<td>${cell(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  // A cell that is exactly a character's name links to their page (encounter and trainer tables).
+  const cell = c => { const ch = roster.find(x => x.name === c); return ch ? `<a href="${charLink(ch)}">${esc(c)}</a>` : esc(c); };
+  // City pages: an event can say when, where and who, and carry dialogue lines as [speaker, line].
+  const meta = i => [['When', i.when], ['Where', i.where], ['Who', i.who]].filter(m => m[1])
+    .map(([k, v]) => `<b>${k}:</b> ${esc(v)}`).join(' · ');
+  const lines = i => i.lines ? `<ul class="lines">${i.lines.map(([who, l]) => `<li><b>${esc(who)}:</b> ${esc(l)}</li>`).join('')}</ul>` : '';
   const status = i => i.s ? ` <span class="badge ${i.s}">${i.s[0].toUpperCase() + i.s.slice(1)}</span>` : '';
   const body = p.soon ? `<p class="soon">${esc(p.soon)}</p>` : p.sections.map(s => `
     <section id="${slug(s)}"><h2>${esc(s.title)}</h2>${s.rows ? table(s) : `<dl>${s.items.map(i => `
-      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}${status(i)}</dt>${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}</div>`).join('')}
+      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}${status(i)}</dt>${meta(i) ? `<dd class="hint">${meta(i)}</dd>` : ''}${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}${lines(i)}</div>`).join('')}
     </dl>`}</section>`).join('');
   const toc = p.sections.length > 1 ? `<nav class="toc" aria-label="On this page">${p.sections.map(s =>
     `<a href="#${p.id}" data-jump="${slug(s)}">${esc(s.title)}</a>`).join('')}</nav>` : '';
