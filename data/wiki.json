@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right; the truth comes out in layers in the post-game; the familiar you still believes it was right. Open question to r: what the copycat's post-game is for (Claude's lean: with the core gone, the merge speeds up, and binding legendaries in the Knots is the only way left to hold the world, so catching them all becomes the lore's last stand; the mentor's offer to make the copycat the next Champion is refused). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities, the opening and the Circle through to the ending are designed (see 'The Circle to the ending'). Open question to r: what happens to the frozen Unbound when the core shuts down (Claude's lean: the nodes release them; the leader sees the tearing, realises they were wrong too, and helps the copycat in the Knots as a guest ally). After that, the big-picture pass is complete: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'. The opening and the story will get deeper detail later."
             }
           ]
         },
@@ -407,12 +407,22 @@
               "t": "The familiar you",
               "n": "The post-game's first quest is binding yourself. The familiar version of you is rebuilt from everything that exists about you, including your certainty, so it joins the copycat's team still believing it was right. It speaks a little, like the starter, while the player knows the truth.",
               "s": "decided"
+            },
+            {
+              "t": "What the post-game is for",
+              "n": "Hold the world, not fix it. With the core gone, the merge speeds up. Binding is the one thing that still anchors copies, and the Knots hold the most data, so the copycat binds the legendaries (locked until after the main story) and the Knots stop pooling pressure one by one. Collecting everything becomes the world's last stand. The copycat refuses the mentor's offer to become the next Champion and rebuild the core.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-05",
+              "n": "Post-game purpose: hold the world, not fix it. The copycat binds the legendaries in the Knots to stop them pooling pressure, and refuses to become the next Champion.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-05",
               "n": "The familiar version of you, bound at the start of the post-game, still believes it was right, because it is rebuilt from data that includes your certainty.",
