@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-05",
-              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided so far: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers. Next: levels for the rival and the Warden, route trainers, the order of the city scenes, then the open items (the friends' names, releasing under the no-abandoning law, Thread tiers)."
+              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided so far: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, and the friends' names (Sól, Kári). Next: levels for the rival and the Warden, route and arena trainers, then the open items (releasing under the no-abandoning law, Thread tiers)."
             }
           ]
         },
@@ -701,6 +701,11 @@
             {
               "t": "2026-11-05",
               "n": "City 1 ends with the glimpse of the Unbound leaving the Knot, right after the harbour-master's badge, on the way out to the Northern Plateau.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The friends' default names: Sól (the Maker's child) and Kári (the copycat), short Icelandic names to match the harbour town. The player can rename them.",
               "s": "decided"
             }
           ]
@@ -1524,13 +1529,13 @@
           "title": "People",
           "items": [
             {
-              "t": "The Maker's child",
-              "n": "Your best friend. Investigates the Ward through the parent; stays off the battle path. Name open.",
+              "t": "Sól (the Maker's child)",
+              "n": "Your best friend. Investigates the Ward through the parent; stays off the battle path. Default name Sól (\"sun\": the one who brings the Ward's secrets to light); the player can rename them.",
               "s": "decided"
             },
             {
-              "t": "The copycat",
-              "n": "Younger neighbour, mirror rival; looks like you by default. Name open.",
+              "t": "Kári (the copycat)",
+              "n": "Younger neighbour, mirror rival; looks like you by default. Default name Kári; the player can rename them.",
               "s": "decided"
             },
             {
@@ -1553,11 +1558,6 @@
         {
           "title": "Open for City 1",
           "items": [
-            {
-              "t": "The friends' names",
-              "n": "Default names for the Maker's child and the copycat (the player can rename them).",
-              "s": "open"
-            },
             {
               "t": "Releasing a familiar",
               "n": "How releasing works under the no-abandoning law.",
