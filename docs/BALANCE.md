@@ -341,6 +341,7 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 
 **Where things are:**
 - Books: `engine/books/book-fit1..4.json` (also in the Windows zip and in `familiar/builds/` in the project files), plus the averaged table `engine/books/best-builds-avg.md`.
+- **Current books (2026-11-05):** `engine/books/book-v2-fit1.json` and `book-v2-fit2.json`, fit on the current AI (after gaps #7-#9) against the seed 1 and seed 2 random-build meta chains (`--per=2000`, about 80 min each on 4 cores). Use these; book-fit1..4 were fit before the AI changes of 2026-10-31. Fit 1 vs 2: corr 0.84, mean diff 2.7 points (balance-history, 2026-11-05).
 - Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
 - Play the books with `familiar-sim ... --builds=books/book-fit1.json,books/book-fit2.json,books/book-fit3.json,books/book-fit4.json` (from engine/ or the unzipped folder). Re-fit with `--optimize` after character, move, ability or item changes.
 
