@@ -697,6 +697,11 @@
               "t": "2026-11-05",
               "n": "Harbour-master's team: Rudeus, Brook, Fern (ace), all pre-mid, so the first Warden is about 1.2x a coast road team. Two mini trainers on the arena's ice floor come before the Warden.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 ends with the glimpse of the Unbound leaving the Knot, right after the harbour-master's badge, on the way out to the Northern Plateau.",
+              "s": "decided"
             }
           ]
         }
@@ -1326,21 +1331,14 @@
               "who": "Harbour-master, Maker's child"
             },
             {
-              "t": "14. The glimpse",
-              "n": "From the edge of the frozen forest you see figures leaving the Knot. Nobody tells you who they are.",
-              "s": "proposal",
-              "where": "Emilia's frozen forest edge",
-              "who": "Unbound (unnamed)"
-            },
-            {
-              "t": "15. The arena challenge",
+              "t": "14. The arena challenge",
               "n": "The ice-sliding floor over the lagoon, with two arena trainers to beat on the way. Your starter is uneasy on the glass over the node.",
               "s": "decided",
               "where": "League arena",
               "who": "Arena trainers"
             },
             {
-              "t": "16. The harbour-master battle and first badge",
+              "t": "15. The harbour-master battle and first badge",
               "n": "Warm and proud. After the badge, a clue in passing.",
               "s": "proposal",
               "where": "League arena",
@@ -1351,6 +1349,13 @@
                   "The lagoon has run colder since they built this place."
                 ]
               ]
+            },
+            {
+              "t": "16. The glimpse",
+              "n": "After the badge, on your way out toward the Northern Plateau, you see figures leaving the Knot at the edge of the frozen forest. Nobody tells you who they are. City 1 ends on a question, not a win.",
+              "s": "decided",
+              "where": "Emilia's frozen forest edge",
+              "who": "Unbound (unnamed)"
             }
           ]
         },
