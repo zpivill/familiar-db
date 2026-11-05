@@ -326,7 +326,7 @@ r paused balancing on 2026-10-29 after the sim checks. Suggested way back in: (1
 r is skeptical of them. In r's testing, Pain and Kaido are almost always on top teams, but the options named Lelouch, Aizen and weak legendaries instead. Those options were ranked by win rate on random teams, not by how often top teams pick a character, which is why Kaido didn't show up. Use meta-team share from the trustworthy-data work for those calls.
 
 **What the AI handles today:**
-- **Battle AI (fast and search):** its damage estimates use real stats (EVs, natures, IVs), abilities and damage-changing items (Overdrive Core, emblems, Ward Charm). It sees the foe's exact build (perfect information, unlike a human). It hasn't been checked to plan around every item's other effects (for example, Focus Seal surviving a hit).
+- **Battle AI (fast and search):** its damage estimates use real stats (EVs, natures, IVs), abilities and damage-changing items (Overdrive Core, emblems, Ward Charm). It sees the foe's exact build (perfect information, unlike a human). It hasn't been checked to plan around every item's other effects (for example, Last Thread surviving a hit).
 - **Build search (`--optimize`, section 8):** the battle AI doesn't choose builds; the build search does. Its limits:
   - One build per character on every team, not tailored to teammates.
   - Only the 6 movesets makeBuild draws most.
