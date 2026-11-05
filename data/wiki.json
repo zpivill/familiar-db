@@ -672,6 +672,11 @@
               "t": "2026-11-05",
               "n": "Each city's scenes, dialogue, encounters and trainers are tracked on its own page on the site (a city page), built from data like the Design page. City 1: Reykjavík is the first.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The three strays on the coast road are Tanjiro, Deku and Ayanokoji, the roster's three starters.",
+              "s": "decided"
             }
           ]
         }
@@ -1344,21 +1349,21 @@
               "Water",
               "Starter",
               "Scripted (one of three)",
-              "Proposal"
+              "Decided"
             ],
             [
               "Deku",
               "Wind",
               "Starter",
               "Scripted (one of three)",
-              "Proposal"
+              "Decided"
             ],
             [
               "Ayanokoji",
               "Neutral",
               "Starter",
               "Scripted (one of three)",
-              "Proposal"
+              "Decided"
             ],
             [
               "Murata",
