@@ -661,3 +661,34 @@ Step 3 of the [simulated-meta plan](https://claude.ai/artifact/3B6snowJaAmGMfy82
 - Best together, lift in seed 1 / seed 2: Lelouch (form 2) + Nezuko 8.2 / 7.7, Lelouch (form 2) + Shawn Frost 6.4 / 7.8, All Might + Dio 6.9 / 6.9, Lelouch (form 2) + Yuno 6.2 / 7.0, Homura + Misaka 6.2 / 4.9, Eren (form 3) + Frieza 5.3 / 5.0, All Might + Madara 5.1 / 5.1, and Homura with Jin-woo (form 3), Tatsumaki and All Might. Lelouch (form 2) appears in many of the top pairs.
 - Worst together: Dio with Komatsu (-13 / -9), with Lelouch (base form), Escanor, Tsuna and Jin-woo; Whitebeard with Escanor, Lelouch and Tsuna; Sukuna with Mumen Rider and Mr. Satan. Whitebeard's book moves are Earthquake and Bulldoze, which in doubles also hit the partner; that is the likely reason for his, not checked.
 - Caveats: pairs are counted only when the draft picked both, so the lift is "when this draft picks them together". The lift comes from per-character books; team-aware builds (gap #10) would raise some pairs further.
+
+## Random builds vs books, and books re-fit on the current AI (2026-11-05)
+
+Rust, 200k meta chains, comp, bring 8, Vitality x3, every form, archetype rounds, `--check=2000` (search AI replays the final 17 teams, about 230 games a team), seeds 1-5 each. Three groups: random builds, the 4 old books (fit 2026-10-30, before the AI changes of 10-31), and 2 new books fit on the current AI (`--optimize --per=2000` against the seed 1 and seed 2 random-build chains, about 82 min each on 4 cores).
+
+**Top-team spots (of 30 meta teams over 5 seeds)** and win rate when picked:
+
+| | random builds | old books | new books |
+|---|---|---|---|
+| Demon Emperor Lelouch | 1 (43%) | 30 (63%) | 30 (64%) |
+| White Room Ayanokoji | 0 (39%) | 15 (65%) | 15 (66%) |
+| Pain | 9 (62%) | 13 (60%) | 11 (61%) |
+| Poseidon | 1 (43%) | 18 (64%) | 11 (59%) |
+| Hybrid Kaido | 15 (62%) | 0 (20%) | 5 (58%) |
+| Devil Union Asta | 28 (64%) | 0 (31%) | 2 (52%) |
+| Levi | 12 (63%) | 3 (57%) | 0 (31%) |
+| Hero of Hell Chainsaw Man | 12 (60%) | 2 (51%) | 0 (32%) |
+
+Correlation of top-team spots: random vs old books 0.10, random vs new books 0.11, old vs new books 0.78. **Re-fitting on the current AI didn't close the gap**; the two book generations agree with each other.
+
+**The cause is the ability roll.** Random builds give each character one of its abilities at random, and the outliers depend on one: Demon Emperor Lelouch wins 39% picked with Zero Requiem against 17% with Geass and 12% with Weak Body (seed 1 random builds); in the new books the gap is 80 vs 52-53 (fit 2). Same shape for Pain (Preta Path 79 vs 60-64), White Room Ayanokoji (Pawns 70 vs 48-51), Mikasa (The Scarf 66 vs 52-53). So random builds average two weak rolls into these characters, and books always give them the strong one. Characters with even abilities (Asta 60-62, UI Goku 73-74) look the same either way, and books push them down by lifting everyone else.
+
+**Book outliers vs their tier** (best-build win rate in fit 1 / fit 2, tier median): Pain 83 / 78 (legendary, 62), Demon Emperor Lelouch 84 / 80 (pseudo, 65), Hybrid Kaido 77 / 77 (legendary), White Room Ayanokoji 72 / 73 (starter, 62), Mikasa 67 / 70 (mid, 58), Rinnegan Sasuke 71 / 71 (post-mid, 62). Hogyoku Aizen 83 / 67 and Darkness 68 / 59 don't repeat. Fit 1 vs fit 2: corr 0.84, mean diff 2.7, same ability for 172 of 257.
+
+**Archetypes, search AI, new books:** Intimidate + Fake Out 64%, Snow 55%, Fire field 45%, Tailwind 44%, Spread offense 44%; Trick Room 24%, Lightning field 27%, Redirection + setup 27%. Intimidate + Fake Out and Snow top, Trick Room / Redirection / Water-Lightning fields bottom in all three groups.
+
+**First-route check:** no first-router is above 35% picked in any group; the few on meta teams are rarely brought (Koby 6%, Shawn Frost 11%).
+
+Also: BALANCE.md said Focus Seal survives a hit; that's Last Thread (Focus Seal is the Choice Specs item). Fixed.
+
+**Open for r:** which view is the real game depends on whether players choose a character's ability (then books are right, and Zero Requiem / Preta Path / Pawns / The Scarf are the targets) or it's rolled like a hidden ability (then random builds are closer).
