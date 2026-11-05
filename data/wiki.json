@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-05",
-              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided so far: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, and the friends' names (Sól, Kári) and releasing (re-home with the Ward). Next: levels for the rival and the Warden, route and arena trainers, then the last open item (Thread tiers)."
+              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Next: levels for the rival and the Warden, who the route and arena trainers are, scene 13's detail, and where the Ward shelter sits."
             }
           ]
         },
@@ -712,6 +712,11 @@
               "t": "2026-11-05",
               "n": "Releasing: there is no true release. You re-home familiars at Ward shelters for a small reward. It seems kind; the truth is the Ward keeps them bound as anchors it controls.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Threads in City 1: Plain only; a few free from the Ward booth, more bought at the Krusty Krab rest stop, and binding a stray sometimes drops one. Better Threads come with the Cape Town device update.",
+              "s": "decided"
             }
           ]
         }
@@ -1180,8 +1185,8 @@
             },
             {
               "t": "The Krusty Krab",
-              "n": "Gag landmark on the waterfront. Proposal: a rest stop (heal, shop) instead of the usual centre.",
-              "s": "proposal"
+              "n": "Gag landmark on the waterfront and the rest stop (heal, shop). Sells Plain Threads.",
+              "s": "decided"
             },
             {
               "t": "League arena over the lagoon",
@@ -1561,12 +1566,12 @@
           ]
         },
         {
-          "title": "Open for City 1",
+          "title": "Threads in City 1",
           "items": [
             {
-              "t": "Thread tiers",
-              "n": "Which Threads you have in City 1 and how better ones arrive (Cape Town update).",
-              "s": "open"
+              "t": "Threads in City 1",
+              "n": "Plain Threads only, so binding is just about lowering HP; better Threads arrive with the Cape Town device update. You get a few free from the Ward booth (scene 9), buy more at the Krusty Krab rest stop, and binding a stray sometimes drops one.",
+              "s": "decided"
             }
           ]
         }
