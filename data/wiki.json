@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-05",
-              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Next: levels for the rival and the Warden, who the route and arena trainers are, scene 13's detail, and where the Ward shelter sits."
+              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Levels set (rival 5-7, arena trainers 9-10, Warden 11-14). Next: who the route and arena trainers are, scene 13's detail, and where the Ward shelter sits."
             }
           ]
         },
@@ -716,6 +716,11 @@
             {
               "t": "2026-11-05",
               "n": "Threads in City 1: Plain only; a few free from the Ward booth, more bought at the Krusty Krab rest stop, and binding a stray sometimes drops one. Better Threads come with the Cape Town device update.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 levels: rival starter 7 and Shawn Frost 5; arena trainers 9 to 10; harbour-master Rudeus 11, Brook 12, Fern 14.",
               "s": "decided"
             }
           ]
@@ -1515,12 +1520,12 @@
           "items": [
             {
               "t": "Copycat (rival 1)",
-              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. Their second familiar is always Shawn Frost (Ice, a coast road catch), which hits Deku super-effectively. Levels open.",
+              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. Their second familiar is always Shawn Frost (Ice, a coast road catch), which hits Deku super-effectively. Levels: starter 7, Shawn Frost 5.",
               "s": "decided"
             },
             {
               "t": "Harbour-master (Warden 1)",
-              "n": "Water + Ice team of three: Rudeus (opener), Brook, Fern (ace). Totals about 1.2x a coast road team, like a first gym. Nothing catchable before the Warden is super-effective on Water (needs Lightning or Blood), so levels do most of the tuning; levels open.",
+              "n": "Water + Ice team of three: Rudeus (opener), Brook, Fern (ace). Totals about 1.2x a coast road team, like a first gym. Nothing catchable before the Warden is super-effective on Water (needs Lightning or Blood), so levels do most of the tuning; levels Rudeus 11, Brook 12, Fern 14 (just past her level 13 move).",
               "s": "decided"
             },
             {
@@ -1530,7 +1535,7 @@
             },
             {
               "t": "Arena trainers",
-              "n": "Two mini trainers on the ice-sliding floor before the harbour-master, each with one or two Water/Ice familiars; they teach the matchups. Proposal: one is a Krusty Krab cook with SpongeBob. Who they are and exact teams open.",
+              "n": "Two mini trainers on the ice-sliding floor before the harbour-master, each with one or two Water/Ice familiars; they teach the matchups. Proposal: one is a Krusty Krab cook with SpongeBob. Levels 9 to 10. Who they are and exact teams open.",
               "s": "decided"
             }
           ]
