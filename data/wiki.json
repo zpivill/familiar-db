@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-05",
-              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Levels set (rival 5-7, arena trainers 9-10, Warden 11-14). Next: who the route and arena trainers are, scene 13's detail, and where the Ward shelter sits."
+              "n": "Step 4: building City 1 (Reykjavík) and the opening on the 'City 1: Reykjavík' page. Decided: the tracker page, the starter trio and copycat cycle (Shawn Frost as their second), both Fray lists, the harbour-master's team (Rudeus, Brook, Fern) and two arena trainers, the Unbound glimpse after the badge, the friends' names (Sól, Kári), releasing (re-home with the Ward) and City 1 Threads (Plain only; booth, Krusty Krab shop, drops). No open items left. Levels set (rival 5-7, arena trainers 9-10, Warden 11-14). Minor trainers set. Next: scene 13's detail (exploring the city), and where the Ward shelter sits."
             }
           ]
         },
@@ -721,6 +721,11 @@
             {
               "t": "2026-11-05",
               "n": "City 1 levels: rival starter 7 and Shawn Frost 5; arena trainers 9 to 10; harbour-master Rudeus 11, Brook 12, Fern 14.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 minor trainers: coast road fisherman (Murata) and Mr. Satan fan kid (Mr. Satan), levels 4-6; arena Krusty Krab cook (SpongeBob, 9) and ice skater (Shawn Frost, Murata, 10); no Northern Plateau trainers in City 1.",
               "s": "decided"
             }
           ]
@@ -1530,12 +1535,12 @@
             },
             {
               "t": "Route trainers",
-              "n": "Coast road and Northern Plateau: who they are and their teams.",
-              "s": "open"
+              "n": "Coast road, levels 4 to 6: a fisherman with Murata, and a kid in a Mr. Satan T-shirt with Mr. Satan (your first trainer battle after binding your starter). Northern Plateau: none in City 1; it comes after the badge, so its trainers wait for the Hawaii route.",
+              "s": "decided"
             },
             {
               "t": "Arena trainers",
-              "n": "Two mini trainers on the ice-sliding floor before the harbour-master, each with one or two Water/Ice familiars; they teach the matchups. Proposal: one is a Krusty Krab cook with SpongeBob. Levels 9 to 10. Who they are and exact teams open.",
+              "n": "Two mini trainers on the ice-sliding floor before the harbour-master: a Krusty Krab cook with SpongeBob (level 9), then an ice skater with Shawn Frost and Murata (level 10). They teach the Water/Ice matchups.",
               "s": "decided"
             }
           ]
