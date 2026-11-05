@@ -12,7 +12,7 @@
           "items": [
             {
               "t": "2026-11-04",
-              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right; the truth comes out in layers in the post-game. Open question to r: what the familiar version of you (bound in the post-game) believes (Claude's lean: it is rebuilt from data, including your certainty, so it still believes it was right). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "n": "All six cities and the opening are designed and reviewed. Now the Circle through to the ending, tracked in 'The Circle to the ending' section. Decided: the summit sits where the seams meet; the four are the spares; their lines are true encouragement; your character dies believing they were right; the truth comes out in layers in the post-game; the familiar you still believes it was right. Open question to r: what the copycat's post-game is for (Claude's lean: with the core gone, the merge speeds up, and binding legendaries in the Knots is the only way left to hold the world, so catching them all becomes the lore's last stand; the mentor's offer to make the copycat the next Champion is refused). After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
             }
           ]
         },
@@ -402,12 +402,22 @@
               "t": "How the truth comes out (post-game)",
               "n": "In layers, as the copycat: 1) the Champion's unsent message ('I wanted to tell you after the ceremony'); 2) the Maker's child, who was right about half of it, pieces the rest together; 3) the mentor confirms it without meaning to, by trying to recruit the copycat as the next spare.",
               "s": "decided"
+            },
+            {
+              "t": "The familiar you",
+              "n": "The post-game's first quest is binding yourself. The familiar version of you is rebuilt from everything that exists about you, including your certainty, so it joins the copycat's team still believing it was right. It speaks a little, like the starter, while the player knows the truth.",
+              "s": "decided"
             }
           ]
         },
         {
           "title": "Decision log",
           "items": [
+            {
+              "t": "2026-11-05",
+              "n": "The familiar version of you, bound at the start of the post-game, still believes it was right, because it is rebuilt from data that includes your certainty.",
+              "s": "decided"
+            },
             {
               "t": "2026-11-05",
               "n": "Post-game: the truth comes out in layers: the Champion's unsent message, then the Maker's child, then the mentor trying to recruit the copycat as the next spare.",
