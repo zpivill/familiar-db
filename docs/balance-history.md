@@ -692,3 +692,28 @@ Correlation of top-team spots: random vs old books 0.10, random vs new books 0.1
 Also: BALANCE.md said Focus Seal survives a hit; that's Last Thread (Focus Seal is the Choice Specs item). Fixed.
 
 **Open for r:** which view is the real game depends on whether players choose a character's ability (then books are right, and Zero Requiem / Preta Path / Pawns / The Scarf are the targets) or it's rolled like a hidden ability (then random builds are closer).
+
+## Ability options for the 4 book outliers (2026-11-05, not applied)
+
+Abilities decided by r (2026-11-05): rolled on catch, hidden rare, changeable by item, so balance uses the books. Each option was tested on a scratch copy of `engine/data.json` (and a scratch engine with test-only ops for the Zero Requiem variants), with a single-character fit (`--optimize --only=... --per=2000`) against the same two metas as the v2 books. The unchanged data reproduces the v2 books exactly (Lelouch 84 / 80), so the numbers compare directly. Best-build win rate, fit 1 / fit 2; target is within about 8 points of the tier median.
+
+| Character (tier median) | Option | Fit 1 / fit 2 |
+|---|---|---|
+| Demon Emperor Lelouch (pseudo 65) | now: on his knockout, whole team +1 all stats, foes -1 all | 84 / 80 |
+| | only allies in battle get +1 (not the bench), foes -1 | 73 / 73 |
+| | allies +1, no foe drop | 79 / 74 |
+| | only Power and Energy: allies +1, foes -1 | **70 / 66** |
+| Pain (legendary 62) | now: Energy moves heal him 1/4 instead of hitting | 83 / 78 |
+| | immune to Energy moves, no heal | 83 / 78 |
+| | Energy moves do half damage | 78 / 74 |
+| | Energy moves do 3/4 damage | 77 / 74 |
+| White Room Ayanokoji (starter 62) | now: ally faints, +1 Power and +1 Speed | 72 / 73 |
+| | +1 Power only | **63 / 64** |
+| | +1 Speed only | 61 / 59 |
+| Mikasa (mid 58) | now: ally faints, +2 Power | 67 / 70 |
+| | +1 Power | **64 / 62** |
+| | +1 Speed instead | 60 / (not finished) |
+
+- Each option keeps the ability as the character's best one, so identity holds.
+- **Pain:** none of the Preta Path options brings him within range (best 74-78). The heal adds nothing (immune without heal = same number), so his strength is elsewhere (660 stats, Recover, Spacial Rend). Needs a second look before options go to r.
+- Next: confirm the leaning options in team play (meta chains with books re-fit for those characters), then bring them to r.
