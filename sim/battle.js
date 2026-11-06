@@ -255,7 +255,10 @@ export function runBattle(data, teams, opts = {}) {
       if (m.vol.destinyBond) { say('Destiny bond'); by.hp = 0; faint(by, m); }
     }
     for (const op of a.faint) {
-      if (op.op === 'requiem') { alive(m.side).forEach(x => addPending(x, { pow: 1, grd: 1, ene: 1, wil: 1, spe: 1 })); foesOf(m).forEach(f => boost(f, { pow: -1, grd: -1, ene: -1, wil: -1, spe: -1 }, m)); }
+      if (op.op === 'requiem') { // the listed stats rise for every ally (bench too) and drop for the foes in battle
+        const st = op.stats || { pow: 1, grd: 1, ene: 1, wil: 1, spe: 1 };
+        alive(m.side).forEach(x => addPending(x, st)); foesOf(m).forEach(f => boost(f, Object.fromEntries(Object.entries(st).map(([k, v]) => [k, -v])), m));
+      }
       if (op.op === 'nextBoost') m.side.gift = { stats: op.stats };
     }
     alive(m.side).forEach(x => {

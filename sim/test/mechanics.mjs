@@ -344,5 +344,20 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(seen[0] === 'None' && seen[1] === 'Fire Dragon Slayer', 'Hidden builds: an ability shows once it absorbs a hit', seen.join(' > '));
 }
 
+// Zero Requiem (2026-11-05 wording): when Lelouch falls, his team gets +1 Power and Energy (benched allies when they come in),
+// and the foes in battle get -1 Power and Energy; Guard, Will and Speed don't move.
+{
+  const ab = ent('lelouch/3').abilities.find(a => a.name === 'Zero Requiem').ab;
+  ok(JSON.stringify(ab.faint) === JSON.stringify([{ op: 'requiem', stats: { pow: 1, ene: 1 } }]), 'Zero Requiem compiles to Power and Energy only', JSON.stringify(ab.faint));
+  const seen = [];
+  runBattle(data, [[build('lelouch/3', ['splash'], 'Zero Requiem'), build('saitama', ['splash'])], [build('pain', ['spacial-rend'])]], { rng: rng(2), turnCap: 8, decide: (kind, B, m) => {
+    if (kind === 'action' && m.side.i === 0 && m.e.key === 'saitama') seen.push({ ally: { ...m.boosts }, foe: { ...B.sides[1].mons[0].boosts } });
+    return null;
+  } });
+  const s0 = seen[0] || {};
+  ok(s0.ally?.pow === 1 && s0.ally?.ene === 1 && !s0.ally?.grd && !s0.ally?.spe, 'Zero Requiem: the benched ally comes in with +1 Power and Energy', JSON.stringify(s0));
+  ok(s0.foe?.pow === -1 && s0.foe?.ene === -1 && !s0.foe?.grd, 'Zero Requiem: the foe drops 1 Power and Energy', JSON.stringify(s0));
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');

@@ -313,8 +313,11 @@ impl<'a> Battle<'a> {
         } }
         for op in &a.faint {
             if op.op == "requiem" {
-                for x in self.alive(ms) { self.add_pending(x, &[(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)]); }
-                for f in self.foes_of(m) { self.boost(f, &[(0, -1), (1, -1), (2, -1), (3, -1), (4, -1)], Some(m), false); }
+                // the listed stats rise for every ally (bench too) and drop for the foes in battle
+                let st: Vec<(usize, i32)> = op.stats.clone().unwrap_or_else(|| vec![(0, 1), (1, 1), (2, 1), (3, 1), (4, 1)]);
+                let neg: Vec<(usize, i32)> = st.iter().map(|&(k, v)| (k, -v)).collect();
+                for x in self.alive(ms) { self.add_pending(x, &st); }
+                for f in self.foes_of(m) { self.boost(f, &neg, Some(m), false); }
             }
             if op.op == "nextBoost" { self.sides[ms].gift = Some(Gift { heal: 0.0, stats: op.stats.clone() }); }
         }

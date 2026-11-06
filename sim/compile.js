@@ -606,7 +606,10 @@ export function compileAbility(a) {
       ab.allyFaint.push(...ops); if (ops.length) hit();
     }
     if (/^When (?:he|she) (?:is knocked out|faints)(?: from a hit)?, (?:the foe that did it|the attacker) loses 1\/4/.test(s)) { ab.faint.push({ op: 'aftermath', frac: 0.25 }); hit(); }
-    if (/^When he is knocked out, all allies' stats rise by 1 and all foes' stats drop by 1/.test(s)) { ab.faint.push({ op: 'requiem' }); hit(); }
+    if ((mm = s.match(/^When he is knocked out, all allies' (stats|[A-Za-z ,]+?) rises? by (\d) and all foes' (?:stats|[A-Za-z ,]+?) drops? by \d/))) {
+      const st = mm[1] === 'stats' ? Object.fromEntries(ALL.map(k => [k, +mm[2]])) : statsIn(`${mm[1]} by ${mm[2]}`);
+      ab.faint.push({ op: 'requiem', stats: st }); hit();
+    }
     if (/^When he faints, the ally that replaces him gets \+1 Power and \+1 Energy/.test(s)) { ab.faint.push({ op: 'nextBoost', stats: { pow: 1, ene: 1 } }); hit(); }
     // --- switching out ---
     if ((mm = s.match(/^(?:Heals|He heals|She heals) (1\/3)(?: of (?:his|her) max Vitality)? when (?:he|she) switches out/))) { ab.regenerator = 1 / 3; hit(); }

@@ -11216,7 +11216,7 @@
       },
       {
         "name": "Pawns",
-        "text": "When an ally faints, his Power and Speed rise by 1.",
+        "text": "When an ally faints, his Power rises by 1.",
         "like": "Moxie, on ally faint",
         "hidden": true
       }
@@ -16824,7 +16824,7 @@
       },
       {
         "name": "Zero Requiem",
-        "text": "When he is knocked out, all allies' stats rise by 1 and all foes' stats drop by 1.",
+        "text": "When he is knocked out, all allies' Power and Energy rise by 1 and all foes' Power and Energy drop by 1.",
         "like": "faint trigger",
         "hidden": true
       }
@@ -19042,7 +19042,7 @@
       },
       {
         "name": "The Scarf",
-        "text": "When an ally faints, her Power rises by 2.",
+        "text": "When an ally faints, her Power rises by 1.",
         "like": "on ally faint boost",
         "hidden": true
       }
