@@ -69,13 +69,22 @@ First run it on the unchanged data and check it reproduces the book's `best` (it
 
 Target: the option brings the character within ~8 points of its tier median while keeping its identity (the ability should still be its best or near-best).
 
+Lessons from the first pass (2026-11-05/06, balance-history):
+
+- **Check the lever before writing options.** Read `tried` in the book: if the character's *other* abilities already win near the top, the ability isn't the cause (Pain: 60-76 with any ability).
+- **Compare with peers before cutting a number.** Before lowering a signature's power, list the same tier's signatures of the same kind (spread, single-target). A cut that makes a famous move the weakest of its tier doesn't fit canon; say so and leave it to r.
+- **One lever often isn't enough.** If no single option reaches the target, test pairs, and if only an off-canon pair works, don't apply it: report the options with a lean.
+- **Watch for a new top character** after a fix (All Might rose when Lelouch was trimmed). Run 5 team seeds before calling the meta healthy.
+- **Background jobs:** run each long job as its own background task (2-hour limit). Don't chain jobs on a `grep` for text a command never prints (`--optimize` output has no "real" line unless wrapped in `time`).
+
 ## 4. Report to r
 
 One table per outlier: option, canon reason, best-build win rate in each fit, top-team spots before and after, and the lean. Then:
 
 - Add the runs to `docs/balance-history.md`.
 - Commit only docs and tooling; push to the session branch.
-- After r picks: change the ability text in `data/characters.json` so `sim/compile.js` reads it (add a rule there and in `engine/src` if needed), run the checks below, and open one PR per decision.
+- After r picks: change the ability text in `data/characters.json` so `sim/compile.js` reads it (add a rule there and in `engine/src` if needed), add a check to `sim/test/mechanics.mjs`, run `node sim/export.mjs` and the checks below, and replace the changed characters' entries in the books with their `--only` re-fit. Open one PR per decision.
+- If r delegated the call, apply only the options that reach the target **and** fit canon; leave the rest as options.
 
 ## Checks before any push
 
