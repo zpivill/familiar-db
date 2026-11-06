@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-10-31",
-              "n": "Big story moment per city decided. r wants small story developments for every party in every city: Claude's proposal is the 'Story threads by city' table, waiting on r to approve or change. Then Hawaii's Warden and package. After all six cities: the opening, a review of the six, then the Circle to the ending. After this thread: update the game map and its copies, and reword the old 'arena sits on the biggest chaos zone' line to 'caps the main vent'."
+              "t": "2026-11-05",
+              "n": "Step 4: City 1 (Reykjavík) and the opening are fully designed on the 'City 1: Reykjavík' page, including a baseline map sketch (one section, no loaders; open plots for later). Next for City 1, when r wants: full dialogue for every scene, the patch-day tutorial battle, badge and rewards, builds for the City 1 trainers, the ice-floor puzzle layout, the escaped third starter, townsfolk. After City 1: feed back, then City 2 (Hawaii)."
             }
           ]
         },
@@ -85,17 +85,17 @@
             ],
             [
               "The device (Familiar)",
-              "A friendly tech product",
-              "The anchor that makes every Keeper part of the machine",
+              "A friendly tech product. Near Frays, nodes and the core it buzzes and its screen fills with static, which reads as bugs in the unfinished launch version",
+              "The anchor that makes every Keeper part of the machine. The device reads the pressure of loose threads: the static was a warning all along",
               "Flick it open like a lighter, draw the thread like a sword",
               "Proposal"
             ],
             [
               "Frays",
               "Dangerous chaos zones the Ward contained; they sit along the routes between cities and can't be closed",
-              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (proposal name: a Knot) where legendary strays form",
+              "Vents opened on purpose. They lie on seams, the lines between nodes, so the routes are the Ward's vent plumbing: every Fray lies between two arenas, a clue on the map. They can't be closed because they are vents. Each city also has a hidden, forbidden high-concentration Fray (a Knot) where legendary strays form",
               "Enter the fray to find hidden strays; binding strays calms a Fray for a while but never closes it",
-              "Decided; Knot name is a proposal"
+              "Decided"
             ],
             [
               "Strays",
@@ -114,9 +114,9 @@
             [
               "No-abandoning law",
               "Protects familiars",
-              "Broken contracts become loose threads",
-              "Open: whether releasing is possible at all",
-              "Decided; release open"
+              "Broken contracts become loose threads. Re-homed familiars stay bound as anchors the Ward controls",
+              "Re-home familiars you don't want at Ward shelters for a small reward; there is no true release",
+              "Decided"
             ],
             [
               "Companions (your two friends)",
@@ -141,8 +141,8 @@
             ],
             [
               "Your starter",
-              "Your first familiar, who reacts and talks a little; gets uneasy near Frays, nodes and the core, which reads as nerves",
-              "Familiars can feel loose threads: its unease was a warning all along. Proposal: the mentor hands you your starter, so it is part of the recruitment from day one",
+              "Your first familiar, who reacts and talks a little",
+              "Your starter is your first bind: one of three strays (Tanjiro, Deku, Ayanokoji) on the coast road out of your hometown; the copycat takes the next one on a fixed cycle",
               "Travels with you from the start",
               "Decided"
             ],
@@ -156,7 +156,7 @@
             [
               "The Champion",
               "The strongest Keeper and the face of the Ward's \"own a familiar, save the world\" campaign",
-              "The mentor's earlier recruit, groomed years ago exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
+              "The mentor's earlier recruit, the trend era's best battler, groomed before patch day exactly as you and the copycat are now; learns the truth too late and tries to tell you after the ceremony. On a replay, they are what you were being turned into",
               "Beat them, then shut down the core",
               "Decided"
             ],
@@ -197,8 +197,8 @@
               "Water 7 canals (One Piece), the Great Naruto Bridge (Naruto), Emilia's frozen forest (Re:Zero), the Krusty Krab (SpongeBob, gag), the Northern Plateau (Frieren), Loch Ness on the route (sealed until the post-game; Nessie)",
               "The harbour-master: knew the old harbour before Water 7 merged in; warm and proud",
               "entering a Fray, first bind with Threads, Water/Ice matchups, first Warden battle; arena challenge is an ice-sliding floor over the lagoon",
-              "devices from the Ward's re-release; the mentor hands you your starter; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
-              "The lagoon has run colder since the arena was built. your starter is uneasy on the arena's glass floor over the node",
+              "devices from the Ward's re-release; you corner the mentor at the launch and they register you as Keepers; first copycat rival battle on the Great Naruto Bridge; the Maker's child starts asking questions; a glimpse of the Unbound leaving the frozen forest (the Knot)",
+              "The lagoon has run colder since the arena was built. your device fills with static on the arena's glass floor over the node",
               "frost-cracked ground with dark water seeping through the seams; ice crystals glitch into the space texture"
             ],
             [
@@ -206,55 +206,55 @@
               "Hawaii",
               "Fire + Earth",
               "Fire Mountain (Dragon Ball), Swordsmith Village (Demon Slayer), the Hidden Stone Village (Naruto), Ishigami Village (Dr. Stone), Megumin's explosion craters on the route (KonoSuba)",
-              "Open",
-              "Open",
+              "the forge master of Swordsmith Village; blunt, tests your team like steel",
+              "duo battles (first one beside the Swordsmith Keeper against the Unbound) and your first evolution; arena challenge: platforms rise and sink with the volcano's breathing",
               "Big moment: first real clash with the Unbound; a Fray tears open where they struck and the Ward truthfully blames them",
-              "Open",
-              "Open"
+              "the volcano 'breathes on a schedule' since the arena was built; the Maker's child's hunch that the new Fray lies between two arenas",
+              "cooling lava crust with glowing cracks; ash glitches into the space texture"
             ],
             [
               "City 3",
               "Cape Town",
               "Wind + Beast",
-              "Open",
-              "Open",
-              "Open",
+              "Skypiea above Table Mountain (One Piece), Biotope 1 (Toriko), the Forest of Giant Trees (Attack on Titan), the Tracen racecourse on the route (Umamusume, gag)",
+              "the head keeper of Biotope 1; raises beast familiars, gruff but fair",
+              "The Ward's first big device update: better Threads. Attunement training at anime-themed training spots, starting at Biotope 1, is how you train a familiar's stat spread. Arena challenge: ride updrafts between floating platforms on Table Mountain",
               "Big moment: the copycat turns as the mentor starts nudging them",
-              "Open",
-              "Open"
+              "Biotope's beasts migrate along a straight line between the arenas (backs up the seam hunch)",
+              "grass flattened in wind-torn streaks that whip into the space texture; dust devils glitch at the edges"
             ],
             [
               "City 4",
               "Akihabara",
               "Lightning + Tech",
-              "Open",
-              "Open",
-              "Open",
+              "Academy City (A Certain Scientific Railgun), San Fransokyo (Big Hero 6), Night City megabuildings (Cyberpunk: Edgerunners), NERV's GeoFront (Evangelion), plus Kith's original headquarters (in-world)",
+              "A pro-gamer streamer who broadcasts every challenge",
+              "Re-threading at Kith's old terminals: rebuild part of a familiar's copy from its data, which means moving its trained stat spread or switching its ability among its own. Limit (proposal): it never changes what a familiar was caught with (its Fidelity, the per-stat render quality, like IVs, or its source arc), so repeat catching in Frays for the best copy still matters. Arena challenge: a circuit puzzle routing power through switches",
               "Big moment: the Maker's child finds proof the Frays were opened on purpose",
-              "Open",
-              "Open"
+              "the district has run on free power from the arena since it opened (the vent powers the city)",
+              "neon static and scanlines; electric arcs crawl into the space texture"
             ],
             [
               "City 5",
               "Kyoto",
               "Light + Spirit",
-              "Open",
-              "Open",
-              "Open",
+              "Kyoto Jujutsu High (Jujutsu Kaisen), the Seireitei (Bleach), Hikawa Shrine (Sailor Moon), the Higurashi shrine and Bone-Eater's Well (Inuyasha), Spirits and Such on the route (Mob Psycho 100)",
+              "the arena's shrine priestess; senses the spirits under the arena hum like a held breath",
+              "nothing new; the node fight is a special duo battle beside the Unbound leader; arena challenge: light lanterns in order to reveal the path",
               "Big moment: team-up, node attack, villains freeze, leader taken, key passed to you",
-              "Open",
-              "Open"
+              "the node freezes only the villains; the Ward says they are held securely (true: anchored to the node)",
+              "drifting paper lanterns and spirit wisps that flicker into the space texture"
             ],
             [
               "City 6",
               "Prague",
               "Dark + Blood",
-              "Open",
-              "Open",
-              "Open",
+              "Hellsing Manor (Hellsing), the Infinity Castle (Demon Slayer), Kinderheim 511 (Monster), the Great Tomb of Nazarick (Overlord), Anteiku (Tokyo Ghoul)",
+              "an old-money aristocrat who has owned the arena grounds for generations; the longest-serving Warden",
+              "Revenants, tougher aggressive strays in Prague's Frays; binding one calms it. Arena challenge: a dark maze where your device's static guides you to the node",
               "Big moment: alone again and angrier; the darkest city before the Circle",
-              "Open",
-              "Open"
+              "the Warden half-knows the truth: 'Every Warden before you was a guard, not a champion'",
+              "red mist and gothic shadows; cracks bleed darkness into the space texture"
             ]
           ]
         },
@@ -262,14 +262,14 @@
           "title": "Story threads by city",
           "cols": [
             "City",
-            "Big moment (decided)",
-            "Copycat (proposal)",
-            "Maker's child (proposal)",
-            "Mentor (proposal)",
-            "Starter (proposal)",
-            "Unbound (proposal)",
-            "Champion (proposal)",
-            "Guest ally (proposal)"
+            "Big moment",
+            "Copycat",
+            "Maker's child",
+            "Mentor",
+            "Device",
+            "Unbound",
+            "Champion",
+            "Guest ally"
           ],
           "rows": [
             [
@@ -277,8 +277,8 @@
               "Setup: devices, starter, first rival battle, a glimpse of the Unbound",
               "First rival battle on the Great Naruto Bridge, picking a team that counters your starter",
               "Asks their parent why they quit Kith and gets a dodge",
-              "Hands you your starter: strong Keepers keep cities safe (true)",
-              "Uneasy on the arena's glass floor",
+              "Cornered at the launch, registers you as Keepers: strong Keepers keep cities safe (true); mentors from a distance from here on",
+              "Static on its screen on the arena's glass floor",
               "Figures leaving the frozen forest (the Knot)",
               "Only on the arena's screens: the campaign ad",
               "None yet"
@@ -289,7 +289,7 @@
               "Beat the Warden a day before you and brags about it",
               "Notices the new Fray lies on a line between two arenas; keeps it as a hunch",
               "Turns up after the tear to help the Ward, oddly calm, knows too much",
-              "Reacts a moment before the Fray tears",
+              "Buzzes a moment before the Fray tears",
               "First clash at Fire Mountain, with a lieutenant; the leader is not seen",
               "Photo op in the torn district: it's handled",
               "A Swordsmith Village Keeper, duo against the Unbound"
@@ -300,7 +300,7 @@
               "Private training with the mentor; starts copying your exact team; the rivalry turns cold",
               "Notices their parent spending time with the copycat; jealous, then suspicious",
               "Offers the copycat what they want: to be as strong as you",
-              "Wary of the copycat's mirror familiars",
+              "Stutters near the copycat's mirror familiars, as if it sees double",
               "A member warns you they are grooming you; you dismiss it (it's true)",
               "First meeting in person: kind, tired, says they were like you once",
               "A ranger Keeper, duo against a stray stampede"
@@ -311,7 +311,7 @@
               "Refuses to believe the proof and sides with the mentor: the first rift",
               "Gets into old Kith servers and finds vent schematics",
               "Nearly catches their child, then quietly lets it go and keeps recruiting",
-              "Distressed in the server rooms near the node",
+              "Overloads in the server rooms near the node",
               "After the same servers; a standoff ends in a truce offer",
               "Broadcast interview about stability numbers (all true)",
               "A local tech Keeper, duo against strays from a tear in the server district"
@@ -322,7 +322,7 @@
               "Arrives on the Ward's side to stop you: a battle at the shrine",
               "Confronts their parent",
               "Arrives after the freeze and lets you go: they want you to keep climbing",
-              "Calm at the shrines, panics at the node",
+              "Quiet at the shrines, a wall of static at the node",
               "Leader fights beside you, is taken, passes you the key",
               "Present at the arrest; sees something that plants the first doubt",
               "The Unbound leader, duo at the node"
@@ -333,11 +333,91 @@
               "Final rival battle before the Circle with a perfect mirror team",
               "Goes quiet; the friend group splits",
               "Congratulates you before the Circle: the most chilling scene on a replay",
-              "Constant unease",
+              "Never stops buzzing",
               "Scattered; a member blames you for the leader's capture",
               "Sends a message: wants to talk after the ceremony",
               "None: you are alone on purpose"
             ]
+          ]
+        },
+        {
+          "title": "Opening (game start to City 1)",
+          "items": [
+            {
+              "t": "Shape",
+              "n": "One prologue day in the trend era that ends with patch day, then a 3-month skip of havoc before the Ward appears. No ages are given.",
+              "s": "decided"
+            },
+            {
+              "t": "Hometown",
+              "n": "A small harbour town outside Reykjavík with a small school, a few houses and a lighthouse. You see the city, its arena and the League in person only once you set out.",
+              "s": "decided"
+            },
+            {
+              "t": "Prologue",
+              "n": "Character creation as the class photo; you design your two friends. The trend you can't see: classmates battle empty air. The promise is shown: the parent, an ex-Kith engineer, tears a device out of their kid's hands in fear. 'It isn't finished.' Patch day on the lighthouse hill: the reveal (everyone can suddenly see the characters) and Reykjavík tears. A tutorial battle played as the parent with the prototype. Truth: patch day is the night the founders opened the vents, and the parent knew where to run.",
+              "s": "decided"
+            },
+            {
+              "t": "Three months later",
+              "n": "Havoc montage; the parent barely calls (guilt). The Ward's debut broadcast is the re-release, live from the new Reykjavík arena, built in weeks over the worst tear. The parent is on stage among the unnamed founders. The kids take free devices from the town booth and break the promise on purpose. On the coast road, three strays come out of a fenced Fray. The Maker's child teaches binding from the prototype's manual. You bind your starter and the copycat takes the counter.",
+              "s": "decided"
+            },
+            {
+              "t": "The mentor sets you on the journey",
+              "n": "You corner the parent backstage. Every answer is true but only half the story; they can't tell even their child. Guilt and the Ward's need for Keepers win: they register you and point you at the six Wardens, then mentor from a distance. Both goals point the same way: you think you're investigating them, they are recruiting you.",
+              "s": "decided"
+            },
+            {
+              "t": "Full text",
+              "n": "Claude Doc 'Familiar: the opening, scene by scene' (version 2): https://claude.ai/artifact/Gq6SaWUJJcF1ycg7jtnprr. Approved for now; it will get more detail when the whole story is finished.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "The Circle to the ending",
+          "items": [
+            {
+              "t": "The League summit",
+              "n": "Sits at the dead centre of the region, where the six cities' Fray seam lines converge. It holds the Circle and the core. The Maker's child's hunch that Frays lie on lines between the arenas pays off on the map: every line points here. The road up is the endgame Fray route, home to the Cosmic and Time characters.",
+              "s": "decided"
+            },
+            {
+              "t": "The Circle's four",
+              "n": "All four are the mentor's earlier recruits. Each was groomed for Champion, lost to the current one, and was kept near the core as a backup. First time through, they are the region's elite; on a replay, they are what the copycat is being turned into.",
+              "s": "decided"
+            },
+            {
+              "t": "What the four say",
+              "n": "After each battle, the spare encourages you to prove yourself and become the real Champion. Every line is true, and each gets closer to the core: 'Whoever wins up here holds the whole region together. Show me you can carry that.' 'Champions don't step down. Make sure you're ready to stay.' 'We were kept close in case the top ever fell. Prove they won't need us.' 'It all makes sense at the ceremony. Go earn it.' First time through it's a send-off; on a replay they are sending you to be consumed, a little relieved it isn't them.",
+              "s": "decided"
+            },
+            {
+              "t": "Your character never learns the truth",
+              "n": "The Champion's talk never happens; you turn the key during the ceremony. Your character dies believing they were right: the last thing they see is the core going dark, which looks like victory, and they are consumed in the flash. The tearing comes after, seen from outside. Only the player, playing as the copycat in the post-game, learns you were wrong.",
+              "s": "decided"
+            },
+            {
+              "t": "How the truth comes out (post-game)",
+              "n": "In layers, as the copycat: 1) the Champion's unsent message ('I wanted to tell you after the ceremony'); 2) the Maker's child, who was right about half of it, pieces the rest together; 3) the mentor confirms it without meaning to, by trying to recruit the copycat as the next spare.",
+              "s": "decided"
+            },
+            {
+              "t": "The familiar you",
+              "n": "The post-game's first quest is binding yourself. The familiar version of you is rebuilt from everything that exists about you, including your certainty, so it joins the copycat's team still believing it was right. It speaks a little, like the starter, while the player knows the truth.",
+              "s": "decided"
+            },
+            {
+              "t": "What the post-game is for",
+              "n": "Hold the world, not fix it. With the core gone, the merge speeds up. Binding is the one thing that still anchors copies, and the Knots hold the most data, so the copycat binds the legendaries (locked until after the main story) and the Knots stop pooling pressure one by one. Collecting everything becomes the world's last stand. The copycat refuses the mentor's offer to become the next Champion and rebuild the core.",
+              "s": "decided"
+            },
+            {
+              "t": "The nodes and the Unbound after the shutdown",
+              "n": "Shutting the core kills the nodes. That fits the lore: there are two layers of stability. Bindings anchor copies, and the nodes control the vents. With the nodes dead, the vents run uncontrolled (the merge speeds up, and cities like Akihabara lose their free power), but bindings still hold, which is why binding in the post-game still matters. The frozen Unbound were anchored to the Kyoto node, so they are released, adding unanchored villains to the pressure. The leader wanted exactly this, sees the tearing, realises they were half wrong too, and helps the copycat in the Knots as a guest ally.",
+              "s": "decided"
+            }
           ]
         },
         {
@@ -346,6 +426,121 @@
             {
               "t": "2026-11-05",
               "n": "Abilities work like Pokémon: a caught familiar rolls one of its two normal abilities, the hidden ability is rare, and an item can change the ability later. So competitive players end up with the best one, and balance is judged on the build books (best ability), not on random rolls.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Shutting the core kills the nodes: the vents run uncontrolled, but bindings still anchor copies. The frozen Unbound are released; the leader realises they were half wrong and helps the copycat in the Knots.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Post-game purpose: hold the world, not fix it. The copycat binds the legendaries in the Knots to stop them pooling pressure, and refuses to become the next Champion.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The familiar version of you, bound at the start of the post-game, still believes it was right, because it is rebuilt from data that includes your certainty.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Post-game: the truth comes out in layers: the Champion's unsent message, then the Maker's child, then the mentor trying to recruit the copycat as the next spare.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Your character never learns the truth: no talk with the Champion, the key is turned at the ceremony, and they die believing they were right. Only the player, as the copycat in the post-game, learns otherwise (r's idea).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The Circle's four each say one true thing about the core after their battle, phrased as encouragement to prove yourself and become the real Champion (r: A, as encouragement).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "The Circle's four members are the spares: the mentor's earlier recruits who lost to the current Champion and were kept near the core as backups.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "The League summit (the Circle and the core) sits at the centre of the region, where all six Fray seam lines converge. The road up is the Cosmic and Time Fray route.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "City 1's Frays: the 2 early Water/Ice characters, mostly early Neutral ones, and a few mid-tier Water/Ice characters as rare, low-odds finds (r: A+B).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "Each city's hidden, forbidden high-concentration Fray is called a Knot.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "Mechanics review: the Ward launched unfinished, so it keeps pushing device updates as you travel. Cape Town's update brings better Threads. Akihabara teaches Re-threading at Kith's old terminals. r's rule: Re-threading must not be too strong and must not replace repeat catching in Frays for min-maxing.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "Opening approved for now (version 2): one prologue day ending with patch day, a 3-month skip, the promise broken on purpose, the parent cornered at the Reykjavík launch, and your starter as your first bind on the coast road. The hometown is a small harbour town with a small school, houses and a lighthouse. No ages. Knock-ons: the Champion was recruited in the trend era, and City 1's mentor beat now has the parent cornered instead of handing over the starter.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-04",
+              "n": "Opening: the time skip after patch day is 3 months, not years. The world is falling apart fast, so the Ward arrives as a rescue, in a usable but unfinished version that its founders (the parent among them) keep working on.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Prague package approved: the old-money aristocrat as Warden ('every Warden before you was a guard, not a champion'); Revenants as the new mechanic; red-mist Fray look; dark maze where your starter's unease guides you. All six cities are now designed.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Prague merges Hellsing Manor, the Infinity Castle, Kinderheim 511, the Great Tomb of Nazarick and Anteiku.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Kyoto package approved: the shrine priestess as Warden; no new mechanic (the node fight is a duo beside the Unbound leader); the frozen villains 'held securely' clue; lantern Fray look; lantern-path arena.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Kyoto merges Kyoto Jujutsu High, the Seireitei, Hikawa Shrine and the Higurashi shrine with the Bone-Eater's Well, with Spirits and Such on the route.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Akihabara package approved: the pro-gamer streamer as Warden; free-power clue; neon-static Fray look; circuit-puzzle arena. Its mechanic is on hold, and better Threads should be available by City 3.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Akihabara merges Academy City, San Fransokyo, the Night City megabuildings and NERV's GeoFront, plus Kith's original headquarters.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Cape Town package approved: the Biotope 1 head keeper as Warden; migration-line clue; wind-streak Fray look; updraft arena on Table Mountain. The mechanic (Attunement training spots) is for now and may change.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Cape Town merges Skypiea above Table Mountain, Biotope 1 and the Forest of Giant Trees, with the Tracen racecourse on the route.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-02",
+              "n": "Hawaii package approved: the Swordsmith Village forge master as Warden; duo battles and first evolution; the volcano 'breathes on a schedule' clue; lava-crust Fray look; rising and sinking arena platforms.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-10-31",
+              "n": "Story threads by city (small developments for every party in every city) approved for now.",
               "s": "decided"
             },
             {
@@ -476,6 +671,86 @@
             {
               "t": "2026-10-20",
               "n": "Title, names (Keepers, Strays, Frays, Kith, the Ward, Wardens, the Circle, the Unbound) and the four pillars.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Each city's scenes, dialogue, encounters and trainers are tracked on its own page on the site (a city page), built from data like the Design page. City 1: Reykjavík is the first.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The three strays on the coast road are Tanjiro, Deku and Ayanokoji, the roster's three starters.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's starter follows a fixed cycle (you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro), since the three starters' types don't counter each other. The 'counter' in the first rival battle is the copycat's second familiar, which hits your starter super-effectively.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The copycat's second familiar in the first rival battle is always Shawn Frost (Ice), caught on the coast road.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 encounters: coast road Fray = Murata, Shawn Frost, Mr. Satan, Mumen Rider, Koby (common), Yamcha (uncommon), Aqua (rare). Northern Plateau Fray = Murata, Shawn Frost, Koby, Chiikawa Usagi, Gobta (common), Fern as its only rare.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Harbour-master's team: Rudeus, Brook, Fern (ace), all pre-mid, so the first Warden is about 1.2x a coast road team. Two mini trainers on the arena's ice floor come before the Warden.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 ends with the glimpse of the Unbound leaving the Knot, right after the harbour-master's badge, on the way out to the Northern Plateau.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The friends' default names: Sól (the Maker's child) and Kári (the copycat), short Icelandic names to match the harbour town. The player can rename them.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Releasing: there is no true release. You re-home familiars at Ward shelters for a small reward. It seems kind; the truth is the Ward keeps them bound as anchors it controls.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "Threads in City 1: Plain only; a few free from the Ward booth, more bought at the Krusty Krab rest stop, and binding a stray sometimes drops one. Better Threads come with the Cape Town device update.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 levels: rival starter 7 and Shawn Frost 5; arena trainers 9 to 10; harbour-master Rudeus 11, Brook 12, Fern 14.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 minor trainers: coast road fisherman (Murata) and Mr. Satan fan kid (Mr. Satan), levels 4-6; arena Krusty Krab cook (SpongeBob, 9) and ice skater (Shawn Frost, Murata, 10); no Northern Plateau trainers in City 1.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "The warning near Frays, nodes and the core now comes from the device, not the starter: it buzzes and fills with static, which reads as bugs in the unfinished launch version; truth: it reads the pressure of loose threads. Familiars are never shown scared. Replaces the starter's unease (2026-10-31).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 scene 13 (exploring the city) decided; the Ward shelter sits next to the arena entrance.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 is one streamed section from the hometown to Reykjavík with no loaders; the first gatehouse is at the Northern Plateau exit. The map sketch is a baseline with open plots for later additions.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-05",
+              "n": "City 1 map layout approved as a baseline (hometown south-west, coast road, bridge, harbour, Krusty Krab, shelter and arena on the lagoon, frozen forest north-east, Northern Plateau and gatehouse north). Loch Ness is an inland loch off the coast road near the hometown, behind a Ward seal until the post-game.",
               "s": "decided"
             }
           ]
@@ -914,6 +1189,462 @@
             {
               "t": "Gatehouse connectors",
               "n": "Brick Bronze-style gatehouses you walk through between sections. The whole world lives in one Roblox place."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "city-reykjavik",
+      "title": "City 1: Reykjavík",
+      "blurb": "Everything that happens from the class photo to the first badge: places, the event script (scenes and dialogue), Fray encounter tables, trainers and people. Water + Ice.",
+      "note": "Draft built from what is decided on the Design page and the opening doc. Tags work like the Design page: Decided = r decided, Proposal = Claude's fill-in, Open = needs an answer. Character names in tables link to their pages.",
+      "sections": [
+        {
+          "title": "Map sketch",
+          "image": "images/maps/reykjavik.svg",
+          "alt": "Top-down sketch of City 1: hometown on the south-west shore, coast road and its Fray, the Great Naruto Bridge over the bay, the harbour, Krusty Krab, Ward shelter and arena on the lagoon, the frozen forest Knot to the north-east, and the Northern Plateau route north.",
+          "items": [
+            {
+              "t": "Layout",
+              "n": "A baseline: what the city needs, with open plots kept for later additions. Not to scale. You start on the south-west shore and walk the coast road north-east, cross the bay on the Great Naruto Bridge into the harbour, then go south past the Krusty Krab to the Ward shelter and the arena on the lagoon. The frozen forest sits off the north-east edge, so you pass it on the way north to the Northern Plateau and the gatehouse to the Hawaii route.",
+              "s": "decided"
+            },
+            {
+              "t": "One section, no loaders",
+              "n": "The hometown, coast road, bridge and Reykjavík are one section with no gatehouse between them, so on patch day you can watch the city tear from the lighthouse hill across the bay. The first gatehouse is at the Northern Plateau exit. Keep the city fairly low-detail so it streams.",
+              "s": "decided"
+            },
+            {
+              "t": "Loch Ness",
+              "n": "A loch inland off the coast road, near the hometown, behind a Ward seal. You see it from the start of the game, and it opens in the post-game, when Nessie can be caught.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "Places, in the order you reach them",
+          "items": [
+            {
+              "t": "Hometown",
+              "n": "A small harbour town on the coast outside Reykjavík: a small school, a few houses and a lighthouse on a hill. The first Fray opens in the square on patch day.",
+              "s": "decided"
+            },
+            {
+              "t": "Coast road",
+              "n": "The road from the hometown to Reykjavík. Runs past a fenced Fray where you bind your starter. Early Water/Ice and mostly Neutral strays.",
+              "s": "decided"
+            },
+            {
+              "t": "Reykjavík: the harbour and Water 7 canals",
+              "n": "Where you arrive. The harbour-master knew this harbour before Water 7 merged into it.",
+              "s": "decided"
+            },
+            {
+              "t": "Great Naruto Bridge",
+              "n": "Crosses the bay into the city; site of the first copycat rival battle.",
+              "s": "decided"
+            },
+            {
+              "t": "The Krusty Krab",
+              "n": "Gag landmark on the waterfront and the rest stop (heal, shop). Sells Plain Threads.",
+              "s": "decided"
+            },
+            {
+              "t": "League arena over the lagoon",
+              "n": "Ward-branded arena built in weeks over the worst tear; caps the city's main vent. No encounters inside. The node hums under the glass floor. Challenge: an ice-sliding floor over the lagoon.",
+              "s": "decided"
+            },
+            {
+              "t": "Ward shelter",
+              "n": "Next to the arena entrance. You re-home familiars you no longer want here for a small reward; there is no true release.",
+              "s": "decided"
+            },
+            {
+              "t": "Northern Plateau",
+              "n": "The route out of the city on the far side, with its own Fray (the second encounter patch of City 1).",
+              "s": "decided"
+            },
+            {
+              "t": "Emilia's frozen forest (the Knot)",
+              "n": "The city's hidden, forbidden high-concentration Fray where legendary strays form. You only glimpse the Unbound leaving it in City 1.",
+              "s": "decided"
+            },
+            {
+              "t": "Loch Ness",
+              "n": "Inland off the coast road near the hometown, behind a Ward seal; you see it from the start and it opens in the post-game, when Nessie can be caught.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "Event script",
+          "items": [
+            {
+              "t": "1. Last day of school",
+              "n": "Character creation as the class photo. You design yourself, then your two friends: the Maker's child (your best friend) and the copycat (a younger neighbour whose default look copies yours).",
+              "s": "decided",
+              "when": "Game start",
+              "where": "Hometown school",
+              "who": "You, the Maker's child, the copycat, classmates"
+            },
+            {
+              "t": "2. The trend you can't see",
+              "n": "Classmates battle in the yard, cheering at empty air. You only see move names in speech bubbles and scorch marks. A classmate taunts you for not having a device; the copycat begs for one.",
+              "s": "decided",
+              "where": "School yard",
+              "who": "You, both friends, a classmate",
+              "lines": [
+                [
+                  "Maker's child",
+                  "We promised."
+                ]
+              ]
+            },
+            {
+              "t": "3. Why the promise is so strong",
+              "n": "A classmate lets the Maker's child hold their device. The parent pulls up, sees it and tears it out of their hands, shaking. Rule: none of you touch a Kith device. They won't say why.",
+              "s": "decided",
+              "where": "School gate",
+              "who": "Parent, Maker's child, a classmate"
+            },
+            {
+              "t": "4. The parent's house",
+              "n": "You ask again. The parent sits with an unsold Kith prototype, glancing at their phone. Tonight is the night they planned for.",
+              "s": "decided",
+              "when": "That evening",
+              "where": "Parent's house",
+              "who": "Parent, you, Maker's child",
+              "lines": [
+                [
+                  "Parent",
+                  "It isn't finished."
+                ]
+              ]
+            },
+            {
+              "t": "5. Patch day",
+              "n": "At sunset the first Fray opens in the square below. Everyone can suddenly see the characters (the reveal). Across the bay the sky over Reykjavík tears and Water 7 falls into it.",
+              "s": "decided",
+              "where": "Lighthouse hill",
+              "who": "You, both friends"
+            },
+            {
+              "t": "6. The first battle (tutorial)",
+              "n": "A stray crawls out toward you. The parent runs up with the prototype as if they knew where to go and binds a familiar on the spot. You play this battle as the parent. They get you home and leave town that night.",
+              "s": "decided",
+              "where": "Lighthouse hill",
+              "who": "Parent, a stray"
+            },
+            {
+              "t": "7. The havoc",
+              "n": "Montage: Frays spread, cities tear and merge, code red on the news. The parent calls twice in three months and never says where they are.",
+              "s": "decided",
+              "when": "3 months later"
+            },
+            {
+              "t": "8. The broadcast",
+              "n": "The Ward goes public live from the new Reykjavík arena. The Champion fronts it; the parent stands among the unnamed founders.",
+              "s": "decided",
+              "where": "TV, hometown",
+              "who": "Champion, parent (on screen)",
+              "lines": [
+                [
+                  "Ward broadcast",
+                  "We can stop the tears. We can't undo them. Own a familiar and help hold the world together."
+                ]
+              ]
+            },
+            {
+              "t": "9. Breaking the promise",
+              "n": "A Ward booth gives free devices to everyone. The three of you take them on purpose. The Maker's child takes one only to get into the Ward's network; the copycat takes one because you did.",
+              "s": "decided",
+              "where": "Hometown booth",
+              "who": "You, both friends, booth staff"
+            },
+            {
+              "t": "10. The coast road and your starter",
+              "n": "Three strays step out of the fenced Fray. The Maker's child walks you through binding from the prototype's manual: lower its HP, open the glitch seams, stitch them shut in gold. You bind your starter; the copycat binds the next one on the cycle (Tanjiro → Deku → Ayanokoji → Tanjiro); the third escapes. Your device flickers with static at the Fray's edge, the first sign something is off.",
+              "s": "decided",
+              "where": "Coast road Fray",
+              "who": "You, both friends, three starter strays"
+            },
+            {
+              "t": "11. Cornering the parent",
+              "n": "Backstage after the launch. Every answer is a true half. Guilt and the Ward's need for Keepers win: they register the three of you and point you at the six Wardens, then leave again.",
+              "s": "decided",
+              "where": "Reykjavík arena, backstage",
+              "who": "Parent, you, both friends",
+              "lines": [
+                [
+                  "Maker's child",
+                  "You made us promise."
+                ],
+                [
+                  "Parent",
+                  "I asked you to wait until it was safe."
+                ],
+                [
+                  "Maker's child",
+                  "Is it safe now?"
+                ],
+                [
+                  "Parent",
+                  "It's as safe as it will ever be."
+                ],
+                [
+                  "Parent",
+                  "Strong Keepers are what keep cities from tearing."
+                ]
+              ]
+            },
+            {
+              "t": "12. First rival battle",
+              "n": "On the Great Naruto Bridge the copycat challenges you with their starter and Shawn Frost, an Ice familiar they caught on the coast road.",
+              "s": "decided",
+              "where": "Great Naruto Bridge",
+              "who": "Copycat"
+            },
+            {
+              "t": "13. Exploring the city",
+              "n": "Off the bridge into the Water 7 canals; the harbour-master greets you on the dock, proud of how the old harbour held when the city tore. The Krusty Krab: heal, buy Plain Threads, a small gag scene with SpongeBob behind the counter. The Ward shelter next to the arena entrance, where re-homing is taught; Sól notices familiars go in but nobody has seen one come out (true, but it reads as a joke about pets sent to a farm upstate). Sól starts asking questions, and your device crackles with static at the arena door.",
+              "s": "decided",
+              "where": "Water 7 canals, Krusty Krab, Ward shelter, arena door",
+              "who": "Harbour-master, SpongeBob, Sól",
+              "lines": [
+                [
+                  "Sól",
+                  "How did they build an arena in weeks?"
+                ]
+              ]
+            },
+            {
+              "t": "14. The arena challenge",
+              "n": "The ice-sliding floor over the lagoon, with two arena trainers to beat on the way. Your device fills with static on the glass over the node.",
+              "s": "decided",
+              "where": "League arena",
+              "who": "Arena trainers"
+            },
+            {
+              "t": "15. The harbour-master battle and first badge",
+              "n": "Warm and proud. After the badge, a clue in passing.",
+              "s": "proposal",
+              "where": "League arena",
+              "who": "Harbour-master",
+              "lines": [
+                [
+                  "Harbour-master",
+                  "The lagoon has run colder since they built this place."
+                ]
+              ]
+            },
+            {
+              "t": "16. The glimpse",
+              "n": "After the badge, on your way out toward the Northern Plateau, you see figures leaving the Knot at the edge of the frozen forest. Nobody tells you who they are. City 1 ends on a question, not a win.",
+              "s": "decided",
+              "where": "Emilia's frozen forest edge",
+              "who": "Unbound (unnamed)"
+            }
+          ]
+        },
+        {
+          "title": "Coast road Fray",
+          "cols": [
+            "Character",
+            "Types",
+            "Tier",
+            "How often",
+            "Tag"
+          ],
+          "rows": [
+            [
+              "Tanjiro",
+              "Water",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Deku",
+              "Wind",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Ayanokoji",
+              "Neutral",
+              "Starter",
+              "Scripted (one of three)",
+              "Decided"
+            ],
+            [
+              "Murata",
+              "Water",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Shawn Frost",
+              "Ice",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Mr. Satan",
+              "Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Mumen Rider",
+              "Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Koby",
+              "Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Yamcha",
+              "Neutral, Beast",
+              "First route",
+              "Uncommon",
+              "Decided"
+            ],
+            [
+              "Aqua",
+              "Water",
+              "Pre-mid",
+              "Rare find",
+              "Decided"
+            ]
+          ]
+        },
+        {
+          "title": "Northern Plateau Fray",
+          "cols": [
+            "Character",
+            "Types",
+            "Tier",
+            "How often",
+            "Tag"
+          ],
+          "rows": [
+            [
+              "Murata",
+              "Water",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Shawn Frost",
+              "Ice",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Koby",
+              "Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Chiikawa Usagi",
+              "Beast, Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Gobta",
+              "Beast, Neutral",
+              "First route",
+              "Common",
+              "Decided"
+            ],
+            [
+              "Fern",
+              "Water",
+              "Pre-mid",
+              "Rare find (the only one)",
+              "Decided"
+            ]
+          ]
+        },
+        {
+          "title": "Trainers and battles",
+          "items": [
+            {
+              "t": "Copycat (rival 1)",
+              "n": "Great Naruto Bridge. Starter on a fixed cycle: you Tanjiro, they Deku; you Deku, they Ayanokoji; you Ayanokoji, they Tanjiro. Their second familiar is always Shawn Frost (Ice, a coast road catch), which hits Deku super-effectively. Levels: starter 7, Shawn Frost 5.",
+              "s": "decided"
+            },
+            {
+              "t": "Harbour-master (Warden 1)",
+              "n": "Water + Ice team of three: Rudeus (opener), Brook, Fern (ace). Totals about 1.2x a coast road team, like a first gym. Nothing catchable before the Warden is super-effective on Water (needs Lightning or Blood), so levels do most of the tuning; levels Rudeus 11, Brook 12, Fern 14 (just past her level 13 move).",
+              "s": "decided"
+            },
+            {
+              "t": "Route trainers",
+              "n": "Coast road, levels 4 to 6: a fisherman with Murata, and a kid in a Mr. Satan T-shirt with Mr. Satan (your first trainer battle after binding your starter). Northern Plateau: none in City 1; it comes after the badge, so its trainers wait for the Hawaii route.",
+              "s": "decided"
+            },
+            {
+              "t": "Arena trainers",
+              "n": "Two mini trainers on the ice-sliding floor before the harbour-master: a Krusty Krab cook with SpongeBob (level 9), then an ice skater with Shawn Frost and Murata (level 10). They teach the Water/Ice matchups.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "People",
+          "items": [
+            {
+              "t": "Sól (the Maker's child)",
+              "n": "Your best friend. Investigates the Ward through the parent; stays off the battle path. Default name Sól (\"sun\": the one who brings the Ward's secrets to light); the player can rename them.",
+              "s": "decided"
+            },
+            {
+              "t": "Kári (the copycat)",
+              "n": "Younger neighbour, mirror rival; looks like you by default. Default name Kári; the player can rename them.",
+              "s": "decided"
+            },
+            {
+              "t": "The parent (mentor)",
+              "n": "Ex-Kith engineer and unnamed Ward founder. Never lies, only tells true halves.",
+              "s": "decided"
+            },
+            {
+              "t": "The harbour-master",
+              "n": "Reykjavík's Warden; knew the old harbour before Water 7 merged in. Warm and proud.",
+              "s": "decided"
+            },
+            {
+              "t": "The Champion",
+              "n": "Seen on the broadcast as the face of the Ward's campaign.",
+              "s": "decided"
+            }
+          ]
+        },
+        {
+          "title": "Threads in City 1",
+          "items": [
+            {
+              "t": "Threads in City 1",
+              "n": "Plain Threads only, so binding is just about lowering HP; better Threads arrive with the Cape Town device update. You get a few free from the Ward booth (scene 9), buy more at the Krusty Krab rest stop, and binding a stray sometimes drops one.",
+              "s": "decided"
             }
           ]
         }
