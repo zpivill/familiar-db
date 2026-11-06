@@ -741,3 +741,21 @@ Same method as the ability options above (single-character fit against the seed 
 - **No single lever.** Each fix alone moves him 2-6 points. His other abilities alone already win 60-76, so the 660 stats with Recover and Calm Mind carry a lot; Preta Path adds 6-15 on top.
 - **Shinra Tensei at 140 is normal for legendaries:** spread signatures are 120-160 (Gilgamesh 160; Madara, Enel, Vergil, Whitebeard 150; Adam Smasher, Sukuna 140; Kaido 120). Only a cut to 100-110 reaches the target, and that would make the move that leveled the Hidden Leaf the weakest legendary spread signature.
 - **Not applied:** no option reaches the target and fits canon cleanly, so this goes to r. Lean: Preta Path to half damage (canon: Naruto's sage chakra overwhelmed the absorb) plus Shinra Tensei 120, with Pain staying a little above the tier (76 / 69).
+
+## The 3 ability trims in team play (2026-11-06, applied on claude/blissful-bohr-9f7gcc)
+
+Zero Requiem (Power and Energy only), Pawns (+1 Power) and The Scarf (+1 Power) were applied together (commit "Balance: trim Zero Requiem, Pawns and The Scarf"), with the 7 changed forms re-fit in the v2 books. Same 200k meta chains as the v2-book runs, seeds 1-5, `--check=2000`. Before = v2 books on the old data.
+
+| | before | after |
+|---|---|---|
+| Most top-team spots by one character (of 30) | 30 (Demon Emperor Lelouch, every meta team) | 17 (All Might) |
+| Different characters on top teams | 84 | 87 |
+| Demon Emperor Lelouch | 30 spots, 64% picked | 11, 61% |
+| White Room Ayanokoji | 15, 66% | 4, 62% |
+| Leaders after | | All Might 17 (5/4/5/3/0 by seed), Devil Union Asta 14, Pain 13, Zebra 12, Lelouch 11 |
+
+Archetypes, search AI, 5-seed mean: Trick Room 24 -> 48, Redirection + setup 27 -> 41, Screens + setup 38 -> 47; Intimidate + Fake Out 64 -> 50, Spread offense 44 -> 33, Water field 33 -> 20; the rest within 6.
+
+- The meta no longer has a single must-pick; the top is shared by five characters from four tiers.
+- **Watch All Might** (post-mid): top in 4 of 5 seeds after the trims, 62% picked. His book best is 69 / 71 against a post-mid median of about 63, just under the +8 outlier line, so no change; check him first in the next pass.
+- Water field is now the weakest archetype in every view (17-35%).
