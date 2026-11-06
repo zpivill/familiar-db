@@ -717,3 +717,27 @@ Abilities decided by r (2026-11-05): rolled on catch, hidden rare, changeable by
 - Each option keeps the ability as the character's best one, so identity holds.
 - **Pain:** none of the Preta Path options brings him within range (best 74-78). The heal adds nothing (immune without heal = same number), so his strength is elsewhere (660 stats, Recover, Spacial Rend). Needs a second look before options go to r.
 - Next: confirm the leaning options in team play (meta chains with books re-fit for those characters), then bring them to r.
+
+## Pain: what makes him an outlier (2026-11-06, not applied)
+
+Same method as the ability options above (single-character fit against the seed 1 and seed 2 metas, scratch data). Legendary median 62; target about 70 or less. Fit 1 / fit 2 best-build win rate, and whether Preta Path stays his best ability:
+
+| Option | Fit 1 / fit 2 | Preta Path still best |
+|---|---|---|
+| now | 83 / 78 | yes (79 vs 60-64 in fit 2) |
+| Shinra Tensei 140 -> 110 | 78 / 73 | yes |
+| Shinra Tensei: user's Energy -1 | 81 / 77 | yes |
+| Shinra Tensei: user's Energy -2 | 79 / 75 | yes |
+| Shinra Tensei can't be used twice in a row (canon: the 5-second interval) | 83 / 75 | yes |
+| Energy 135 -> 115 | 81 / 73 | yes |
+| Preta Path Energy moves 3/4 damage + Energy 120 | 77 / 73 | yes |
+| Preta Path half damage + no-repeat Shinra | 79 / 74 | yes |
+| Preta Path half damage + Shinra Energy -1 | 76 / 73 | yes |
+| Preta Path half damage + Shinra 120 | 76 / 69 | yes |
+| Preta Path half damage + Shinra 110 | 73 / 70 | yes |
+| Preta Path 3/4 damage + Shinra 110 | 72 / 69 | tie with Rinnegan (fit 2) |
+| Preta Path half damage + Shinra 100 | **68 / 69** | yes, barely |
+
+- **No single lever.** Each fix alone moves him 2-6 points. His other abilities alone already win 60-76, so the 660 stats with Recover and Calm Mind carry a lot; Preta Path adds 6-15 on top.
+- **Shinra Tensei at 140 is normal for legendaries:** spread signatures are 120-160 (Gilgamesh 160; Madara, Enel, Vergil, Whitebeard 150; Adam Smasher, Sukuna 140; Kaido 120). Only a cut to 100-110 reaches the target, and that would make the move that leveled the Hidden Leaf the weakest legendary spread signature.
+- **Not applied:** no option reaches the target and fits canon cleanly, so this goes to r. Lean: Preta Path to half damage (canon: Naruto's sage chakra overwhelmed the absorb) plus Shinra Tensei 120, with Pain staying a little above the tier (76 / 69).
