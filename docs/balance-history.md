@@ -759,3 +759,19 @@ Archetypes, search AI, 5-seed mean: Trick Room 24 -> 48, Redirection + setup 27 
 - The meta no longer has a single must-pick; the top is shared by five characters from four tiers.
 - **Watch All Might** (post-mid): top in 4 of 5 seeds after the trims, 62% picked. His book best is 69 / 71 against a post-mid median of about 63, just under the +8 outlier line, so no change; check him first in the next pass.
 - Water field is now the weakest archetype in every view (17-35%).
+
+## Pain's trim in team play (2026-11-07, applied on claude/blissful-bohr-9f7gcc)
+
+Preta Path now halves Energy moves (the same text as Six Paths Madara's) and Shinra Tensei is 120 (was 140). Pain re-fit with `--only=pain` against the seed 1 and 2 metas: best build **76 / 70** (was 83 / 78; legendary median 62), Preta Path still his best ability. Same 200k meta chains, seeds 1-5, `--check=2000`, all 4 trims in; before = the 3-trim runs.
+
+| | 3 trims | + Pain trim |
+|---|---|---|
+| Pain top-team spots (of 30), picked win rate | 13, 61% | 11 (2/3/2/1/3 by seed), 65% |
+| Most spots by one character | 17 (All Might) | 22 (Zebra) |
+| Different characters on top teams | 87 | 88 |
+| Leaders | All Might 17, Asta 14, Pain 13, Zebra 12 | Zebra 22 (4/6/3/4/5), All Might 14, Hero of Hell Chainsaw Man 13, Pain 11 |
+
+Archetypes, search AI, 5-seed mean: Tailwind 38 -> 50, Intimidate + Fake Out 50 -> 60, Trick Room 48 -> 39; the rest within 8.
+
+- **Kept.** Pain's book number is near the line (+8 to +14) and his team share dipped; his picked win rate rose 4 points, likely from the meta shifting around him (Lelouch fell to 1 spot). Not a must-pick: 1-3 of 6 meta teams per seed.
+- **New watch: Zebra** (post-mid). On top teams in all 5 seeds (22 of 30), but his book best is only 66 / 68 against a post-mid median of about 63, so his strength is team fit (Sound Knocking with sound moves, 125 Energy), not raw power. Look at his cores next pass.

@@ -327,8 +327,8 @@ r paused balancing on 2026-10-29 after the sim checks. Suggested way back in: (1
 - **Goal (r):** no outliers. An outlier is 8+ points above its tier's median best-build win rate in both v2 book fits, and common on top teams across 5 seeds. Judge within tiers; first-routers stay weak.
 - **Current books:** `engine/books/book-v2-fit1.json`, `book-v2-fit2.json` (fit on the current AI; the changed characters re-fit with `--only`).
 - **Applied on the branch** (Claude decided while r was away; r can revert any): Zero Requiem (Lelouch forms) now Power and Energy only; Pawns (Ayanokoji forms) +1 Power; The Scarf (Mikasa) +1 Power; Pain's Preta Path halves Energy moves (as Madara's) and Shinra Tensei 140 -> 120. Numbers and options tried: balance-history, 2026-11-05 to 2026-11-07.
-- **Result so far (3 trims, 5 seeds):** no character on more than 17 of 30 top teams (Lelouch was on all 30). Pain's team test was running when this was written; its result is the last balance-history entry.
-- **Next pass:** All Might (top in 4 of 5 seeds after the trims, just under the outlier line), Water field (weakest archetype everywhere). Run it with the `balance-pass` skill (`.claude/skills/balance-pass/SKILL.md`).
+- **Result (all 4 trims, 5 seeds):** Lelouch from 30 of 30 top teams to 1; Pain 11; 88 different characters on top teams. Pain's best build 83 / 78 -> 76 / 70.
+- **Next pass:** Zebra (22 of 30 top-team spots in all 5 seeds, but only 66 / 68 in the books: a team-fit question, look at his cores), All Might (14 of 30, just under the outlier line), Water field (weakest archetype everywhere). Run it with the `balance-pass` skill (`.claude/skills/balance-pass/SKILL.md`).
 - **r's next step:** playtest the branch on `#play` (`py serve.py`), then decide on the PR.
 
 ### Earlier status (2026-10-31)
