@@ -310,7 +310,7 @@ Balance (bring these to r, don't fix alone):
 
 - **Trick Room is structurally weak:** its setters are fast (Shinra 150, Homura 140, Dio 120...), four of six are legendary/mythical, and there are few strong slow characters.
 - **Protect-ignoring signatures one-shot setters:** Devil Union Asta's Black Divider (140 power, ignores Protect) knocks setters out on turn 1.
-- **Fields are weak:** 1.3x on one type doesn't pay for the turn spent setting it.
+- **Fields are weak:** 1.3x on one type doesn't pay for the turn spent setting it. Tested 2026-11-07 (balance-history): 1.5x lifts Fire field but not Water field, whose limit is its attackers.
 - **Mythicals** (~600 stats) share the slot with 660 legendaries and almost never get picked. A separate mythical slot was offered; r hasn't chosen it.
 - **Mid tier** (~505) loses the race to pseudos (~600) even with the new canon team tools.
 - **Long tail of legendaries:** two or three take most of the legendary slot.
@@ -343,6 +343,8 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 - Books: `engine/books/book-fit1..4.json` (also in the Windows zip and in `familiar/builds/` in the project files), plus the averaged table `engine/books/best-builds-avg.md`.
 - Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
 - Play the books with `familiar-sim ... --builds=books/book-fit1.json,books/book-fit2.json,books/book-fit3.json,books/book-fit4.json` (from engine/ or the unzipped folder). Re-fit with `--optimize` after character, move, ability or item changes.
+
+**Balance pass 2026-11-07 (Zebra, All Might, Water field):** results and options in balance-history; nothing changed in data. All Might's edge is the ally boost on I Am Here!; Zebra is fine; Water field needs a better Water attacker, not a rule change. All wait on r, as above.
 
 **Possible next tooling:**
 - Team-aware builds: search a build per core or team, not per character.

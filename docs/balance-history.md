@@ -661,3 +661,34 @@ Step 3 of the [simulated-meta plan](https://claude.ai/artifact/3B6snowJaAmGMfy82
 - Best together, lift in seed 1 / seed 2: Lelouch (form 2) + Nezuko 8.2 / 7.7, Lelouch (form 2) + Shawn Frost 6.4 / 7.8, All Might + Dio 6.9 / 6.9, Lelouch (form 2) + Yuno 6.2 / 7.0, Homura + Misaka 6.2 / 4.9, Eren (form 3) + Frieza 5.3 / 5.0, All Might + Madara 5.1 / 5.1, and Homura with Jin-woo (form 3), Tatsumaki and All Might. Lelouch (form 2) appears in many of the top pairs.
 - Worst together: Dio with Komatsu (-13 / -9), with Lelouch (base form), Escanor, Tsuna and Jin-woo; Whitebeard with Escanor, Lelouch and Tsuna; Sukuna with Mumen Rider and Mr. Satan. Whitebeard's book moves are Earthquake and Bulldoze, which in doubles also hit the partner; that is the likely reason for his, not checked.
 - Caveats: pairs are counted only when the draft picked both, so the lift is "when this draft picks them together". The lift comes from per-character books; team-aware builds (gap #10) would raise some pairs further.
+
+## Balance pass: Zebra, All Might, Water field (2026-11-07), nothing changed in data
+
+Rust sim, comp, bring 8, Vitality x3, every form, archetype rounds, the 4 averaged books. **Baseline:** 12 meta chains (200k; seeds 31-34 with `--check=2000`, seeds 35-42 with the final round robin replayed by the fast AI, `--recheck --ai=fast`, 40k) and plain 300k batches on seeds 1-2. **Options** were applied to a scratch copy of the data (and, for the field multiplier, `FIELD_BOOST` in a scratch build of engine/), then the same 8 chains (35-42) and 2 plain batches. The books were not re-fitted, except All Might for the option that moved him. "Picked" = win rate when the draft picked him, pooled over the 2 plain seeds (about 35k picks, ±0.5). Meta teams are the 6 non-archetype teams each chain ends with.
+
+**Baseline**
+
+- **All Might** (post-mid, 560 total): picked 62.0%, rank 15 of 257, the best post-mid (post-mid median rank 82). He's on 16 of 72 meta teams, 7th overall (Demon Emperor Lelouch 70, Jin-woo 29, Ayanokoji 27, Pain 27, Goku 24, Poseidon 23), and the draft picks him about 100% of the time when he's brought. Books always choose I Am Here! (Intimidate plus ally Power +1). Time Limit and Last Embers are almost never played (never in plain batches with books, about 5% of his games in a meta chain), so his "real drawback" (roleNote) almost never happens in the competitive format.
+- **Zebra** (post-mid, 560): picked 55.3%, rank 48; 7 of 72 meta teams. About 70% of his actions are Voice Missile (priority, never misses, boosted 1.3x by Sound Knocking).
+- **Water field:** final round robin 39.9% under the fast AI on seeds 35-42 (all archetypes 38.0), and on seeds 31-34 32.8% fast / **25.0% search** (all archetypes 39.7 / 38.7). Under the search AI it ties Redirection for last, which repeats the gap #7 note (8-20 points worse under search on seeds 1-2). It has one setter, Juvia (pre-mid, 430 total), and all 4 of her book fits choose Gray-sama! over Rain Woman (seed 31: Rain Woman games won 16.5%, Gray-sama! 26.9%). Its attackers are weak apart from Poseidon, who has his own 1.3x and shares the legendary slot with Hanako-kun and Nessie: Giyu, Oni Rem, Rudeus, Fern rank 150-240 by picked win rate.
+
+**Options tested**
+
+| option | picked (rank) | meta teams of 48 | median rank in chains | Water field round robin, fast |
+|---|---|---|---|---|
+| baseline | All Might 62.0% (15), Zebra 55.3% (48) | 9, 4 | 18.5, 32 | 39.9 |
+| I Am Here! without the ally boost (plain Intimidate) | All Might 58.6% (25) | 2 | 55.5 | |
+| same, All Might re-fitted (2 fits, 3 chains each) | 58.7% (23), vs 63.1% (14) for a control re-fit on current data | | | |
+| Time Limit folded into I Am Here! (always on) | 61.7% (15) | 6 | 28.5 | |
+| All Might Power 140 to 130 | 61.9% (16) | 12 | 33 | |
+| Thunder Noise counts as a sound move | Zebra 55.0% (48) | 6 | 20 | |
+| every field 1.3x to 1.5x | | | | 39.4 (Fire 34 to 41, Lightning 29 to 38) |
+| second Water setter: Rudeus (form 2) learns Cumulonimbus (Rain Dance) | | | | 38.4 |
+| both | | | | 36.8; search, seeds 31-34: **23.8** (base 25.0); Fire field 28 to 48 under search |
+
+What it shows:
+
+- **All Might's edge is the ally boost on I Am Here!**, not his Power. Removing it costs about 3.5-4.5 points and most of his meta share (9 to 2 of 48); he stays top 25. Power 130 and an always-on Time Limit change nothing: he rarely reaches his sixth turn, and United States of Smash plus Brave Bird do the damage either way.
+- **Zebra is a healthy upper-middle pick.** Thunder Noise isn't flagged as a sound move because the name rule in `compile.js` (`FLAG_WORDS.sound`) has no "noise"; adding it doubles his Hurricane use and raises its damage per use about 30% (69 to 91) but doesn't move his win rate, since Voice Missile does most of his work. "noise" matches only Thunder Noise in the current data.
+- **Water field's limit is its attackers, not the setter or the multiplier.** A second setter and 1.5x fields together move it nowhere under either AI, while the same 1.5x lifts Fire field by about 19 points under the search AI. Not tested yet: a stronger non-legendary Water attacker (Giyu or Oni Rem).
+- Single-chain numbers (meta teams, median rank, Water field round robin) swing a lot: the Water field round robin has sd 8-12 across seeds, so only the plain picked rates and the 1.5x Fire field jump are past the noise.
