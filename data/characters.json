@@ -7995,8 +7995,8 @@
     "abilities": [
       {
         "name": "Preta Path",
-        "text": "Energy moves heal him 1/4 instead of doing damage.",
-        "like": "Energy absorb"
+        "text": "Energy moves do half damage to him. He absorbs chakra.",
+        "like": "Energy resist"
       },
       {
         "name": "Naraka Path",
@@ -8014,7 +8014,7 @@
       "Attack",
       "Setter"
     ],
-    "roleNote": "Energy-absorbing nuke. Preta Path heals from Energy attacks, Naraka heals on switch, Shinra Tensei clears the foe's screens and hazards."
+    "roleNote": "Energy-tanking nuke. Preta Path halves Energy attacks, Naraka heals on switch, Shinra Tensei hits both foes and clears their screens and hazards."
   },
   {
     "id": "sung-jinwoo",

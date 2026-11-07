@@ -5938,7 +5938,7 @@
       "type": "Cosmic",
       "category": "Energy",
       "size": "signature",
-      "power": 140,
+      "power": 120,
       "accuracy": 100,
       "pp": 2,
       "effect": "Hits all foes and removes screens and hazards on their side.",
