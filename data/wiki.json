@@ -747,6 +747,11 @@
               "t": "2026-11-05",
               "n": "City 1 map layout approved as a baseline (hometown south-west, coast road, bridge, harbour, Krusty Krab, shelter and arena on the lagoon, frozen forest north-east, Northern Plateau and gatehouse north). Loch Ness is an inland loch off the coast road near the hometown, behind a Ward seal until the post-game.",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-07",
+              "n": "Rig: R6 with split parts (one rigid mesh per part, no skinning), like Anime Vanguards and most anime Roblox games; saves modelling and animation time. Replaces R15 for now (2026-10-26). Vertical Slice 1 proves it with one familiar at final quality plus greybox extremes (Brook, Chiikawa Usagi, Mr. Satan).",
+              "s": "decided"
             }
           ]
         }
@@ -1713,8 +1718,8 @@
               "n": "Stylized anime units like Anime Vanguards or Anime Expedition: bigger heads, sculpted hair meshes, faces painted as textures."
             },
             {
-              "t": "Rig: R15 for now",
-              "n": "Every humanoid familiar shares one R15 skeleton, chosen over R6 for now because bending elbows, knees and hands suit close-up cinematic moves."
+              "t": "Rig: R6 split parts",
+              "n": "Every humanoid familiar shares one R6 rig (head, torso, two arms, two legs) built from split parts: one rigid mesh per part, no skinning. Chosen 2026-11-07 to match the Anime Vanguards look and most anime Roblox games, and to save modelling and animation time. Replaces R15 (no elbows or knees now)."
             },
             {
               "t": "Fighting-style animation sets",
