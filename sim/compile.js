@@ -22,7 +22,7 @@ const FLAG_WORDS = {
   punch: /punch|fist|smash|jab|gun\b|gatling|rush|knuckle|hammer|jet pistol|impact/i,
   kick: /kick|leg|jambe|step|shoot|stomp|dropkick/i,
   slice: /slash|cut|blade|sword|claw|scissor|shell|giri|edge|katana|fang|form|reaver|saber|sabre|excalibur|getsuga|onigiri|oni giri|wire|zanpakuto|scar|whip/i,
-  sound: /voice|sing|boomburst|guitar|sound|song|flute|roar|howl|growl|bass|drum|tempo|shout/i,
+  sound: /voice|sing|boomburst|guitar|sound|song|flute|roar|howl|growl|bass|drum|tempo|shout|noise/i,
   shot: /ball|beam|shot|bomb|cannon|gun\b|blast|bullet|missile|spear|arrow|meteor|throw|rocket|wave|pulse/i,
   dance: /dance|step/i,
   head: /head|headbutt|zen/i,

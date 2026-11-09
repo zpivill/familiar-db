@@ -344,5 +344,11 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
   ok(seen[0] === 'None' && seen[1] === 'Fire Dragon Slayer', 'Hidden builds: an ability shows once it absorbs a hit', seen.join(' > '));
 }
 
+// Sound moves are found by name: Zebra's Thunder Noise (Hurricane) is one, so Sound Knocking boosts it.
+{
+  const zebra = data.entrants.find(e => e.key === 'zebra');
+  ok(zebra.learn.find(l => l.id === 'hurricane').flags.sound, 'Thunder Noise counts as a sound move');
+}
+
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
 console.log('all passed');
