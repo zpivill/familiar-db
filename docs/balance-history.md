@@ -694,3 +694,17 @@ What it shows:
 - Single-chain numbers (meta teams, median rank, Water field round robin) swing a lot: the Water field round robin has sd 8-12 across seeds, so only the plain picked rates and the 1.5x Fire field jump are past the noise.
 
 **Decided by r (2026-11-09):** fix Thunder Noise (done: `noise` added to the sound name rule in `sim/compile.js`, with a mechanics check; effect on results as measured above, Zebra 55.3% to 55.0%, within noise), leave All Might as he is, and test a Giyu buff for Water field (below).
+
+### Giyu options for Water field (2026-11-09), nothing changed in data
+
+Same setup as above, on data with the Thunder Noise fix. Giyu was re-fitted for each option (2 fits, `--only=giyu`, 3 chains each, `--per=2000`) and those books played the 8 fast chains (seeds 35-42), 2 plain batches and 4 search-checked chains (seeds 31-34). A control re-fit on unchanged data moved Giyu from 44.3% to 47.0%, so options are compared to 47.0%.
+
+| option | Giyu picked (rank) | in the Water field team | Water field, fast | Water field, search |
+|---|---|---|---|---|
+| baseline (control re-fit) | 47.0% (133) | 0 of 8 | 37.4 (all 38.1) | 25.0 (all 38.7) |
+| G1: Vitality 80 to 90, Power 110 to 125 | 50.0% (97) | 4 of 8 | 37.8 (all 38.5) | 24.5 (all 37.8) |
+| G2: Water Hashira ("His Water moves do 1.2x.") replaces Calm Surface | 47.4% (128) | 1 of 8 | 34.5 (all 38.2) | 34.5 (all 36.9) |
+
+- **G1 makes Giyu better (+3 points) but not Water field.** He joins half the Water teams, and the team does no better under either AI.
+- **G2 does little for Giyu:** only 1 of 2 fits picks Water Hashira (Demon Slayer Mark is about as good). The +9.5 under search is under the noise floor (one seed at 50, the others 25-35), the fast AI goes the other way, and Giyu was in only 1 of the 8 Water teams, so it isn't his doing.
+- **Together with the first pass:** 1.5x fields, a second setter and a better Water attacker all leave Water field where it was. The one member every Water team must bring and pick is Juvia (430 total, the only setter, forced to Rain Woman), so a stronger setter is the lever left untested.
