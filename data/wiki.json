@@ -16,7 +16,7 @@
             },
             {
               "t": "2026-11-11",
-              "n": "Game build (VS1 Phase 3, battle on screen): City 1 Fray tables now carry wild levels and weights, exported to the game. Story and design: still as of 2026-11-05 above."
+              "n": "Game build (VS1 Phase 4, saves): player saves (party, box, bag, flags, story progress, a slot per playable character) and binding wild strays with Plain Threads. Story and design: still as of 2026-11-05 above."
             }
           ]
         },
@@ -765,6 +765,11 @@
             {
               "t": "2026-11-11",
               "n": "Wild encounters in City 1: coast road wilds are level 2-4, Northern Plateau wilds level 8-11. Odds by weight: each Common entry 10, Uncommon 4, Rare 1 (Aqua about 2% on the coast road). Scripted starters never roll. Shown as the Levels and Weight columns of the City 1 Fray tables.",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-11",
+              "n": "Bind odds in the game (Plain Thread): chance = tier rate x (1 - 2/3 of HP left) x status bonus, capped at 100%. Tier rates: starter and first-route 0.9, pre-mid 0.6, mid 0.45, post-mid 0.3, pseudo 0.15, mythical and legendary 0.05. Sleep or freeze x2, any other status x1.5. A first-route stray at full HP is 30%, near 0 HP about 90%. A failed bind costs the turn. Better Threads (Cape Town) will multiply it.",
               "s": "decided"
             }
           ]
