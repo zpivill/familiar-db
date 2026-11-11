@@ -51,11 +51,16 @@ const page = wiki.pages.find(p => p.id === 'city-reykjavik');
 const events = page.sections.find(s => s.title === 'Event script').items.map(({ t, n, when, where, who, lines }) => ({ title: t, text: n, when, where, who, lines: lines || [] }));
 const frays = {};
 for (const s of page.sections.filter(s => s.rows && s.cols.includes('Character'))) {
-  const ci = s.cols.indexOf('Character'), ri = s.cols.indexOf('How often');
+  const ci = s.cols.indexOf('Character'), ri = s.cols.indexOf('How often'), li = s.cols.indexOf('Levels'), wi = s.cols.indexOf('Weight');
   frays[s.title] = s.rows.map(r => {
     const key = byName.get(r[ci]);
     if (!key) throw new Error(`${s.title}: no familiar named "${r[ci]}"`);
-    return { familiar: key, rate: r[ri] };
+    // Scripted rows ("-") never roll at random: no weight, no levels.
+    if (r[wi] === '-') return { familiar: key, rate: r[ri] };
+    const [min, max] = r[li].split('-').map(Number), weight = Number(r[wi]);
+    if (!(min >= 1 && max >= min && max <= 100 && weight > 0)) throw new Error(`${s.title}: ${r[ci]} has bad levels "${r[li]}" or weight "${r[wi]}"`);
+    if ((Familiars[key].evolvesAt || 1) > min) throw new Error(`${s.title}: ${key} is wild below its form's level`);
+    return { familiar: key, rate: r[ri], weight, min, max };
   });
 }
 // Trainers: team is [familiar key, level] in send-out order. The rival's "starter" slot is filled from
