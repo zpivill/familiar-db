@@ -73,7 +73,8 @@ function makeMon(data, e, build, level) {
 // ---------------- the battle ----------------
 
 // opts.decide(kind, B, mon or side, options, extra) lets a player make a side's choices instead of the AI:
-// kind 'action' returns { type: 'move', slot, target } or { type: 'switch', to }, kind 'replace' returns the
+// kind 'action' returns { type: 'move', slot, target }, { type: 'switch', to } or { type: 'pass' } (the turn is
+// spent outside the engine, e.g. a failed bind in the Roblox game), kind 'replace' returns the
 // character to bring in. Returning nothing leaves the choice to the AI. The Battle vs AI page uses it.
 // opts.turnCap overrides RULES.turnCap (the competitive format draws at 50 turns).
 // opts.setup(B) runs once the leads are in, before turn 1 (for hand-made test positions).
@@ -1178,13 +1179,13 @@ export function runBattle(data, teams, opts = {}) {
       } });
     }
     api.cache = null;
-    const order = a => a.type === 'switch' ? 10 : effPriority(a.m, a.m.moves[a.slot]);
+    const order = a => a.type === 'move' ? effPriority(a.m, a.m.moves[a.slot]) : 10;
     acts.forEach(a => { a.pri = order(a); a.spd = speed(a.m, foesOf(a.m).some(f => abOf(f).targetLock)); a.tie = r(); if (a.m.vol.slowTurn === B.turn) a.pri -= 9; });
     const tr = B.field?.trickRoom ? -1 : 1;
     acts.sort((x, y) => (y.pri - x.pri) || (tr * (y.spd - x.spd)) || (y.tie - x.tie));
     for (const a of acts) {
       const m = a.m;
-      if (m.fainted || !m.side.active.includes(m)) continue;
+      if (m.fainted || !m.side.active.includes(m) || a.type === 'pass') continue;
       if (a.type === 'switch') {
         if (a.to.fainted || m.side.active.includes(a.to)) continue;
         const slot = switchOut(m);

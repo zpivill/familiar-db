@@ -345,4 +345,9 @@ const target = () => data.entrants.find(e => e.final && !e.types.includes('Spiri
 }
 
 if (fails) { console.log(fails, 'failed'); process.exit(1); }
+{ // A 'pass' choice spends the turn: the foe still acts, the passer does nothing.
+  const tanjiro = build('tanjiro', ['constant-flux']), murata = build('murata', [ent('murata').learn[0].id]);
+  const B = battle([tanjiro], [murata], 3, { decide: (kind, B, m) => kind === 'action' && m.side.i === 0 ? { type: 'pass' } : undefined });
+  ok(B.winner === 1 && !logHas(B, /\(A\) uses/), 'pass: the passer never moves and loses', B.log.join(' | '));
+}
 console.log('all passed');
