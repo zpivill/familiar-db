@@ -24,6 +24,10 @@ Rules that always apply:
 - Don't flag copyright or takedown risk; r handles it.
 - Hidden dev roles are for balancers, never told to players.
 
+## Roblox export
+
+`node tools/export-roblox.mjs <game repo>/src/shared/Data` writes the game data (familiars, moves with compiled effects, rules, City 1 events and Fray tables) as JSON modules for the familiar-game repo. It drops hidden dev roles and balance notes and fails if any reach the output. Re-run it after any data change the game needs.
+
 ## Checks
 
 ```sh
