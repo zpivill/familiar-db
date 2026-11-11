@@ -28,6 +28,8 @@ Rules that always apply:
 
 `node tools/export-roblox.mjs <game repo>/src/shared/Data` writes the game data (familiars, moves with compiled effects, rules, City 1 events, Fray tables and trainers) as JSON modules for the familiar-game repo. It drops hidden dev roles and balance notes and fails if any reach the output. Re-run it after any data change the game needs.
 
+The game's battle engine (`src/shared/Battle/Engine.luau` there) is a Luau port of `sim/battle.js`, like `engine/` is the Rust one. After any change to `sim/battle.js`, `sim/rules.js` or `sim/compile.js`: make the same change in Engine.luau, re-run the export, then `node tools/roblox-parity.mjs <game repo>/tests/parity-expected.json` and `lune run tests/run` in the game repo (must say the battles are identical).
+
 ## Checks
 
 ```sh

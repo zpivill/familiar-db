@@ -47,8 +47,10 @@ export function prepare(characters, moveList) {
 // ---------------- battlers ----------------
 
 // build.evs / build.ivs ({ vit, pow, ... }), build.nature and build.item are optional: without them a
-// character fights on base stats alone, as in the earlier runs.
+// character fights on base stats alone, as in the earlier runs. build.level overrides the battle's level for
+// that character (the game's trainers and wild familiars have their own levels; sim runs never set it).
 function makeMon(data, e, build, level) {
+  level = build.level || level;
   const st = e.stats, ev = build.evs || {}, iv = build.ivs || {};
   const item = itemDef(build.item);
   const mon = {
