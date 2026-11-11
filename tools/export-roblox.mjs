@@ -5,7 +5,8 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { prepare } from '../sim/battle.js';
-import { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS } from '../sim/rules.js';
+import { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS, ITEM_NUM } from '../sim/rules.js';
+import { moveFlags } from '../sim/compile.js';
 
 const root = new URL('..', import.meta.url).pathname;
 const read = f => JSON.parse(readFileSync(join(root, 'data', f), 'utf8'));
@@ -16,15 +17,18 @@ const out = process.argv[2] || join(root, 'export/roblox');
 
 // Keys that are for balancers or designers only. Checked recursively on everything written.
 const DEV_KEYS = ['roles', 'roleNote', 'like', 'why', 'source', 'unsupported'];
-const strip = o => JSON.parse(JSON.stringify(o, (k, v) => DEV_KEYS.includes(k) ? undefined : v));
+// A Set (an ability's block list) becomes { key: true }: JSON has no sets, and Luau reads this as one.
+const strip = o => JSON.parse(JSON.stringify(o, (k, v) => DEV_KEYS.includes(k) ? undefined : v instanceof Set ? Object.fromEntries([...v].map(x => [x, true])) : v));
 
 // Compiled rules (fx / ab) go along with the text, so the Luau engine runs exactly what the JS sim runs.
 const { moves, entrants } = prepare(characters, moveList);
 
+// n keeps the moves.json order (Metronome picks by it); flags are the move's own, for a move used without a learnset entry.
 const Moves = {};
+let n = 0;
 for (const m of moves.values()) {
   const { cat, ...rest } = m; // cat duplicates category
-  Moves[m.id] = rest;
+  Moves[m.id] = { ...rest, n: n++, flags: moveFlags(m, []) };
 }
 
 const Familiars = {};
@@ -37,7 +41,7 @@ for (const e of entrants) {
   };
 }
 
-const Rules = { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS };
+const Rules = { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS, ITEM_NUM };
 
 // City 1: the event script and the Fray tables. Places, trainers and people are prose on the site
 // and get built in Studio by hand, so they are not exported.
