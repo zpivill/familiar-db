@@ -537,10 +537,14 @@ function renderPage(p) {
   const meta = i => [['When', i.when], ['Where', i.where], ['Who', i.who]].filter(m => m[1])
     .map(([k, v]) => `<b>${k}:</b> ${esc(v)}`).join(' · ');
   const lines = i => i.lines ? `<ul class="lines">${i.lines.map(([who, l]) => `<li><b>${esc(who)}:</b> ${esc(l)}</li>`).join('')}</ul>` : '';
+  // City pages: trainers carry a team of [familiar key, level]; "starter" is the rival's cycled starter.
+  const famLink = ([key, lv]) => { const [id, f = 1] = key.split('/'), ch = roster.find(x => x.id === id);
+    return (ch ? `<a href="${charLink(ch, f - 1)}">${esc(ch.stages[f - 1]?.name || ch.name)}</a>` : esc(key === 'starter' ? 'Starter (cycle)' : key)) + ` Lv ${lv}`; };
+  const trainers = i => i.trainers ? `<ul class="lines">${i.trainers.map(t => `<li><b>${esc(t.name)}</b> (${esc(t.where)}): ${t.team.map(famLink).join(', ')}</li>`).join('')}</ul>` : '';
   const status = i => i.s ? ` <span class="badge ${i.s}">${i.s[0].toUpperCase() + i.s.slice(1)}</span>` : '';
   const body = p.soon ? `<p class="soon">${esc(p.soon)}</p>` : p.sections.map(s => `
     <section id="${slug(s)}"><h2>${esc(s.title)}</h2>${s.image ? `<img class="map" src="${esc(s.image)}" alt="${esc(s.alt || s.title)}">` : ''}${s.rows ? table(s) : `<dl>${s.items.map(i => `
-      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}${status(i)}</dt>${meta(i) ? `<dd class="hint">${meta(i)}</dd>` : ''}${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}${lines(i)}</div>`).join('')}
+      <div><dt>${esc(i.t)}${i.plan ? ' <span class="badge plan">Plan</span>' : ''}${status(i)}</dt>${meta(i) ? `<dd class="hint">${meta(i)}</dd>` : ''}${i.n ? `<dd>${esc(i.n)}</dd>` : '<dd class="tbd">Not written yet</dd>'}${lines(i)}${trainers(i)}</div>`).join('')}
     </dl>`}</section>`).join('');
   const toc = p.sections.length > 1 ? `<nav class="toc" aria-label="On this page">${p.sections.map(s =>
     `<a href="#${p.id}" data-jump="${slug(s)}">${esc(s.title)}</a>`).join('')}</nav>` : '';

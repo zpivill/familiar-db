@@ -5,7 +5,8 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { prepare } from '../sim/battle.js';
-import { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS } from '../sim/rules.js';
+import { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS, ITEM_NUM } from '../sim/rules.js';
+import { moveFlags } from '../sim/compile.js';
 
 const root = new URL('..', import.meta.url).pathname;
 const read = f => JSON.parse(readFileSync(join(root, 'data', f), 'utf8'));
@@ -16,15 +17,18 @@ const out = process.argv[2] || join(root, 'export/roblox');
 
 // Keys that are for balancers or designers only. Checked recursively on everything written.
 const DEV_KEYS = ['roles', 'roleNote', 'like', 'why', 'source', 'unsupported'];
-const strip = o => JSON.parse(JSON.stringify(o, (k, v) => DEV_KEYS.includes(k) ? undefined : v));
+// A Set (an ability's block list) becomes { key: true }: JSON has no sets, and Luau reads this as one.
+const strip = o => JSON.parse(JSON.stringify(o, (k, v) => DEV_KEYS.includes(k) ? undefined : v instanceof Set ? Object.fromEntries([...v].map(x => [x, true])) : v));
 
 // Compiled rules (fx / ab) go along with the text, so the Luau engine runs exactly what the JS sim runs.
 const { moves, entrants } = prepare(characters, moveList);
 
+// n keeps the moves.json order (Metronome picks by it); flags are the move's own, for a move used without a learnset entry.
 const Moves = {};
+let n = 0;
 for (const m of moves.values()) {
   const { cat, ...rest } = m; // cat duplicates category
-  Moves[m.id] = rest;
+  Moves[m.id] = { ...rest, n: n++, flags: moveFlags(m, []) };
 }
 
 const Familiars = {};
@@ -37,9 +41,9 @@ for (const e of entrants) {
   };
 }
 
-const Rules = { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS };
+const Rules = { TYPES, CHART, RULES, COMPETITIVE, TRAINING, STAT_KEYS, STAT_NAMES, ITEMS, ITEM_NUM };
 
-// City 1: the event script and the Fray tables. Places, trainers and people are prose on the site
+// City 1: the event script, the Fray tables and the trainers. Places and people are prose on the site
 // and get built in Studio by hand, so they are not exported.
 const byName = new Map();
 for (const e of entrants) { byName.set(e.name, e.key); if (!byName.has(e.charName)) byName.set(e.charName, e.key); }
@@ -59,7 +63,20 @@ for (const s of page.sections.filter(s => s.rows && s.cols.includes('Character')
     return { familiar: key, rate: r[ri], weight, min, max };
   });
 }
-const City1 = { id: 'city-reykjavik', name: page.title, events, frays };
+// Trainers: team is [familiar key, level] in send-out order. The rival's "starter" slot is filled from
+// cycle (player's starter -> rival's starter).
+const trainerItems = page.sections.find(s => s.title === 'Trainers and battles').items;
+const trainers = trainerItems.flatMap(i => i.trainers || []).map(({ team, ...t }) => ({ ...t, team: team.map(([familiar, level]) => ({ familiar, level })) }));
+const rivalStarter = trainerItems.find(i => i.cycle).cycle;
+for (const t of trainers) for (const { familiar, level } of t.team) {
+  if (familiar === 'starter') continue;
+  const f = Familiars[familiar];
+  if (!f) throw new Error(`trainer ${t.id}: no familiar "${familiar}"`);
+  if (!(level >= 1 && level <= 100) || (f.evolvesAt || 1) > level) throw new Error(`trainer ${t.id}: ${familiar} at level ${level}`);
+}
+const starters = Object.keys(rivalStarter);
+if (starters.some(k => !Familiars[k]) || [...new Set(Object.values(rivalStarter))].sort().join() !== starters.sort().join()) throw new Error('rival starter cycle must map the starters onto each other');
+const City1 = { id: 'city-reykjavik', name: page.title, events, frays, trainers, rivalStarter };
 
 // Checks: every learned move and signature exists, no dev keys reach the game.
 for (const f of Object.values(Familiars)) {
@@ -74,4 +91,4 @@ for (const [name, data] of Object.entries(files)) {
   writeFileSync(join(out, name + '.json'), json + '\n');
   console.log(`${name}.json  ${(json.length / 1024).toFixed(0)} KB`);
 }
-console.log(`${Object.keys(Familiars).length} familiars, ${Object.keys(Moves).length} moves, ${events.length} events, ${Object.keys(frays).length} Fray tables -> ${out}`);
+console.log(`${Object.keys(Familiars).length} familiars, ${Object.keys(Moves).length} moves, ${events.length} events, ${Object.keys(frays).length} Fray tables, ${trainers.length} trainers -> ${out}`);
