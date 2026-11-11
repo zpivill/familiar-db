@@ -13,6 +13,10 @@
             {
               "t": "2026-11-05",
               "n": "Step 4: City 1 (Reykjavík) and the opening are fully designed on the 'City 1: Reykjavík' page, including a baseline map sketch (one section, no loaders; open plots for later). Next for City 1, when r wants: full dialogue for every scene, the patch-day tutorial battle, badge and rewards, builds for the City 1 trainers, the ice-floor puzzle layout, the escaped third starter, townsfolk. After City 1: feed back, then City 2 (Hawaii)."
+            },
+            {
+              "t": "2026-11-11",
+              "n": "Game build (VS1 Phase 3, battle on screen): City 1 Fray tables now carry wild levels and weights, exported to the game. Story and design: still as of 2026-11-05 above."
             }
           ]
         },
@@ -752,6 +756,11 @@
               "t": "2026-11-07",
               "n": "Rig: R6 with split parts (one rigid mesh per part, no skinning), like Anime Vanguards and most anime Roblox games; saves modelling and animation time. Replaces R15 for now (2026-10-26). Vertical Slice 1 proves it with one familiar at final quality plus greybox extremes (Brook, Chiikawa Usagi, Mr. Satan).",
               "s": "decided"
+            },
+            {
+              "t": "2026-11-11",
+              "n": "Wild encounters in City 1: coast road wilds are level 2-4, Northern Plateau wilds level 8-11. Odds by weight: each Common entry 10, Uncommon 4, Rare 1 (Aqua about 2% on the coast road). Scripted starters never roll. Shown as the Levels and Weight columns of the City 1 Fray tables.",
+              "s": "decided"
             }
           ]
         }
@@ -1449,6 +1458,8 @@
             "Types",
             "Tier",
             "How often",
+            "Levels",
+            "Weight",
             "Tag"
           ],
           "rows": [
@@ -1457,6 +1468,8 @@
               "Water",
               "Starter",
               "Scripted (one of three)",
+              "-",
+              "-",
               "Decided"
             ],
             [
@@ -1464,6 +1477,8 @@
               "Wind",
               "Starter",
               "Scripted (one of three)",
+              "-",
+              "-",
               "Decided"
             ],
             [
@@ -1471,6 +1486,8 @@
               "Neutral",
               "Starter",
               "Scripted (one of three)",
+              "-",
+              "-",
               "Decided"
             ],
             [
@@ -1478,6 +1495,8 @@
               "Water",
               "First route",
               "Common",
+              "2-4",
+              "10",
               "Decided"
             ],
             [
@@ -1485,6 +1504,8 @@
               "Ice",
               "First route",
               "Common",
+              "2-4",
+              "10",
               "Decided"
             ],
             [
@@ -1492,6 +1513,8 @@
               "Neutral",
               "First route",
               "Common",
+              "2-4",
+              "10",
               "Decided"
             ],
             [
@@ -1499,6 +1522,8 @@
               "Neutral",
               "First route",
               "Common",
+              "2-4",
+              "10",
               "Decided"
             ],
             [
@@ -1506,6 +1531,8 @@
               "Neutral",
               "First route",
               "Common",
+              "2-4",
+              "10",
               "Decided"
             ],
             [
@@ -1513,6 +1540,8 @@
               "Neutral, Beast",
               "First route",
               "Uncommon",
+              "2-4",
+              "4",
               "Decided"
             ],
             [
@@ -1520,6 +1549,8 @@
               "Water",
               "Pre-mid",
               "Rare find",
+              "2-4",
+              "1",
               "Decided"
             ]
           ]
@@ -1531,6 +1562,8 @@
             "Types",
             "Tier",
             "How often",
+            "Levels",
+            "Weight",
             "Tag"
           ],
           "rows": [
@@ -1539,6 +1572,8 @@
               "Water",
               "First route",
               "Common",
+              "8-11",
+              "10",
               "Decided"
             ],
             [
@@ -1546,6 +1581,8 @@
               "Ice",
               "First route",
               "Common",
+              "8-11",
+              "10",
               "Decided"
             ],
             [
@@ -1553,6 +1590,8 @@
               "Neutral",
               "First route",
               "Common",
+              "8-11",
+              "10",
               "Decided"
             ],
             [
@@ -1560,6 +1599,8 @@
               "Beast, Neutral",
               "First route",
               "Common",
+              "8-11",
+              "10",
               "Decided"
             ],
             [
@@ -1567,6 +1608,8 @@
               "Beast, Neutral",
               "First route",
               "Common",
+              "8-11",
+              "10",
               "Decided"
             ],
             [
@@ -1574,6 +1617,8 @@
               "Water",
               "Pre-mid",
               "Rare find (the only one)",
+              "8-11",
+              "1",
               "Decided"
             ]
           ]
