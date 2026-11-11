@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-05",
+  "updated": "2026-11-11",
   "pages": [
     {
       "id": "design",
@@ -11,8 +11,8 @@
           "title": "Where we paused",
           "items": [
             {
-              "t": "2026-11-05",
-              "n": "Step 4: City 1 (Reykjavík) and the opening are fully designed on the 'City 1: Reykjavík' page, including a baseline map sketch (one section, no loaders; open plots for later). Next for City 1, when r wants: full dialogue for every scene, the patch-day tutorial battle, badge and rewards, builds for the City 1 trainers, the ice-floor puzzle layout, the escaped third starter, townsfolk. After City 1: feed back, then City 2 (Hawaii)."
+              "t": "2026-11-11",
+              "n": "Step 4: City 1 (Reykjavík) and the opening are fully designed on the 'City 1: Reykjavík' page, including a baseline map sketch (one section, no loaders; open plots for later). Next for City 1, when r wants: full dialogue for every scene, the patch-day tutorial battle, badge and rewards, move builds for the City 1 trainers (teams and levels are set and exported to the game), the ice-floor puzzle layout, the escaped third starter, townsfolk. After City 1: feed back, then City 2 (Hawaii)."
             }
           ]
         },
@@ -751,6 +751,11 @@
             {
               "t": "2026-11-07",
               "n": "Rig: R6 with split parts (one rigid mesh per part, no skinning), like Anime Vanguards and most anime Roblox games; saves modelling and animation time. Replaces R15 for now (2026-10-26). Vertical Slice 1 proves it with one familiar at final quality plus greybox extremes (Brook, Chiikawa Usagi, Mr. Satan).",
+              "s": "decided"
+            },
+            {
+              "t": "2026-11-11",
+              "n": "City 1 coast road trainer levels: the kid with Mr. Satan is level 4 (first trainer battle), the fisherman with Murata level 6. All City 1 trainer teams are now structured data exported to the game.",
               "s": "decided"
             }
           ]
@@ -1637,7 +1642,7 @@
             },
             {
               "t": "Route trainers",
-              "n": "Coast road, levels 4 to 6: a fisherman with Murata, and a kid in a Mr. Satan T-shirt with Mr. Satan (your first trainer battle after binding your starter). Northern Plateau: none in City 1; it comes after the badge, so its trainers wait for the Hawaii route.",
+              "n": "Coast road: a kid in a Mr. Satan T-shirt with Mr. Satan, level 4 (your first trainer battle after binding your starter), then a fisherman with Murata, level 6. Northern Plateau: none in City 1; it comes after the badge, so its trainers wait for the Hawaii route.",
               "s": "decided",
               "trainers": [
                 {
