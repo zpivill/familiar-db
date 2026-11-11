@@ -30,6 +30,8 @@ Rules that always apply:
 
 The game's battle engine (`src/shared/Battle/Engine.luau` there) is a Luau port of `sim/battle.js`, like `engine/` is the Rust one. After any change to `sim/battle.js`, `sim/rules.js` or `sim/compile.js`: make the same change in Engine.luau, re-run the export, then `node tools/roblox-parity.mjs <game repo>/tests/parity-expected.json` and `lune run tests/run` in the game repo (must say the battles are identical).
 
+The game's trainer AI (`src/shared/Battle/AI.luau`) is a Luau port of `sim/ai.js`. After any change to `sim/ai.js`, make the same change there and re-run the same parity steps (its "AI battles" set must say identical).
+
 ## Checks
 
 ```sh
