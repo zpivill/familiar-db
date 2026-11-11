@@ -1,9 +1,10 @@
 // Parity check for the Roblox (Luau) battle engine in the familiar-game repo.
-// Plays seeded battles in the JS sim with random teams and a random-choice bot, and writes one hash per battle
-// of the whole battle state at every choice. The game repo's tests/parity.luau plays the same seeds through
-// the Luau engine and must get the same hashes.
-// Usage: node tools/roblox-parity.mjs <game repo>/tests/parity-expected.json [count=300]
-//        node tools/roblox-parity.mjs --trace=<seed>     (prints the state lines, to diff against the Luau side)
+// Plays seeded battles in the JS sim with random teams, and writes one hash per battle of the whole battle state
+// at every choice. Two sets: "battles" (a random-choice bot, checks the engine) and "aiBattles" (the battle AI,
+// sim/ai.js, plays both sides; checks the game's AI.luau too). The game repo's tests/parity.luau plays the same
+// seeds through the Luau engine and must get the same hashes.
+// Usage: node tools/roblox-parity.mjs <game repo>/tests/parity-expected.json [count=300] [aiCount=200]
+//        node tools/roblox-parity.mjs --trace=<seed> [--ai]   (prints the state lines, to diff against the Luau side)
 // tests/parity.luau mirrors genBattle, the bot and stateLine line by line: change both together.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { prepare, runBattle, rng } from '../sim/battle.js';
@@ -64,7 +65,7 @@ function stateLine(B, r) {
   return out.join('|');
 }
 
-export function play(seed, onLine) {
+export function play(seed, onLine, ai = false) {
   const { format, level, teams } = genBattle(seed);
   const r = counted(seed), b = rng(seed + 1000003);
   let hash = 0, lines = 0;
@@ -76,6 +77,7 @@ export function play(seed, onLine) {
   };
   const decide = (kind, B, x, options, extra) => {
     line(B);
+    if (ai) return null;   // the battle AI chooses
     if (kind === 'replace') return b.pick(options);
     const bench = B.api.bench(x.side);
     if (!extra && b() < 0.12 && bench.length && B.api.canSwitch(x)) return { type: 'switch', to: b.pick(bench) };
@@ -88,12 +90,14 @@ export function play(seed, onLine) {
 }
 
 const trace = process.argv.find(a => a.startsWith('--trace='));
-if (trace) play(+trace.split('=')[1], s => console.log(s));
+if (trace) play(+trace.split('=')[1], s => console.log(s), process.argv.includes('--ai'));
 else {
-  const [out, count = '300'] = process.argv.slice(2);
+  const [out, count = '300', aiCount = '200'] = process.argv.slice(2);
   if (!out) throw new Error('usage: node tools/roblox-parity.mjs <game repo>/tests/parity-expected.json [count]');
   const battles = [];
   for (let seed = 1; seed <= +count; seed++) battles.push(play(seed));
-  writeFileSync(out, JSON.stringify({ note: 'Made by familiar-db tools/roblox-parity.mjs. Never edit by hand.', battles }) + '\n');
-  console.log(`${battles.length} battles -> ${out}`);
+  const aiBattles = [];
+  for (let seed = 1; seed <= +aiCount; seed++) aiBattles.push(play(seed, null, true));
+  writeFileSync(out, JSON.stringify({ note: 'Made by familiar-db tools/roblox-parity.mjs. Never edit by hand.', battles, aiBattles }) + '\n');
+  console.log(`${battles.length} + ${aiBattles.length} AI battles -> ${out}`);
 }
