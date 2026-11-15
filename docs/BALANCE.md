@@ -143,6 +143,7 @@ batch.runBatch(opts) ─ for each battle:
 | `mcts.js` | The **search AI** (see section 6): slow but much stronger, for measuring and later teaching the fast AI, not for big batches. `playSearch` plays one battle, `replay` checks it. |
 | `bots/baselines.js` | The fixed opponents (random, greedy, frozen v1, mirror = current AI) shared by the bench, the tuner and the search AI. |
 | `bots/ai-v1.js` | Frozen copy of ai.js from 2026-10-29, a fixed opponent for the bench. Never edit it; freeze a new copy (ai-v2.js) when a version is worth keeping. ai-v2.js is the step-2 AI, ai-v3.js the AI after gaps #4-#6 (2026-10-31), before foe prediction. |
+| `tm-check.mjs` | Checks the TM/HM proposal in `docs/tm-hm-proposal.json` (see [TM-HM.md](TM-HM.md)): no pair may be a move the character already has, or a near-copy of one. `--patch=dir` writes a scratch `characters.json` with the Patterns added, for sim tests. Reads data, changes nothing. |
 | `test/mechanics.mjs` | 63 rule checks. Run after every engine, AI, draft or data change. |
 | `test/scenarios.mjs` | 12 hand-made doubles positions with a known right answer; prints how often the fast and search AI pick it. A measuring stick for AI changes, not a pass/fail check. |
 
@@ -345,6 +346,8 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 - Play the books with `familiar-sim ... --builds=books/book-fit1.json,books/book-fit2.json,books/book-fit3.json,books/book-fit4.json` (from engine/ or the unzipped folder). Re-fit with `--optimize` after character, move, ability or item changes.
 
 **Balance pass 2026-11-07 (Zebra, All Might, Water field):** results and options in balance-history; nothing changed in data. All Might's edge is the ally boost on I Am Here!; Zebra is fine; Water field needs a better Water attacker, not a rule change. All wait on r, as above.
+
+**TM/HM proposal 2026-11-15:** [TM-HM.md](TM-HM.md) proposes 17 Patterns (TMs) and 6 field techniques, with who can learn what and sim tests. Proposal only, nothing changed in data; waits on r. `node sim/tm-check.mjs` checks the proposal against the learnsets.
 
 **Possible next tooling:**
 - Team-aware builds: search a build per core or team, not per character.
