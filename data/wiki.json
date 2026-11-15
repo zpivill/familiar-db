@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-05",
+  "updated": "2026-11-15",
   "pages": [
     {
       "id": "design",
@@ -166,6 +166,20 @@
               "A more complete copy is a stronger anchor. The Ward celebrates evolving because it ties the world down tighter, which is why every Warden's team is fully evolved",
               "Level up and build the bond; characters grow into later-arc forms (57 of 175 evolve)",
               "Decided"
+            ],
+            [
+              "Patterns (TMs)",
+              "A Warden's reward: a technique their city is known for. 'It will make your familiar more itself'",
+              "Every line is true. A Pattern fills in more of the copy from its source data, and a more complete copy is a stronger anchor (see Evolution), so Wardens give one to every Keeper strong enough to matter",
+              "Stitch a Pattern into any familiar whose source already holds that move; reusable; 17 proposed",
+              "Proposal (2026-11-15): rules, list, who can learn what and sim tests in docs/TM-HM.md"
+            ],
+            [
+              "Seam skills (HMs)",
+              "Device updates from the Ward after each badge, so your familiars can help you travel: cross water, melt rock, fly, power doors, light the dark, slip through mist",
+              "Each update opens the next stretch of seam to Keepers, in the order the pressure needs binding; the update notes say which Fray you can now reach",
+              "Use a party familiar of the right type in the field; no move slot is used",
+              "Proposal (2026-11-15): docs/TM-HM.md, section 8"
             ],
             [
               "The ending",

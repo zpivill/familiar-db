@@ -1,0 +1,603 @@
+{
+  "note": "PROPOSAL, not game data. The TM/HM proposal for Familiar (docs/TM-HM.md). Checked by `node sim/tm-check.mjs`. Nothing in data/ reads this file. In `can`, a key is a character id, or `id/N` when only form N and later forms learn it; the value is the canon reason. `cannot` lists characters a player would expect on the list, with the reason they are not. `demo` entries are moves that should stay off Patterns, tested only to show why.",
+  "status": "proposal",
+  "patterns": [
+    {
+      "no": 1,
+      "move": "protect",
+      "band": 1,
+      "kind": "universal",
+      "source": "Hawaii: handed over by the Swordsmith Village Keeper before your first duo battle.",
+      "why": "Basic move (no rename needed). Doubles is built around it, and only 40 of 175 characters have it today.",
+      "rule": "all",
+      "cannot": {}
+    },
+    {
+      "no": 2,
+      "move": "flip-turn",
+      "band": 1,
+      "kind": "type",
+      "source": "Reykjavík: the harbour-master's reward. 'Hit, then go out with the tide.'",
+      "why": "Water, 60 power, the user switches out. No character has it yet. Teaches switching in City 1.",
+      "can": {
+        "giyu": "Water Breathing, Third Form: Flowing Dance, striking while he slips past.",
+        "tanjiro": "Third Form: Flowing Dance, the weaving footwork he uses against Rui's threads.",
+        "murata": "Survives every mission by striking once and falling back.",
+        "juvia": "Steps away across the raindrops held in the air (Rain Walker).",
+        "spongebob": "Jellyfishing hit-and-run (gag).",
+        "nessie": "Surfaces, strikes and is gone before the photo is taken (Blurry Photo)."
+      },
+      "cannot": {
+        "poseidon": "Canon: never takes a step back from Sasaki. Balance: already a top legendary.",
+        "patrick": "Canon: does not move."
+      }
+    },
+    {
+      "no": 3,
+      "move": "work-up",
+      "band": 1,
+      "kind": "utility",
+      "source": "Reykjavík: sold at the Krusty Krab counter (gag).",
+      "why": "Neutral, raises Power and Energy by 1. The classic first setup move.",
+      "can": {
+        "natsu": "'I'm all fired up!' before every fight.",
+        "bakugo": "Builds up sweat and temper as a fight goes on.",
+        "yamcha": "Psyches himself up before the Wolf Fang Fist.",
+        "konohamaru": "Will of Fire speeches before he charges in.",
+        "mr-satan": "Plays to the crowd until he believes it himself.",
+        "axel-blaze": "Hot-blooded striker firing himself up (gag).",
+        "koby": "Shouts down his own fear at Marineford.",
+        "mark-evans": "Tyre training and a shout to the team (gag).",
+        "mob": "Body Improvement Club warm-ups."
+      },
+      "cannot": {
+        "megumin": "Canon: every skill point goes into Explosion. She learns no Pattern except Protect."
+      }
+    },
+    {
+      "no": 4,
+      "move": "will-o-wisp",
+      "band": 1,
+      "kind": "type",
+      "source": "Hawaii: the forge master's reward. 'A blade is tested by the fire, not by the hammer.'",
+      "why": "Fire, burns the target (halves its physical damage). A tool, not power.",
+      "can": {
+        "natsu": "Fire Dragon's flames cling and keep burning.",
+        "todoroki": "His left side sets whatever he touches alight.",
+        "akainu": "Magma that keeps burning through what it hits (Ace, Whitebeard).",
+        "hanako-kun": "Off-type (Fire): his Hakujoudai are hitodama, ghost fires.",
+        "jiraiya": "Toad Oil Flame Bullet sticks and burns.",
+        "soma": "Flambé at the stove (cooking flames)."
+      },
+      "cannot": {
+        "tanjiro": "Canon: Breathing-style flames are an image, not real fire.",
+        "rengoku": "Canon: same, his flames don't burn.",
+        "megumin": "Canon: Explosion only.",
+        "escanor": "Balance: top of his tier; Cruel Sun already burns.",
+        "tsuna": "Balance: top pseudo. His Sky flames harmonise, they don't burn."
+      }
+    },
+    {
+      "no": 5,
+      "move": "rock-tomb",
+      "band": 1,
+      "kind": "type",
+      "source": "Hawaii: found in Megumin's craters on the route.",
+      "why": "Earth, 60 power, lowers the target's Speed by 1. Only Mineta has it.",
+      "can": {
+        "hashirama": "Wood Style binds and pins his target in place.",
+        "patrick": "Drops his rock on you (gag).",
+        "onoki": "Earth Style: Added-Weight Rock makes the target heavy and slow.",
+        "gilgamesh": "Enkidu, the Chains of Heaven, pin the target down.",
+        "rudo": "Buries the target under animated scrap."
+      },
+      "cannot": {
+        "kakuzu": "Near-copy: Hanami already has Bulldoze.",
+        "whitebeard": "Near-copy: already has Bulldoze. Balance: top legendary.",
+        "nijika": "Near-copy: already has Bulldoze.",
+        "gyomei": "Balance: top quarter of his tier."
+      }
+    },
+    {
+      "no": 6,
+      "move": "helping-hand",
+      "band": 2,
+      "kind": "tool",
+      "source": "Cape Town: the Biotope head keeper's reward. 'Nothing in here hunts alone.'",
+      "why": "Basic doubles support (ally's move does 1.5x). Team players only, not everyone: see the tests.",
+      "can": {
+        "tanjiro": "Carries Zenitsu and Inosuke through every fight and calls their openings.",
+        "deku": "Calls plays for Class 1-A; a hero who reaches out a hand.",
+        "nami": "The navigator calling the crew's moves.",
+        "senku": "Fights by powering up the Kingdom of Science's fighters, never himself.",
+        "mark-evans": "The captain: lifts the whole team (gag).",
+        "axel-blaze": "Fire Tornado off a teammate's pass (gag).",
+        "shawn-frost": "The defender who feeds the strikers (gag).",
+        "cole-palmer": "Assists (gag).",
+        "ryo-yamada": "The bassist holds the band's rhythm (gag).",
+        "asuna": "'Switch!' Calls swaps for Kirito and leads the raid as vice-commander.",
+        "emilia": "Backs her allies with spirit arts while Puck does the hitting.",
+        "koby": "His shout stops the Marineford war and steadies the men around him.",
+        "hinata": "The ultimate decoy: draws the blockers so the ace scores.",
+        "kazuma": "A party leader who wins through his party's skills.",
+        "rengoku": "'Set your heart ablaze': fires up the juniors on the Mugen Train.",
+        "nanami": "The mentor who sets up Itadori's hits.",
+        "jiraiya": "Teacher of Minato, Nagato and Naruto.",
+        "darkness": "A crusader who takes the hits so the party can act.",
+        "mikasa": "Covers Eren and the squad.",
+        "kakashi": "The bell test: teamwork above all."
+      },
+      "cannot": {
+        "all-might": "Balance: best post-mid, and the ally boost on I Am Here! is already his edge (2026-11-07).",
+        "lelouch": "Balance: the top character in the game.",
+        "tsuna": "Balance: top pseudo; Sky Harmony already protects allies.",
+        "sailor-moon": "Balance: top legendary support.",
+        "zenitsu": "Canon: runs and cries; he only fights asleep and alone.",
+        "megumin": "Canon: Explosion only."
+      }
+    },
+    {
+      "no": 7,
+      "move": "substitute",
+      "band": 2,
+      "kind": "utility",
+      "source": "Akihabara: Kith's old terminals. A decoy render: a copy of a copy.",
+      "why": "Neutral, spends 1/4 Vitality on a decoy. Clone, proxy and stand-in users only.",
+      "can": {
+        "kon": "A mod soul in a plushie: the body is the decoy.",
+        "minato": "Shadow clones and marked kunai left behind.",
+        "jiraiya": "Substitution jutsu, and his toads take hits for him.",
+        "light-yagami": "Mikami and Misa act as Kira in his place.",
+        "johan": "Never acts himself: others do it for him.",
+        "makima": "Her contract passes her wounds on to someone else.",
+        "conan": "Sleeping Kogoro is his stand-in for every deduction.",
+        "doraemon": "Decoy gadgets from the 4D pocket (gag).",
+        "rimuru": "Replication: a clone of himself (used against the Orc Lord)."
+      },
+      "cannot": {
+        "itachi": "Already built in: Crow Clone is his ability.",
+        "kurumi": "Already built in: Past Selves is her ability.",
+        "sasuke": "Balance: top quarter of his tier.",
+        "goku": "Balance: Ultra Instinct Goku is the 4th best character (the afterimage would fit).",
+        "lelouch": "Balance: top character (Sayoko as his double would fit).",
+        "aizen": "Balance: top legendary (Kyoka Suigetsu would fit)."
+      }
+    },
+    {
+      "no": 8,
+      "move": "iron-head",
+      "band": 2,
+      "kind": "type",
+      "source": "Akihabara: the streamer Warden's reward, handed over live on stream.",
+      "why": "Tech, physical, 80 power, 30% flinch. A plain physical Tech hit for Tech characters who only have beams.",
+      "can": {
+        "homura": "Swings a golf club before she has her guns (tested as an option 2026-10-30).",
+        "shinji": "Unit-01's Progressive Knife.",
+        "doraemon": "His famous stone-hard head (gag).",
+        "guts": "Off-type (Tech): the Dragonslayer, 'a heap of raw iron'."
+      },
+      "cannot": {
+        "luffy": "Balance: Gear 5 is a strong pseudo (Armament hardening would fit).",
+        "misaka": "Balance: best mid; her Tech is magnetism, not blows."
+      }
+    },
+    {
+      "no": 9,
+      "move": "ice-beam",
+      "band": 2,
+      "kind": "type",
+      "source": "Reykjavík: the far side of the Northern Plateau, reached once you can cross water.",
+      "why": "Ice, energy, 90 power. Ice coverage is the classic way counters disappear, so the list is short.",
+      "can": {
+        "brook": "Soul Solid's chill from the underworld: Song of Scratches, Blizzard Slice.",
+        "rudeus/2": "Off-type (Ice): Ice Smash and Frost Nova, his everyday spells.",
+        "rimuru": "Off-type (Ice): Icicle Lance.",
+        "kazuma": "Off-type (Ice): Freeze, usually after Create Water."
+      },
+      "cannot": {
+        "tsuna": "Balance: top pseudo, and he has Freeze-Dry.",
+        "shawn-frost": "Canon: his ice is one shot, his signature.",
+        "aqua": "Canon: holy water only.",
+        "cmvnn1tin": "Canon: Juvia only makes ice together with Gray.",
+        "fern": "Canon: she fights with the one basic attack spell, fast."
+      }
+    },
+    {
+      "no": 10,
+      "move": "light-screen",
+      "band": 3,
+      "kind": "tool",
+      "source": "Kyoto: the shrine priestess's reward. A ward, in the old sense of the word.",
+      "why": "Light, cuts Energy damage to the team for 5 turns. Barrier casters only.",
+      "can": {
+        "fern": "Standard defensive magic, the hexagon barrier every mage learns.",
+        "shinji": "The A.T. Field.",
+        "aqua": "Her blessings and holy barriers.",
+        "doraemon": "Barrier Point gadget (gag).",
+        "homura": "Her weapon is a shield.",
+        "mob": "His psychic barrier."
+      },
+      "cannot": {
+        "rukia": "Balance: Bankai Rukia is a top pseudo (Bakudo #81 Danku would fit).",
+        "itachi": "Balance: top quarter of his tier (the Yata Mirror would fit).",
+        "misaka": "Balance: best mid (her iron-sand shield would fit).",
+        "gojo": "Already built in: Infinity is his ability. Balance: top legendary.",
+        "tatsumaki": "Already built in: Esper Barrier is her ability."
+      }
+    },
+    {
+      "no": 11,
+      "move": "shadow-ball",
+      "band": 3,
+      "kind": "type",
+      "source": "Kyoto: a job reward at Spirits and Such on the route.",
+      "why": "Spirit, energy, 80 power. For Spirit casters who only have Hex.",
+      "can": {
+        "sung-jinwoo": "Yuta pours Rika's cursed energy into a blast.",
+        "shinji": "Unit-01's cross-shaped blast.",
+        "brook": "Soul fire thrown from his blade.",
+        "emilia": "Lesser spirits gathered into a shot (with Puck)."
+      },
+      "cannot": {
+        "yamamoto": "Balance: above the middle of his tier; his Spirit side is a blade.",
+        "mahito": "Balance: best mythical.",
+        "ichigo": "Near-copy of his signature Getsuga Tensho."
+      }
+    },
+    {
+      "no": 12,
+      "move": "swords-dance",
+      "band": 3,
+      "kind": "utility",
+      "source": "Kyoto: taught on the Seireitei training grounds.",
+      "why": "Basic move, raises Power by 2. Setup is the strongest thing in the sim, so only blade users who are not already top picks.",
+      "can": {
+        "murata": "Water Breathing drills, like every Corps swordsman.",
+        "inosuke": "Beast Breathing with two chipped blades.",
+        "brook": "A fencer: Three-Verse Humming, Arrow-Notch Slash.",
+        "sunraku": "Dual-blade builds and buff stacking are his whole game.",
+        "guts": "Swinging a too-big sword since he was a child.",
+        "toga": "Knife fighter.",
+        "sanemi": "Wind Hashira swordsmanship.",
+        "arima": "IXA and Narukami: the CCG's undefeated quinque swordsman.",
+        "shirou/2": "Trace On: projects the blade and the skill of whoever wielded it.",
+        "inuyasha/2": "Tessaiga."
+      },
+      "cannot": {
+        "levi": "Balance: a meta regular (Speed 140) who would get setup on top.",
+        "mikasa": "Balance: top of mid tier.",
+        "kizaru": "Balance: second-best mythical (his light sword would fit).",
+        "darkness": "Balance: best first-router by 12 points. Canon: can't hit a thing anyway.",
+        "dante": "Balance: top quarter of his tier.",
+        "rukia": "Canon: Sode no Shirayuki's dances are Ice techniques, not swordplay."
+      }
+    },
+    {
+      "no": 13,
+      "move": "taunt",
+      "band": 3,
+      "kind": "tool",
+      "source": "Prague: the aristocrat Warden's reward. 'Every Warden before you was a guard.'",
+      "why": "Dark, the target can only attack for 3 turns. Shuts down supports, so trash-talkers who are not top picks.",
+      "can": {
+        "bakugo": "'DIE!' at friend and foe alike.",
+        "inosuke": "Challenges everything he meets to a fight.",
+        "hisoka": "Goads strong opponents so they ripen.",
+        "vegeta": "Saiyan pride: mocks every opponent before the fight.",
+        "jinx": "Graffiti, laughter and 'Boo!'.",
+        "frieza": "Polite, vicious mockery on Namek.",
+        "gold-ship": "Trolls everyone (gag).",
+        "aqua": "Provokes the undead and Kazuma alike.",
+        "sukuna": "'Know your place, fool.'",
+        "kon": "A plushie with a big mouth."
+      },
+      "cannot": {
+        "dio": "Balance: top third of legendaries ('You approach me?' would fit).",
+        "mahito": "Balance: best mythical.",
+        "escanor": "Balance: top of his tier ('Who decided that?' would fit).",
+        "kenpachi": "Balance: top of his tier.",
+        "gintoki": "Balance: top pseudo."
+      }
+    },
+    {
+      "no": 14,
+      "move": "rest",
+      "band": 3,
+      "kind": "utility",
+      "source": "Prague: with a coffee at Anteiku.",
+      "why": "Basic move: full heal, then 2 turns asleep. Tested as a near-universal Pattern first: it gave recovery to top legendaries (Whitebeard +3.2, Kaido +1.7 team points, both seeds), so it is a short canon list of weak-for-tier sleepers instead.",
+      "cannot": {
+        "whitebeard": "Balance: top legendary, and Rest was his biggest gain in the tests.",
+        "kaido": "Balance: +1.7 in the tests (sleeping off the drink would fit).",
+        "frieren": "Balance: top quarter of her tier (sleeping until noon would fit).",
+        "nessie": "Near-copy: already has Slack Off.",
+        "doraemon": "Near-copy: already has Recover (naps in the closet would fit).",
+        "luffy": "Near-copy: already has Recover.",
+        "megumin": "Canon: Explosion only (she collapses instead).",
+        "ainz": "Canon: the undead don't sleep."
+      },
+      "can": {
+        "ace": "Narcolepsy: falls asleep mid-meal and mid-sentence.",
+        "sunthorn-phu": "Wine and Verse: sleeps it off (gag).",
+        "shinji": "Lies on his bed with the SDAT player until it passes.",
+        "aqua": "Sleeps in after every night out.",
+        "kazuma": "A shut-in who sleeps all day when he can.",
+        "gold-ship": "Naps wherever she likes (gag).",
+        "nanami": "'I hate overtime.' Clocks off."
+      }
+    },
+    {
+      "no": 15,
+      "move": "psychic",
+      "band": 4,
+      "kind": "type",
+      "source": "The summit road, among the Time strays.",
+      "why": "Time, energy, 90 power. Time is rare and strong, so the list is tiny.",
+      "can": {
+        "pucci": "Whitesnake's mind attacks (Confusion to Psychic was tested 2026-10-30).",
+        "mob": "Off-type (Time): raw telekinesis, his whole power."
+      },
+      "cannot": {
+        "tatsumaki": "Balance: second-best post-mid (telekinesis would fit).",
+        "anya": "Canon: she reads minds and nothing else.",
+        "pain": "Balance: top legendary.",
+        "ainz": "Balance: at the legendary median and +1.8 in the tests on both seeds (Grasp Heart would fit)."
+      }
+    },
+    {
+      "no": 16,
+      "move": "trick-room",
+      "band": 4,
+      "kind": "tool",
+      "source": "The summit road, near the core.",
+      "why": "Time, slower characters move first for 5 turns. Trick Room is weak because its setters are fast legendaries; these are slower ones.",
+      "can": {
+        "takemichi": "Leaps back to change the order of events.",
+        "jotaro": "Star Platinum: The World. He moves while nobody else can.",
+        "kurumi": "Zafkiel's Second Bullet slows time for whoever it hits.",
+        "adam-smasher": "A military Sandevistan: everyone else stands still.",
+        "yhwach": "The Almighty rewrites what happens next."
+      },
+      "cannot": {
+        "pucci": "Canon: Made in Heaven speeds time up, the opposite.",
+        "minato": "Canon: he is simply the fastest.",
+        "david-martinez": "Canon: his Sandevistan speeds only him up, which is his signature."
+      }
+    },
+    {
+      "no": 17,
+      "move": "close-combat",
+      "band": 4,
+      "kind": "type",
+      "source": "The summit road: a prize from the Circle's sparring hall.",
+      "why": "Basic move: Neutral, 120 power, lowers the user's Guard and Will. For martial artists stuck on Mega Punch.",
+      "can": {
+        "vegeta": "A martial artist first: the brawls with Goku and Jiren.",
+        "sung-jinwoo": "Yuta's hand-to-hand, trained by Maki.",
+        "nezuko": "Her frenzied kicks against Daki.",
+        "sanji": "Black Leg Style, kicks only.",
+        "yoruichi/2": "Hakuda master.",
+        "natsu": "Fairy Tail's brawler.",
+        "david-martinez": "Gorilla Arms."
+      },
+      "cannot": {
+        "all-might": "Balance: best post-mid.",
+        "seiya": "Near-copy: already has Double-Edge (Neutral, physical, 120).",
+        "toriko": "Balance: top of mid tier.",
+        "killua": "Canon: an assassin's single strikes, not brawling.",
+        "mr-satan": "Near-copy: the World Champion already has Double-Edge (Neutral, physical, 120)."
+      }
+    }
+  ],
+  "demo": [
+    {
+      "move": "fake-out",
+      "why": "Doubles tool: a free turn on turn 1.",
+      "on": [
+        "all-might",
+        "levi",
+        "toriko",
+        "shanks",
+        "kenpachi",
+        "yami",
+        "gyomei",
+        "zebra",
+        "mahito",
+        "inosuke"
+      ]
+    },
+    {
+      "move": "tailwind",
+      "why": "Speed control for the whole team.",
+      "on": [
+        "all-might",
+        "levi",
+        "mikasa",
+        "zebra",
+        "tatsumaki",
+        "deku/3",
+        "inuyasha/2"
+      ]
+    },
+    {
+      "move": "calm-mind",
+      "why": "The setup move behind Pain and Aizen (2026-10-30).",
+      "on": [
+        "frieza",
+        "makima",
+        "light-yagami",
+        "tatsumaki",
+        "enel",
+        "misaka",
+        "fern",
+        "gojo",
+        "madara"
+      ]
+    },
+    {
+      "move": "recover",
+      "why": "Reliable recovery.",
+      "on": [
+        "frieza",
+        "blackbeard",
+        "makima",
+        "tatsumaki",
+        "all-might",
+        "kaido",
+        "whitebeard",
+        "madara",
+        "gyomei"
+      ]
+    },
+    {
+      "move": "extreme-speed",
+      "why": "Strong priority.",
+      "on": [
+        "all-might",
+        "levi",
+        "arima",
+        "saitama",
+        "gon/3",
+        "kenpachi",
+        "mahito",
+        "vegeta/3"
+      ]
+    },
+    {
+      "move": "hyperspace-fury",
+      "why": "Hits through Protect.",
+      "on": [
+        "gon/3",
+        "kenpachi/2",
+        "guts/2",
+        "muzan",
+        "toga",
+        "yor",
+        "hisoka"
+      ]
+    },
+    {
+      "move": "follow-me",
+      "why": "Redirection.",
+      "on": [
+        "darkness",
+        "gyomei",
+        "whitebeard",
+        "all-might",
+        "vergil-chair",
+        "patrick",
+        "kaido"
+      ]
+    },
+    {
+      "move": "earthquake",
+      "why": "Strong spread move.",
+      "on": [
+        "akainu",
+        "kaido",
+        "all-might",
+        "saitama",
+        "toriko",
+        "rudo"
+      ]
+    }
+  ],
+  "field": [
+    {
+      "name": "Crossing",
+      "like": "Surf",
+      "badge": "Reykjavík",
+      "who": "Water or Ice",
+      "does": "A Water familiar carries you over water; an Ice one freezes a path.",
+      "opens": "The canals of Water 7, the lagoon, the far side of the Northern Plateau.",
+      "cannot": {
+        "hanako-kun": "Bound to his toilet (gag).",
+        "patrick": "Does not move (gag).",
+        "juvia": "Only walks on rain while it is raining."
+      }
+    },
+    {
+      "name": "Smelt",
+      "like": "Rock Smash / Cut",
+      "badge": "Hawaii",
+      "who": "Fire or Earth",
+      "does": "Fire melts cooled lava crust; Earth breaks or moves boulders.",
+      "opens": "Fire Mountain's upper paths, the sealed forges, shortcuts on the crater route.",
+      "cannot": {
+        "megumin": "She can clear the rock, the path and the mountain; the Ward forbids it (gag).",
+        "tanjiro/3": "His flames are an image, not real fire.",
+        "rengoku": "Same: his flames don't melt rock.",
+        "darkness": "Can't hit a thing."
+      }
+    },
+    {
+      "name": "Updraft",
+      "like": "Fly",
+      "badge": "Cape Town",
+      "who": "Wind familiars that fly in canon, or Beast familiars big enough to ride",
+      "does": "Fast travel between arenas you have beaten, and rides the updrafts between Table Mountain's platforms.",
+      "opens": "Skypiea, fast travel.",
+      "cannot": {
+        "deku": "Recruit Deku can't fly; from Dark Deku (Float) he can.",
+        "kita": "Not a flyer.",
+        "sunthorn-phu": "Not a flyer.",
+        "konohamaru": "Not a flyer.",
+        "nami": "Not until Zeus (form 2).",
+        "levi": "ODM gear needs something to hook on to.",
+        "mikasa": "Same as Levi.",
+        "chiikawa-usagi": "Too small to ride.",
+        "kon": "Too small to ride."
+      }
+    },
+    {
+      "name": "Jack-in",
+      "like": "Flash (as a key)",
+      "badge": "Akihabara",
+      "who": "Lightning or Tech",
+      "does": "Powers dead terminals, doors and lifts.",
+      "opens": "Kith's old server floors, the GeoFront, powered doors in earlier cities.",
+      "cannot": {
+        "zenitsu": "Faints first.",
+        "bocchi": "Melts first (form 1)."
+      }
+    },
+    {
+      "name": "Lantern",
+      "like": "Flash",
+      "badge": "Kyoto",
+      "who": "Light or Spirit",
+      "does": "Lights dark places and shows hidden paths, spirits and seams.",
+      "opens": "The Bone-Eater's Well, hidden shrine paths, dark caves on earlier routes.",
+      "cannot": {
+        "darkness": "Light type by faith only; she gives off no light.",
+        "light-yagami": "Light in name only (gag)."
+      }
+    },
+    {
+      "name": "Slip",
+      "like": "Dive / Strength",
+      "badge": "Prague",
+      "who": "Dark or Blood",
+      "does": "Passes through shadowed seams and the red mist that turns others back.",
+      "opens": "The Infinity Castle's shifting rooms, the way down toward each city's Knot (sealed until the post-game).",
+      "cannot": {
+        "hinata": "Blood type for stamina only; he is afraid of the dark (gag).",
+        "soma": "A cook. No."
+      }
+    }
+  ],
+  "dropped": [
+    {
+      "move": "thunderbolt",
+      "why": "Only two characters passed all three tests (Lightning Flame Natsu, Lucy). Killua's signature Narukami is the same move; Zenitsu, Yoruichi and Arthur fail canon; everyone else has it."
+    },
+    {
+      "move": "flamethrower",
+      "why": "Same: only Natsu and Obito would qualify."
+    },
+    {
+      "move": "surf, waterfall, air-slash, dark-pulse, night-slash, x-scissor, earth-power",
+      "why": "Every character who fits already has it or a near-copy."
+    }
+  ]
+}
