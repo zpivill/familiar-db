@@ -319,7 +319,7 @@ Balance (bring these to r, don't fix alone):
 
 r paused balancing on 2026-10-29 after the sim checks. Suggested way back in: (1) run each setting 2-3 times and compare, (2) look at Protect-ignoring signatures that one-shot setters, (3) hand-play combo teams on `#play`.
 
-### Status and handoff (2026-10-31)
+### Status and handoff (2026-10-31, plan added 2026-11-15)
 
 **r's stance:** no character changes until the simulated data is trustworthy. Character changes come last. A separate thread is working on trustworthy data. The options tested on 2026-10-30 (balance-history, "Character options tested") are on hold.
 
@@ -344,7 +344,27 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 - Options doc for r: https://claude.ai/artifact/YSWfFQyc2yj3cruogWtddL
 - Play the books with `familiar-sim ... --builds=books/book-fit1.json,books/book-fit2.json,books/book-fit3.json,books/book-fit4.json` (from engine/ or the unzipped folder). Re-fit with `--optimize` after character, move, ability or item changes.
 
-**Balance pass 2026-11-07 (Zebra, All Might, Water field):** results and options in balance-history; nothing changed in data. All Might's edge is the ally boost on I Am Here!; Zebra is fine; Water field needs a better Water attacker, not a rule change. All wait on r, as above.
+**Balance pass 2026-11-07 to 2026-11-15:** results and options are in balance-history; the only game change is Zebra's Thunder Noise counting as a sound move (r, 2026-11-09). All Might's edge is the ally boost on I Am Here! (r chose to leave him). Zebra and Giyu need nothing. Water field is held back by its setter: a sturdier Juvia is the first option that lifts it (needs fresh seeds). Three sessions worked in parallel: this one (branch `claude/brave-hopper-8k4ufi`), a whole-roster scan (`claude/roster-balance-scan`) and a TM/HM design proposal (`claude/tm-hm-design`, `docs/TM-HM.md`). Their branches are not merged; r decides when.
+
+**Plan for future balance** (written 2026-11-15; update it as steps finish):
+
+1. **Refresh the build books first.** The 4 books date from Oct 30 - Nov 3 and every number depends on them (Frieza: 42.6% with books, 51.9% without). A 4-fit refresh is running in the first session; a fit takes about 75 minutes on 4 cores, so run one fit per background job. Then re-check the main claims once on the new books.
+2. **Fix the tools before the characters.**
+   - Opener rule: the draft leads legendaries 77-95% of the time, and Blackbeard, Pucci and Homura win about 35% leading and 49% not. Test a draft change (draft.js and draft.rs, parity must hold) before buffing any weak legendary.
+   - Pivot moves are under-valued by the fast AI (+4, or +18 under threat), so judge switch-out moves with the search AI.
+   - Report meta-team share only as always / often / rarely: counts swing 2-4x between runs with nothing relevant changed. Picked win rate is the steady number (±0.5).
+3. **Bring r the decisions one at a time, biggest first.** Each has tested options in balance-history:
+   1. Demon Emperor Lelouch (86%): Zero Requiem. Option "replacement gets +1 Power and Energy" gives about 58%.
+   2. Pain (about 83%) and Aizen: Calm Mind is the lever (Pain without it about 70%).
+   3. Ultra Instinct Goku (70%) and Jin-woo (64%).
+   4. Juvia's Rain Woman also halving physical damage (Water field), once it repeats on fresh seeds.
+   5. Weak legendaries (Blackbeard, Pucci, Homura, Arima), only after the opener test.
+   6. Kaido: the sim says average (54%), r's play says top. r plays him on `#play`, or names the team he wins with, so the sim can be checked against it.
+   7. The TM/HM proposal, after the items above, since strong characters get no TMs.
+4. **One patch at a time.** Per decision: one PR, before and after numbers on 2+ seeds, the changed character re-fitted against a control re-fit (a re-fit alone moves a character about 3 points). After every 3-5 accepted changes: refresh the books, rerun the roster baseline (plain 300k on 2 seeds, 12 chains), and save the per-character picked win rate table in balance-history so each patch can be compared with the last. A change is only done when nobody new has jumped more than about 5 points for a reason nobody intended.
+5. **Keep the two-agent check.** One session measures and proposes; a second tries to break each claim on seeds the first did not use, and runs archetype claims under the search AI (`--check=2000`, 4+ seeds). It already overturned two claims (meta-team counts as evidence, and "Cosmic is the best type"). Disagreements go to r with both sides.
+6. **Targets to balance toward** (proposals until r confirms): no character above about 70% picked with its best build, or on nearly every meta team; each tier's median inside its expected band, with legendaries above pseudos above post-mid; every archetype between about 30% and 50% under the search AI; and weak-for-tier fixed by canon tools, not raw stats.
+7. **What only r can do:** hand-play combo teams on `#play` (Water field, Trick Room, Kaido), and confirm the unconfirmed defaults in section 3.
 
 **Possible next tooling:**
 - Team-aware builds: search a build per core or team, not per character.
