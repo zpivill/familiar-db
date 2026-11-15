@@ -708,3 +708,154 @@ Same setup as above, on data with the Thunder Noise fix. Giyu was re-fitted for 
 - **G1 makes Giyu better (+3 points) but not Water field.** He joins half the Water teams, and the team does no better under either AI.
 - **G2 does little for Giyu:** only 1 of 2 fits picks Water Hashira (Demon Slayer Mark is about as good). The +9.5 under search is under the noise floor (one seed at 50, the others 25-35), the fast AI goes the other way, and Giyu was in only 1 of the 8 Water teams, so it isn't his doing.
 - **Together with the first pass:** 1.5x fields, a second setter and a better Water attacker all leave Water field where it was. The one member every Water team must bring and pick is Juvia (430 total, the only setter, forced to Rain Woman), so a stronger setter is the lever left untested.
+
+## Roster scan: strongest and weakest for tier (2026-11-15), nothing changed in data
+
+Rust sim, comp, bring 8, Vitality x3, every form, the 4 averaged books (`engine/books/book-fit1..4.json`, not the refreshed ones). Zebra, All Might, Giyu, Juvia, Rudeus and Water field were left out of the options (handled in the passes above).
+
+**Setup**
+
+- **Baseline:** plain 300k batches on seeds 1-2 and 12 meta chains (200k, archetype rounds, seeds 31-42). Repeated on fresh seeds (plain 3-4, chains 51-54): every picked rate below came back within 0.5 points.
+- **"Picked"** = win rate when the draft picked the character (`stats.bring`, pw / p), pooled over 2 plain seeds, about 20-36k picks each. **Meta teams** = the 6 non-archetype teams each chain ends with.
+- **Options** were applied to a scratch copy (data/, sim/, the built binary). The changed character was re-fitted (2 fits, seeds 101 / 102, chains 31-33 / 34-36, `--per=2000`; fit A goes into books 1-2, fit B into 3-4), then 2 plain batches. Each option is compared with a **control re-fit on unchanged data done the same way** (same seeds, same characters taken out of the books first). Several characters' options shared one plain run ("round"), one option per character; two given characters meet in under 1% of battles. The leading options then ran alone on 8 chains (seeds 35-42) with the round's fits.
+- Zero Requiem variants that the text patterns can't express used a throwaway engine switch (not in the repo), checked to give identical results to the repo binary when off. Homura's two options need `(?:his|her)` / `(?:he|she)` in two patterns of `sim/compile.js` (lines for "Once per battle, on his first turn" and "The first time he is knocked out"); done in the scratch copy only.
+
+**How steady the numbers are**
+
+- Picked rate across battle seeds: about ±0.5.
+- **Re-fitting alone can move a character far more than the 3 points noted before.** Three control re-fits of Pain gave 71.2, 83.6 and 82.6 (books: 78.3). The difference is whether a fit takes Calm Mind (both fits with it: 83; one without: 71). Frieza went 42.6 (books), 50.9, 42.3 and is 51.9 with no books at all; Arima 40.5 (books), 42.9, 46.2, and 46.8 with no books. So Frieza's and part of Arima's weakness comes from their book builds, not the characters.
+- **Meta-team counts are not steady, except Lelouch's.** With only other characters re-fitted, 8-chain counts moved Ayanokoji 20 to 2, Goku 28 to 14 to 11, All Might 9 to 23. On the same chain seeds as the 2026-11-07 pass All Might is on 7 of 72 teams here against 16 there (only the Thunder Noise fix differs). Read counts as always / often / rarely.
+
+**Baseline by tier** (final forms, gags left out of the medians; rank of 257)
+
+| tier | usual total | median picked | median rank |
+|---|---|---|---|
+| first-route | 320 | 38.6 | 235 |
+| pre-mid | 430 | 44.2 | 158 |
+| mid | 505 | 48.5 | 114 |
+| post-mid | 550 | 53.5 | 53 |
+| pseudo | 600 | 60.1 | 16 |
+| mythical | 600 | 44.7 | 154 |
+| legendary | 660 | 53.2 | 56 |
+
+Tiers are in order except mythicals (below mid) and legendaries (level with post-mid, spread from 39 to 78).
+
+**Strongest for tier**
+
+| character | tier | picked (rank) | vs tier median | meta teams of 72 |
+|---|---|---|---|---|
+| Demon Emperor Lelouch | pseudo | 86.1 (1) | +26 | 71 (always) |
+| Pain | legendary | 78.3 (2) | +25 | 40 (often) |
+| Aizen | legendary | 74.3 (3) | +21 | 2 (Pain holds the legendary slot) |
+| Ultra Instinct Goku | pseudo | 69.7 (4) | +10 | 41 (often) |
+| Zero (Lelouch form 2, 435 total) | pseudo | 69.5 (5) | | 0 |
+| Final Arc Gintoki | pseudo | 67.0 (6) | +7 | 0 |
+| Shadow Monarch Jin-woo | pseudo | 63.6 (10) | +3.5 | 28 (often) |
+| White Room Ayanokoji | starter | 57.9 (28) | +4 | 30 (often) |
+| Mahito | mythical | 57.9 (27) | +13 | 0 |
+
+- **Kaido: 53.6%, rank 56, exactly the legendary median, on 1 of 72 meta teams** (and 1 of 24 on fresh seeds). **Pain: rank 2, on 40 of 72.** So the sim agrees with r about Pain and disagrees about Kaido. Kaido wins 53.5% when he leads (95% of his games) and 63.5% when he doesn't, and the books give him Drunk or Thunder Bagua more than Strongest Creature, so the sim may simply not play him the way r does. Treat it as "sim and r disagree", not "Kaido is fine".
+- Lelouch lasts 2.2 turns per game and faints in 85% of them: being knocked out is the plan. The "when an ally faints" abilities ride on him (Ayanokoji's Pawns, Mikasa's The Scarf: 30 and 15 of 72 teams).
+- Cosmic characters sit +6.5 over their tier medians on average (n = 11), but only +2.0 once Pain, Aizen and Goku are left out, so this is not shown to be a type-chart effect. Time characters sit lowest (-2.7, n = 14).
+
+**Weakest for tier**
+
+| character | tier | picked (rank) | vs tier median | no books |
+|---|---|---|---|---|
+| Blackbeard | legendary | 38.9 (230) | -14 | 38.0 |
+| Pucci | legendary | 39.0 (228) | -14 | 40.8 |
+| Homura | legendary | 39.4 (226) | -14 | 37.6 |
+| Arima | legendary | 40.5 (215) | -13 | 46.8 |
+| Frieza | legendary | 42.6 (189) | -11 | 51.9 (book artifact) |
+| Shinra, Bansho Man | pseudo | 51.7 (78) | -8.5 | 54.1 |
+| Shinji | post-mid | 45.4 (150) | -8 | 46.6 |
+| Toga / Hanako-kun | mythical | 37.8 / 39.1 | -7 / -6 | 40.3 / 42.0 |
+| Takemichi / Nanami | mid | 40.8 / 42.5 | -8 / -6 | |
+
+- **A draft effect sits under the weak legendaries.** Legendaries open 87% of their games. Blackbeard wins 35.1% when he leads and 49.7% when he doesn't; Pucci 36.8 / 48.9, Homura 34.7 / 49.0, Arima 37.1 / 47.9. Attackers in general do 10-15 points worse leading (All Might 61.6 / 70.1, Kaido 53.5 / 63.5); setup walls do better (Pain 78.3 / 74.3, Aizen 74.5 / 66.2). They last about 3 turns (Kaido 6.5, Pain 10.5). Part of this may be selection (a legendary stays back when the team has stronger openers), so it needs a draft test before any buff: see "Next".
+
+**Options tested, strongest** (picked, 2 plain seeds; control = re-fit on unchanged data)
+
+| option | canon | picked (rank) | 8 chains, alone |
+|---|---|---|---|
+| **Lelouch** control | | 85.7 (1); Zero 70.1 | on 46 of 48 teams |
+| L1: Zero Requiem becomes "When he faints, the ally that replaces him gets +1 Power and +1 Energy." (Mumen Rider's existing text) | Suzaku takes up the mask of Zero | 58.4 (29); Zero 45.6 | 58.0, on 0 of 48. No character on more than 25 of 48 |
+| L2: only the ally on the field gets +1 Power and Energy, only foes on the field get -1 Power and Energy; forms 1-2 lose Zero Requiem | the plan is the Emperor's, at the parade, in front of those present | 61.7 (15); Zero 44.9 | 61.6, on 11 of 48. Top: Dio 26 |
+| ally on the field +1 all stats, no drop for foes | | 66.1 (7) | |
+| every ally +1 Power and Energy, foes -1 Power and Energy | | 70.4 (3) | |
+| ally on the field +1 all, foes on the field -1 all (as on 2026-10-30) | | 75.3 (1) | |
+| **Pain** control | | 82.6 (2) | on 33 of 48 |
+| no Human Path (Calm Mind) | Human Path reads and pulls out souls, it isn't a self-boost | 72.9 (2) | |
+| Shinra Tensei: "The user must rest on the next turn." | the technique's recharge interval (5 seconds; much longer after the village-sized one) | 79.4 | |
+| Shinra Tensei power 140 to 110 | | 80.1 | |
+| P1: no Calm Mind + Shinra Tensei rests | | 69.7 (2) | 67.8 (5), on 22 of 48 |
+| no Calm Mind + power 110 | | 71.3 | |
+| **Aizen** control | | 80.6 (3) | on 2 of 48 |
+| no Thinking Ahead (Calm Mind) | | 70.8 (4) | |
+| Kurohitsugi charges a turn | the full incantation | 74.3 | |
+| Kurohitsugi power 140 to 120 | | 79.5 | |
+| both of the first two | | 65.6 (8) | |
+| **Ultra Instinct Goku** control | | 69.9 (5) | on 11 of 48 |
+| Silver Dragon Flash without priority | | 68.8 | |
+| Silver Dragon Flash power 110 to 90 | | 70.9 | |
+| no Weighted Training (Bulk Up) on form 3 | | 66.2 | |
+| stats 620 to 600 (Power and Speed 125 to 115) | pseudos are 600 | 66.6 | |
+| G1: no priority + no Bulk Up | | 61.9 (14) | 61.3 (16), on 5 of 48 |
+| **Jin-woo** control | | 65.7 (7) | on 23 of 48 |
+| no Shadow Army (entry decoy) | | 59.5 (20) | 57.8 (27), on 4 of 48 |
+| decoy 1/4 to 1/8 of his Vitality | | 67.9 | |
+| Arise: Shadow Army power 140 to 120 | | 64.5 | |
+| no Level Up (Swords Dance) on form 3 | | 67.2 | |
+| **All together:** L2 + P1 + Aizen without Calm Mind + G1 + Jin-woo without the decoy | | Lelouch 62.1 (14), Pain 68.7 (3), Aizen 72.3 (1), Goku 62.8 (13), Jin-woo 59.3 (26) | most common: Goku 28, Tsuna 28, All Might 22, Asta 22, Pain 18, Eren 17, Denji 15; Aizen 11, Kaido 6, Lelouch 0 |
+
+**Options tested, weakest** (control re-fit: Blackbeard 38.0, Pucci 38.0, Homura 36.8, Arima 43.8, Shinra 51.6)
+
+| option | canon | picked |
+|---|---|---|
+| Homura H1: Time Stop Shield becomes "Once per battle, on her first turn, foes can't move." (Dio's The World) | she stops time with her shield | 47.6; 48.7 in the chain run (rank 113) |
+| Homura H2: Repeated Time becomes "The first time she is knocked out, she comes back with half her max Vitality." (Obito's Izanagi) | she rewinds the month every time she fails | 45.1 |
+| Homura with both abilities available | | 46.5 |
+| Pucci Pu1: Made in Heaven adds "His moves do 1.3x against a target that hasn't moved yet." | in accelerated time nobody else can react | 44.0 (forced; the fits didn't pick it over Whitesnake) |
+| Pucci Pu2: the same at 1.5x | | 52.7; 52.4 in the chain run (rank 66) |
+| Shinra S1: Speed 150 to 130, Vitality 80 to 90, Guard 75 to 85 | the Bansho Man is a god, not a glass sprinter | 53.0 |
+| Shinra, Speed 150 to 120, Vitality 95, Guard 85, Will 85 | | 51.9 |
+| Shinra S2: Universe Creation is Physical (he has Power 120, Energy 95) | | 56.5; 56.1 in the chain run (rank 37) |
+| Arima: Undefeated also "His stats can't be lowered by others." | never put on the back foot | 44.8 (forced) |
+| Arima: IXA Shield also "His physical moves do 1.2x and have a 10% chance to Stun." (Kaido's Thunder Bagua text) | Narukami | 47.8 (forced) |
+| Blackbeard: Guard 90 to 105, Will 85 to 100 | "his body is atypical" | 38.9 |
+| Blackbeard: Yami Yami also "His Earth moves hit all foes." | two Devil Fruits at once | 37.2 |
+| Blackbeard: both / Speed 85 to 110 / no Kurouzu (Super Fang) | | 41.0 / 39.9 / 40.5 |
+
+**What it shows**
+
+- **Lelouch is the one clear outlier, and Zero Requiem is all of it.** The lever is who gets the boost: every living teammate including the bench, in all five stats. Any version that reaches only one ally lands him between rank 7 and 29. L1 takes him out of the meta and spreads it (the most common character drops from 46 of 48 teams to 25); L2 keeps him a top-15 pseudo. Either also fixes Zero (a 435-total form at rank 5). Ayanokoji and Mikasa keep the same picked rate either way (58-59, 53), so their meta share was Lelouch's, not their own.
+- **Pain is a Calm Mind + Recover wall with one weakness.** Without Calm Mind he is about 70-73 in five separate runs (72.9, 69.7, 71.3, 67.8, 68.7; 64.5 on 2026-10-30) against 83 with it, which is also why control fits swing between 71 and 84. Nothing on Shinra Tensei moves him by itself. Even at 68 he keeps about half the legendary slots.
+- **Aizen is the same shell** and waits behind Pain: when Pain is cut and Aizen isn't (the all-together run kept Aizen's Kurohitsugi), Aizen becomes rank 1 and takes 11 of 48 teams. Decide them together.
+- **Goku's edge is priority on a 110-power signature plus Bulk Up, and needs both removed to move** (8 points; each alone 1-4).
+- **Jin-woo's edge is the free decoy on entry**, whatever its size. He is only 3.5-5 points over the pseudo median.
+- **After all five, nobody is on more than 28 of 48 teams** and Kaido appears on 6.
+- **Homura and Pucci respond to one canon ability each** (+11 and +15, to about mid-pack for a legendary). Shinra gains about 5 from a physical signature.
+- **Blackbeard doesn't respond to anything tried** (+30 bulk, +25 Speed, spread Earth moves, no Super Fang: all within 3 points), and **Arima** gains 1-4. With the lead split above, their problem looks like how the draft and AI use them rather than their sheets.
+
+**What is noise**
+
+- Any meta-team count difference under about 2x, and every single-run count for Ayanokoji, Mikasa, All Might, Goku and Jin-woo.
+- Differences under about 3 points between options (Blackbeard's and Arima's whole tables; Shinra S1; Goku's and Jin-woo's single changes).
+- Pain's and Aizen's single options were each run once against one control; what repeats is the Calm Mind split, not the exact size of each row.
+- Options sharing a round were not isolated from each other; the strong rows with a chain column were (Homura H1, Pucci Pu2 and Shinra S2 shared one chain run), and agree within 1 point for Lelouch, Pucci, Shinra and Homura, 2 for Pain and Jin-woo.
+
+**What Pokémon doubles balance suggests for Familiar** (from memory of VGC, not checked against current usage data; hypotheses only)
+
+- **Restricted legendaries are strong through stats and one defining ability, not through setup + recovery + a near-unresisted spread nuke at once.** Calm Mind + Recover on a 660-total single-weakness body (Pain, Aizen) is the pattern VGC keeps in check with Taunt, Encore, Haze, phazing and critical hits, and by battles that end in about 8 turns. Familiar's Vitality x3 makes battles 11 turns, which pays setup and healing more than Pokémon does.
+- **No Pokémon ability boosts a whole team on fainting.** The nearest are one-ally or copy effects (Receiver, Costar, a +1 to the partner). L1 and L2 are that size.
+- **Priority is capped by power:** Extreme Speed is 80 at +2, most +1 moves are 40, Sucker Punch 70 with a condition. A 110-power +1 signature (Goku) or 120 that also goes through Protect (Homura) is far outside that; Homura only stays weak because the rest of her sheet is.
+- **A free Substitute on entry** has no Pokémon equal either; Substitute costs a turn and 25% Vitality.
+- **Weather teams work because the setter has real stats, the boost is 1.5x and it weakens the opposing type, and abusers double their Speed.** Familiar's fields are 1.3x, 5 turns, with no Speed ability that fires (Loch Dweller has no rain) and a 430-total Water setter. This matches the 2026-11-07 Water field finding.
+- **Trick Room setters are slow and bulky** (Porygon2, Dusclops, Hatterene); Familiar's are fast (Shinra 150, Homura 140, Dio 120), as section 12 of BALANCE.md already notes.
+- **Healthy usage:** in VGC the most used Pokémon sits on roughly 40-60% of teams and 2-3 restricteds share the slot. Lelouch on 71 of 72 is beyond anything a format keeps; Pain on about half the legendary slots is the top of the normal range.
+
+**Next (tooling, no character change)**
+
+- Test the opener rule: let the draft choose openers by matchup without preferring the legendary, and see whether Blackbeard, Pucci, Homura and Arima recover toward 45-49% with no data change. Needs the same change in `sim/draft.js` and `engine/src/draft.rs`, and parity.
+- Re-check Lelouch, Pain and the weak legendaries once on the refreshed books.
+- Not done here: search-AI checks of any option, and the other session's requests to re-test All Might's ally boost, fields at 1.5x and the Juvia options on fresh seeds.

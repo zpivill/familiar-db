@@ -346,7 +346,10 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 
 **Balance pass 2026-11-07 (Zebra, All Might, Water field):** results and options in balance-history; nothing changed in data. All Might's edge is the ally boost on I Am Here!; Zebra is fine; Water field needs a better Water attacker, not a rule change. All wait on r, as above.
 
+**Roster scan 2026-11-15:** every entrant ranked by tier, with options for the 5 strongest and 5 weakest, in balance-history ("Roster scan"); nothing changed in data. Demon Emperor Lelouch is the one clear outlier (86% picked, on 71 of 72 meta teams) and Zero Requiem is all of it. Pain and Aizen are Calm Mind + Recover walls. Kaido is at the legendary median in the sim (rank 56, 1 of 72 teams), which disagrees with r's play. The weak legendaries (Blackbeard, Pucci, Homura, Arima) lose mostly when they lead, and legendaries lead 87% of games, so test the draft's opener rule before buffing them. Meta-team counts swing 2x or more from a re-fit alone; only Lelouch's is steady. All options wait on r.
+
 **Possible next tooling:**
+- Opener rule test: openers by matchup, without preferring the legendary (see the roster scan).
 - Team-aware builds: search a build per core or team, not per character.
 - Joint search over moves, ability and item.
 - Check how the AI uses non-damage items.
