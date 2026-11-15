@@ -733,6 +733,11 @@ Recover, Calm Mind, Fake Out, Tailwind, Extreme Speed, Earthquake and Hyperspace
 
 ### 9.7 What these tests can't say
 
+- **The screen is a lower bound.** It swaps one move into a build that was fitted without it, so it answers "is this move better than the build's fourth move", not "what is the best build now". Setup, Substitute, Rest and Trick Room can pay off more once the spread, item or partner change with them. "No strong character gains" is therefore safest for attacks and weakest for those four. Before any list is final, re-fit its 3 to 5 strongest learners against several control fits (the first balance session's challenge).
+- **Which number carries each claim:** the paired screen. Giyu's Flip Turn is "+1.9 on both seeds"; his +2.4 after a re-fit is inside that method's noise and proves nothing on its own. Only Shirou and Arima are large enough to read from the re-fit.
+- **The Trick Room Pattern is untested in practice,** not shown to help: Takemichi and Jotaro never made a Trick Room team.
+- **Universal Protect was measured in a world built without it.** The AI's weights, its guess at when a foe will Protect, the draft and the books were all tuned while 191 of 257 forms had no Protect. With everything re-fitted the effect could be larger than the screen shows.
+- **The lists follow the ranking, and the ranking will move** with the new books and with any nerf r accepts (Lelouch, Pain). The rule is the principle (top quarter of a tier gets nothing extra; a lift must go to a weak-for-tier character). The "Balance" rows in section 7 should be re-derived after each balance patch.
 - **The fast AI under-rates pivots and combo plans.** It scores a switch-out move's switch at +4, or +18 under threat, so Flip Turn is under-rated; Helping Hand, Follow Me, Fake Out and Trick Room are played simply (BALANCE.md section 11). No search-AI run was done here.
 - **The books are being refreshed** by the first balance session (r approved it on 2026-11-15). Every number here is on the old books. Re-check 9.2's short list and 9.4's table once on the new ones.
 - **The second balance session's roster scan did not reach this doc.** My message to it was blocked by a permission rule and its results had not arrived when this was written. The strong and weak lists in 9.1 are from my own two batches; if the scan disagrees, the "Balance" rows in section 7 are the ones to revisit.
@@ -746,6 +751,7 @@ One at a time, in this order. Each has options and a lean.
 - A. Everyone (the Pokémon rule).
 - B. Everyone except legendaries and mythicals. **(lean)** In the tests Protect did nothing measurable for the story cast and lifted bulky legendaries (Ainz, Saitama, Whitebeard, Kaido, Yhwach). In-world it fits: the story already says your Threads "can't hold that much data" for a legendary.
 - C. Only characters with a guard or barrier in canon who are weak for their tier (the first balance session's suggestion). Safest, but doubles without Protect on most of the cast stays as it is today.
+- The first balance session argues for C: the tests ran with an AI and books tuned in a world without Protect, so the real effect of A or B may be larger than measured.
 - Either way: re-check on the refreshed books, with every book re-fitted and under the search AI, before it is final.
 
 **Q2. Reusable Patterns, one copy each?** Lean yes. The other option is Scarlet and Violet's: single-use, crafted from stray drops.
