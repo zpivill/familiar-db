@@ -708,3 +708,22 @@ Same setup as above, on data with the Thunder Noise fix. Giyu was re-fitted for 
 - **G1 makes Giyu better (+3 points) but not Water field.** He joins half the Water teams, and the team does no better under either AI.
 - **G2 does little for Giyu:** only 1 of 2 fits picks Water Hashira (Demon Slayer Mark is about as good). The +9.5 under search is under the noise floor (one seed at 50, the others 25-35), the fast AI goes the other way, and Giyu was in only 1 of the 8 Water teams, so it isn't his doing.
 - **Together with the first pass:** 1.5x fields, a second setter and a better Water attacker all leave Water field where it was. The one member every Water team must bring and pick is Juvia (430 total, the only setter, forced to Rain Woman), so a stronger setter is the lever left untested.
+
+### Juvia options for Water field (2026-11-15), nothing changed in data
+
+Same setup, on data with the Thunder Noise fix: per option 8 fast chains (seeds 35-42, final round robin replayed by the fast AI), 2 plain batches and 4 search-checked chains (seeds 31-34), on the 4 averaged books with no re-fit. Juvia is id `cmvnn1tin`, the only Water field setter, so she is in every Water field team.
+
+| option | Juvia picked (rank) | Water field, fast (8 seeds) | Water field, search (4 seeds) |
+|---|---|---|---|
+| baseline | 50.2% (97) | 37.4 | 25.0 [31, 26, 28, 15] |
+| J1: Vitality 65 to 80, Energy 90 to 105, Speed 70 to 80 (430 to 470) | 52.8% (66) | 42.8 | 35.8 [38, 23, 44, 38] |
+| J2: Rain Woman also halves physical damage to her (Water Body folded in) | 50.2% (97) | 38.4 | 42.2 [35, 57, 58, 19] |
+| J3: J1 + J2 | 52.8% (66) | 43.8 | 39.2 [36, 41, 48, 32] |
+| J4: J3 + Giyu stats (G1) + Rudeus's Cumulonimbus + fields 1.5x | 52.8% (63) | 39.2 | 34.8 [35, 43, 38, 23] |
+
+All archetypes average about 38.5 in every row.
+
+- **Juvia is the first lever that moves Water field.** All four options lift it 10-17 points under the search AI, to about the archetype average, where 1.5x fields, a second setter and a Giyu buff moved nothing. Each single result is near the 15-point noise line (4 seeds, sd up to 16), so the claim rests on four options agreeing, and it needs fresh seeds before it counts as proven.
+- **Under the fast AI only the stat buff helps** (about +6, inside the noise); the ability change alone does nothing there.
+- **J2 is targeted:** her books pick Gray-sama!, so it changes her only as the forced field setter and her own win rate stays 50.2%. J1 lifts her to rank 66, which would make her the best pre-mid character (pre-mid median rank 175).
+- **J4's extras add nothing** over J3, in line with the earlier results for each of them.
