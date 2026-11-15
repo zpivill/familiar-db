@@ -708,3 +708,23 @@ Same setup as above, on data with the Thunder Noise fix. Giyu was re-fitted for 
 - **G1 makes Giyu better (+3 points) but not Water field.** He joins half the Water teams, and the team does no better under either AI.
 - **G2 does little for Giyu:** only 1 of 2 fits picks Water Hashira (Demon Slayer Mark is about as good). The +9.5 under search is under the noise floor (one seed at 50, the others 25-35), the fast AI goes the other way, and Giyu was in only 1 of the 8 Water teams, so it isn't his doing.
 - **Together with the first pass:** 1.5x fields, a second setter and a better Water attacker all leave Water field where it was. The one member every Water team must bring and pick is Juvia (430 total, the only setter, forced to Rain Woman), so a stronger setter is the lever left untested.
+
+## TM/HM proposal tests (2026-11-15), nothing changed in data
+
+Full write-up, the move list and who can learn what: [TM-HM.md](TM-HM.md) (proposal; r decides). The lists are in `docs/tm-hm-proposal.json`, checked by `node sim/tm-check.mjs` (no pair may be a move the character already has in any form, or a near-copy of one).
+
+Rust sim, comp, bring 8, Vitality x3, every form, the 4 averaged books (the old ones, before the 2026-11-15 refresh). Baseline: plain 300k batches on seeds 1-2 and six 200k meta chains with archetype rounds (seeds 51-56). All moves were added to a scratch copy of the data.
+
+**Screen (the main evidence).** For each character-move pair, the book build against the same build with one move swapped for the new one (4 variants), on the same 1,000 battles each, the character joining the meta teams of 3 chains; reported as best variant minus unchanged build, in team win-rate points. 722 pairs, twice (seed 1 on chains 51-53, seed 2 on chains 54-56). The two runs agree at 0.81. The scale is small (one character in a team of 8): +1 on both runs is real but small, +2 is clear. A scratch-only engine mode, not in the repo.
+
+- **Protect for everyone:** mean -0.1 over 189 forms. Only 8 gain +1 on both runs and 7 are legendaries (Ainz +2.9, Saitama +2.4, Whitebeard +2.4, Kaido +1.7, Vergil +1.6, Muzan +1.5, Yhwach +1.4). By tier: legendary +0.9, everyone else -0.3 to +0.4.
+- **The 16 hand-made Pattern lists:** mean -0.4 over 149 forms. Gains on both runs: Shinji (Shadow Ball +2.2, Iron Head +2.1, Rest +1.5), Giyu (Flip Turn +1.9), Frieza (Taunt +1.7), Mob form 2 (Psychic +1.3), Nanami (Rest +1.3). No strong character gains.
+- **Moves tested to show why they stay off:** Recover lifted all 9 testers (mean +1.7; Whitebeard +3.9, Madara +2.5, Kaido +2.1). Rest for everyone without a heal: mean +0.5, Whitebeard +3.2. Calm Mind: Frieza +1.4, Tatsumaki +1.1. Extreme Speed: Saitama +2.2. Earthquake: Saitama +2.1. Tailwind: All Might +1.7, the other six negative. Fake Out: at most +1.0. Follow Me and Helping Hand for everyone: negative (the fast AI plays them poorly, so this clears nothing).
+
+**Re-fit against a control.** 49 characters re-fitted with the 17 Patterns available (2 fits, `--per=2000`, 3 chains each, book movesets and their one-swap variants added to the candidates) against a control re-fit of the same characters on unchanged data, then plain 300k batches on seeds 1-2.
+
+- **Noise finding:** with 2 fits, a re-fitted character moves up to about 4 points with no change in its build (Vergil +4.2, Dio -4.3), and legendaries move 5-13 (the control alone took Ainz from 53.7 to 44.6 and Poseidon from 64.3 to 71.7). The two seeds agree almost exactly, but only because both replay the same two fits. Untouched characters moved 0.55 (rms). So a 2-fit re-fit can only confirm large effects; use 4 fits, or the paired screen above, for small ones.
+- Large enough to read: Shirou form 2 +6.4 (47.6 to 54.0, Swords Dance in both fits), Arima +10.9 (40.3 to 51.2, Swords Dance in both fits). Protect was taken by both fits of Ainz (+13.0, or +3.9 against the 4-book baseline), Yhwach (+6.9), Boros (+5.7), Whitebeard (+2.3). Giyu +2.4 (Flip Turn), Nanami +2.9. Shinji -0.9: not confirmed.
+- The same method on 8 characters given Recover, Calm Mind, Fake Out, Tailwind, Extreme Speed, Earthquake or Hyperspace Fury: 15 of 16 fits took the new move. Tatsumaki +4.4 and Frieza +5.7 (Calm Mind), Kaido +4.2 (Recover), All Might +1.6; Whitebeard -4.3 and Saitama -5.9 are inside the legendary noise.
+
+**Not done:** universal Protect with every book re-fitted and meta chains under the search AI; any search-AI check (the fast AI under-rates pivots such as Flip Turn: a switch-out is worth +4, or +18 under threat); a re-check on the refreshed books.
