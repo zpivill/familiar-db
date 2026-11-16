@@ -727,3 +727,26 @@ All archetypes average about 38.5 in every row.
 - **Under the fast AI only the stat buff helps** (about +6, inside the noise); the ability change alone does nothing there.
 - **J2 is targeted:** her books pick Gray-sama!, so it changes her only as the forced field setter and her own win rate stays 50.2%. J1 lifts her to rank 66, which would make her the best pre-mid character (pre-mid median rank 175).
 - **J4's extras add nothing** over J3, in line with the earlier results for each of them.
+
+## Build book refresh (2026-11-16)
+
+The 4 books (engine/books/book-fit1..4.json, best-builds-avg.md) were re-fitted on current data (with the Thunder Noise fix). Each fit is against 3 new meta chains (200k, meta + archetype rounds, seeds 35-46) with `--per=2000`, and takes about 100 minutes on 4 cores. The average gain of the best build over a plain build per fit was +2.6, +2.3, +2.1 and +2.5.
+
+- **Fits agree with each other as well as before:** fit-vs-fit correlation is 0.91-0.95 (old 0.93-0.95) and the median range over 4 fits is 2.8 points (old 2.7). All 4 fits pick the same ability for 87 of 257 characters (old 91), the same item for 6 (old 5) and the same moves for 18 (old 29).
+- **Kept old entries for 3 characters.** The new fits gave Ainz Ooal Gown, Cosmic Boros and Adam Smasher builds that won fewer random games: 44.1 vs 54.0, 48.8 vs 55.7 and 47.4 vs 52.2 over 4 seeds. With their old entries back they score 53.0, 52.7 and 51.1, so the installed books keep them. The fit scores builds against meta teams, so it can pick a build that is worse in random teams. Check this after every refresh.
+- **Win rates, old vs installed books** (picked win rate, 300k random-team draft battles × 4 seeds). The changes repeat across seed pairs (correlation 0.95 between seeds 1-2 and 3-4, against 0.37 points of seed noise), so they come from the books. The mean change is 1.3 points, and 21 characters moved more than 3. Tier medians stay in order and move under 1.5 points.
+
+| character | old | new | why |
+|---|---|---|---|
+| Black Frieza | 42.4% (193) | 53.2% (62) | Ruthless + Nasty Plot (old book was the artifact the roster check flagged) |
+| Unlimited Blade Works Shirou | 43.1% (181) | 49.8% (96) | Hero of Justice, Swift + Steel Beam |
+| Sin Devil Trigger Vergil | 48.1% (120) | 54.0% (53) | Swords Dance |
+| Hybrid Kaido | 53.6% (55) | 59.4% (22) | Thunder Bagua + Bulk Up |
+| Soul King Yhwach | 50.1% (98) | 54.8% (39) | Psychic + Foul Play, Last Thread |
+| Heian Sukuna | 51.9% (72) | 56.5% (35) | Reverse Cursed Technique, Swords Dance |
+| Pain | 78.5% (2) | 72.9% (3) | same build; field got stronger |
+| Sailor Moon | 65.1% (7) | 59.7% (21) | Crybaby |
+| Kurumi | 48.8% (112) | 44.2% (169) | City of Devouring Time |
+| Ultra Instinct Goku | 69.8% (5) | 65.9% (6) | same build |
+
+Top 3 now: Demon Emperor Lelouch 84.4%, Hogyoku Aizen 77.1%, Pain 73.1% (best-builds-avg). Lelouch remains the outlier, and Kaido's sim-vs-r gap shrinks (59.4%, rank 22).

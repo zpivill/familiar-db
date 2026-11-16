@@ -348,7 +348,7 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 
 **Plan for future balance** (written 2026-11-15; update it as steps finish):
 
-1. **Refresh the build books first.** The 4 books date from Oct 30 - Nov 3 and every number depends on them (Frieza: 42.6% with books, 51.9% without). A 4-fit refresh is running in the first session; a fit takes about 75 minutes on 4 cores, so run one fit per background job. Then re-check the main claims once on the new books.
+1. **Refresh the build books first.** Done 2026-11-16 (balance-history, "Build book refresh"). Next: re-check the main claims once on the new books (Lelouch, Pain, Juvia/Water field). A fit takes about 100 minutes on 4 cores, so run one fit per background job. A fit can pick a build that wins fewer random games than the old one (3 did, by 4-9 points), so after a refresh compare each changed character against its old entry and keep the better one.
 2. **Fix the tools before the characters.**
    - Opener rule: the draft leads legendaries 77-95% of the time, and Blackbeard, Pucci and Homura win about 35% leading and 49% not. Test a draft change (draft.js and draft.rs, parity must hold) before buffing any weak legendary.
    - Pivot moves are under-valued by the fast AI (+4, or +18 under threat), so judge switch-out moves with the search AI.
