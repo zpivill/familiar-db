@@ -47,11 +47,11 @@
         "mr-satan": "Plays to the crowd until he believes it himself.",
         "axel-blaze": "Hot-blooded striker firing himself up (gag).",
         "koby": "Shouts down his own fear at Marineford.",
-        "mark-evans": "Tyre training and a shout to the team (gag).",
-        "mob": "Body Improvement Club warm-ups."
+        "mark-evans": "Tyre training and a shout to the team (gag)."
       },
       "cannot": {
-        "megumin": "Canon: every skill point goes into Explosion. She learns no Pattern except Protect."
+        "megumin": "Canon: every skill point goes into Explosion. She learns no Pattern except Protect.",
+        "mob": "Balance: on the refreshed books (2026-11-16) Mob ???% is in the top quarter of mid tier."
       }
     },
     {
@@ -191,7 +191,6 @@
       "can": {
         "brook": "Soul Solid's chill from the underworld: Song of Scratches, Blizzard Slice.",
         "rudeus/2": "Off-type (Ice): Ice Smash and Frost Nova, his everyday spells.",
-        "rimuru": "Off-type (Ice): Icicle Lance.",
         "kazuma": "Off-type (Ice): Freeze, usually after Create Water."
       },
       "cannot": {
@@ -199,7 +198,8 @@
         "shawn-frost": "Canon: his ice is one shot, his signature.",
         "aqua": "Canon: holy water only.",
         "cmvnn1tin": "Canon: Juvia only makes ice together with Gray.",
-        "fern": "Canon: she fights with the one basic attack spell, fast."
+        "fern": "Canon: she fights with the one basic attack spell, fast.",
+        "rimuru": "Balance: on the refreshed books Demon Lord Rimuru is above the middle of his tier and gained +1.1 on both seeds (Icicle Lance would fit)."
       }
     },
     {
@@ -214,15 +214,15 @@
         "shinji": "The A.T. Field.",
         "aqua": "Her blessings and holy barriers.",
         "doraemon": "Barrier Point gadget (gag).",
-        "homura": "Her weapon is a shield.",
-        "mob": "His psychic barrier."
+        "homura": "Her weapon is a shield."
       },
       "cannot": {
         "rukia": "Balance: Bankai Rukia is a top pseudo (Bakudo #81 Danku would fit).",
         "itachi": "Balance: top quarter of his tier (the Yata Mirror would fit).",
         "misaka": "Balance: best mid (her iron-sand shield would fit).",
         "gojo": "Already built in: Infinity is his ability. Balance: top legendary.",
-        "tatsumaki": "Already built in: Esper Barrier is her ability."
+        "tatsumaki": "Already built in: Esper Barrier is her ability.",
+        "mob": "Balance: on the refreshed books (2026-11-16) Mob ???% is in the top quarter of mid tier."
       }
     },
     {
@@ -328,24 +328,6 @@
     },
     {
       "no": 15,
-      "move": "psychic",
-      "band": 4,
-      "kind": "type",
-      "source": "The summit road, among the Time strays.",
-      "why": "Time, energy, 90 power. Time is rare and strong, so the list is tiny.",
-      "can": {
-        "pucci": "Whitesnake's mind attacks (Confusion to Psychic was tested 2026-10-30).",
-        "mob": "Off-type (Time): raw telekinesis, his whole power."
-      },
-      "cannot": {
-        "tatsumaki": "Balance: second-best post-mid (telekinesis would fit).",
-        "anya": "Canon: she reads minds and nothing else.",
-        "pain": "Balance: top legendary.",
-        "ainz": "Balance: at the legendary median and +1.8 in the tests on both seeds (Grasp Heart would fit)."
-      }
-    },
-    {
-      "no": 16,
       "move": "trick-room",
       "band": 4,
       "kind": "tool",
@@ -365,7 +347,7 @@
       }
     },
     {
-      "no": 17,
+      "no": 16,
       "move": "close-combat",
       "band": 4,
       "kind": "type",
@@ -587,6 +569,10 @@
     }
   ],
   "dropped": [
+    {
+      "move": "psychic",
+      "why": "Proposed at first for Pucci, Ainz and Mob. Ainz gained too much for a median legendary, and on the refreshed books Mob is in the top quarter of mid tier, which leaves Pucci alone. Confusion to Psychic for Pucci stays what it was: a learnset option for r (tested 2026-10-30)."
+    },
     {
       "move": "thunderbolt",
       "why": "Only two characters passed all three tests (Lightning Flame Natsu, Lucy). Killua's signature Narukami is the same move; Zenitsu, Yoruichi and Arthur fail canon; everyone else has it."

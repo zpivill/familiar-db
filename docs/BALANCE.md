@@ -347,7 +347,7 @@ r is skeptical of them. In r's testing, Pain and Kaido are almost always on top 
 
 **Balance pass 2026-11-07 (Zebra, All Might, Water field):** results and options in balance-history; nothing changed in data. All Might's edge is the ally boost on I Am Here!; Zebra is fine; Water field needs a better Water attacker, not a rule change. All wait on r, as above.
 
-**TM/HM proposal 2026-11-15:** [TM-HM.md](TM-HM.md) proposes 17 Patterns (TMs) and 6 field techniques, with who can learn what and sim tests. Proposal only, nothing changed in data; waits on r. `node sim/tm-check.mjs` checks the proposal against the learnsets.
+**TM/HM proposal 2026-11-15:** [TM-HM.md](TM-HM.md) proposes 16 Patterns (TMs) and 6 field techniques, with who can learn what and sim tests. Proposal only, nothing changed in data; waits on r. `node sim/tm-check.mjs` checks the proposal against the learnsets.
 
 **Possible next tooling:**
 - Team-aware builds: search a build per core or team, not per character.

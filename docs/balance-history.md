@@ -728,3 +728,12 @@ Rust sim, comp, bring 8, Vitality x3, every form, the 4 averaged books (the old 
 - The same method on 8 characters given Recover, Calm Mind, Fake Out, Tailwind, Extreme Speed, Earthquake or Hyperspace Fury: 15 of 16 fits took the new move. Tatsumaki +4.4 and Frieza +5.7 (Calm Mind), Kaido +4.2 (Recover), All Might +1.6; Whitebeard -4.3 and Saitama -5.9 are inside the legendary noise.
 
 **Not done:** universal Protect with every book re-fitted and meta chains under the search AI; any search-AI check (the fast AI under-rates pivots such as Flip Turn: a switch-out is worth +4, or +18 under threat); a re-check on the refreshed books.
+
+### Re-check on the refreshed books (2026-11-16)
+
+Same paired screen on the 4 refreshed books (commit 75edf16 on `claude/brave-hopper-8k4ufi`): plain 300k batches on seeds 1-2, six new chains (seeds 61-66), 193 pairs (every non-Protect pair; Protect on legendaries, mythicals and Juvia), two runs.
+
+- The two runs agree at 0.78; old books against new agree at 0.86 over the same pairs.
+- Still +1 or more on both runs, all weak for their tier: Nanami +2.5 (Rest), Arima +1.7 (Swords Dance), Vegeta form 3 +1.7 (Taunt), Shinji +1.6 (Iron Head) and +1.4 (Shadow Ball), Soma +1.6 and Natsu +1.1 (Will-O-Wisp), Hisoka +1.2 (Taunt). No longer repeating: Giyu's Flip Turn (+1.2 / +0.5), Frieza's Taunt, Shirou's Swords Dance.
+- Protect on legendaries and mythicals: mean +0.2 over 44; Ainz +1.9 and Kaido +1.6 repeat, Whitebeard and Saitama do not. Juvia gains nothing.
+- The ranking moved (Frieza 42.6 to 53.2, Kaido 53.6 to 59.5, Mob form 2 49.6 to 52.4, Rimuru form 2 51.5 to 53.7), so Mob came off three lists and Rimuru off Ice Beam, and Psychic, left with one learner, is no longer a Pattern: 16 Patterns, 109 pairs plus Protect. The re-fit, demo and archetype results above were not re-run on the new books.

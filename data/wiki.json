@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-15",
+  "updated": "2026-11-16",
   "pages": [
     {
       "id": "design",
@@ -171,7 +171,7 @@
               "Patterns (TMs)",
               "A Warden's reward: a technique their city is known for. 'It will make your familiar more itself'",
               "Every line is true. A Pattern fills in more of the copy from its source data, and a more complete copy is a stronger anchor (see Evolution), so Wardens give one to every Keeper strong enough to matter",
-              "Stitch a Pattern into any familiar whose source already holds that move; reusable; 17 proposed",
+              "Stitch a Pattern into any familiar whose source already holds that move; reusable; 16 proposed",
               "Proposal (2026-11-15): rules, list, who can learn what and sim tests in docs/TM-HM.md"
             ],
             [

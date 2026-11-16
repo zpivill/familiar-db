@@ -1,6 +1,6 @@
 # TMs and HMs for Familiar (proposal)
 
-**Status: proposal, 2026-11-15. Nothing here is decided and nothing in `data/` has changed.** r decides; this doc brings options with a lean and numbers. The move lists live in [tm-hm-proposal.json](tm-hm-proposal.json) and are checked by `node sim/tm-check.mjs`.
+**Status: proposal, 2026-11-15, re-checked on the refreshed books 2026-11-16. Nothing here is decided and nothing in `data/` has changed.** r decides; this doc brings options with a lean and numbers. The move lists live in [tm-hm-proposal.json](tm-hm-proposal.json) and are checked by `node sim/tm-check.mjs`.
 
 Familiar's Gameplay page already says "a fixed list of moves learned at set levels, plus TMs. No daycare and no breeding." This doc proposes what "plus TMs" means: the rules, the names, the move list, who can learn what, and what the sim says it does to balance.
 
@@ -25,10 +25,10 @@ Familiar's Gameplay page already says "a fixed list of moves learned at set leve
 - **In-world reason:** a Pattern can only be stitched into a copy whose source data already holds that move. So a Pattern never teaches anything new, it surfaces something the character did in its anime. That is r's canon rule, with a reason inside the world.
 - **Two readings:** a Pattern is a Warden's gift that "makes your familiar more itself". True: a more complete copy is a stronger anchor. Touches the Evolution and Wardens rows. Seam skills touch the device row.
 - **Rules (lean):** reusable, one copy each; no TRs, no egg moves, no tutors at launch; free relearning from the device; four bands that pace power by city; never sold for money.
-- **List:** 17 Patterns, all existing generic moves. Short on purpose: learnsets already hold almost every move that fits, so Thunderbolt, Flamethrower and seven more had nobody left to teach.
-- **Who gets what:** Protect for everyone (see the open question). Every other Pattern is a hand-made canon list of 2 to 20 characters. The top quarter of each tier gets nothing else. 114 character-move pairs, plus Protect for the 133 characters who lack it.
+- **List:** 16 Patterns, all existing generic moves. Short on purpose: learnsets already hold almost every move that fits, so Thunderbolt, Flamethrower, Psychic and seven more had too few characters left to teach.
+- **Who gets what:** Protect for everyone (see the open question). Every other Pattern is a hand-made canon list of 2 to 20 characters. The top quarter of each tier gets nothing else. 109 character-move pairs, plus Protect for the 133 characters who lack it.
 - **Kept off Patterns for good:** Recover and other healing, Calm Mind and Nasty Plot, priority moves, strong spread moves, Tailwind, Fake Out, Follow Me, Protect-ignoring moves.
-- **What the sim says:** every pair was screened on two seeds (they agree, correlation 0.81). The lists lift only weak-for-tier characters (Shinji, Giyu, Frieza, Nanami, Shirou, Arima) and no strong one. The "kept off" moves do lift strong ones (Recover: +3.9 on Whitebeard). **The one risk found is universal Protect, which mostly helps bulky legendaries.**
+- **What the sim says:** every pair was screened on two seeds (they agree, correlation 0.81). The lists lift only weak-for-tier characters (Shinji, Nanami, Arima, Giyu, Vegeta) and no strong one; this held on the refreshed books (2026-11-16), after three pairs that no longer fit the rule were removed. The "kept off" moves do lift strong ones (Recover: +3.9 on Whitebeard). **The one risk found is universal Protect, which mostly helps bulky legendaries.**
 - **Decisions needed from r:** section 10, one at a time.
 
 ## 2. How Pokémon did it, and the lean for Familiar
@@ -154,31 +154,30 @@ Clue planted (pillar 2): the Warden's line "it will make your familiar more itse
 
 ## 5. The Pattern list
 
-17 Patterns. All are generic moves already in `data/moves.json`; no new move was needed. Five are basic moves (no rename). "Learners" counts characters, not forms.
+16 Patterns. All are generic moves already in `data/moves.json`; no new move was needed. Five are basic moves (no rename). "Learners" counts characters, not forms.
 
 | # | Pattern | Type | What it is | Band | Where it comes from | Learners |
 |---|---|---|---|---|---|---|
 | P01 | Protect (basic) | Neutral | Blocks every move aimed at the user this turn. Likely to fail if used twice in a row. | 1 | Hawaii: handed over by the Swordsmith Village Keeper before your first duo battle. | everyone |
 | P02 | Flip Turn | Water | Physical 60. The user switches out after hitting. | 1 | Reykjavík: the harbour-master's reward. 'Hit, then go out with the tide.' | 6 |
-| P03 | Work Up | Neutral | Raises the user's Power and Energy by 1. | 1 | Reykjavík: sold at the Krusty Krab counter (gag). | 9 |
+| P03 | Work Up | Neutral | Raises the user's Power and Energy by 1. | 1 | Reykjavík: sold at the Krusty Krab counter (gag). | 8 |
 | P04 | Will-O-Wisp | Fire | Burns the target. | 1 | Hawaii: the forge master's reward. 'A blade is tested by the fire, not by the hammer.' | 6 |
 | P05 | Rock Tomb | Earth | Physical 60. Lowers the target's Speed by 1. | 1 | Hawaii: found in Megumin's craters on the route. | 5 |
 | P06 | Helping Hand (basic) | Neutral | Duos: the ally's move this turn does 1.5x damage. | 2 | Cape Town: the Biotope head keeper's reward. 'Nothing in here hunts alone.' | 20 |
 | P07 | Substitute | Neutral | Spends 1/4 of max Vitality on a decoy that takes hits for the user. | 2 | Akihabara: Kith's old terminals. A decoy render: a copy of a copy. | 9 |
 | P08 | Iron Head | Tech | Physical 80. 30% chance to make the target flinch. | 2 | Akihabara: the streamer Warden's reward, handed over live on stream. | 4 |
-| P09 | Ice Beam | Ice | Energy 90. 10% chance to Freeze. | 2 | Reykjavík: the far side of the Northern Plateau, reached once you can cross water. | 4 |
-| P10 | Light Screen | Light | Halves Energy damage to the user's team for 5 turns. | 3 | Kyoto: the shrine priestess's reward. A ward, in the old sense of the word. | 6 |
+| P09 | Ice Beam | Ice | Energy 90. 10% chance to Freeze. | 2 | Reykjavík: the far side of the Northern Plateau, reached once you can cross water. | 3 |
+| P10 | Light Screen | Light | Halves Energy damage to the user's team for 5 turns. | 3 | Kyoto: the shrine priestess's reward. A ward, in the old sense of the word. | 5 |
 | P11 | Shadow Ball | Spirit | Energy 80. 20% chance to lower the target's Will by 1. | 3 | Kyoto: a job reward at Spirits and Such on the route. | 4 |
 | P12 | Swords Dance (basic) | Neutral | Raises the user's Power by 2. | 3 | Kyoto: taught on the Seireitei training grounds. | 10 |
 | P13 | Taunt | Dark | The target can only use attacking moves for 3 turns. | 3 | Prague: the aristocrat Warden's reward. 'Every Warden before you was a guard.' | 10 |
 | P14 | Rest (basic) | Neutral | Fully heals the user and cures its status, then it Sleeps for 2 turns. | 3 | Prague: with a coffee at Anteiku. | 7 |
-| P15 | Psychic | Time | Energy 90. 10% chance to lower the target's Will by 1. | 4 | The summit road, among the Time strays. | 2 |
-| P16 | Trick Room | Time | Field for 5 turns: slower characters move first. | 4 | The summit road, near the core. | 5 |
-| P17 | Close Combat (basic) | Neutral | Physical 120. Lowers the user's Guard and Will by 1. | 4 | The summit road: a prize from the Circle's sparring hall. | 7 |
+| P15 | Trick Room | Time | Field for 5 turns: slower characters move first. | 4 | The summit road, near the core. | 5 |
+| P16 | Close Combat (basic) | Neutral | Physical 120. Lowers the user's Guard and Will by 1. | 4 | The summit road: a prize from the Circle's sparring hall. | 7 |
 
-**Why so few.** Pokémon has 50 to 229 TMs. Familiar's learnsets were written move by move from canon, so almost every character already has the type moves that fit it. A 100-move list would be 90% empty. Thunderbolt and Flamethrower were dropped for that reason: only two characters each passed all three tests. Seven more (Surf, Waterfall, Air Slash, Dark Pulse, Night Slash, X-Scissor, Earth Power) had nobody left to teach. What Patterns can add is narrow and worth having: Protect for everyone, a few tools and setup moves where canon backs them, and one missing move for characters who are weak for their tier.
+**Why so few.** Pokémon has 50 to 229 TMs. Familiar's learnsets were written move by move from canon, so almost every character already has the type moves that fit it. A 100-move list would be 90% empty. Thunderbolt and Flamethrower were dropped for that reason: only two characters each passed all three tests. Psychic was dropped after testing left it with one (Pucci). Seven more (Surf, Waterfall, Air Slash, Dark Pulse, Night Slash, X-Scissor, Earth Power) had nobody left to teach. What Patterns can add is narrow and worth having: Protect for everyone, a few tools and setup moves where canon backs them, and one missing move for characters who are weak for their tier.
 
-**Wind, Beast, Blood and Cosmic have no Pattern.** Their characters are covered. Cosmic is meant to be rare and strong, so leaving it out is on purpose.
+**Wind, Beast, Blood, Cosmic and (apart from Trick Room) Time have no attack Pattern.** Their characters are covered. Cosmic is meant to be rare and strong, so leaving it out is on purpose.
 
 **Pacing check.** Band 1 is Protect, a 60-power pivot, a 60-power Speed drop, Burn and +1/+1 setup. No first-route character gets more than that before City 3. The only 120-power Pattern arrives on the summit road.
 
@@ -198,7 +197,7 @@ These are the moves Pokémon keeps off its wide TM lists, or learned to. Each wa
 | Follow Me | Redirection | Nobody gained (mean -1.1). | Never a Pattern (judgment) |
 | Hyperspace Fury (hits through Protect) | Protect-ignoring | Gon (form 3) +1.1, others flat. | Never a Pattern |
 | Helping Hand, given to everyone | Doubles tool | Mean -2.6 over 169 forms: under this AI nobody is better off carrying it. | Not universal: a canon list (identity, not balance) |
-| Trick Room, Wide Guard, Encore, sleep moves, Blood Pact / Shift Gear / Belly Drum, hazards, field setters | Tools that define a character's job | Not screened (Trick Room is the exception: see P16 and 9.5). | Stay in learnsets |
+| Trick Room, Wide Guard, Encore, sleep moves, Blood Pact / Shift Gear / Belly Drum, hazards, field setters | Tools that define a character's job | Not screened (Trick Room is the exception: see the Trick Room Pattern and 9.5). | Stay in learnsets |
 
 **Where the sim backs the rule and where it is judgment.** Recovery, setup, priority and strong spread moves show up clearly, on both seeds, and help strong characters most. Fake Out, Follow Me and Helping Hand do not show a risk in this sim. BALANCE.md section 11 says why: the fast AI plays combo plans poorly, and Redirection scores 8 to 20 points worse under the search AI. So the sim can't clear them. They stay off Patterns because every Pokémon generation kept Fake Out and Follow Me off TMs (they are level-up or egg moves), and because here they are what gives Sanemi, Takemichi, Mumen Rider, Gintoki, Spike and Kazuma their jobs.
 
@@ -245,11 +244,11 @@ Neutral, raises Power and Energy by 1. The classic first setup move. *Source:* R
 | Axel Blaze | Hot-blooded striker firing himself up (gag). |
 | Koby | Shouts down his own fear at Marineford. |
 | Mark Evans | Tyre training and a shout to the team (gag). |
-| Mob | Body Improvement Club warm-ups. |
 
 | Cannot | Why |
 |---|---|
 | Megumin | Canon: every skill point goes into Explosion. She learns no Pattern except Protect. |
+| Mob | Balance: on the refreshed books (2026-11-16) Mob ???% is in the top quarter of mid tier. |
 
 #### P04 Will-O-Wisp (Fire, status), band 1
 
@@ -376,7 +375,6 @@ Ice, energy, 90 power. Ice coverage is the classic way counters disappear, so th
 |---|---|
 | Brook | Soul Solid's chill from the underworld: Song of Scratches, Blizzard Slice. |
 | Rudeus (from form 2) | Off-type (Ice): Ice Smash and Frost Nova, his everyday spells. |
-| Rimuru | Off-type (Ice): Icicle Lance. |
 | Kazuma | Off-type (Ice): Freeze, usually after Create Water. |
 
 | Cannot | Why |
@@ -386,6 +384,7 @@ Ice, energy, 90 power. Ice coverage is the classic way counters disappear, so th
 | Aqua | Canon: holy water only. |
 | Juvia | Canon: Juvia only makes ice together with Gray. |
 | Fern | Canon: she fights with the one basic attack spell, fast. |
+| Rimuru | Balance: on the refreshed books Demon Lord Rimuru is above the middle of his tier and gained +1.1 on both seeds (Icicle Lance would fit). |
 
 #### P10 Light Screen (Light, status), band 3
 
@@ -398,7 +397,6 @@ Light, cuts Energy damage to the team for 5 turns. Barrier casters only. *Source
 | Aqua | Her blessings and holy barriers. |
 | Doraemon | Barrier Point gadget (gag). |
 | Homura | Her weapon is a shield. |
-| Mob | His psychic barrier. |
 
 | Cannot | Why |
 |---|---|
@@ -407,6 +405,7 @@ Light, cuts Energy damage to the team for 5 turns. Barrier casters only. *Source
 | Misaka | Balance: best mid (her iron-sand shield would fit). |
 | Gojo | Already built in: Infinity is his ability. Balance: top legendary. |
 | Tatsumaki | Already built in: Esper Barrier is her ability. |
+| Mob | Balance: on the refreshed books (2026-11-16) Mob ???% is in the top quarter of mid tier. |
 
 #### P11 Shadow Ball (Spirit, energy 80), band 3
 
@@ -501,23 +500,7 @@ Basic move: full heal, then 2 turns asleep. Tested as a near-universal Pattern f
 | Megumin | Canon: Explosion only (she collapses instead). |
 | Ainz Ooal Gown | Canon: the undead don't sleep. |
 
-#### P15 Psychic (Time, energy 90), band 4
-
-Time, energy, 90 power. Time is rare and strong, so the list is tiny. *Source:* The summit road, among the Time strays.
-
-| Can | Why |
-|---|---|
-| Pucci | Whitesnake's mind attacks (Confusion to Psychic was tested 2026-10-30). |
-| Mob | Off-type (Time): raw telekinesis, his whole power. |
-
-| Cannot | Why |
-|---|---|
-| Tatsumaki | Balance: second-best post-mid (telekinesis would fit). |
-| Anya | Canon: she reads minds and nothing else. |
-| Pain | Balance: top legendary. |
-| Ainz Ooal Gown | Balance: at the legendary median and +1.8 in the tests on both seeds (Grasp Heart would fit). |
-
-#### P16 Trick Room (Time, status), band 4
+#### P15 Trick Room (Time, status), band 4
 
 Time, slower characters move first for 5 turns. Trick Room is weak because its setters are fast legendaries; these are slower ones. *Source:* The summit road, near the core.
 
@@ -535,7 +518,7 @@ Time, slower characters move first for 5 turns. Trick Room is weak because its s
 | Minato | Canon: he is simply the fastest. |
 | David Martinez | Canon: his Sandevistan speeds only him up, which is his signature. |
 
-#### P17 Close Combat (Neutral, physical 120), band 4
+#### P16 Close Combat (Neutral, physical 120), band 4
 
 Basic move: Neutral, 120 power, lowers the user's Guard and Will. For martial artists stuck on Mega Punch. *Source:* The summit road: a prize from the Circle's sparring hall.
 
@@ -690,7 +673,7 @@ Options for r are in section 10.
 
 ### 9.5 Trick Room and the other archetypes
 
-Trick Room is "structurally weak: its setters are fast, four of six are legendary or mythical" (BALANCE.md section 12). P16 adds Takemichi (mid, Speed 65) and Jotaro (mid, Speed 85) as setters, plus Kurumi, Adam Smasher and Yhwach. Archetype teams' win rate in each chain's final round robin, fast AI, six chains (seeds 51 to 56), baseline against all 17 Patterns applied:
+Trick Room is "structurally weak: its setters are fast, four of six are legendary or mythical" (BALANCE.md section 12). The Trick Room Pattern adds Takemichi (mid, Speed 65) and Jotaro (mid, Speed 85) as setters, plus Kurumi, Adam Smasher and Yhwach. Archetype teams' win rate in each chain's final round robin, fast AI, six chains (seeds 51 to 56), baseline against all 17 Patterns applied:
 
 | Archetype | Baseline (6 chains) | With Patterns (6 chains) |
 |---|---|---|
@@ -731,7 +714,18 @@ Recover, Calm Mind, Fake Out, Tailwind, Extreme Speed, Earthquake and Hyperspace
 - The plain-batch changes are inside this method's noise for legendaries (9.4), in both directions, so they neither add to nor take from the screen. Tatsumaki, who is not a legendary, is the cleanest row: the second-best post-mid gains 4.4 from Calm Mind and enters the top 10.
 - Tailwind was never chosen, though the screen gave All Might +1.7 for it: Extreme Speed and Fake Out were better still.
 
-### 9.7 What these tests can't say
+### 9.7 Re-check on the refreshed books (2026-11-16)
+
+The first balance session refreshed the 4 build books (r approved; branch `claude/brave-hopper-8k4ufi`, commit 75edf16). The ranking moved: Frieza 42.6 to 53.2, Kaido 53.6 to 59.5, Shirou (form 2) 43.0 to 49.9, Pain 78.3 to 73.0, Sailor Moon 65.5 to 59.9. So the baseline and the screen were run again on the new books: plain 300k batches on seeds 1 and 2, six new chains (seeds 61 to 66), and the paired screen on 193 pairs (every non-Protect pair, and Protect on legendaries, mythicals and Juvia).
+
+- **The screen holds up.** The two seeds agree at 0.78, and old books against new agree at 0.86 over the same pairs.
+- **Still lifting weak-for-tier characters, +1 or more on both seeds:** Nanami +2.5 (Rest), Arima +1.7 (Swords Dance), Vegeta form 3 +1.7 (Taunt), Shinji +1.6 (Iron Head) and +1.4 (Shadow Ball), Soma +1.6 and Natsu +1.1 (Will-O-Wisp), Hisoka +1.2 (Taunt).
+- **No longer repeating:** Giyu's Flip Turn (+1.2 / +0.5), Frieza's Taunt (+0.7 / +0.2; he is no longer weak), Shirou's Swords Dance (+1.0 / -0.4).
+- **Protect on legendaries is smaller but still there:** mean +0.2 over 44 legendaries and mythicals. Ainz +1.9 and Kaido +1.6 repeat (Kaido is now rank 22); Whitebeard's and Saitama's gains do not. Juvia still gains nothing.
+- **Three pairs broke the rule on the new ranking and were removed:** Mob ???% is now 5th in mid tier, so Mob came off Work Up, Light Screen and Psychic; Demon Lord Rimuru is now above the middle of post-mid and gained +1.1 from Ice Beam on both seeds, so he came off Ice Beam. That left Psychic with one learner, so **Psychic is no longer a Pattern** (17 became 16). Sections 9.2 to 9.6 describe the 17-Pattern draft as it was tested.
+- This is the rule working as intended: the principle stays, the lists follow the ranking.
+
+### 9.8 What these tests can't say
 
 - **The screen is a lower bound.** It swaps one move into a build that was fitted without it, so it answers "is this move better than the build's fourth move", not "what is the best build now". Setup, Substitute, Rest and Trick Room can pay off more once the spread, item or partner change with them. "No strong character gains" is therefore safest for attacks and weakest for those four. Before any list is final, re-fit its 3 to 5 strongest learners against several control fits (the first balance session's challenge).
 - **Which number carries each claim:** the paired screen. Giyu's Flip Turn is "+1.9 on both seeds"; his +2.4 after a re-fit is inside that method's noise and proves nothing on its own. Only Shirou and Arima are large enough to read from the re-fit.
@@ -739,7 +733,7 @@ Recover, Calm Mind, Fake Out, Tailwind, Extreme Speed, Earthquake and Hyperspace
 - **Universal Protect was measured in a world built without it.** The AI's weights, its guess at when a foe will Protect, the draft and the books were all tuned while 191 of 257 forms had no Protect. With everything re-fitted the effect could be larger than the screen shows.
 - **The lists follow the ranking, and the ranking will move** with the new books and with any nerf r accepts (Lelouch, Pain). The rule is the principle (top quarter of a tier gets nothing extra; a lift must go to a weak-for-tier character). The "Balance" rows in section 7 should be re-derived after each balance patch.
 - **The fast AI under-rates pivots and combo plans.** It scores a switch-out move's switch at +4, or +18 under threat, so Flip Turn is under-rated; Helping Hand, Follow Me, Fake Out and Trick Room are played simply (BALANCE.md section 11). No search-AI run was done here.
-- **The books are being refreshed** by the first balance session (r approved it on 2026-11-15). Every number here is on the old books. Re-check 9.2's short list and 9.4's table once on the new ones.
+- **Only the screen was re-run on the refreshed books** (9.7). The re-fit table in 9.4, the demo in 9.6 and the archetype chains in 9.5 are on the old books.
 - **The second balance session's roster scan did not reach this doc.** My message to it was blocked by a permission rule and its results had not arrived when this was written. The strong and weak lists in 9.1 are from my own two batches; if the scan disagrees, the "Balance" rows in section 7 are the ones to revisit.
 - **Story balance is untested.** The sim plays level-50 doubles. Whether a 60-power Pattern is right for City 1 is a design judgment taken from how Pokémon paces TMs.
 
@@ -760,9 +754,9 @@ One at a time, in this order. Each has options and a lean.
 
 **Q4. The names.** Pattern (lean), Spool or Swatch. Seam skills (lean), Shuttles or Crossings.
 
-**Q5. Is 17 Patterns the right size?** Lean yes: more would be lists of two. If r wants more, the honest way is new generic moves, which is a bigger job than this proposal.
+**Q5. Is 16 Patterns the right size?** Lean yes: more would be lists of two. If r wants more, the honest way is new generic moves, which is a bigger job than this proposal.
 
-**Q6. Swords Dance on Shirou.** It took him from below the middle of mid tier to its top quarter (+6.4). Keep (lean: keep, re-check on the new books), or drop him from that list?
+**Q6. Swords Dance on Shirou.** On the old books a re-fit took him from below the middle of mid tier to its top quarter (+6.4). On the refreshed books he already sits mid-table (49.9) and the paired gain no longer repeats (+1.0 / -0.4). Lean: keep him on the list.
 
 **Q7. Free relearning from the device anywhere, or only at Akihabara's terminals as part of Re-threading?** Lean anywhere: locking it until City 4 punishes experimenting in the first half of the game.
 
